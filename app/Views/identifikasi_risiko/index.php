@@ -37,29 +37,30 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Kode</th>
-                            <th>Nama Risiko</th>
+                            <th>Uraian Kegiatan</th>
                             <th>Kategori</th>
                             <th>Level</th>
-                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <?php $no = 1; ?>
                         <?php foreach ($risiko as $r): ?>
                             <tr>
-                                <td><?= esc($r['kode']) ?></td>
-                                <td><?= esc($r['nama']) ?></td>
-                                <td><?= esc($r['kategori']) ?></td>
+                                <td><?= $no++ ?></td>
                                 <td>
-                                    <span class="badge bg-warning"><?= esc($r['level']) ?></span>
+                                    <a href="<?= base_url('identifikasi-risiko/view/' . $r['id_identifikasi']) ?>"
+                                        class="text-decoration-none fw-semibold">
+                                        <?= esc($r['kode_risiko']) ?>
+                                    </a>
                                 </td>
+                                <td><?= esc($r['uraian_kegiatan']) ?></td>
+                                <td><?= esc($r['kategori_risiko']) ?></td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-outline-primary">
-                                        <i class="ti ti-eye"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-outline-warning">
-                                        <i class="ti ti-edit"></i>
-                                    </a>
+                                    <span class="badge bg-warning">
+                                        <?= esc($r['level_risiko'] ?? '-') ?>
+                                    </span>
                                 </td>
                             </tr>
                         <?php endforeach ?>
@@ -69,5 +70,20 @@
         </div>
     </div>
 </div>
+
+<?php if (session()->getFlashdata('success')): ?>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '<?= session()->getFlashdata('success') ?>',
+            confirmButtonText: 'OK',
+            width: 420,
+            customClass: {
+                popup: 'swal-mantis'
+            }
+        });
+    </script>
+<?php endif ?>
 
 <?= $this->endSection() ?>

@@ -2,77 +2,102 @@
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
-            <a href="<?= base_url('dashboard') ?>">
-                <!-- ========   Change your logo from here   ============ -->
-                <img src="<?= base_url('assets/images/logo-dark.svg') ?>">
+            <a href="<?= base_url('/') ?>" class="b-brand">
+                <img src="<?= base_url('assets/images/logo-dark.svg') ?>" class="logo-lg" alt="logo">
             </a>
         </div>
+
         <div class="navbar-content">
             <ul class="pc-navbar">
+
                 <!-- Dashboard -->
                 <li class="pc-item">
-                    <a href="<?= base_url('dashboard') ?>" class="pc-link">
+                    <a href="<?= base_url('/') ?>" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-dashboard"></i></span>
                         <span class="pc-mtext">Dashboard</span>
                     </a>
                 </li>
 
-                <!-- Risiko -->
+                <!-- Bank Risiko -->
+                <li class="pc-item">
+                    <a href="<?= base_url('bank-risiko') ?>" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-database"></i></span>
+                        <span class="pc-mtext">Bank Risiko</span>
+                    </a>
+                </li>
+
+                <!-- Caption
                 <li class="pc-item pc-caption">
-                    <label>Manajemen Risiko</label>
+                    <label>Proses Risiko</label>
                 </li>
+                -->
 
-                <li class="pc-item">
-                    <a href="<?= base_url('identifikasi-risiko') ?>" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-alert-triangle"></i></span>
-                        <span class="pc-mtext">Identifikasi Risiko</span>
-                    </a>
-                </li>
-
-                <li class="pc-item">
-                    <a href="<?= base_url('penetapan-level-risiko') ?>" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-layers-intersect"></i></span>
-                        <span class="pc-mtext">Penetapan Level Risiko</span>
-                    </a>
-                </li>
-
-                <li class="pc-item">
-                    <a href="<?= base_url('monitoring-risiko') ?>" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-chart-line"></i></span>
-                        <span class="pc-mtext">Monitoring Risiko</span>
-                    </a>
-                </li>
-
-                <li class="pc-item">
-                    <a href="<?= base_url('tindak-lanjut') ?>" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-checklist"></i></span>
-                        <span class="pc-mtext">Tindak Lanjut</span>
-                    </a>
-                </li>
-
-                <!-- Master Data -->
-                <li class="pc-item pc-caption">
-                    <label>Master Data</label>
-                </li>
-
+                <!-- Manajemen Risiko (Parent tanpa icon) -->
                 <li class="pc-item pc-hasmenu">
                     <a href="#!" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-database"></i></span>
-                        <span class="pc-mtext">Master Data</span>
-                        <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
+                        <span class="pc-micon">
+                            <i class="ti ti-folders"></i>
+                        </span>
+                        <span class="pc-mtext">Manajemen Risiko</span>
+                        <span class="pc-arrow">
+                            <i data-feather="chevron-right"></i>
+                        </span>
                     </a>
+
                     <ul class="pc-submenu">
                         <li class="pc-item">
-                            <a href="<?= base_url('master/tim') ?>" class="pc-link">Tim</a>
+                            <a href="<?= base_url('penetapan-konteks') ?>" class="pc-link">
+                                <span class="pc-micon"><i class="ti ti-settings"></i></span>
+                                <span class="pc-mtext">Penetapan Konteks</span>
+                            </a>
                         </li>
+
                         <li class="pc-item">
-                            <a href="<?= base_url('master/user') ?>" class="pc-link">User</a>
+                            <a href="<?= base_url('identifikasi-risiko') ?>" class="pc-link">
+                                <span class="pc-micon"><i class="ti ti-alert-circle"></i></span>
+                                <span class="pc-mtext">Identifikasi Risiko</span>
+                            </a>
                         </li>
+
                         <li class="pc-item">
-                            <a href="<?= base_url('master/level-risiko') ?>" class="pc-link">Level Risiko</a>
+                            <a href="<?= base_url('analisis-risiko') ?>" class="pc-link">
+                                <span class="pc-micon"><i class="ti ti-chart-bar"></i></span>
+                                <span class="pc-mtext">Analisis Risiko</span>
+                            </a>
+                        </li>
+
+                        <li class="pc-item">
+                            <a href="<?= base_url('evaluasi-risiko') ?>" class="pc-link">
+                                <span class="pc-micon"><i class="ti ti-clipboard-check"></i></span>
+                                <span class="pc-mtext">Evaluasi Risiko</span>
+                            </a>
+                        </li>
+
+                        <li class="pc-item">
+                            <a href="<?= base_url('rencana-penanganan') ?>" class="pc-link">
+                                <span class="pc-micon"><i class="ti ti-list-check"></i></span>
+                                <span class="pc-mtext">Penanganan Risiko</span>
+                            </a>
                         </li>
                     </ul>
                 </li>
+
+                <!-- Pemantauan Risiko -->
+                <li class="pc-item">
+                    <a href="<?= base_url('monitoring-risiko') ?>" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-eye"></i></span>
+                        <span class="pc-mtext">Pemantauan Risiko</span>
+                    </a>
+                </li>
+
+                <!-- Pelaporan Risiko -->
+                <li class="pc-item">
+                    <a href="<?= base_url('pelaporan-risiko') ?>" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-report-analytics"></i></span>
+                        <span class="pc-mtext">Pelaporan Risiko</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
     </div>

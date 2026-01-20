@@ -8,9 +8,9 @@
             <li class="breadcrumb-item">
                 <a href="<?= base_url('identifikasi-risiko') ?>">Identifikasi Risiko</a>
             </li>
-            <li class="breadcrumb-item active">Tambah</li>
+            <li class="breadcrumb-item active">Detail</li>
         </ul>
-        <h2>Tambah Identifikasi Risiko</h2>
+        <h2>Detail Identifikasi Risiko</h2>
     </div>
 </div>
 

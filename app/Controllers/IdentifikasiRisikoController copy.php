@@ -7,12 +7,10 @@ use App\Models\PenetapanKonteksModel;
 class IdentifikasiRisikoController extends BaseController
 {
     protected $identifikasiRisikoModel;
-    protected $konteksModel;
 
     public function __construct()
     {
         $this->identifikasiRisikoModel = new IdentifikasiRisikoModel();
-        $this->konteksModel = new PenetapanKonteksModel();
     }
 
     /**
@@ -30,11 +28,16 @@ class IdentifikasiRisikoController extends BaseController
      */
     public function create()
     {
-        return view('identifikasi_risiko/create', [
-            'mode'        => 'create',
-            'kodeRisiko'  => $this->identifikasiRisikoModel->generateKodeRisiko(),
-            'konteksList' => $this->konteksModel->findAll(),
-        ]);
+        $konteksModel = new PenetapanKonteksModel();
+
+        $kodeRisiko = $this->identifikasiRisikoModel->generateKodeRisiko();
+
+        $data = [
+            'konteksList' => $konteksModel->findAll(),
+            'kodeRisiko'  => $kodeRisiko, // ⬅ INI YANG KURANG
+        ];
+
+        return view('identifikasi_risiko/create', $data);
     }
 
     /**
@@ -53,7 +56,6 @@ class IdentifikasiRisikoController extends BaseController
             'indikator'         => $this->request->getPost('indikator'),
             'pernyataan_risiko' => $this->request->getPost('pernyataan_risiko'),
             'penyebab_risiko'   => $this->request->getPost('penyebab_risiko'),
-            'dampak_risiko'      => $this->request->getPost('dampak_risiko'),
             'kategori_risiko'   => $this->request->getPost('kategori_risiko'),
             'sumber_risiko'     => $this->request->getPost('sumber_risiko'),
         ];
@@ -65,41 +67,17 @@ class IdentifikasiRisikoController extends BaseController
     }
 
     /**
-     * MELIHAT DETAIL DATA
-     */
-    public function view($id)
-    {
-        $risiko = $this->identifikasiRisikoModel->find($id);
-
-        if (!$risiko) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException(
-                'Data risiko tidak ditemukan'
-            );
-        }
-
-        return view('identifikasi_risiko/view', [
-            'mode'   => 'view',
-            'risiko' => $risiko,
-            'konteksList' => $this->konteksModel->findAll(),
-        ]);
-    }
-
-    /**
      * FORM EDIT
      */
     public function edit($id)
     {
-        $risiko = $this->identifikasiRisikoModel->find($id);
+        $data['risiko'] = $this->identifikasiRisikoModel->find($id);
 
-        if (!$risiko) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if (!$data['risiko']) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data tidak ditemukan');
         }
 
-        return view('identifikasi_risiko/edit', [
-            'mode'        => 'edit',
-            'risiko'      => $risiko,
-            'konteksList' => $this->konteksModel->findAll(),
-        ]);
+        return view('identifikasi_risiko/edit', $data);
     }
 
     /**
@@ -112,7 +90,6 @@ class IdentifikasiRisikoController extends BaseController
             'indikator'          => $this->request->getPost('indikator'),
             'pernyataan_risiko'  => $this->request->getPost('pernyataan_risiko'),
             'penyebab_risiko'    => $this->request->getPost('penyebab_risiko'),
-            'dampak_risiko'      => $this->request->getPost('dampak_risiko'),
             'kategori_risiko'    => $this->request->getPost('kategori_risiko'),
             'sumber_risiko'      => $this->request->getPost('sumber_risiko'),
         ];
