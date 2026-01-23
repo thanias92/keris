@@ -26,7 +26,10 @@ class PenetapanKonteksController extends BaseController
      */
     public function create()
     {
-        return view('penetapan_konteks/create');
+        return view('penetapan_konteks/create', [
+            'mode'        => 'create',
+            'kodeKonteks' => $this->penetapanKonteksModel->generateKodeKonteks(),
+        ]);
     }
 
     /**
@@ -34,7 +37,12 @@ class PenetapanKonteksController extends BaseController
      */
     public function store()
     {
+        // 1️⃣ generate kode (sekali saja)
+        $kodeKonteks = $this->penetapanKonteksModel->generateKodeKonteks();
+
+        // 2️⃣ insert TANPA id_konteks
         $data = [
+            'kode_konteks'          => $kodeKonteks,
             'nama_kegiatan'         => $this->request->getPost('nama_kegiatan'),
             'unit_kerja'            => $this->request->getPost('unit_kerja'),
             'tahun'                 => $this->request->getPost('tahun'),
@@ -56,17 +64,39 @@ class PenetapanKonteksController extends BaseController
     }
 
     /**
+     * MELIHAT DETAIL DATA
+     */
+    public function view($id)
+    {
+        $konteks = $this->penetapanKonteksModel->find($id);
+
+        if (!$konteks) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException(
+                'Data konteks tidak ditemukan'
+            );
+        }
+
+        return view('penetapan_konteks/view', [
+            'mode'   => 'view',
+            'konteks' => $konteks,
+        ]);
+    }
+
+    /**
      * FORM EDIT
      */
     public function edit($id)
     {
-        $data['konteks'] = $this->penetapanKonteksModel->find($id);
+        $konteks = $this->penetapanKonteksModel->find($id);
 
-        if (!$data['konteks']) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data tidak ditemukan');
+        if (!$konteks) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        return view('penetapan_konteks/edit', $data);
+        return view('penetapan_konteks/edit', [
+            'mode'        => 'edit',
+            'konteks'      => $konteks,
+        ]);
     }
 
     /**

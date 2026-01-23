@@ -11,10 +11,17 @@ $routes->get('/', 'DashboardController::index');
 //Bank Risiko
 $routes->get('/bank-risiko', 'BankRisikoController::index');
 
-// Penetapan Konteks
-$routes->get('penetapan-konteks', 'PenetapanKonteksController::index');
-$routes->get('penetapan-konteks/create', 'PenetapanKonteksController::create');
-$routes->post('penetapan-konteks/store', 'PenetapanKonteksController::store');
+//Penetapan Konteks
+$routes->group('penetapan-konteks', function ($routes) {
+    $routes->get('/', 'PenetapanKonteksController::index');
+    $routes->get('create', 'PenetapanKonteksController::create');
+    $routes->post('store', 'PenetapanKonteksController::store');
+    $routes->get('view/(:num)', 'PenetapanKonteksController::view/$1');
+    $routes->get('edit/(:num)', 'PenetapanKonteksController::edit/$1');
+    $routes->post('update/(:num)', 'PenetapanKonteksController::update/$1');
+    $routes->post('delete/(:num)', 'PenetapanKonteksController::delete/$1');
+    $routes->get('delete/(:num)', 'PenetapanKonteksController::delete/$1');
+});
 
 //Identifikasi Risiko
 $routes->group('identifikasi-risiko', function ($routes) {
@@ -27,6 +34,13 @@ $routes->group('identifikasi-risiko', function ($routes) {
     $routes->post('delete/(:num)', 'IdentifikasiRisikoController::delete/$1');
     $routes->get('delete/(:num)', 'IdentifikasiRisikoController::delete/$1');
 });
+
+//Analisis Risiko
+$routes->group('analisis-risiko', function ($routes) {
+    $routes->get('/', 'AnalisisRisikoController::index');
+    $routes->post('store', 'AnalisisRisikoController::store');
+});
+
 
 
 $routes->get('/penetapan-level-risiko', 'LevelRisiko::index');

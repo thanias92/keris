@@ -21,7 +21,6 @@ class IdentifikasiRisikoController extends BaseController
     public function index()
     {
         $data['risiko'] = $this->identifikasiRisikoModel->findAll();
-
         return view('identifikasi_risiko/index', $data);
     }
 

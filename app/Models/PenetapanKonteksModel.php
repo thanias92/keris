@@ -10,6 +10,7 @@ class PenetapanKonteksModel extends Model
     protected $primaryKey = 'id_konteks';
 
     protected $allowedFields = [
+        'kode_konteks',
         'nama_kegiatan',
         'unit_kerja',
         'tahun',
@@ -24,7 +25,19 @@ class PenetapanKonteksModel extends Model
         'faktor_eksternal',
     ];
 
-    protected $useTimestamps = true;
-    protected $createdField = 'created_at';
-    protected $updatedField = 'updated_at';
+    protected $useTimestamps = false;
+    public function generateKodeKonteks(): string
+    {
+        $last = $this->select('kode_konteks')
+            ->orderBy('id_konteks', 'DESC')
+            ->first();
+
+        if ($last && preg_match('/K-(\d+)/', $last['kode_konteks'], $m)) {
+            $next = (int)$m[1] + 1;
+        } else {
+            $next = 1;
+        }
+
+        return 'K-' . str_pad($next, 3, '0', STR_PAD_LEFT);
+    }
 }

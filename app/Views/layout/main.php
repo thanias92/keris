@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/custom.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/uikit.css') ?>">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="<?= base_url('assets/js/plugins/bootstrap.min.js') ?>"></script>
 </head>
 
 <body>

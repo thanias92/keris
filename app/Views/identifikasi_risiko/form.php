@@ -49,6 +49,7 @@ $disabled = $isView ? 'disabled' : '';
                             <input type="text"
                                 name="uraian_kegiatan"
                                 class="form-control"
+                                placeholder="Uraian Proses"
                                 value="<?= esc($risiko['uraian_kegiatan'] ?? '') ?>"
                                 <?= $disabled ?> required>
                         </div>
@@ -60,6 +61,7 @@ $disabled = $isView ? 'disabled' : '';
                         <div class="col-sm-9">
                             <textarea name="pernyataan_risiko"
                                 class="form-control"
+                                placeholder="Pernyataan Risiko"
                                 <?= $disabled ?> required><?= esc($risiko['pernyataan_risiko'] ?? '') ?></textarea>
                         </div>
                     </div>
@@ -70,6 +72,7 @@ $disabled = $isView ? 'disabled' : '';
                         <div class="col-sm-9">
                             <textarea name="penyebab_risiko"
                                 class="form-control"
+                                placeholder="Penyebab Risiko"
                                 <?= $disabled ?> required><?= esc($risiko['penyebab_risiko'] ?? '') ?></textarea>
                         </div>
                     </div>
@@ -80,6 +83,7 @@ $disabled = $isView ? 'disabled' : '';
                         <div class="col-sm-9">
                             <textarea name="dampak_risiko"
                                 class="form-control"
+                                placeholder="Dampak Risiko"
                                 <?= $disabled ?> required><?= esc($risiko['dampak_risiko'] ?? '') ?></textarea>
                         </div>
                     </div>
