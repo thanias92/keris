@@ -1,87 +1,130 @@
 <?= $this->extend('layout/main') ?>
 <?= $this->section('content') ?>
 
-<!-- [ page-header ] start -->
-<div class="page-header">
-    <div class="page-block">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="javascript: void(0)">Manajemen Risiko</a>
-                    </li>
-                    <li class="breadcrumb-item" aria-current="page">
-                        Penetapan Konteks
-                    </li>
-                </ul>
-                <div class="page-header-title">
-                    <h2 class="m-b-10">Penetapan Konteks</h2>
+<div class="pk-page">
+    <!-- [ page-header ] start -->
+    <div class="page-header pk-header">
+        <div class="page-block">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="javascript:void(0)">Manajemen Risiko</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Penetapan Konteks
+                        </li>
+                    </ul>
+                    <div class="page-header-title">
+                        <h2 class="m-b-10">Penetapan Konteks</h2>
+                    </div>
+                </div>
+
+                <div class="col-md-6 text-end">
+                    <?php
+                    $addConfig = [
+                        'proses_bisnis' => [
+                            'label' => 'Proses Bisnis',
+                            'url'   => 'penetapan-konteks/proses-bisnis/create'
+                        ],
+                        'sasaran_kinerja' => [
+                            'label' => 'Sasaran Kinerja',
+                            'url'   => 'penetapan-konteks/sasaran-kinerja/create'
+                        ],
+                        'pemangku' => [
+                            'label' => 'Pemangku Kepentingan',
+                            'url'   => 'penetapan-konteks/pemangku/create'
+                        ],
+                        'peraturan' => [
+                            'label' => 'Peraturan Terkait',
+                            'url'   => 'penetapan-konteks/peraturan/create'
+                        ],
+                    ];
+
+                    if (isset($addConfig[$activeTab])):
+                    ?>
+                        <?php if ($activeTab === 'proses_bisnis'): ?>
+                            <button class="btn btn-primary"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasProsesBisnis"
+                                onclick="resetProsesBisnisForm()">
+                                <i class="ti ti-plus"></i> Proses Bisnis
+                            </button>
+                        <?php endif; ?>
+                        <?php if ($activeTab === 'sasaran_kinerja'): ?>
+                            <button class="btn btn-primary"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasSasaranKinerja"
+                                onclick="resetSasaranKinerjaForm()">
+                                <i class="ti ti-plus"></i> Sasaran Kinerja
+                            </button>
+                        <?php endif; ?>
+                        <?php if ($activeTab === 'pemangku'): ?>
+                            <button class="btn btn-primary"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasPemangkuKepentingan"
+                                onclick="resetPemangkuKepentinganForm()">
+                                <i class="ti ti-plus"></i> Pemangku Kepentingan
+                            </button>
+                        <?php endif; ?>
+                        <?php if ($activeTab === 'peraturan'): ?>
+                            <button class="btn btn-primary"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasPeraturan"
+                                onclick="resetPeraturanForm()">
+                                <i class="ti ti-plus"></i> Peraturan Terkait
+                            </button>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </div>
             </div>
-
-            <div class="col-md-6 text-end">
-                <a href="<?= base_url('penetapan-konteks/create') ?>" class="btn btn-primary">
-                    <i class="ti ti-plus"></i> Tambah Konteks
-                </a>
-            </div>
         </div>
     </div>
-</div>
-<!-- [ page-header ] end -->
+    <!-- [ page-header ] end -->
 
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th style="width:70px">Kode</th>
-                            <th>Nama Kegiatan</th>
-                            <th>Unit Kerja</th>
-                            <th>Tahun</th>
-                            <th>Penanggung Jawab</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $no = 1; ?>
-                        <?php foreach ($konteks as $r): ?>
-                            <tr>
-                                <td><?= $no++ ?></td>
-                                <td>
-                                    <a href="<?= base_url('penetapan-konteks/view/' . $r['id_konteks']) ?>"
-                                        class="text-decoration-none fw-semibold">
-                                        <?= esc($r['kode_konteks']) ?>
-                                    </a>
-                                </td>
-                                <td><?= esc($r['nama_kegiatan']) ?></td>
-                                <td><?= esc($r['unit_kerja']) ?></td>
-                                <td><?= esc($r['tahun']) ?></td>
-                                <td><?= esc($r['penanggung_jawab']) ?></td>
-                            </tr>
-                        <?php endforeach ?>
-                    </tbody>
+    <!-- Tabs -->
+    <?= $this->include('penetapan_konteks/_tabs') ?>
 
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+    <!-- Content -->
+    <div class="card">
+        <div class="card-body">
+            <?php
+            switch ($activeTab) {
+                case 'proses_bisnis':
+                    echo $this->include('penetapan_konteks/proses_bisnis');
+                    break;
 
-<?php if (session()->getFlashdata('success')): ?>
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil',
-            text: '<?= session()->getFlashdata('success') ?>',
-            confirmButtonText: 'OK',
-            width: 420,
-            customClass: {
-                popup: 'swal-mantis'
+                case 'sasaran_kinerja':
+                    echo $this->include('penetapan_konteks/sasaran_kinerja');
+                    break;
+
+                case 'pemangku':
+                    echo $this->include('penetapan_konteks/pemangku');
+                    break;
+
+                case 'peraturan':
+                    echo $this->include('penetapan_konteks/peraturan');
+                    break;
+
+                case 'kriteria':
+                    echo $this->include('penetapan_konteks/kriteria');
+                    break;
+
+                case 'matriks':
+                    echo $this->include('penetapan_konteks/matriks');
+                    break;
+
+                case 'selera':
+                    echo $this->include('penetapan_konteks/selera');
+                    break;
+
+                case 'sasaran_strategis':
+                    echo $this->include('penetapan_konteks/sasaran_strategis');
+                    break;
             }
-        });
-    </script>
-<?php endif ?>
+            ?>
+        </div>
+    </div>
+</div>
 
 <?= $this->endSection() ?>

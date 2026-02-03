@@ -1,39 +1,144 @@
-/* Disable sidebar submenu animation */
-.pc-sidebar .pc-submenu {
-  transition: none !important;
+/* =============================== */
+/* MINI SIDEBAR – FLATTEN SUBMENU */
+/* =============================== */
+
+/* Sembunyikan parent menu */
+.pc-sidebar.pc-sidebar-mini .pc-item.pc-hasmenu > .pc-link {
+  display: none !important;
 }
 
-.pc-sidebar .pc-item.pc-hasmenu > .pc-link {
-  transition: none !important;
+/* Jadikan submenu sebagai menu utama */
+.pc-sidebar.pc-sidebar-mini .pc-item.pc-hasmenu > .pc-submenu {
+  position: static !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
-.pc-sidebar .pc-submenu {
-    height: auto !important;
-}
-/* Sidebar submenu text: keep single line */
-.pc-sidebar .pc-submenu .pc-link {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-/* .pc-sidebar .pc-submenu .pc-link {
-    position: relative;
-} */
 
-/* .pc-sidebar .pc-submenu .pc-link:hover::after {
-    content: attr(title);
-    position: absolute;
-    left: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    background: #111;
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-    font-size: 12px;
-    margin-left: 8px;
-    z-index: 9999;
-} */
+/* Submenu item tampil seperti menu utama */
+.pc-sidebar.pc-sidebar-mini .pc-submenu .pc-link {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 !important;
+}
+
+/* Sembunyikan teks */
+.pc-sidebar.pc-sidebar-mini .pc-submenu .pc-mtext {
+  display: none !important;
+}
+
+/* Center icon */
+.pc-sidebar.pc-sidebar-mini .pc-submenu .pc-micon {
+  margin: 0 !important;
+}
+
+/* MINI SIDEBAR ACTIVE FIX */
+.pc-sidebar.pc-sidebar-mini .pc-submenu .pc-item.active > .pc-link {
+  background: rgba(13,110,253,0.12);
+}
+
+.pc-sidebar.pc-sidebar-mini .pc-submenu .pc-item.active > .pc-link::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--bs-primary);
+}
+
+/* === PENETAPAN KONTEKS PAGE=== */
+/* Penetapan Konteks Page Layout */
+.pk-page {
+    margin-left: -16px;   /* geser ke kiri */
+    margin-right: -8px;   /* opsional, biar balance */
+}
+/* Pentapan Konteks Header */
+.pk-header {
+    padding-top: 8px;     /* naik ke atas */
+    margin-top: -10px;    /* dorong lebih naik */
+}
+.pk-header .breadcrumb {
+    margin-bottom: 4px;
+    padding-left: 0;      /* geser ke kiri */
+}
+.pk-header .page-header-title h2 {
+    margin-top: 0;
+}
+/* Penetapan Konteks Tabs */
+.pk-tabs .nav-link {
+    color: #000;                 /* tab non-active hitam */
+    font-weight: 500;
+}
+.pk-tabs .nav-link:hover {
+    color: #0d6efd;              /* biru saat hover */
+}
+.pk-tabs .nav-link.active {
+    color: #0d6efd !important;   /* tab aktif biru */
+    border-bottom: 2px solid #0d6efd;
+    background-color: transparent;
+}
+.pk-tabs {
+    margin-top: -6px;
+}
+/* Tab utama melebar rata */
+.pk-tabs {
+    display: flex;
+}
+.pk-tabs .pk-tab-main {
+    flex: 1 1 0;
+    text-align: center;
+}
+.pk-tabs .pk-tab-main .nav-link {
+    padding: 12px 0;
+}
+
+/* Tab aktif lebih terasa */
+.pk-tabs .nav-link.active {
+    background-color: rgba(13,110,253,0.06);
+    border-radius: 6px 6px 0 0;
+}
+.pk-tabs {
+    margin-bottom: 10px; /* sebelumnya 16px default */
+}
+.pk-page .card {
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+.pk-tabs .dropdown-menu {
+    border-radius: 8px;
+    padding: 6px 0;
+}
+
+.pk-tabs .dropdown-item {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.pk-tabs .dropdown-item:hover {
+    background-color: rgba(13,110,253,0.08);
+}
+
+/* === TABEL PROSES BISNIS === */
+.table th, .table td {
+    border-top: 1px solid #eef1f4;
+}
+.table thead th {
+    border-bottom: 2px solid #e6ebf1;
+}
+.table-responsive {
+  position: relative; /* WAJIB untuk sticky */
+}
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+
+  background-color: #f8f9fa; /* samakan dengan table-light */
+  box-shadow: inset 0 -1px 0 #dee2e6;
+}
 
 /* === SWEETALERT MANTIS FIX === */
 .swal2-popup.swal-mantis {
@@ -69,5 +174,3 @@
     padding: 6px 18px;
     font-size: 0.9rem;
 }
-
-

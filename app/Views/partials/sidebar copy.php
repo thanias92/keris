@@ -33,8 +33,8 @@
                 -->
 
                 <!-- Manajemen Risiko (Parent tanpa icon) -->
-                <li class="pc-item pc-hasmenu">
-                    <a href="javascript:void(0)" class="pc-link pc-parent">
+                <li class="pc-item pc-hasmenu" data-title="Manajemen Risiko">
+                    <a href="#!" class="pc-link">
                         <span class="pc-micon">
                             <i class="ti ti-folders"></i>
                         </span>

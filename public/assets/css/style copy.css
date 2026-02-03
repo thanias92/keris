@@ -16222,7 +16222,8 @@ pre[class*=language-] > code {
 
 .pc-sidebar.pc-sidebar-mini .pc-mtext,
 .pc-sidebar.pc-sidebar-mini .pc-arrow,
-.pc-sidebar.pc-sidebar-mini .pc-caption {
+.pc-sidebar.pc-sidebar-mini .pc-caption,
+.pc-sidebar.pc-sidebar-mini .pc-submenu {
   display: none !important;
 }
 

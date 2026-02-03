@@ -5,50 +5,51 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-//Dashboard
+
+// Dashboard
 $routes->get('/', 'DashboardController::index');
 
-//Bank Risiko
-$routes->get('/bank-risiko', 'BankRisikoController::index');
-
-//Penetapan Konteks
+// Penetapan Konteks
 $routes->group('penetapan-konteks', function ($routes) {
+
+    // ===== TAB / LIST =====
     $routes->get('/', 'PenetapanKonteksController::index');
-    $routes->get('create', 'PenetapanKonteksController::create');
-    $routes->post('store', 'PenetapanKonteksController::store');
-    $routes->get('view/(:num)', 'PenetapanKonteksController::view/$1');
-    $routes->get('edit/(:num)', 'PenetapanKonteksController::edit/$1');
-    $routes->post('update/(:num)', 'PenetapanKonteksController::update/$1');
-    $routes->post('delete/(:num)', 'PenetapanKonteksController::delete/$1');
-    $routes->get('delete/(:num)', 'PenetapanKonteksController::delete/$1');
-});
+    $routes->get('proses-bisnis', 'PenetapanKonteksController::prosesBisnis');
+    $routes->get('sasaran-kinerja', 'PenetapanKonteksController::sasaranKinerja');
+    $routes->get('pemangku', 'PenetapanKonteksController::pemangkuKepentingan');
+    $routes->get('peraturan', 'PenetapanKonteksController::peraturanTerkait');
+    $routes->get('kriteria', 'PenetapanKonteksController::kriteria');
+    $routes->get('matriks', 'PenetapanKonteksController::matriksRisiko');
+    $routes->get('selera', 'PenetapanKonteksController::seleraRisiko');
+    $routes->get('sasaran-strategis', 'PenetapanKonteksController::sasaranStrategis');
 
-//Identifikasi Risiko
-$routes->group('identifikasi-risiko', function ($routes) {
-    $routes->get('/', 'IdentifikasiRisikoController::index');
-    $routes->get('create', 'IdentifikasiRisikoController::create');
-    $routes->post('store', 'IdentifikasiRisikoController::store');
-    $routes->get('view/(:num)', 'IdentifikasiRisikoController::view/$1');
-    $routes->get('edit/(:num)', 'IdentifikasiRisikoController::edit/$1');
-    $routes->post('update/(:num)', 'IdentifikasiRisikoController::update/$1');
-    $routes->post('delete/(:num)', 'IdentifikasiRisikoController::delete/$1');
-    $routes->get('delete/(:num)', 'IdentifikasiRisikoController::delete/$1');
-});
+    // ===== AJAX DETAIL =====
+    $routes->get('proses-bisnis/detail/(:num)', 'PenetapanKonteksController::detailProsesBisnis/$1');
+    $routes->get('sasaran-kinerja/detail/(:num)', 'PenetapanKonteksController::detailSasaranKinerja/$1');
+    $routes->get('pemangku/detail/(:num)', 'PenetapanKonteksController::detailPemangkuKepentingan/$1');
+    $routes->get('peraturan/detail/(:num)', 'PenetapanKonteksController::detailPeraturanTerkait/$1');
 
-//Analisis Risiko
-$routes->group('analisis-risiko', function ($routes) {
-    $routes->get('/', 'AnalisisRisikoController::index');
-    $routes->post('store', 'AnalisisRisikoController::store');
-});
+    // ===== AJAX GENERATE =====
+    $routes->get('proses-bisnis/generate-kode', 'PenetapanKonteksController::generateKodeProses');
+    $routes->get('sasaran-kinerja/generate-kode', 'PenetapanKonteksController::generateKodeSasaran');
 
+    // ===== CRUD PROSES BISNIS =====
+    $routes->post('proses-bisnis/store', 'PenetapanKonteksController::storeProsesBisnis');
+    $routes->post('proses-bisnis/update/(:num)', 'PenetapanKonteksController::updateProsesBisnis/$1');
+    $routes->post('proses-bisnis/delete/(:num)', 'PenetapanKonteksController::deleteProsesBisnis/$1');
 
+    // ===== CRUD SASARAN KINERJA =====
+    $routes->post('sasaran-kinerja/store', 'PenetapanKonteksController::storeSasaranKinerja');
+    $routes->post('sasaran-kinerja/update/(:num)', 'PenetapanKonteksController::updateSasaranKinerja/$1');
+    $routes->post('sasaran-kinerja/delete/(:num)', 'PenetapanKonteksController::deleteSasaranKinerja/$1');
 
-$routes->get('/penetapan-level-risiko', 'LevelRisiko::index');
-$routes->get('/monitoring-risiko', 'MonitoringRisiko::index');
-$routes->get('/tindak-lanjut', 'TindakLanjut::index');
+    // ===== CRUD PEMANGKU KEPENTINGAN =====
+    $routes->post('pemangku/store', 'PenetapanKonteksController::storePemangkuKepentingan');
+    $routes->post('pemangku/update/(:num)', 'PenetapanKonteksController::updatePemangkuKepentingan/$1');
+    $routes->post('pemangku/delete/(:num)', 'PenetapanKonteksController::deletePemangkuKepentingan/$1');
 
-$routes->group('master', function ($routes) {
-    $routes->get('tim', 'MasterTim::index');
-    $routes->get('user', 'MasterUser::index');
-    $routes->get('level-risiko', 'MasterLevelRisiko::index');
+    // ===== CRUD PERATURAN TERKAIT =====
+    $routes->post('peraturan/store', 'PenetapanKonteksController::storePeraturanTerkait');
+    $routes->post('peraturan/update/(:num)', 'PenetapanKonteksController::updatePeraturanTerkait/$1');
+    $routes->post('peraturan/delete/(:num)', 'PenetapanKonteksController::deletePeraturanTerkait/$1');
 });
