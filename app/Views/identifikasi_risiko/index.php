@@ -33,7 +33,7 @@
 
             <div class="d-flex justify-content-between mb-3">
                 <small class="text-muted">
-                    Menampilkan <?= count($data) ?> dari <?= $pager->getTotal() ?> data
+                    Menampilkan <?= count($data) ?> dari <?= $pager->getTotal('identifikasi') ?> data
                 </small>
                 <?= $pager->links('identifikasi', 'default_full') ?>
             </div>

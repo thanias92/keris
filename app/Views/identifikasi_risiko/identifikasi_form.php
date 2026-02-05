@@ -1,85 +1,110 @@
-    <?= $this->extend('layout/main') ?>
-    <?= $this->section('content') ?>
+<div class="offcanvas offcanvas-end"
+    tabindex="-1"
+    id="offcanvasIdentifikasi"
+    aria-labelledby="offcanvasIdentifikasiLabel">
 
-    <div class="pk-page">
-
-        <!-- HEADER -->
-        <div class="page-header pk-header">
-            <div class="page-block">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item">Manajemen Risiko</li>
-                            <li class="breadcrumb-item active">Identifikasi Risiko</li>
-                        </ul>
-                        <h2 class="m-b-10">Identifikasi Risiko</h2>
-                    </div>
-
-                    <div class="col-md-6 text-end">
-                        <button
-                            class="btn btn-primary"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasIdentifikasi">
-                            + Identifikasi Risiko
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- CONTENT -->
-        <div class="card">
-            <div class="card-body">
-
-                <div class="d-flex justify-content-between mb-3">
-                    <small class="text-muted">
-                        Menampilkan <?= count($data) ?> dari <?= $pager->getTotal() ?> data
-                    </small>
-                    <?= $pager->links() ?>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th style="width:50px">#</th>
-                                <th style="width:220px">Proses Bisnis</th>
-                                <th>Uraian Kegiatan</th>
-                                <th style="width:160px">Kategori</th>
-                                <th style="width:80px">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (empty($data)): ?>
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted">
-                                        Data identifikasi risiko belum tersedia
-                                    </td>
-                                </tr>
-                            <?php else: ?>
-                                <?php foreach ($data as $i => $row): ?>
-                                    <tr>
-                                        <td><?= $i + 1 ?></td>
-                                        <td>Proses #<?= esc($row['id_proses']) ?></td>
-                                        <td><?= esc($row['uraian_kegiatan']) ?></td>
-                                        <td>
-                                            <span class="badge bg-secondary">Belum Ditentukan</span>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary">Edit</button>
-                                        </td>
-                                    </tr>
-                                <?php endforeach ?>
-                            <?php endif ?>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-        </div>
-
-        <?= $this->include('identifikasi_risiko/identifikasi_form') ?>
-
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasIdentifikasiLabel">
+            Tambah Identifikasi Risiko
+        </h5>
+        <button type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"></button>
     </div>
 
-    <?= $this->endSection() ?>
+    <div class="offcanvas-body">
+
+        <form action="<?= site_url('identifikasi-risiko/store') ?>" method="post">
+            <?= csrf_field() ?>
+
+            <!-- PROSES BISNIS -->
+            <div class="mb-3">
+                <label class="form-label">
+                    Proses Bisnis <span class="text-danger">*</span>
+                </label>
+                <input type="number"
+                    name="id_proses"
+                    class="form-control"
+                    placeholder="ID Proses Bisnis"
+                    required>
+            </div>
+
+            <!-- KODE RISIKO -->
+            <div class="mb-3">
+                <label class="form-label">
+                    Kode Risiko <span class="text-danger">*</span>
+                </label>
+                <input type="text"
+                    name="kode_risiko"
+                    class="form-control"
+                    placeholder="Contoh: IR-01"
+                    required>
+            </div>
+
+            <!-- URAIAN KEGIATAN -->
+            <div class="mb-3">
+                <label class="form-label">
+                    Uraian Kegiatan <span class="text-danger">*</span>
+                </label>
+                <textarea name="uraian_kegiatan"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Uraian kegiatan proses bisnis"
+                    required></textarea>
+            </div>
+
+            <!-- PERNYATAAN RISIKO -->
+            <div class="mb-3">
+                <label class="form-label">
+                    Pernyataan Risiko <span class="text-danger">*</span>
+                </label>
+                <textarea name="pernyataan_risiko"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Apa risiko yang mungkin terjadi?"
+                    required></textarea>
+            </div>
+
+            <!-- DAMPAK RISIKO -->
+            <div class="mb-3">
+                <label class="form-label">
+                    Dampak Risiko <span class="text-danger">*</span>
+                </label>
+                <textarea name="dampak_risiko"
+                    class="form-control"
+                    rows="2"
+                    placeholder="Dampak yang ditimbulkan"
+                    required></textarea>
+            </div>
+
+            <!-- PENYEBAB RISIKO -->
+            <div class="mb-3">
+                <label class="form-label">
+                    Penyebab Risiko <span class="text-danger">*</span>
+                </label>
+                <textarea name="penyebab_risiko"
+                    class="form-control"
+                    rows="2"
+                    placeholder="Penyebab terjadinya risiko"
+                    required></textarea>
+            </div>
+
+            <!-- ACTION -->
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="button"
+                    class="btn btn-light"
+                    data-bs-dismiss="offcanvas">
+                    Batal
+                </button>
+
+                <button type="submit"
+                    class="btn btn-primary">
+                    Simpan
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
