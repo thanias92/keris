@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12 mb-3">
-        <h5 class="mb-3">Matriks Analisis Risiko</h5>
+        <h5 class="mb-3">Sasaran strategis</h5>
         <div class="alert alert-info border-0">
             Digunakan sebagai acuan sasaran strategis BPS Provinsi dan akan digunakan
             pada proses manajemen risiko lainnya.
