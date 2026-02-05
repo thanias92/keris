@@ -174,3 +174,30 @@
     padding: 6px 18px;
     font-size: 0.9rem;
 }
+/* Matriks */
+table.risk-matrix {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 6px;
+}
+
+table.risk-matrix td {
+  padding: 0;
+  background: transparent;
+}
+
+.risk-cell {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 1.1rem;
+}
+/* efek hover biar hidup */
+table.risk-matrix td:hover {
+  transform: scale(1.04);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  cursor: default;
+}

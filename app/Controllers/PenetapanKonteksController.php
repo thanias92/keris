@@ -491,6 +491,7 @@ class PenetapanKonteksController extends BaseController
     /* TAB MATRIKS RISIKO */
     public function matriksRisiko()
     {
+        helper('kriteria');
         $model = new MatriksRisikoModel();
 
         return view('penetapan_konteks/index', [
@@ -505,11 +506,13 @@ class PenetapanKonteksController extends BaseController
     /* TAB SELERA RISIKO */
     public function seleraRisiko()
     {
+        helper('kriteria');
+
         $model = new SeleraRisikoModel();
 
         return view('penetapan_konteks/index', [
             'activeTab' => 'selera',
-            'data'      => $model->orderBy('nilai_min', 'ASC')->findAll(),
+            'data'      => $model->orderBy('level_risiko', 'ASC')->findAll(),
         ]);
     }
 
