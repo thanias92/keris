@@ -506,13 +506,13 @@ class PenetapanKonteksController extends BaseController
     /* TAB SELERA RISIKO */
     public function seleraRisiko()
     {
-        helper('kriteria');
+        helper('selera_risiko');
 
         $model = new SeleraRisikoModel();
 
         return view('penetapan_konteks/index', [
             'activeTab' => 'selera',
-            'data'      => $model->orderBy('level_risiko', 'ASC')->findAll(),
+            'data'      => $model->orderBy('level', 'ASC')->findAll(),
         ]);
     }
 

@@ -1,38 +1,66 @@
+<?php
+
+/**
+ * $data berisi isi tabel selera_risiko
+ * Kolom:
+ * - level
+ * - nilai_min
+ * - nilai_max
+ * - nama_level
+ * - deskripsi
+ * - tindakan
+ * - warna
+ */
+?>
+
 <div class="row">
 
-    <!-- PENJELASAN -->
+    <!-- INFO -->
     <div class="col-12 mb-2">
+        <h5 class="mb-3">Matriks Analisis Risiko</h5>
         <div class="alert alert-info border-0 py-2">
-            <strong>Selera Risiko</strong><br>
-            Menunjukkan batas tingkat risiko yang dapat diterima oleh organisasi
-            sebagai dasar pengambilan keputusan penanganan risiko.
+            Menunjukkan batas tingkat risiko yang <b>dapat diterima</b> dan
+            <b>tindakan manajemen risiko</b> yang harus dilakukan.
         </div>
     </div>
 
-    <!-- TABEL -->
+    <!-- TABLE -->
     <div class="col-12">
         <div class="table-responsive">
-            <table class="table table-bordered align-middle text-center risk-matrix">
+            <table class="table table-bordered align-middle text-center">
 
                 <thead class="table-light">
                     <tr>
-                        <th style="width:70px">Level</th>
-                        <th style="width:180px">Tingkat Risiko</th>
-                        <th style="width:180px">Rentang Nilai</th>
-                        <th style="width:200px">Keputusan</th>
-                        <th>Keterangan</th>
+                        <th width="5%">Level</th>
+                        <th width="15%">Nilai Risiko</th>
+                        <th width="18%">Selera Risiko</th>
+                        <th width="30%">Tindakan</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     <?php foreach ($data as $row): ?>
-                        <tr class="<?= warna_risiko_class($row['warna']) ?>">
-                            <td class="fw-bold"><?= $row['level_risiko'] ?></td>
-                            <td class="fw-bold"><?= $row['nama_risiko'] ?></td>
-                            <td><?= $row['nilai_min'] ?> – <?= $row['nilai_max'] ?></td>
-                            <td class="fw-semibold"><?= $row['keputusan'] ?></td>
+                        <tr>
+                            <!-- LEVEL -->
+                            <td class="fw-bold">
+                                <?= $row['level'] ?>
+                            </td>
+
+                            <!-- RENTANG NILAI -->
+                            <td>
+                                <?= $row['nilai_min'] ?> – <?= $row['nilai_max'] ?>
+                            </td>
+
+                            <!-- NAMA + WARNA -->
+                            <td>
+                                <span class="badge px-3 py-2 <?= warna_selera_risiko_class($row['warna']) ?>">
+                                    <?= esc($row['nama_level']) ?>
+                                </span>
+                            </td>
+
+                            <!-- TINDAKAN -->
                             <td class="text-start">
-                                <?= $row['keterangan'] ?? '-' ?>
+                                <?= esc($row['tindakan']) ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
