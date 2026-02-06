@@ -1,0 +1,864 @@
+<!--
+
+=========================================================
+* Volt Free - Bootstrap 5 Dashboard
+=========================================================
+
+* Product Page: https://themesberg.com/product/admin-dashboard/volt-bootstrap-5-dashboard
+* Copyright 2021 Themesberg (https://www.themesberg.com)
+* License (https://themesberg.com/licensing)
+
+* Designed and coded by https://themesberg.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. Please contact us to request a removal.
+
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <style>
+      /* SIMIKO PROTOTYPE STYLE */
+      .simiko-card {
+        border-radius: 18px;
+        padding: 20px;
+      }
+
+      .bg-soft-green {
+        background: #dff5e5;
+      }
+      .bg-soft-peach {
+        background: #fde7d9;
+      }
+      .bg-soft-yellow {
+        background: #fff1c9;
+      }
+
+      .simiko-title {
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .simiko-value {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+
+      .card-soft {
+        border-radius: 18px;
+      }
+    </style>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- Primary Meta Tags -->
+    <title>Dashboard Simiko</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="title" content="Volt - Free Bootstrap 5 Dashboard" />
+    <meta name="author" content="Themesberg" />
+    <meta
+      name="description"
+      content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS."
+    />
+    <meta
+      name="keywords"
+      content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, themesberg, themesberg dashboard, themesberg admin dashboard"
+    />
+    <link
+      rel="canonical"
+      href="https://themesberg.com/product/admin-dashboard/volt-premium-bootstrap-5-dashboard"
+    />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://demo.themesberg.com/volt-pro" />
+    <meta property="og:title" content="Volt - Free Bootstrap 5 Dashboard" />
+    <meta
+      property="og:description"
+      content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS."
+    />
+    <meta
+      property="og:image"
+      content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg"
+    />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta
+      property="twitter:url"
+      content="https://demo.themesberg.com/volt-pro"
+    />
+    <meta
+      property="twitter:title"
+      content="Volt - Free Bootstrap 5 Dashboard"
+    />
+    <meta
+      property="twitter:description"
+      content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS."
+    />
+    <meta
+      property="twitter:image"
+      content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg"
+    />
+
+    <!-- Favicon -->
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="../../assets/img/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="../../assets/img/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../../assets/img/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="../../assets/img/favicon/site.webmanifest" />
+    <link
+      rel="mask-icon"
+      href="../../assets/img/favicon/safari-pinned-tab.svg"
+      color="#ffffff"
+    />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Sweet Alert -->
+    <link
+      type="text/css"
+      href="../../vendor/sweetalert2/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Notyf -->
+    <link
+      type="text/css"
+      href="../../vendor/notyf/notyf.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Volt CSS -->
+    <link type="text/css" href="../../css/volt.css" rel="stylesheet" />
+
+    <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
+  </head>
+
+  <body>
+    <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
+
+    <nav class="navbar navbar-dark navbar-theme-primary px-4 col-12 d-lg-none">
+      <a class="navbar-brand me-lg-5" href="../../index.html">
+        <img
+          class="navbar-brand-dark"
+          src="../../assets/img/brand/light.svg"
+          alt="Volt logo"
+        />
+        <img
+          class="navbar-brand-light"
+          src="../../assets/img/brand/dark.svg"
+          alt="Volt logo"
+        />
+      </a>
+      <div class="d-flex align-items-center">
+        <button
+          class="navbar-toggler d-lg-none collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#sidebarMenu"
+          aria-controls="sidebarMenu"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+
+    <nav
+      id="sidebarMenu"
+      class="sidebar d-lg-block bg-green-800 text-white collapse"
+      data-simplebar
+    >
+      <div class="sidebar-inner px-4 pt-3">
+        <div
+          class="user-card d-flex flex-column align-items-start pb-4 border-bottom border-green-700"
+        >
+          <a href="../../index.html" class="d-flex align-items-center mb-3">
+            <img
+              src="../../assets/img/brand/light.svg"
+              height="35"
+              class="me-2"
+              alt="Simiko Logo"
+            />
+            <span class="mt-1 sidebar-text fw-bolder fs-4">SIMIKO</span>
+          </a>
+          <hr class="w-100 my-2 opacity-25" />
+          <div class="d-flex align-items-center mt-2">
+            <img
+              src="../../assets/img/logo-bps.svg"
+              height="30"
+              class="me-2"
+              alt="BPS Logo"
+            />
+            <div class="sidebar-text">
+              <p
+                class="mb-0 fw-bold"
+                style="font-size: 0.75rem; line-height: 1.2"
+              >
+                Badan Pusat Statistik
+              </p>
+              <p
+                class="mb-0 text-success"
+                style="font-size: 0.7rem; font-weight: 600"
+              >
+                Provinsi Riau
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <ul class="nav flex-column pt-3 pt-md-0">
+          <li class="nav-item active">
+            <a href="../../pages/dashboard/dashboard.html" class="nav-link">
+              <span class="sidebar-icon">
+                <svg
+                  class="icon icon-xs me-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                  <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                </svg>
+              </span>
+              <span class="sidebar-text">Dashboard</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="../../pages/bank-risiko/bank-risiko.html" class="nav-link">
+              <span class="sidebar-icon">
+                <svg
+                  class="icon icon-xs me-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span class="sidebar-text">Bank Risiko</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <span
+              class="nav-link collapsed d-flex justify-content-between align-items-center"
+              data-bs-toggle="collapse"
+              data-bs-target="#submenu-manajemen-risiko"
+            >
+              <span>
+                <span class="sidebar-icon">
+                  <svg
+                    class="icon icon-xs me-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                </span>
+                <span class="sidebar-text">Manajemen Risiko</span>
+              </span>
+              <span class="link-arrow">
+                <svg
+                  class="icon icon-sm"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+            </span>
+            <div
+              class="multi-level collapse"
+              role="list"
+              id="submenu-manajemen-risiko"
+              aria-expanded="false"
+            >
+              <ul class="flex-column nav">
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="../../pages/manajemen-risiko/penetapan-konteks.html"
+                    ><span>Penetapan Konteks</span></a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="../../pages/manajemen-risiko/identifikasi-risiko.html"
+                    ><span>Identifikasi Risiko</span></a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="../../pages/manajemen-risiko/analisis-risiko.html"
+                    ><span>Analisis Risiko</span></a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="../../pages/manajemen-risiko/evaluasi-risiko.html"
+                    ><span>Evaluasi Risiko</span></a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="../../pages/manajemen-risiko/rencana-penanganan.html"
+                    ><span>Rencana Penanganan</span></a
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a
+              href="../../pages/pemantauan-risiko/pemantauan-risiko.html"
+              class="nav-link"
+            >
+              <span class="sidebar-icon">
+                <svg
+                  class="icon icon-xs me-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                  <path
+                    fill-rule="evenodd"
+                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span class="sidebar-text">Pemantauan Risiko</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a
+              href="../../pages/pelaporan-risiko/pelaporan-risiko.html"
+              class="nav-link"
+            >
+              <span class="sidebar-icon">
+                <svg
+                  class="icon icon-xs me-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 100-2h4a1 1 0 100 2H8zm0 4a1 1 0 100-2h4a1 1 0 100 2H8z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span class="sidebar-text">Pelaporan Risiko</span>
+            </a>
+          </li>
+
+          <li
+            role="separator"
+            class="dropdown-divider mt-4 mb-3 border-green-700"
+          ></li>
+
+          <li class="nav-item">
+            <a href="../../pages/settings.html" class="nav-link">
+              <span class="sidebar-icon">
+                <svg
+                  class="icon icon-xs me-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span class="sidebar-text">Settings</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a
+              href="../../pages/examples/sign-in.html"
+              class="nav-link d-flex align-items-center"
+            >
+              <span class="sidebar-icon">
+                <svg
+                  class="icon icon-xs me-2 text-danger"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  ></path>
+                </svg>
+              </span>
+              <span class="sidebar-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="content">
+      <nav
+        class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0"
+      >
+        <div class="container-fluid px-0">
+          <div
+            class="d-flex justify-content-between w-100"
+            id="navbarSupportedContent"
+          >
+            <div class="d-flex align-items-center">
+              <button
+                id="sidebar-toggle"
+                class="sidebar-toggle me-3 btn btn-icon-only btn-lg btn-white d-none d-lg-inline-block shadow-sm text-green-800"
+              >
+                <svg
+                  class="icon icon-xs"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+
+            <ul class="navbar-nav align-items-center">
+              <li class="nav-item me-2 d-none d-md-block">
+                <form class="navbar-search form-inline" id="navbar-search-main">
+                  <div class="input-group input-group-merge search-bar">
+                    <span class="input-group-text" id="topbar-addon">
+                      <svg
+                        class="icon icon-xs"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Cari"
+                      aria-label="Search"
+                    />
+                  </div>
+                </form>
+              </li>
+
+              <li class="nav-item dropdown me-2">
+                <a
+                  class="nav-link text-dark notification-bell unread dropdown-toggle"
+                  data-unread-notifications="true"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <svg
+                    class="icon icon-sm text-green-800"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
+                    ></path>
+                  </svg>
+                </a>
+              </li>
+
+              <li class="nav-item dropdown ms-lg-3">
+                <a
+                  class="nav-link dropdown-toggle pt-1 px-0"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <div class="media d-flex align-items-center">
+                    <div
+                      class="media-body ms-2 text-dark align-items-center d-none d-lg-block me-2 text-end"
+                    >
+                      <span
+                        class="mb-0 font-small fw-bold text-green-900 d-block"
+                        >Ahmad Fauzi</span
+                      >
+                      <small class="text-muted">Administrator</small>
+                    </div>
+                    <img
+                      class="avatar rounded-circle border-2 border-green-500"
+                      alt="Image placeholder"
+                      src="../../assets/img/team/profile-picture-3.jpg"
+                    />
+                  </div>
+                </a>
+                <div
+                  class="dropdown-menu dashboard-dropdown dropdown-menu-end mt-2 py-1"
+                >
+                  <a class="dropdown-item d-flex align-items-center" href="#">
+                    <svg
+                      class="dropdown-icon text-gray-400 me-2"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                    Profil Saya
+                  </a>
+                  <div role="separator" class="dropdown-divider my-1"></div>
+                  <a
+                    class="dropdown-item d-flex align-items-center"
+                    href="../../pages/examples/sign-in.html"
+                  >
+                    <svg
+                      class="dropdown-icon text-danger me-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      ></path>
+                    </svg>
+                    Logout
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+  <nav
+    class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0"
+  >
+    <!-- NAVBAR TETAP -->
+  </nav>
+
+  <div class="container-fluid army-theme">
+
+    <!-- JUDUL -->
+    <div class="page-title mb-3">
+      <h6 class="mb-0">Evaluasi Risiko</h6>
+    </div>
+
+    <!-- FILTER -->
+    <div class="filter-box mb-4">
+      <div class="row">
+        <div class="col-md-4">
+          <label>Satuan Kerja</label>
+          <select class="form-control">
+            <option>- Pilih -</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Pengelola Risiko</label>
+          <select class="form-control">
+            <option>- Pilih -</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Ruang Lingkup Penerapan</label>
+          <select class="form-control">
+            <option>- Pilih -</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENANGGUNG JAWAB -->
+    <div class="mb-3">
+      <strong>Penanggung Jawab:</strong> ____________ 
+      <span class="text-muted">[otomatis]</span>
+    </div>
+
+    <!-- TABEL EVALUASI RISIKO -->
+    <div class="card">
+      <div class="card-body table-responsive">
+        <table class="table table-bordered table-army">
+          <thead>
+            <tr class="text-center">
+              <th>No</th>
+              <th>Pernyataan Risiko</th>
+              <th>Risiko Aktual</th>
+              <th>Efektivitas</th>
+              <th>Respon Risiko</th>
+              <th>Prioritas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-center">1</td>
+              <td>XXXXXXXXXXXXXX</td>
+              <td class="text-center">1</td>
+              <td class="text-center">XXXXXXXX</td>
+              <td class="text-center text-danger">XXXXXXXX</td>
+              <td class="text-center text-danger">1</td>
+            </tr>
+
+            <tr>
+              <td class="text-center">2</td>
+              <td>XXXXXXXXXXXXXX</td>
+              <td class="text-center">1</td>
+              <td class="text-center">XXXXXXXX</td>
+              <td class="text-center text-danger">XXXXXXXX</td>
+              <td class="text-center text-danger">1</td>
+            </tr>
+
+            <tr>
+              <td class="text-center">3</td>
+              <td>XXXXXXXXXXXXXX</td>
+              <td class="text-center">1</td>
+              <td class="text-center">XXXXXXXX</td>
+              <td class="text-center text-danger">XXXXXXXX</td>
+              <td class="text-center text-danger">1</td>
+            </tr>
+
+            <tr>
+              <td class="text-center">4</td>
+              <td>XXXXXXXXXXXXXX</td>
+              <td class="text-center">1</td>
+              <td class="text-center">XXXXXXXX</td>
+              <td class="text-center text-danger">XXXXXXXX</td>
+              <td class="text-center text-danger">1</td>
+            </tr>
+
+            <tr>
+              <td class="text-center">5</td>
+              <td>XXXXXXXXXXXXXX</td>
+              <td class="text-center">1</td>
+              <td class="text-center">XXXXXXXX</td>
+              <td class="text-center text-danger">XXXXXXXX</td>
+              <td class="text-center text-danger">1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+      <footer class="bg-white rounded shadow p-5 mb-4 mt-4">
+        <p class="mb-0 text-center">
+          © 2025 <b>BPS Provinsi Riau</b> - Sistem Informasi Manajemen Risiko
+          (SIMIKO)
+        </p>
+      </footer>
+    </main>
+
+    <!-- Core -->
+    <script src="../../vendor/@popperjs/core/dist/umd/popper.min.js"></script>
+    <script src="../../vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!-- Vendor JS -->
+    <script src="../../vendor/onscreen/dist/on-screen.umd.min.js"></script>
+
+    <!-- Slider -->
+    <script src="../../vendor/nouislider/distribute/nouislider.min.js"></script>
+
+    <!-- Smooth scroll -->
+    <script src="../../vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+
+    <!-- Charts -->
+    <script src="../../vendor/chartist/dist/chartist.min.js"></script>
+    <script src="../../vendor/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
+
+    <!-- Datepicker -->
+    <script src="../../vendor/vanillajs-datepicker/dist/js/datepicker.min.js"></script>
+
+    <!-- Sweet Alerts 2 -->
+    <script src="../../vendor/sweetalert2/dist/sweetalert2.all.min.js"></script>
+
+    <!-- Moment JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+
+    <!-- Vanilla JS Datepicker -->
+    <script src="../../vendor/vanillajs-datepicker/dist/js/datepicker.min.js"></script>
+
+    <!-- Notyf -->
+    <script src="../../vendor/notyf/notyf.min.js"></script>
+
+    <!-- Simplebar -->
+    <script src="../../vendor/simplebar/dist/simplebar.min.js"></script>
+
+    <!-- Github buttons -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    <!-- Volt JS -->
+    <script src="../../assets/js/volt.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggleBtn = document.getElementById("sidebar-toggle");
+        const sidebar = document.getElementById("sidebarMenu");
+        const content = document.querySelector(".content");
+
+        if (toggleBtn) {
+          toggleBtn.addEventListener("click", function () {
+            sidebar.classList.toggle("sidebar-hidden");
+            content.classList.toggle("content-full");
+          });
+        }
+      });
+    </script>
+
+    <script>
+      const tabs = document.querySelectorAll(".tab-btn");
+      const contents = document.querySelectorAll(".tab-content");
+
+      const searchInput = document.getElementById("searchInput");
+      const btnTambah = document.getElementById("btnTambah");
+
+      const formTambah = document.getElementById("formTambah");
+      const formTitle = document.getElementById("formTitle");
+      const inputData = document.getElementById("inputData");
+      const btnBatal = document.getElementById("btnBatal");
+      const btnSimpan = document.getElementById("btnSimpan");
+
+      let activeTabName = "Proses Bisnis";
+
+      /* ================= TAB ================= */
+      tabs.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          tabs.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          contents.forEach((c) => c.classList.add("d-none"));
+          document
+            .getElementById(btn.dataset.target)
+            .classList.remove("d-none");
+
+          activeTabName = btn.innerText;
+
+          searchInput.value = "";
+          formTambah.classList.add("d-none");
+
+          filterTable("");
+        });
+      });
+
+      /* ================= SEARCH ================= */
+      searchInput.addEventListener("input", () => {
+        filterTable(searchInput.value.toLowerCase());
+      });
+
+      function filterTable(keyword) {
+        const activeContent = document.querySelector(
+          ".tab-content:not(.d-none)",
+        );
+        if (!activeContent) return;
+
+        activeContent.querySelectorAll("tbody tr").forEach((row) => {
+          row.style.display = row.innerText.toLowerCase().includes(keyword)
+            ? ""
+            : "none";
+        });
+      }
+
+      /* ================= FORM ================= */
+      btnTambah.addEventListener("click", () => {
+        formTambah.classList.remove("d-none");
+        formTitle.innerText = "Tambah " + activeTabName;
+        inputData.value = "";
+        inputData.focus();
+      });
+
+      btnBatal.addEventListener("click", () => {
+        formTambah.classList.add("d-none");
+      });
+
+      btnSimpan.addEventListener("click", () => {
+        const value = inputData.value.trim();
+        if (!value) {
+          alert("Data tidak boleh kosong");
+          return;
+        }
+
+        const activeContent = document.querySelector(
+          ".tab-content:not(.d-none)",
+        );
+        const tbody = activeContent.querySelector("tbody");
+
+        const row = tbody.insertRow();
+        row.innerHTML = `
+      <td>${tbody.rows.length}</td>
+      <td>${value}</td>
+    `;
+
+        formTambah.classList.add("d-none");
+        inputData.value = "";
+
+        filterTable(searchInput.value.toLowerCase());
+      });
+    </script>
+
+  </body>
+</html>
