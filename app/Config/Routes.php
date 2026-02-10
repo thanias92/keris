@@ -30,6 +30,8 @@ $routes->group('penetapan-konteks', function ($routes) {
     // ===== AJAX GENERATE =====
     $routes->get('proses-bisnis/generate-kode', 'PenetapanKonteksController::generateKodeProses');
     $routes->get('sasaran-kinerja/generate-kode', 'PenetapanKonteksController::generateKodeSasaran');
+    // ===== CRUD KONTEKS =====
+    $routes->post('konteks/store', 'PenetapanKonteksController::storeKonteks');
     // ===== CRUD PROSES BISNIS =====
     $routes->post('proses-bisnis/store', 'PenetapanKonteksController::storeProsesBisnis');
     $routes->post('proses-bisnis/update/(:num)', 'PenetapanKonteksController::updateProsesBisnis/$1');
@@ -58,4 +60,4 @@ $routes->group('identifikasi-risiko', function ($routes) {
     $routes->post('delete/(:num)', 'IdentifikasiRisikoController::delete/$1');
     // ===== AJAX DETAIL =====
     $routes->get('detail/(:num)', 'IdentifikasiRisikoController::detail/$1');
- });
+});

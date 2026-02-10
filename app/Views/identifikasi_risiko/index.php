@@ -27,6 +27,59 @@
         </div>
     </div>
 
+    <!-- FILTER / KONTEXT IDENTIFIKASI -->
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body">
+
+            <h5 class="mb-3">Identifikasi Risiko</h5>
+
+            <div class="row g-3">
+
+                <!-- SATUAN KERJA -->
+                <div class="col-md-4">
+                    <label class="form-label">Satuan Kerja</label>
+                    <select class="form-select">
+                        <option value="">- Pilih -</option>
+                        <option>SDM & Hukum</option>
+                        <option>Umum & Perencanaan</option>
+                        <option>Keuangan & PBJ</option>
+                        <option>Statistik Sosial</option>
+                        <option>Statistik Produksi</option>
+                        <option>Statistik Distribusi</option>
+                        <option>Nerwilis</option>
+                        <option>DLS</option>
+                        <option>IPD & PAS</option>
+                        <option>Infrastruktur TI & SD</option>
+                        <option>Sektoral & UKK</option>
+                        <option>Humas & Protokoler</option>
+                    </select>
+                </div>
+
+                <!-- PENGELOLA RISIKO -->
+                <div class="col-md-4">
+                    <label class="form-label">Pengelola Risiko</label>
+                    <select class="form-select">
+                        <option value="">- Pilih -</option>
+                        <option>Koordinator MR</option>
+                        <option>Koordinator SPIP</option>
+                    </select>
+                </div>
+
+                <!-- RUANG LINGKUP -->
+                <div class="col-md-4">
+                    <label class="form-label">Ruang Lingkup Penerapan</label>
+                    <select class="form-select">
+                        <option value="">- Pilih -</option>
+                        <option>Seluruh Satuan Kerja</option>
+                        <option>Sebagian Satuan Kerja</option>
+                    </select>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
     <!-- CONTENT -->
     <div class="card">
         <div class="card-body">

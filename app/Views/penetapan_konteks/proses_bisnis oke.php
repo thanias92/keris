@@ -1,48 +1,8 @@
-<?php if ($activeKonteks): ?>
-    <div class="card mb-3 border-0 shadow-sm">
-        <div class="card-body py-3">
-
-            <div class="row small text-muted">
-
-                <div class="col-md-3 mb-2">
-                    <strong>Satuan Kerja</strong><br>
-                    <?= esc($activeKonteks['nama_satuan_kerja']) ?>
-                </div>
-
-                <div class="col-md-3 mb-2">
-                    <strong>Pengelola Risiko</strong><br>
-                    <?= esc($activeKonteks['pengelola_risiko']) ?>
-                </div>
-
-                <div class="col-md-3 mb-2">
-                    <strong>Tahun</strong><br>
-                    <?= esc($activeKonteks['tahun']) ?>
-                </div>
-
-                <div class="col-md-3 mb-2">
-                    <strong>Sasaran Strategis</strong><br>
-                    <?= esc($activeKonteks['uraian_sasaran']) ?>
-                </div>
-
-                <div class="col-12 mt-2">
-                    <strong>Kegiatan</strong><br>
-                    <?= esc($activeKonteks['kegiatan']) ?>
-                </div>
-
-            </div>
-
-        </div>
-    </div>
-<?php else: ?>
-    <div class="alert alert-warning">
-        <i class="ti ti-alert-circle"></i>
-        Silakan tetapkan <strong>Konteks</strong> terlebih dahulu untuk menambahkan Proses Bisnis.
-    </div>
-<?php endif; ?>
+<?= $this->include('penetapan_konteks/_konteks_filter') ?>
 
 <div class="d-flex justify-content-between mb-2">
     <small class="text-muted">
-        Menampilkan <?= count($data) ?> dari <?= $pager->getTotal('proses') ?> data
+        Menampilkan <?= count($data) ?> dari <?= $pager->getTotal() ?> data
     </small>
 
     <?= $pager->links('default', 'bootstrap_pagination') ?>

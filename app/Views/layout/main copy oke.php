@@ -37,15 +37,6 @@
     <!-- ✅ BOOTSTRAP 5 BUNDLE (WAJIB & SATU-SATUNYA) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        const tooltipTriggerList = [].slice.call(
-            document.querySelectorAll('[data-bs-toggle="tooltip"]')
-        );
-        tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-    </script>
-
     <!-- Plugins -->
     <script src="<?= base_url('assets/js/plugins/simplebar.min.js') ?>"></script>
 

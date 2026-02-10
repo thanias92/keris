@@ -17,37 +17,10 @@
     </div>
 
     <div class="offcanvas-body">
-        <!-- CONTEXT INFO -->
-        <div class="card bg-light border-0 mb-3">
-            <div class="card-body py-2">
-                <div class="row small text-muted">
-                    <div class="col-6 mb-1">
-                        <strong>Satuan Kerja</strong><br>
-                        <span id="ctx_satuan_kerja"><?= esc($activeKonteks['nama_satuan_kerja'] ?? '-') ?></span>
-                    </div>
-                    <div class="col-6 mb-1">
-                        <strong>Tahun</strong><br>
-                        <span id="ctx_tahun"><?= esc($activeKonteks['tahun'] ?? '-') ?></span>
-                    </div>
-                    <div class="col-6">
-                        <strong>Kegiatan</strong><br>
-                        <span id="ctx_kegiatan"><?= esc($activeKonteks['kegiatan'] ?? '-') ?></span>
-                    </div>
-                    <div class="col-6">
-                        <strong>Sasaran Strategis</strong><br>
-                        <span id="ctx_sasaran"><?= esc($activeKonteks['uraian_sasaran'] ?? '-') ?></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <form id="formProsesBisnis"
             method="post"
             action="<?= site_url('penetapan-konteks/proses-bisnis/store') ?>">
             <input type="hidden" name="id_proses" id="id_proses">
-
-            <input type="hidden" name="id_konteks" id="id_konteks"
-                value="<?= isset($activeKonteks) && $activeKonteks ? esc($activeKonteks['id_konteks']) : '' ?>">
 
             <!-- Jenis Proses -->
             <div class="mb-4">
@@ -118,12 +91,6 @@
 </div>
 
 <script>
-    document.querySelector('[data-bs-target="#offcanvasProsesBisnis"]')
-        ?.addEventListener('click', function() {
-            const idKonteks = this.getAttribute('data-id-konteks');
-            document.getElementById('id_konteks').value = idKonteks;
-        });
-
     /* === OFFCANVAS LIFECYCLE === */
     const offcanvasEl = document.getElementById('offcanvasProsesBisnis');
     let offcanvasInstance = null;

@@ -18,16 +18,21 @@
         <form action="<?= site_url('identifikasi-risiko/store') ?>" method="post">
             <?= csrf_field() ?>
 
+            <input type="hidden" name="id_konteks" value="<?= esc($activeKonteks['id_konteks']) ?>">
+
             <!-- PROSES BISNIS -->
             <div class="mb-3">
                 <label class="form-label">
                     Proses Bisnis <span class="text-danger">*</span>
                 </label>
-                <input type="number"
-                    name="id_proses"
-                    class="form-control"
-                    placeholder="ID Proses Bisnis"
-                    required>
+                <select name="id_proses" required>
+                    <option value="">- Pilih Proses Bisnis -</option>
+                    <?php foreach ($listProses as $p): ?>
+                        <option value="<?= $p['id_proses'] ?>">
+                            <?= esc($p['kode_proses']) ?> - <?= esc($p['uraian_proses']) ?>
+                        </option>
+                    <?php endforeach ?>
+                </select>
             </div>
 
             <!-- KODE RISIKO -->
