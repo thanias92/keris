@@ -1,8 +1,9 @@
 <div class="offcanvas offcanvas-end shadow-lg"
     tabindex="-1"
     id="offcanvasProsesBisnis"
-    style="width: 420px">
+    style="width:420px">
 
+    <!-- ================= HEADER ================= -->
     <div class="offcanvas-header border-bottom" style="background:#f8f9fa">
         <div>
             <h5 id="offcanvasTitle" class="mb-0 fw-semibold">
@@ -10,54 +11,57 @@
             </h5>
             <small class="text-muted">Penetapan Konteks</small>
         </div>
-        <button type="button"
-            class="btn-close"
-            data-bs-dismiss="offcanvas">
-        </button>
     </div>
 
+    <!-- ================= BODY ================= -->
     <div class="offcanvas-body">
-        <!-- CONTEXT INFO -->
+
+        <!-- ===== INFO KONTEKS (BAGIAN B) ===== -->
         <div class="card bg-light border-0 mb-3">
             <div class="card-body py-2">
                 <div class="row small text-muted">
-                    <div class="col-6 mb-1">
+                    <div class="col-6">
                         <strong>Satuan Kerja</strong><br>
-                        <span id="ctx_satuan_kerja"><?= esc($activeKonteks['nama_satuan_kerja'] ?? '-') ?></span>
+                        <?= esc($activeKonteks['nama_satuan_kerja'] ?? '-') ?>
                     </div>
-                    <div class="col-6 mb-1">
+                    <div class="col-6">
                         <strong>Tahun</strong><br>
-                        <span id="ctx_tahun"><?= esc($activeKonteks['tahun'] ?? '-') ?></span>
+                        <?= esc($activeKonteks['tahun'] ?? '-') ?>
                     </div>
-                    <div class="col-6">
+                    <div class="col-6 mt-2">
                         <strong>Kegiatan</strong><br>
-                        <span id="ctx_kegiatan"><?= esc($activeKonteks['kegiatan'] ?? '-') ?></span>
+                        <?= esc($activeKonteks['kegiatan'] ?? '-') ?>
                     </div>
-                    <div class="col-6">
+                    <div class="col-6 mt-2">
                         <strong>Sasaran Strategis</strong><br>
-                        <span id="ctx_sasaran"><?= esc($activeKonteks['uraian_sasaran'] ?? '-') ?></span>
+                        <?= esc($activeKonteks['uraian_sasaran'] ?? '-') ?>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- ================= FORM ================= -->
         <form id="formProsesBisnis"
             method="post"
             action="<?= site_url('penetapan-konteks/proses-bisnis/store') ?>">
+
+            <?= csrf_field() ?>
+
             <input type="hidden" name="id_proses" id="id_proses">
-
             <input type="hidden" name="id_konteks" id="id_konteks"
-                value="<?= isset($activeKonteks) && $activeKonteks ? esc($activeKonteks['id_konteks']) : '' ?>">
+                value="<?= esc($activeKonteks['id_konteks'] ?? '') ?>">
 
-            <!-- Jenis Proses -->
+            <!-- ===== JENIS PROSES (UI ASLI) ===== -->
             <div class="mb-4">
                 <label class="form-label fw-semibold">Jenis Proses</label>
                 <div class="d-flex gap-3 mt-2">
+
                     <label class="form-check border rounded px-3 py-2 flex-fill jenis-card">
                         <input class="form-check-input me-2"
                             type="radio"
                             name="jenis_proses"
-                            value="S">
+                            value="S"
+                            required>
                         <strong>Teknis</strong>
                         <div class="text-muted small">Proses inti operasional</div>
                     </label>
@@ -70,10 +74,11 @@
                         <strong>Non-Teknis</strong>
                         <div class="text-muted small">Proses pendukung</div>
                     </label>
+
                 </div>
             </div>
 
-            <!-- Kode Proses -->
+            <!-- ===== KODE ===== -->
             <div class="mb-3">
                 <label class="form-label">Kode Proses</label>
                 <input type="text"
@@ -84,63 +89,60 @@
                     readonly>
             </div>
 
-            <!-- Uraian -->
+            <!-- ===== URAIAN ===== -->
             <div class="mb-3">
                 <label class="form-label">Uraian Proses</label>
                 <input type="text"
                     name="uraian_proses"
                     class="form-control"
-                    placeholder="Contoh: Pengelolaan Arsip"
                     maxlength="100"
                     required>
             </div>
 
-            <div class="d-flex align-items-center mt-4 pt-3 border-top">
+            <!-- ================= ACTION ================= -->
+            <div class="d-flex align-items-center gap-2 pt-3 border-top">
+
                 <div class="me-auto">
                     <button type="button"
                         id="btnDeleteProses"
                         class="btn btn-outline-danger btn-icon d-none"
-                        title="Hapus Proses">
+                        title="Hapus">
                         <i class="ti ti-trash"></i>
                     </button>
                 </div>
 
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="offcanvas">Tutup</button>
-                    <button type="button" id="btnEditProses" class="btn btn-warning d-none">Edit</button>
-                    <button type="button" id="btnSimpanProses" class="btn btn-primary px-4">Simpan</button>
-                </div>
+                <button type="button"
+                    class="btn btn-light"
+                    data-bs-dismiss="offcanvas">
+                    Tutup
+                </button>
+
+                <button type="button"
+                    id="btnEditProses"
+                    class="btn btn-warning d-none">
+                    Edit
+                </button>
+
+                <button type="button"
+                    id="btnSimpanProses"
+                    class="btn btn-primary px-4">
+                    Simpan
+                </button>
+
             </div>
         </form>
-        <form id="formDeleteProses" method="post" action="" class="d-none">
-        </form>
+
+        <!-- DELETE FORM -->
+        <form id="formDeleteProses" method="post" class="d-none"></form>
     </div>
 </div>
 
+<!-- ================= SCRIPT ================= -->
 <script>
-    document.querySelector('[data-bs-target="#offcanvasProsesBisnis"]')
-        ?.addEventListener('click', function() {
-            const idKonteks = this.getAttribute('data-id-konteks');
-            document.getElementById('id_konteks').value = idKonteks;
-        });
-
-    /* === OFFCANVAS LIFECYCLE === */
-    const offcanvasEl = document.getElementById('offcanvasProsesBisnis');
-    let offcanvasInstance = null;
-
-    offcanvasEl.addEventListener('shown.bs.offcanvas', function() {
-        if (formMode !== 'create') return;
-        const firstRadio = document.querySelector('input[name="jenis_proses"]');
-        if (firstRadio) {
-            firstRadio.checked = true;
-            firstRadio.dispatchEvent(new Event('change'));
-        }
-    });
-
-    /* === JENIS PROSES → GENERATE KODE === */
+    /* === GENERATE KODE === */
     document.querySelectorAll('input[name="jenis_proses"]').forEach(radio => {
         radio.addEventListener('change', function() {
-            if (formMode !== 'create') return;
+
             document.querySelectorAll('.jenis-card')
                 .forEach(el => el.classList.remove('border-primary', 'bg-light'));
 
@@ -150,61 +152,23 @@
             fetch(
                     "<?= site_url('penetapan-konteks/proses-bisnis/generate-kode') ?>?jenis=" + this.value
                 )
-                .then(res => res.json())
-                .then(data => {
-                    document.querySelector('#kode_proses').value = data.kode;
-                });
+                .then(r => r.json())
+                .then(d => document.getElementById('kode_proses').value = d.kode);
         });
     });
 
-    /* === PREVENT CLOSE WHEN DIRTY === */
-    offcanvasEl.addEventListener('hide.bs.offcanvas', function(e) {
-        if (!isDirty) return;
-
-        e.preventDefault();
-
-        Swal.fire({
-            title: 'Batalkan perubahan?',
-            text: 'Perubahan yang belum disimpan akan hilang.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, tutup',
-            cancelButtonText: 'Lanjut edit',
-            customClass: {
-                popup: 'swal-mantis'
-            }
-        }).then(result => {
-            if (result.isConfirmed) {
-                isDirty = false;
-                offcanvasInstance.hide();
-            }
-        });
-
-        if (offcanvasInstance) {
-            offcanvasInstance.hide();
-        }
-    });
-
-    /* === SUBMIT HANDLER (SAVE / UPDATE) === */
+    /* === SUBMIT HANDLER === */
     document.getElementById('btnSimpanProses')
         .addEventListener('click', function() {
 
-            if (!checkDirty()) {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Tidak ada perubahan',
-                    text: 'Tidak ada data yang diubah.',
-                    customClass: {
-                        popup: 'swal-mantis'
-                    }
-                });
+            const form = document.getElementById('formProsesBisnis');
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
                 return;
             }
 
-            const form = document.getElementById('formProsesBisnis');
-            const isEdit = document.getElementById('id_proses').value !== '';
-
-            if (isEdit) {
+            if (formMode === 'edit') {
                 confirmUpdateProsesBisnis(form);
             } else {
                 confirmSaveProsesBisnis(form);
@@ -212,4 +176,5 @@
         });
 </script>
 
+<!-- SWEET ALERT -->
 <script src="<?= base_url('assets/js/proses-bisnis.alert.js') ?>"></script>

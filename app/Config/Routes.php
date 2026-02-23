@@ -22,6 +22,9 @@ $routes->group('penetapan-konteks', function ($routes) {
     $routes->get('selera', 'PenetapanKonteksController::seleraRisiko');
     $routes->get('sasaran-strategis', 'PenetapanKonteksController::sasaranStrategis');
 
+    $routes->post('set-active-konteks','PenetapanKonteksController::setActiveKonteks');
+    $routes->post('reset-active-konteks', 'PenetapanKonteksController::resetActiveKonteks');
+
     // ===== AJAX DETAIL =====
     $routes->get('proses-bisnis/detail/(:num)', 'PenetapanKonteksController::detailProsesBisnis/$1');
     $routes->get('sasaran-kinerja/detail/(:num)', 'PenetapanKonteksController::detailSasaranKinerja/$1');
@@ -54,10 +57,24 @@ $routes->group('penetapan-konteks', function ($routes) {
 $routes->group('identifikasi-risiko', function ($routes) {
     $routes->get('/', 'IdentifikasiRisikoController::index');
 
+    // ===== AJAX GENERATE =====
+    $routes->get('generate-kode','IdentifikasiRisikoController::generateKodeRisiko');
+
     // ===== CRUD =====
     $routes->post('store', 'IdentifikasiRisikoController::store');
     $routes->post('update/(:num)', 'IdentifikasiRisikoController::update/$1');
     $routes->post('delete/(:num)', 'IdentifikasiRisikoController::delete/$1');
     // ===== AJAX DETAIL =====
     $routes->get('detail/(:num)', 'IdentifikasiRisikoController::detail/$1');
+    $routes->get('detail-area/(:num)', 'IdentifikasiRisikoController::detailArea/$1');
+});
+
+// Analisis Risiko
+$routes->group('analisis-risiko', function ($routes) {
+    $routes->get('/', 'AnalisisRisikoController::index');
+    $routes->get('detail/(:num)', 'AnalisisRisikoController::detail/$1');
+    $routes->post('store', 'AnalisisRisikoController::store');
+    $routes->post('update/(:num)', 'AnalisisRisikoController::update/$1');
+    $routes->post('delete/(:num)', 'AnalisisRisikoController::delete/$1');
+    $routes->post('preview', 'AnalisisRisikoController::preview');
 });

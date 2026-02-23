@@ -1,0 +1,210 @@
+<div class="pk-page">
+
+    <!-- ================= PAGE HEADER ================= -->
+    <div class="page-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold mb-1">Identifikasi Risiko</h2>
+                <small class="text-muted">
+                    Manajemen Risiko / Identifikasi Risiko
+                </small>
+            </div>
+
+            <button class="btn btn-primary">
+                <i class="ti ti-plus me-1"></i> Risiko
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ================= KONTEKS SECTION ================= -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+
+            <div class="d-flex align-items-center mb-3">
+                <i class="ti ti-filter text-primary me-2"></i>
+                <h6 class="fw-semibold mb-0">Pilih Konteks Risiko</h6>
+            </div>
+
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-4">
+                    <label class="form-label small text-muted">
+                        Satuan Kerja
+                    </label>
+                    <select class="form-select">
+                        <option>-- Pilih --</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">
+                        Tahun
+                    </label>
+                    <select class="form-select">
+                        <option>2025</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">
+                        Sasaran Strategis
+                    </label>
+                    <select class="form-select">
+                        <option>Nilai BerAkhlak</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-flex gap-2">
+                    <button class="btn btn-primary w-100">
+                        Pilih
+                    </button>
+                    <button class="btn btn-outline-secondary w-100">
+                        Reset
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= KONTEKS AKTIF ================= -->
+    <div class="card border-primary border-1 shadow-sm mb-4">
+        <div class="card-body">
+
+            <div class="d-flex align-items-center mb-3">
+                <i class="ti ti-pin text-primary me-2"></i>
+                <h6 class="fw-semibold mb-0">Konteks Aktif</h6>
+            </div>
+
+            <div class="row text-muted small">
+                <div class="col-md-3">
+                    <strong>Satuan Kerja</strong><br>
+                    Infrastruktur TI & SD
+                </div>
+                <div class="col-md-2">
+                    <strong>Tahun</strong><br>
+                    2025
+                </div>
+                <div class="col-md-3">
+                    <strong>Kegiatan</strong><br>
+                    SIPASTI
+                </div>
+                <div class="col-md-4">
+                    <strong>Sasaran Strategis</strong><br>
+                    Nilai BerAkhlak
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= FILTER SECTION ================= -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+
+            <div class="d-flex align-items-center mb-3">
+                <i class="ti ti-adjustments-horizontal text-primary me-2"></i>
+                <h6 class="fw-semibold mb-0">Filter & Pencarian</h6>
+            </div>
+
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-4">
+                    <label class="form-label small text-muted">
+                        Kategori Risiko
+                    </label>
+                    <select class="form-select">
+                        <option>Semua Kategori</option>
+                        <option>Fraud</option>
+                        <option>Infrastruktur</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label small text-muted">
+                        Search Risiko
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Cari pernyataan risiko...">
+                </div>
+
+                <div class="col-md-4 d-flex gap-2">
+                    <button class="btn btn-primary w-100">
+                        Terapkan
+                    </button>
+                    <button class="btn btn-outline-secondary w-100">
+                        Reset
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= DATA SECTION ================= -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <small class="text-muted">
+                    Menampilkan 2 dari 2 data
+                </small>
+
+                <div>
+                    <!-- Pagination Placeholder -->
+                    <button class="btn btn-sm btn-light">1</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="7%">Kode</th>
+                            <th width="20%">Proses Bisnis</th>
+                            <th width="25%">Pernyataan Risiko</th>
+                            <th width="15%">Kategori</th>
+                            <th width="15%">Area Dampak</th>
+                            <th width="13%">Sumber</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td>1</td>
+                            <td>R001</td>
+                            <td>Perencanaan</td>
+                            <td>Daftar sampel tidak representatif...</td>
+                            <td>
+                                <span class="badge bg-primary-subtle text-primary border border-primary">
+                                    Fraud
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-success-subtle text-success border border-success me-1">
+                                    Kecelakaan Kerja
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-info-subtle text-info border border-info">
+                                    Internal
+                                </span>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>

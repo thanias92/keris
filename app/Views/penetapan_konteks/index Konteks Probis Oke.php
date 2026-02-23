@@ -2,13 +2,11 @@
 <?= $this->section('content') ?>
 
 <div class="pk-page">
-
     <!-- ================= PAGE HEADER ================= -->
     <div class="page-header pk-header">
         <div class="page-block">
             <div class="row">
-
-                <!-- LEFT -->
+                <!-- LEFT: breadcrumb + title (SELALU VERTIKAL) -->
                 <div class="col-12 col-lg-8">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-1">
@@ -23,33 +21,43 @@
                     <h2 class="page-title mb-0">Penetapan Konteks</h2>
                 </div>
 
-                <!-- RIGHT ACTION -->
+                <!-- RIGHT: action button -->
                 <div class="col-12 col-lg-4 text-lg-end mt-3 mt-lg-0 pk-header-action">
-
                     <?php if ($activeTab === 'proses_bisnis'): ?>
+                        <!-- + KONTEKS (SELALU AKTIF) -->
                         <button class="btn btn-outline-primary me-2"
                             data-bs-toggle="offcanvas"
                             data-bs-target="#offcanvasKonteks">
                             <i class="ti ti-plus"></i> Konteks
                         </button>
-
-                        <button class="btn btn-primary"
-                            <?= !$activeKonteks ? 'disabled style="pointer-events:none;opacity:.6"' : '' ?>
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasProsesBisnis"
-                            onclick="resetProsesBisnisForm()">
-                            <i class="ti ti-plus"></i> Proses Bisnis
-                        </button>
+                        <?php if ($activeKonteks): ?>
+                            <!-- + PROSES BISNIS (AKTIF JIKA ADA KONTEKS) -->
+                            <button class="btn btn-primary"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasProsesBisnis"
+                                data-id-konteks="<?= esc($activeKonteks['id_konteks']) ?>"
+                                onclick="resetProsesBisnisForm()">
+                                <i class="ti ti-plus"></i> Proses Bisnis
+                            </button>
+                        <?php else: ?>
+                            <!-- + PROSES BISNIS (DISABLED) -->
+                            <button class="btn btn-primary disabled"
+                                type="button"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="left"
+                                title="Tetapkan Konteks terlebih dahulu">
+                                <i class="ti ti-plus"></i> Proses Bisnis
+                            </button>
+                        <?php endif; ?>
                     <?php endif; ?>
-
                     <?php if ($activeTab === 'sasaran_kinerja'): ?>
-                        <button class="btn btn-primary <?= !$activeKonteks ? 'disabled' : '' ?>"
-                            <?= $activeKonteks ? 'data-bs-toggle="offcanvas" data-bs-target="#offcanvasSasaranKinerja"' : '' ?>
-                            id="btnOpenSasaran">
+                        <button class="btn btn-primary"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasSasaranKinerja"
+                            onclick="resetSasaranKinerjaForm()">
                             <i class="ti ti-plus"></i> Sasaran Kinerja
                         </button>
                     <?php endif; ?>
-
                     <?php if ($activeTab === 'pemangku'): ?>
                         <button class="btn btn-primary"
                             data-bs-toggle="offcanvas"
@@ -58,7 +66,6 @@
                             <i class="ti ti-plus"></i> Pemangku
                         </button>
                     <?php endif; ?>
-
                     <?php if ($activeTab === 'peraturan'): ?>
                         <button class="btn btn-primary"
                             data-bs-toggle="offcanvas"
@@ -67,30 +74,26 @@
                             <i class="ti ti-plus"></i> Peraturan
                         </button>
                     <?php endif; ?>
-
                 </div>
             </div>
         </div>
     </div>
-    <!-- ================= END HEADER ================= -->
+    <!-- ================= END PAGE HEADER ================= -->
 
     <!-- ================= TABS ================= -->
     <?= $this->include('penetapan_konteks/_tabs') ?>
 
-    <!-- ================= CONTEXT SELECTOR (FIX) ================= -->
-    <?php if (in_array($activeTab, ['proses_bisnis', 'sasaran_kinerja'], true)): ?>
-        <?= view('penetapan_konteks/_context_selector', [
-            'listKonteks'    => $listKonteks ?? [],
-            'activeKonteks'  => $activeKonteks ?? null
-        ]) ?>
+    <!-- ================= FILTER ================= -->
+    <?php if (in_array($activeTab, ['proses_bisnis', 'sasaran_kinerja'])): ?>
+        <?= $this->include('penetapan_konteks/_konteks_filter') ?>
     <?php endif; ?>
 
     <!-- ================= CONTENT ================= -->
     <div class="card">
         <div class="card-body">
 
-            <?php switch ($activeTab):
-
+            <?php
+            switch ($activeTab) {
                 case 'proses_bisnis':
                     echo $this->include('penetapan_konteks/proses_bisnis');
                     break;
@@ -122,14 +125,13 @@
                 case 'sasaran_strategis':
                     echo $this->include('penetapan_konteks/sasaran_strategis');
                     break;
-
-            endswitch; ?>
-
+            }
+            ?>
         </div>
     </div>
 </div>
-
 <?= $this->include('penetapan_konteks/konteks_form') ?>
+
 <?= $this->endSection() ?>
 
 <?php if ($activeTab === 'proses_bisnis' && !$activeKonteks): ?>

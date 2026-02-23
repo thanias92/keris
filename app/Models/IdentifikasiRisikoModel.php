@@ -14,10 +14,11 @@ class IdentifikasiRisikoModel extends Model
     protected $allowedFields = [
         'id_proses',
         'kode_risiko',
-        'uraian_kegiatan',
         'pernyataan_risiko',
-        'dampak_risiko',
         'penyebab_risiko',
+        'dampak_risiko',
+        'id_kategori_risiko',
+        'sumber_risiko',
     ];
 
     protected $useTimestamps = true;

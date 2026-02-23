@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title><?= $title ?? 'KERIS JAYA' ?></title>
+    <title><?= $title ?? 'KERIS RAJA' ?></title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

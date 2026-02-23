@@ -1,12 +1,47 @@
 <div class="d-flex justify-content-between mb-2">
     <small class="text-muted">
-        Menampilkan <?= count($data) ?> dari <?= $pager->getTotal() ?> data
+        Menampilkan <?= count($data) ?> dari <?= $pager->getTotal('sasaran') ?> data
     </small>
 
     <?= $pager->links('default', 'bootstrap_pagination') ?>
 </div>
 
+<?php if ($activeKonteks): ?>
+    <div class="card mb-3 border-0 shadow-sm">
+        <div class="card-body py-3">
+            <div class="row small text-muted">
+                <div class="col-md-3 col-6 mb-2">
+                    <strong>Satuan Kerja</strong><br>
+                    <?= esc($activeKonteks['nama_satuan_kerja']) ?>
+                </div>
+                <div class="col-md-3 col-6 mb-2">
+                    <strong>Tahun</strong><br>
+                    <?= esc($activeKonteks['tahun']) ?>
+                </div>
+                <div class="col-md-3 col-6 mb-2">
+                    <strong>Kegiatan</strong><br>
+                    <?= esc($activeKonteks['kegiatan']) ?>
+                </div>
+                <div class="col-md-3 col-6 mb-2">
+                    <strong>Sasaran Strategis</strong><br>
+                    <?= esc($activeKonteks['uraian_sasaran']) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
 <div class="table-responsive" style="max-height: 420px; overflow-y: auto;">
+    <?php if (empty($data)): ?>
+        <div class="alert alert-warning d-flex align-items-center">
+            <i class="ti ti-info-circle me-2"></i>
+            <div>
+                Belum ada Sasaran Kinerja untuk Konteks ini.
+                Silakan tambahkan terlebih dahulu.
+            </div>
+        </div>
+    <?php endif; ?>
+
     <table class="table table-hover align-middle">
         <thead class="table-light">
             <tr>
@@ -34,183 +69,175 @@
 <?= $this->include('penetapan_konteks/sasaran_kinerja_form') ?>
 
 <script>
-    /* =====================================================
-     * STATE GLOBAL (MENIRU PROSES BISNIS)
-     * =================================================== */
-    let sasaranFormMode = 'create';
-    let originalData = {};
-    let isDirty = false;
+    console.log("Script Sasaran Loaded");
 
-    function setOriginalData(data) {
-        originalData = JSON.stringify(data);
-        isDirty = false;
-    }
+    document.addEventListener('DOMContentLoaded', function() {
 
-    function checkDirty() {
-        const currentData = JSON.stringify({
-            proses: document.getElementById('id_proses').value,
-            sasaran: document.getElementById('uraian_sasaran').value
-        });
+        /* ======================================================
+           GLOBAL STATE (NAMESPACE SASARAN)
+        ====================================================== */
+        let skFormMode = 'create';
+        let skOriginalData = {};
+        let skIsDirty = false;
 
-        isDirty = currentData !== originalData;
-        return isDirty;
-    }
+        const offcanvasSkEl = document.getElementById('offcanvasSasaranKinerja');
+        let offcanvasSK;
 
-    /* =====================================================
-     * MODE HANDLER (RESET / READONLY / EDIT)
-     * =================================================== */
-    function resetSasaranKinerjaForm() {
-        sasaranFormMode = 'create';
+        if (typeof bootstrap !== 'undefined') {
+            offcanvasSK = new bootstrap.Offcanvas(offcanvasSkEl);
+        }
 
-        offcanvasTitleSasaran.innerText = 'Tambah Sasaran Kinerja';
-        formSasaranKinerja.action =
-            "<?= site_url('penetapan-konteks/sasaran-kinerja/store') ?>";
+        const formSK = document.getElementById('formSasaranKinerja');
+        const titleSK = document.getElementById('offcanvasTitleSasaran');
+        const btnEditSK = document.getElementById('btnEditSasaran');
+        const btnDeleteSK = document.getElementById('btnDeleteSasaran');
+        const btnSaveSK = document.getElementById('btnSimpanSasaran');
 
-        id_sasaran.value = '';
-        id_proses.value = '';
-        uraian_sasaran.value = '';
-        kode_sasaran.value = '';
+        /* ======================================================
+           HELPER
+        ====================================================== */
+        function skSetOriginal(data) {
+            skOriginalData = JSON.stringify(data);
+            skIsDirty = false;
+        }
 
-        btnDeleteSasaran.classList.add('d-none');
-        btnEditSasaran.classList.add('d-none');
-        btnSimpanSasaran.classList.remove('d-none');
-
-        document.querySelectorAll(
-            '#formSasaranKinerja select, #formSasaranKinerja textarea'
-        ).forEach(el => el.disabled = false);
-
-        fetch("<?= site_url('penetapan-konteks/sasaran-kinerja/generate-kode') ?>")
-            .then(res => res.json())
-            .then(data => {
-                kode_sasaran.value = data.kode;
+        function skCheckDirty() {
+            const current = JSON.stringify({
+                proses: document.getElementById('id_proses').value,
+                sasaran: document.getElementById('uraian_sasaran').value
             });
+            skIsDirty = current !== skOriginalData;
+            return skIsDirty;
+        }
 
-        setOriginalData({
-            proses: '',
-            sasaran: ''
+        /* ======================================================
+           RESET FORM
+        ====================================================== */
+        function resetSasaranKinerjaForm() {
+
+            skFormMode = 'create';
+
+            titleSK.innerText = 'Tambah Sasaran Kinerja';
+            formSK.action = "<?= site_url('penetapan-konteks/sasaran-kinerja/store') ?>";
+
+            document.getElementById('id_sasaran').value = '';
+            document.getElementById('id_proses').value = '';
+            document.getElementById('uraian_sasaran').value = '';
+            document.getElementById('kode_sasaran').value = '';
+
+            document.querySelectorAll('#formSasaranKinerja select, #formSasaranKinerja textarea')
+                .forEach(el => el.disabled = false);
+
+            btnEditSK.classList.add('d-none');
+            btnDeleteSK.classList.add('d-none');
+            btnSaveSK.classList.remove('d-none');
+
+            fetch("<?= site_url('penetapan-konteks/sasaran-kinerja/generate-kode') ?>")
+                .then(r => r.json())
+                .then(d => {
+                    document.getElementById('kode_sasaran').value = d.kode;
+                });
+
+            skSetOriginal({
+                proses: '',
+                sasaran: ''
+            });
+        }
+
+        /* ======================================================
+           OPEN BUTTON
+        ====================================================== */
+        document.getElementById('btnOpenSasaran')?.addEventListener('click', function() {
+            resetSasaranKinerjaForm();
         });
-    }
 
-    function setReadOnlyMode() {
-        document.querySelectorAll(
-            '#formSasaranKinerja select, #formSasaranKinerja textarea'
-        ).forEach(el => el.disabled = true);
+        /* ======================================================
+            ROW CLICK → DETAIL
+        ====================================================== */
+        document.addEventListener('click', function(e) {
 
-        btnEditSasaran.classList.remove('d-none');
-        btnDeleteSasaran.classList.remove('d-none');
-        btnSimpanSasaran.classList.add('d-none');
-    }
+            const row = e.target.closest('.sasaran-row');
+            if (!row) return;
 
-    function setEditMode() {
-        document.querySelectorAll(
-            '#formSasaranKinerja select, #formSasaranKinerja textarea'
-        ).forEach(el => el.disabled = false);
+            const id = row.dataset.id;
 
-        btnEditSasaran.classList.add('d-none');
-        btnSimpanSasaran.classList.remove('d-none');
-    }
+            console.log("Row clicked", id);
 
-    /* =====================================================
-     * KLIK BARIS TABEL → DETAIL (READ ONLY)
-     * =================================================== */
-    document.querySelectorAll('.sasaran-row').forEach(row => {
-        row.addEventListener('click', function() {
-            const id = this.dataset.id;
-
-            document.querySelectorAll('.sasaran-row')
-                .forEach(r => r.classList.remove('table-active'));
-            this.classList.add('table-active');
-
-            fetch(
-                    "<?= site_url('penetapan-konteks/sasaran-kinerja/detail') ?>/" + id
-                )
+            fetch("<?= site_url('penetapan-konteks/sasaran-kinerja/detail') ?>/" + id)
                 .then(res => res.json())
                 .then(data => {
 
-                    sasaranFormMode = 'edit';
+                    skFormMode = 'edit';
 
-                    offcanvasTitleSasaran.innerText = 'Detail Sasaran Kinerja';
+                    titleSK.innerText = 'Detail Sasaran Kinerja';
 
-                    id_sasaran.value = data.id_sasaran;
-                    id_proses.value = data.id_proses;
-                    uraian_sasaran.value = data.uraian_sasaran;
-                    kode_sasaran.value = data.kode_sasaran;
+                    document.getElementById('id_sasaran').value = data.id_sasaran;
+                    document.getElementById('id_proses').value = data.id_proses;
+                    document.getElementById('uraian_sasaran').value = data.uraian_sasaran;
+                    document.getElementById('kode_sasaran').value = data.kode_sasaran;
 
-                    formSasaranKinerja.action =
-                        "<?= site_url('penetapan-konteks/sasaran-kinerja/update') ?>/" + id;
+                    formSK.action =
+                        "<?= site_url('penetapan-konteks/sasaran-kinerja/update') ?>/" + data.id_sasaran;
 
-                    setReadOnlyMode();
-                    setOriginalData({
-                        proses: data.id_proses,
-                        sasaran: data.uraian_sasaran
-                    });
+                    document.querySelectorAll('#formSasaranKinerja select, #formSasaranKinerja textarea')
+                        .forEach(el => el.disabled = true);
 
-                    new bootstrap.Offcanvas(
-                        document.getElementById('offcanvasSasaranKinerja')
-                    ).show();
+                    btnEditSK.classList.remove('d-none');
+                    btnDeleteSK.classList.remove('d-none');
+                    btnSaveSK.classList.add('d-none');
+
+                    if (offcanvasSK) {
+                        offcanvasSK.show();
+                    }
+
                 });
+
         });
-    });
 
-    /* =====================================================
-     * BUTTON EVENTS (MENIRU PROSES BISNIS)
-     * =================================================== */
+        /* ======================================================
+           SAVE BUTTON
+        ====================================================== */
+        btnSaveSK.addEventListener('click', function() {
 
-    // EDIT
-    btnEditSasaran.addEventListener('click', function() {
-        offcanvasTitleSasaran.innerText = 'Edit Sasaran Kinerja';
-        setEditMode();
-    });
-
-    // SIMPAN
-    btnSimpanSasaran.addEventListener('click', function() {
-
-        if (!checkDirty()) {
-            Swal.fire({
-                icon: 'info',
-                title: 'Tidak ada perubahan',
-                text: 'Tidak ada data yang diubah.',
-                customClass: {
-                    popup: 'swal-mantis'
-                }
-            });
-            return;
-        }
-
-        const form = document.getElementById('formSasaranKinerja');
-        const isEdit = document.getElementById('id_sasaran').value !== '';
-
-        if (isEdit) {
-            confirmUpdateSasaranKinerja(form);
-        } else {
-            confirmSaveSasaranKinerja(form);
-        }
-    });
-
-    // DELETE
-    btnDeleteSasaran.addEventListener('click', function() {
-        const id = id_sasaran.value;
-
-        Swal.fire({
-            title: 'Hapus Sasaran Kinerja?',
-            text: 'Data yang dihapus tidak dapat dikembalikan.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Hapus',
-            cancelButtonText: 'Batal',
-            confirmButtonColor: '#d33',
-            customClass: {
-                popup: 'swal-mantis'
+            if (!formSK.checkValidity()) {
+                formSK.reportValidity();
+                return;
             }
-        }).then(result => {
-            if (result.isConfirmed) {
-                const form = document.getElementById('formDeleteSasaran');
-                form.action =
-                    "<?= site_url('penetapan-konteks/sasaran-kinerja/delete') ?>/" + id;
-                form.submit();
+
+            if (!skCheckDirty()) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Tidak ada perubahan',
+                    text: 'Tidak ada data yang diubah.',
+                    customClass: {
+                        popup: 'swal-mantis'
+                    }
+                });
+                return;
             }
+
+            if (skFormMode === 'edit') {
+                confirmUpdateSasaranKinerja(formSK);
+            } else {
+                confirmSaveSasaranKinerja(formSK);
+            }
+        });
+
+        /* ======================================================
+            EDIT BUTTON
+        ====================================================== */
+        btnEditSK.addEventListener('click', function() {
+
+            skFormMode = 'edit';
+
+            titleSK.innerText = 'Ubah Sasaran Kinerja';
+
+            document.querySelectorAll('#formSasaranKinerja select, #formSasaranKinerja textarea')
+                .forEach(el => el.disabled = false);
+
+            btnEditSK.classList.add('d-none');
+            btnSaveSK.classList.remove('d-none');
         });
     });
 </script>
-
 <script src="<?= base_url('assets/js/sasaran-kinerja.alert.js') ?>"></script>

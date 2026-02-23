@@ -48,10 +48,7 @@
             action="<?= site_url('penetapan-konteks/sasaran-kinerja/store') ?>">
 
             <input type="hidden" name="id_sasaran" id="id_sasaran">
-            <?php if ($activeKonteks): ?>
-                <input type="hidden" name="id_konteks"
-                    value="<?= esc($activeKonteks['id_konteks']) ?>">
-            <?php endif; ?>
+            <input type="hidden" name="id_konteks" value="<?= esc($activeKonteks['id_konteks']) ?>">
 
             <!-- KODE SASARAN -->
             <div class="mb-3">

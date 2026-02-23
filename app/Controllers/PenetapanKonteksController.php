@@ -35,7 +35,6 @@ class PenetapanKonteksController extends BaseController
             'id_sasaran_strategis' => $this->request->getPost('id_sasaran_strategis'),
         ];
 
-        // VALIDASI WAJIB
         if (
             empty($data['id_satuan_kerja']) ||
             empty($data['pengelola_risiko']) ||
@@ -47,143 +46,145 @@ class PenetapanKonteksController extends BaseController
                 ->with('error', 'Data konteks belum lengkap');
         }
 
-        // SIMPAN KONTEKS
         $idKonteks = $konteksModel->insert($data);
 
-        // SET KONTEKS AKTIF (SESSION)
+        // 🔴 INI KUNCI
         session()->set('id_konteks_aktif', $idKonteks);
 
         return redirect()
             ->to('penetapan-konteks/proses-bisnis')
             ->with('success', 'Konteks berhasil ditetapkan');
     }
+    public function setActiveKonteks()
+    {
+        $idKonteks = $this->request->getPost('id_konteks');
+        $redirect  = $this->request->getPost('redirect');
+
+        if (!empty($idKonteks)) {
+            session()->set('id_konteks_aktif', $idKonteks);
+        } else {
+            session()->remove('id_konteks_aktif');
+        }
+
+        // Jika ada redirect → kembali ke halaman asal
+        if (!empty($redirect)) {
+            return redirect()->to($redirect);
+        }
+
+        // fallback default
+        return redirect()->to('penetapan-konteks/proses-bisnis');
+    }
+
+    public function resetActiveKonteks()
+    {
+        session()->remove('id_konteks_aktif');
+
+        return redirect()->to('penetapan-konteks/proses-bisnis');
+    }
 
     /* TAB PROSES BISNIS */
     //View
     public function prosesBisnis()
     {
-        $prosesModel           = new ProsesBisnisModel();
-        $konteksModel          = new KonteksModel();
-        $satuanKerjaModel      = new SatuanKerjaModel();
-        $sasaranStrategisModel = new SasaranStrategisModel();
+        $prosesModel        = new ProsesBisnisModel();
+        $konteksModel       = new KonteksModel();
+        $satuanKerjaModel   = new SatuanKerjaModel();
+        $sasaranModel       = new SasaranStrategisModel();
 
-        /* 0. CONTEXT SELECTOR (DARI _konteks_filter.php) */
-        $satuanKerjaId = $this->request->getGet('satuan_kerja');
-        $tahun         = $this->request->getGet('tahun');
-        $sasaranId     = $this->request->getGet('sasaran_strategis');
-
-        if ($satuanKerjaId && $tahun && $sasaranId) {
-            $konteks = $konteksModel
-                ->where('id_satuan_kerja', $satuanKerjaId)
-                ->where('tahun', $tahun)
-                ->where('id_sasaran_strategis', $sasaranId)
-                ->first();
-
-            if ($konteks) {
-                session()->set('id_konteks_aktif', $konteks['id_konteks']);
-            } else {
-                session()->remove('id_konteks_aktif');
-                session()->setFlashdata(
-                    'error',
-                    'Konteks belum dibuat. Silakan tambah Konteks terlebih dahulu.'
-                );
-            }
-        }
-
-        /* 1. KONTEKS AKTIF (STATE SISTEM) */
+        /* ======================================================
+       1️⃣ KONTEKS AKTIF (SESSION)
+    ====================================================== */
         $idKonteksAktif = session('id_konteks_aktif');
-        $activeKonteks  = null;
+
+        $activeKonteks = null;
+        $selectedContext = null;
 
         if ($idKonteksAktif) {
+
             $activeKonteks = $konteksModel
                 ->select('
                 konteks.*,
                 satuan_kerja.nama_satuan_kerja,
                 sasaran_strategis.uraian_sasaran
             ')
-                ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
-                ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
+                ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
+                ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
                 ->where('konteks.id_konteks', $idKonteksAktif)
                 ->first();
+
+            if ($activeKonteks) {
+                $selectedContext = [
+                    'nama_satuan_kerja' => $activeKonteks['nama_satuan_kerja'],
+                    'tahun'             => $activeKonteks['tahun'],
+                    'uraian_sasaran'    => $activeKonteks['uraian_sasaran'],
+                ];
+            } else {
+                // Jika session ada tapi konteks tidak ditemukan → hapus session
+                session()->remove('id_konteks_aktif');
+                $idKonteksAktif = null;
+            }
         }
 
-        /* 2. FILTER (HANYA UNTUK LIST) */
-        $filters = [
-            'pengelola_risiko' => $this->request->getGet('pengelola_risiko'),
-            'kegiatan'         => $this->request->getGet('kegiatan'),
-            'tahun'            => $this->request->getGet('tahun'),
-        ];
+        /* ======================================================
+       2️⃣ LIST KONTEKS (UNTUK DROPDOWN)
+    ====================================================== */
+        $listKonteks = $konteksModel
+            ->select('
+            konteks.id_konteks,
+            konteks.tahun,
+            satuan_kerja.nama_satuan_kerja,
+            sasaran_strategis.uraian_sasaran
+        ')
+            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
+            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
+            ->orderBy('konteks.created_at', 'DESC')
+            ->findAll();
 
-        /* 3. QUERY PROSES BISNIS */
-        $builder = $prosesModel
-            ->select('proses_bisnis.*')
-            ->join('konteks', 'konteks.id_konteks = proses_bisnis.id_konteks');
+        /* ======================================================
+       3️⃣ DATA PROSES BISNIS
+       - Jika ada konteks → filter
+       - Jika tidak ada → tampil semua
+    ====================================================== */
+        $builder = $prosesModel;
 
-        // 🔒 WAJIB: scope ke konteks aktif
         if ($idKonteksAktif) {
-            $builder->where('proses_bisnis.id_konteks', $idKonteksAktif);
-        } else {
-            // kalau belum ada konteks, jangan tampilkan data apapun
-            $builder->where('1=0');
-        }
-
-        // filter opsional
-        if ($filters['pengelola_risiko']) {
-            $builder->where('konteks.pengelola_risiko', $filters['pengelola_risiko']);
-        }
-
-        if ($filters['kegiatan']) {
-            $builder->where('konteks.kegiatan', $filters['kegiatan']);
-        }
-
-        if ($filters['tahun']) {
-            $builder->where('konteks.tahun', $filters['tahun']);
+            $builder = $builder->where('id_konteks', $idKonteksAktif);
         }
 
         $data = $builder
             ->orderBy("
             CASE 
-                WHEN proses_bisnis.jenis_proses = 'Teknis' THEN 1
-                WHEN proses_bisnis.jenis_proses = 'Non-Teknis' THEN 2
+                WHEN jenis_proses = 'Teknis' THEN 1
+                WHEN jenis_proses = 'Non-Teknis' THEN 2
             END
         ", '', false)
-            ->orderBy('proses_bisnis.kode_proses', 'ASC')
+            ->orderBy('kode_proses', 'ASC')
             ->paginate(10, 'proses');
 
-        /* 4. FILTER OPTIONS (DROPDOWN) */
+        /* ======================================================
+       4️⃣ DATA MASTER UNTUK OFFCANVAS
+    ====================================================== */
         $filterOptions = [
             'satuan_kerja' => $satuanKerjaModel
                 ->orderBy('nama_satuan_kerja', 'ASC')
                 ->findAll(),
 
-            'tahun' => $konteksModel
-                ->distinct()
-                ->orderBy('tahun', 'DESC')
-                ->findColumn('tahun'),
-
-            'sasaran_strategis' => $sasaranStrategisModel
-                ->orderBy('kode_sasaran', 'ASC')
+            'sasaran_strategis' => $sasaranModel
+                ->orderBy('uraian_sasaran', 'ASC')
                 ->findAll(),
         ];
 
-        /* === ACTIVE FILTER (DEFAULT SAFE) === */
-        $activeFilter = [
-            'satuan_kerja'      => $this->request->getGet('satuan_kerja') ?? '',
-            'tahun'             => $this->request->getGet('tahun') ?? '',
-            'sasaran_strategis' => $this->request->getGet('sasaran_strategis') ?? '',
-        ];
-
+        /* ======================================================
+       RETURN VIEW
+    ====================================================== */
         return view('penetapan_konteks/index', [
-            'activeTab'     => 'proses_bisnis',
-            'data'          => $data,
-            'pager'         => $prosesModel->pager,
-            'filterOptions' => $filterOptions,
-            'activeFilter'  => [
-                'satuan_kerja'      => $satuanKerjaId,
-                'tahun'             => $tahun,
-                'sasaran_strategis' => $sasaranId,
-            ],
-            'activeKonteks' => $activeKonteks,
+            'activeTab'        => 'proses_bisnis',
+            'data'             => $data,
+            'pager'            => $prosesModel->pager,
+            'activeKonteks'    => $activeKonteks,
+            'listKonteks'      => $listKonteks,
+            'filterOptions'    => $filterOptions,
+            'selectedContext'  => $selectedContext,
         ]);
     }
     //Create - Form
@@ -212,18 +213,17 @@ class PenetapanKonteksController extends BaseController
                 ->with('error', 'Konteks belum dipilih');
         }
 
-        // Generate ulang kode
+        // Generate kode GLOBAL
         $last = $model
-            ->where('id_konteks', $idKonteks)
-            ->like('kode_proses', $jenis, 'after')
-            ->orderBy('kode_proses', 'DESC')
+            ->select("MAX(CAST(SUBSTRING(kode_proses FROM 2) AS INTEGER)) as max_number")
+            ->where('kode_proses LIKE', $jenis . '%')
             ->first();
 
-        $next = $last
-            ? ((int) substr($last['kode_proses'], 1)) + 1
+        $nextNumber = ($last && $last['max_number'])
+            ? ((int)$last['max_number']) + 1
             : 1;
 
-        $kode = $jenis . str_pad($next, 2, '0', STR_PAD_LEFT);
+        $kode = $jenis . str_pad($nextNumber, 2, '0', STR_PAD_LEFT);
 
         $model->insert([
             'id_konteks'    => $idKonteks,
@@ -233,7 +233,7 @@ class PenetapanKonteksController extends BaseController
         ]);
 
         return redirect()
-            ->to('penetapan-konteks/proses-bisnis?id_konteks=' . $idKonteks)
+            ->to('penetapan-konteks/proses-bisnis')
             ->with('success', 'Data Proses Bisnis berhasil disimpan');
     }
     //Edit - Form Edit
@@ -273,7 +273,7 @@ class PenetapanKonteksController extends BaseController
     //Generate Kode Proses Bisnis
     public function generateKodeProses()
     {
-        $jenis = $this->request->getGet('jenis'); // S / K
+        $jenis = $this->request->getGet('jenis'); // S atau K
 
         if (!in_array($jenis, ['S', 'K'])) {
             return $this->response->setJSON(['kode' => '']);
@@ -281,19 +281,17 @@ class PenetapanKonteksController extends BaseController
 
         $model = new ProsesBisnisModel();
 
+        // Ambil nomor terbesar GLOBAL untuk jenis tersebut
         $last = $model
-            ->like('kode_proses', $jenis, 'after')
-            ->orderBy('kode_proses', 'DESC')
+            ->select("MAX(CAST(SUBSTRING(kode_proses FROM 2) AS INTEGER)) as max_number")
+            ->where('kode_proses LIKE', $jenis . '%')
             ->first();
 
-        if ($last) {
-            $number = (int) substr($last['kode_proses'], 1);
-            $next   = $number + 1;
-        } else {
-            $next = 1;
-        }
+        $nextNumber = ($last && $last['max_number'])
+            ? ((int)$last['max_number']) + 1
+            : 1;
 
-        $kode = $jenis . str_pad($next, 2, '0', STR_PAD_LEFT);
+        $kode = $jenis . str_pad($nextNumber, 2, '0', STR_PAD_LEFT);
 
         return $this->response->setJSON([
             'kode' => $kode
@@ -333,37 +331,78 @@ class PenetapanKonteksController extends BaseController
         $prosesModel  = new ProsesBisnisModel();
         $konteksModel = new KonteksModel();
 
-        $idKonteks = $this->request->getGet('id_konteks');
+        $idKonteksAktif = session('id_konteks_aktif');
 
-        $sasaranModel
+        $activeKonteks = null;
+        $selectedContext = null;
+
+        if ($idKonteksAktif) {
+
+            $activeKonteks = $konteksModel
+                ->select('
+                konteks.*,
+                satuan_kerja.nama_satuan_kerja,
+                sasaran_strategis.uraian_sasaran
+            ')
+                ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
+                ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
+                ->where('konteks.id_konteks', $idKonteksAktif)
+                ->first();
+
+            if ($activeKonteks) {
+                $selectedContext = [
+                    'nama_satuan_kerja' => $activeKonteks['nama_satuan_kerja'],
+                    'tahun'             => $activeKonteks['tahun'],
+                    'uraian_sasaran'    => $activeKonteks['uraian_sasaran'],
+                ];
+            } else {
+                session()->remove('id_konteks_aktif');
+                $idKonteksAktif = null;
+            }
+        }
+
+        $listKonteks = $konteksModel
+            ->select('
+            konteks.id_konteks,
+            konteks.tahun,
+            satuan_kerja.nama_satuan_kerja,
+            sasaran_strategis.uraian_sasaran
+        ')
+            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
+            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
+            ->orderBy('konteks.created_at', 'DESC')
+            ->findAll();
+
+        $builder = $sasaranModel
             ->select('sasaran_kinerja.*, proses_bisnis.kode_proses, proses_bisnis.uraian_proses')
             ->join('proses_bisnis', 'proses_bisnis.id_proses = sasaran_kinerja.id_proses');
 
-        if ($idKonteks) {
-            $sasaranModel->where('proses_bisnis.id_konteks', $idKonteks);
+        if ($idKonteksAktif) {
+            $builder = $builder->where('proses_bisnis.id_konteks', $idKonteksAktif);
         }
 
-        $data = $sasaranModel
+        $data = $builder
             ->orderBy('kode_proses', 'ASC')
             ->paginate(10, 'sasaran');
 
+        $listProses = $idKonteksAktif
+            ? $prosesModel
+            ->where('id_konteks', $idKonteksAktif)
+            ->orderBy('kode_proses', 'ASC')
+            ->findAll()
+            : [];
+
         return view('penetapan_konteks/index', [
-            'activeTab' => 'sasaran_kinerja',
-            'data'      => $data,
-            'pager'     => $sasaranModel->pager,
-
-            // 🔑 konteks
-            'konteksList'   => $konteksModel->getAll(),
-            'activeKonteks' => $idKonteks
-                ? $konteksModel->getById($idKonteks)
-                : null,
-
-            // 🔽 dropdown proses (konteks-aware)
-            'listProses' => $idKonteks
-                ? $prosesModel->getByKonteks($idKonteks)
-                : $prosesModel->orderBy('kode_proses', 'ASC')->findAll(),
+            'activeTab'        => 'sasaran_kinerja',
+            'data'             => $data,
+            'pager'            => $sasaranModel->pager,
+            'activeKonteks'    => $activeKonteks,
+            'listKonteks'      => $listKonteks,
+            'listProses'       => $listProses,
+            'selectedContext'  => $selectedContext, // 🔴 WAJIB
         ]);
     }
+
     //Create - Form
     public function createSasaranKinerja()
     {

@@ -1,3 +1,52 @@
+/* ===================================== */
+/* GLOBAL FONT SCALE – KERIS RAJA */
+/* Membuat tampilan setara zoom 90% */
+/* ===================================== */
+
+html {
+    font-size: 14px; /* default browser 16px */
+}
+
+body {
+    font-size: 1rem;
+}
+
+/* Compact table */
+.table th,
+.table td {
+    padding: 0.6rem 0.75rem;
+}
+
+/* Compact card body */
+.card-body {
+    padding: 1rem 1.25rem;
+}
+
+/* ===================================== */
+/* TABLE BODY FONT MORE COMPACT */
+/* ===================================== */
+
+/* Header tetap normal */
+.table thead th {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Isi row lebih kecil */
+.table tbody td {
+    font-size: 0.88rem;
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+    font-weight: 400;
+    color: #495057;
+}
+
+.table th,
+.table td {
+    border-top: 1px solid #f1f3f6;
+}
+
+
 /* =============================== */
 /* MINI SIDEBAR – FLATTEN SUBMENU */
 /* =============================== */
@@ -189,30 +238,250 @@
     padding: 6px 18px;
     font-size: 0.9rem;
 }
-/* Matriks */
-table.risk-matrix {
-  table-layout: fixed;
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 6px;
+
+/* Identifikasi Form */
+#offcanvasRisiko {
+    width: 540px !important;
+    max-width: 95vw;
+}
+.table td:nth-child(2),
+.table th:nth-child(2) {
+    width: 80px;
+    white-space: nowrap;
+}
+.truncate {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-table.risk-matrix td {
-  padding: 0;
-  background: transparent;
+.risiko-row {
+    cursor: pointer;
+}
+.risiko-row:hover {
+    background-color: #f8f9fa;
 }
 
-.risk-cell {
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  font-size: 1.1rem;
+.col-risiko {
+    width: auto;
 }
-/* efek hover biar hidup */
-table.risk-matrix td:hover {
-  transform: scale(1.04);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  cursor: default;
+
+.risiko-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Saat sidebar mini */
+body.sidebar-mini .col-risiko {
+    width: 450px;
+}
+
+/* Saat sidebar normal */
+body:not(.sidebar-mini) .col-risiko {
+    width: 300px;
+}
+
+/* ===================================== */
+/* MATRlKS RISIKO - SUPER TIGHT VERSION */
+/* ===================================== */
+
+.pk-matriks-wrapper table.risk-matrix {
+    width: 100%;
+    border-collapse: collapse; /* penting */
+    table-layout: fixed;
+}
+
+/* Reset */
+.pk-matriks-wrapper .risk-matrix th,
+.pk-matriks-wrapper .risk-matrix td {
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+/* HEADER */
+.pk-matriks-wrapper .risk-matrix thead th {
+    background: #ffffff;
+    font-weight: 600;
+    text-align: center;
+    padding: 12px 6px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+/* Paksa header jadi 2 baris */
+.pk-matriks-wrapper .risk-matrix thead th {
+    line-height: 1.2;
+}
+
+/* Row kiri */
+.pk-matriks-wrapper .risk-matrix tbody th {
+    background: #ffffff;
+    text-align: left;
+    padding: 10px 12px;
+    font-weight: 500;
+    border-right: 1px solid #eef2f6;
+}
+
+/* Risk cell */
+.pk-matriks-wrapper .risk-cell {
+    height: 70px; /* lebih pendek */
+    margin: 2px;  /* jarak antar kotak */
+    border-radius: 4px; /* lebih square */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 600;
+
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: all 0.15s ease;
+}
+
+/* Hover */
+.pk-matriks-wrapper .risk-cell:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+/* ===================================================== */
+/* ANALISIS RISIKO – TABLE FIX (Scoped to .pk-page) */
+/* ===================================================== */
+.pk-page .analisis-table th,
+.pk-page .analisis-table td {
+    vertical-align: middle;
+}
+
+/* Kolom Risiko */
+.pk-page .analisis-table .col-risiko {
+    max-width: 280px;
+}
+
+/* Text truncate */
+.pk-page .analisis-table .risiko-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Hilangkan horizontal scroll */
+.pk-page .analisis-wrapper {
+    overflow-x: hidden;
+}
+
+/* Header P & D dua baris */
+.pk-page .analisis-table .th-small {
+    line-height: 1.2;
+}
+
+.pk-page .analisis-table .th-small small {
+    font-size: 11px;
+    color: #6c757d;
+}
+
+/* Status badge spacing */
+.pk-page .status-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+}
+/* ===================================================== */
+/* ANALISIS RISIKO – FIX NO HORIZONTAL SCROLL */
+/* ===================================================== */
+
+/* Wrapper khusus */
+.pk-page #analisisTableWrapper {
+    width: 100%;
+}
+
+/* Jangan pakai fixed layout */
+.pk-page .analisis-table {
+    width: 100%;
+}
+
+/* Pastikan tabel tidak melebar */
+.pk-page .analisis-table th,
+.pk-page .analisis-table td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* Kolom Risiko fleksibel */
+.pk-page .analisis-table .col-risiko {
+    max-width: 300px;
+}
+
+/* Text tetap terpotong rapi */
+.pk-page .analisis-table .risiko-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ===================================================== */
+/* ANALISIS RISIKO – SUMMARY CARDS (Scoped) */
+/* ===================================================== */
+
+.pk-page .summary-card {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.pk-page .summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
+
+.pk-page .summary-card.active-total {
+    border: 2px solid var(--bs-primary);
+}
+
+.pk-page .summary-card.active-sudah {
+    border: 2px solid var(--bs-success);
+}
+
+.pk-page .summary-card.active-belum {
+    border: 2px solid var(--bs-warning);
+}
+
+/* ===================================================== */
+/* ANALISIS RISIKO – ROW VISUAL INDICATOR */
+/* ===================================================== */
+.pk-page .analisis-row {
+    transition: all 0.2s ease;
+}
+
+.pk-page .analisis-row:hover {
+    background-color: #f5f9ff;
+    cursor: pointer;
+}
+
+/* Sudah dianalisis */
+.pk-page .analisis-table tbody tr.row-sudah > td:first-child {
+    box-shadow: inset 4px 0 0 #198754;
+}
+
+.pk-page .analisis-table tbody tr.row-belum > td:first-child {
+    box-shadow: inset 4px 0 0 #ffc107;
+}
+
+/* ===================================================== */
+/* ANALISIS RISIKO – HIGHLIGHT RISIKO TINGGI */
+/* Scoped aman ke halaman analisis */
+/* ===================================================== */
+
+.pk-page .analisis-table .row-risiko-tinggi {
+    background-color: rgba(255, 193, 7, 0.08); /* kuning lembut */
+}
+
+.pk-page .analisis-table .row-risiko-ekstrem {
+    background-color: rgba(220, 53, 69, 0.08); /* merah lembut */
+}
+
+/* Hover tetap smooth */
+.pk-page .analisis-table .row-risiko-tinggi:hover,
+.pk-page .analisis-table .row-risiko-ekstrem:hover {
+    background-color: rgba(0, 0, 0, 0.03);
 }

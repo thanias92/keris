@@ -8,13 +8,14 @@
     <!-- ================= HEADER ================= -->
     <div class="offcanvas-header border-bottom" style="background:#f8f9fa">
         <div>
-            <h5 class="mb-0 fw-semibold" id="irOffcanvasTitle">
-                Tambah Risiko
+            <h5 class="mb-0 fw-semibold">
+                Tambah Identifikasi Risiko
             </h5>
-            <small class="text-muted" id="irOffcanvasSubtitle">
-                Identifikasi Risiko
-            </small>
+            <small class="text-muted">Manajemen Risiko</small>
         </div>
+        <button type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"></button>
     </div>
 
     <!-- ================= BODY ================= -->
@@ -188,193 +189,39 @@
             </div>
 
             <!-- ================= ACTION ================= -->
-            <div class="d-flex align-items-center pt-3 border-top">
+            <div class="d-flex align-items-center gap-2 pt-3 border-top">
 
-                <!-- LEFT -->
-                <div>
-                    <button type="button"
-                        id="btnDeleteRisiko"
-                        class="btn btn-danger d-none">
-                        <i class="ti ti-trash"></i>
-                    </button>
-                </div>
+                <div class="me-auto"></div>
 
-                <!-- RIGHT -->
-                <div class="ms-auto d-flex gap-2">
-
-                    <button type="button"
-                        id="btnEditMode"
-                        class="btn btn-warning d-none">
-                        Edit
-                    </button>
-
-                    <button type="button"
-                        id="btnSimpanRisiko"
-                        class="btn btn-primary px-4">
-                        Simpan
-                    </button>
-
-                    <button type="button"
-                        id="btnTutupRisiko"
-                        class="btn btn-light"
-                        data-bs-dismiss="offcanvas">
-                        Tutup
-                    </button>
-                </div>
+                <button type="button" class="btn btn-light" data-bs-dismiss="offcanvas">Tutup</button>
+                <button type="button" id="btnSimpanRisiko" class="btn btn-primary px-4">Simpan</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    /* ======================================================
-   GLOBAL STATE
-====================================================== */
-    let irMode = 'create';
-    let offcanvasIR = null;
+    let irFormMode = 'create';
 
-    document.addEventListener('DOMContentLoaded', function() {
-
-        const offcanvasEl = document.getElementById('offcanvasRisiko');
-        offcanvasIR = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
-
-    });
-
-    /* ======================================================
-       RESET FORM (CREATE MODE)
-    ====================================================== */
     function resetIdentifikasiForm() {
 
-        irMode = 'create';
+        irFormMode = 'create';
 
-        const form = document.getElementById('formIdentifikasiRisiko');
+        document.getElementById('formIdentifikasiRisiko').action =
+            "<?= site_url('identifikasi-risiko/store') ?>";
 
-        form.reset();
-
-        document.getElementById('id_identifikasi').value = '';
-
-        document.getElementById('irOffcanvasTitle').innerText = 'Tambah Risiko';
-
-        enableForm(true);
-
-        toggleButtons('create');
-
-        // generate kode otomatis
         fetch("<?= site_url('identifikasi-risiko/generate-kode') ?>")
-            .then(res => res.json())
-            .then(data => {
-                document.querySelector('[name="kode_risiko"]').value = data.kode;
-            });
-
-    }
-
-    /* ======================================================
-       ENABLE / DISABLE FORM
-    ====================================================== */
-    function enableForm(status) {
-
-        document.querySelectorAll('#formIdentifikasiRisiko input, #formIdentifikasiRisiko textarea, #formIdentifikasiRisiko select')
-            .forEach(el => {
-
-                if (el.name === 'id_identifikasi' || el.name === 'id_konteks') return;
-
-                if (el.name === 'kode_risiko') return; // JANGAN disable kode
-
-                el.disabled = !status;
-
+            .then(r => r.json())
+            .then(d => {
+                document.querySelector('[name="kode_risiko"]').value = d.kode;
             });
     }
 
-    /* ======================================================
-       BUTTON MODE
-    ====================================================== */
-    function toggleButtons(mode) {
-
-        const btnDelete = document.getElementById('btnDeleteRisiko');
-        const btnEdit = document.getElementById('btnEditMode');
-        const btnSave = document.getElementById('btnSimpanRisiko');
-        const btnClose = document.getElementById('btnTutupRisiko');
-
-        btnDelete.classList.add('d-none');
-        btnEdit.classList.add('d-none');
-        btnSave.classList.add('d-none');
-
-        if (mode === 'create') {
-            btnSave.classList.remove('d-none');
-        }
-
-        if (mode === 'detail') {
-            btnDelete.classList.remove('d-none');
-            btnEdit.classList.remove('d-none');
-        }
-
-        if (mode === 'edit') {
-            btnSave.classList.remove('d-none');
-        }
-    }
-
-    /* ======================================================
-       DETAIL LOAD
-    ====================================================== */
-    function loadDetail(id) {
-
-        fetch("<?= site_url('identifikasi-risiko/detail') ?>/" + id)
-            .then(res => res.json())
-            .then(data => {
-
-                irMode = 'detail';
-
-                document.getElementById('id_identifikasi').value = data.id_identifikasi;
-
-                document.querySelector('[name="id_proses"]').value = data.id_proses;
-                document.querySelector('[name="kode_risiko"]').value = data.kode_risiko;
-                document.querySelector('[name="pernyataan_risiko"]').value = data.pernyataan_risiko;
-                document.querySelector('[name="penyebab_risiko"]').value = data.penyebab_risiko;
-                document.querySelector('[name="dampak_risiko"]').value = data.dampak_risiko;
-                document.querySelector('[name="id_kategori_risiko"]').value = data.id_kategori_risiko;
-
-                // radio sumber
-                document.querySelectorAll('[name="sumber_risiko"]').forEach(r => {
-                    r.checked = r.value === data.sumber_risiko;
-                });
-
-                // load area dampak
-                fetch("<?= site_url('identifikasi-risiko/detail-area') ?>/" + id)
-                    .then(res => res.json())
-                    .then(area => {
-                        document.querySelectorAll('[name="area_dampak[]"]').forEach(cb => {
-                            cb.checked = area.includes(cb.value);
-                        });
-                    });
-
-                document.getElementById('irOffcanvasTitle').innerText = 'Detail Risiko';
-
-                enableForm(false);
-
-                toggleButtons('detail');
-
-                offcanvasIR.show();
-            });
-    }
-
-    /* ======================================================
-       EDIT MODE
-    ====================================================== */
-    document.getElementById('btnEditMode')
-        .addEventListener('click', function() {
-
-            irMode = 'edit';
-
-            document.getElementById('irOffcanvasTitle').innerText = 'Ubah Risiko';
-
-            enableForm(true);
-
-            toggleButtons('edit');
+    document.getElementById('offcanvasRisiko')
+        .addEventListener('show.bs.offcanvas', function() {
+            resetIdentifikasiForm();
         });
 
-    /* ======================================================
-       SAVE (AJAX)
-    ====================================================== */
     document.getElementById('btnSimpanRisiko')
         .addEventListener('click', function() {
 
@@ -385,24 +232,10 @@
                 return;
             }
 
-            confirmSaveIdentifikasi(form, irMode);
-        });
-
-    /* ======================================================
-       DELETE (AJAX)
-    ====================================================== */
-    document.getElementById('btnDeleteRisiko')
-        .addEventListener('click', function() {
-
-            const id = document.getElementById('id_identifikasi').value;
-            confirmDeleteIdentifikasi(id);
-        });
-
-    /* ======================================================
-       CLEAN BACKDROP
-    ====================================================== */
-    document.getElementById('offcanvasRisiko')
-        .addEventListener('hidden.bs.offcanvas', function() {
-            resetIdentifikasiForm();
+            if (irFormMode === 'edit') {
+                confirmUpdateIdentifikasiRisiko(form);
+            } else {
+                confirmIdentifikasiRisiko(form);
+            }
         });
 </script>

@@ -19,7 +19,7 @@ function confirmSavePemangkuKepentingan(form) {
 
 function confirmUpdatePemangkuKepentingan(form) {
   Swal.fire({
-    title: "Ubah Pemangku Kepentingan",
+    title: "Ubah Pemangku Kepentingan?",
     text: "Perubahan akan langsung disimpan.",
     icon: "warning",
     customClass: {

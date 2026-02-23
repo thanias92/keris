@@ -17,10 +17,26 @@
 
     <!-- INFO -->
     <div class="col-12 mb-2">
-        <h5 class="mb-3">Matriks Analisis Risiko</h5>
-        <div class="alert alert-info border-0 py-2">
+        <h5 class="mb-2">Selera Risiko</h5>
+
+        <div class="alert alert-info border-0 py-2 mb-2">
             Menunjukkan batas tingkat risiko yang <b>dapat diterima</b> dan
             <b>tindakan manajemen risiko</b> yang harus dilakukan.
+        </div>
+    </div>
+
+    <!-- CATATAN -->
+    <div class="col-12 mb-3">
+        <div class="p-3 bg-light rounded">
+            <strong>Catatan:</strong>
+            <ol class="mb-0">
+                <li>
+                    Persentase digunakan apabila terdapat populasi yang jelas atas kegiatan tersebut.
+                </li>
+                <li>
+                    Jumlah digunakan apabila populasi tidak dapat ditemukan.
+                </li>
+            </ol>
         </div>
     </div>
 
