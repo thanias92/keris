@@ -1,0 +1,78 @@
+/* =====================
+   STYLE UMUM
+===================== */
+
+.info-table td {
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+.laporan-table th {
+  background-color: #7ee2a8;
+  font-weight: 600;
+}
+
+.laporan-table td {
+  background-color: #c9f5d6;
+  font-size: 13px;
+}
+
+/* =====================
+   MODE CETAK
+===================== */
+
+@media print {
+
+  /* SEMBUNYIKAN SEMUA */
+  body * {
+    visibility: hidden;
+  }
+
+  /* TAMPILKAN AREA CETAK */
+  #print-area,
+  #print-area * {
+    visibility: visible;
+  }
+
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* HILANGKAN NAV, SIDEBAR, TOMBOL */
+  nav, aside, header, footer, button {
+    display: none !important;
+  }
+
+  /* TABLE PRINT STYLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    border: 1px solid #000 !important;
+    padding: 6px;
+    text-align: center;
+  }
+
+  th {
+    background-color: #7ee2a8 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  td {
+    background-color: #c9f5d6 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* HALAMAN */
+  @page {
+    size: A4 landscape;
+    margin: 20mm;
+  }
+}

@@ -1,0 +1,231 @@
+/* ===============================
+   Halaman Utama
+   =============================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
+body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: 700;
+}
+
+/*DISABLE SCROLL KHUSUS LANDING*/
+
+body.landing-page {
+  overflow: hidden;
+  height: 100vh;
+}
+
+.landing-page #hero-simiko {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/*NAVBAR ENHANCEMENT(Tidak ubah warna Volt)*/
+
+.navbar-main {
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-main .nav-link {
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.navbar-main .nav-link:hover {
+  opacity: 0.85;
+}
+
+/*HERO SECTION FIX*/
+
+#hero-simiko {
+  position: relative;
+
+  background:
+    linear-gradient(rgba(138, 201, 184, 0.836), rgba(39, 85, 73, 0.772)),
+    url("../assets/img/bg-utama.jpg") center center / cover no-repeat !important;
+
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*HERO TEXT STYLING*/
+
+#hero-simiko h1 {
+  font-size: 3.3rem;
+  font-weight: 800;
+  color: #053f30;
+  letter-spacing: -1px;
+  margin-bottom: 15px;
+  animation: fadeDown 1s ease;
+}
+
+#hero-simiko h2 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  opacity: 0.95;
+  animation: fadeUp 1.2s ease;
+}
+
+/*BUTTON IMPROVEMENT*/
+
+#hero-simiko .btn-secondary {
+  border-radius: 50px;
+  padding: 12px 32px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+#hero-simiko .btn-secondary:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+}
+
+/*FOOTER SPACING*/
+
+.footer {
+  padding: 20px 0;
+}
+
+/*ANIMATIONS*/
+
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*RESPONSIVE FIX*/
+
+@media (max-width: 768px) {
+  #hero-simiko h1 {
+    font-size: 2.2rem;
+  }
+
+  #hero-simiko h2 {
+    font-size: 1rem;
+  }
+}
+
+/* ===============================
+   Dashboard
+   =============================== */
+/* =====================================================
+   DASHBOARD MODE – CLEAN & PROFESSIONAL
+===================================================== */
+
+/* =========================================
+   SUMMARY CARD (ATAS SAJA BOLEH HOVER HALUS)
+========================================= */
+.dashboard-summary .card {
+  border-radius: 14px;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.dashboard-summary .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================================
+   TREND RISIKO – TANPA ANIMASI
+========================================= */
+.trend-risiko .card {
+  transform: none !important;
+  transition: none !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.trend-risiko .card:hover {
+  transform: none !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================
+   PETA RISIKO – TANPA ANIMASI
+========================================= */
+.peta-risiko .card {
+  transform: none !important;
+  transition: none !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.peta-risiko .card:hover {
+  transform: none !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Update di custom.css */
+.peta-risiko .risk-point {
+  /* Hapus transform: none !important agar tooltip bisa bergeser ke tengah */
+  transition: transform 0.2s ease !important;
+}
+
+.peta-risiko .risk-point:hover {
+  /* Berikan sedikit scale agar interaktif */
+  transform: translate(-50%, 50%) scale(1.2) !important;
+}
+
+/* =========================================
+   REALISASI MITIGASI – TANPA ANIMASI
+========================================= */
+.realisasi-mitigasi .card {
+  transform: none !important;
+  transition: none !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.realisasi-mitigasi .card:hover {
+  transform: none !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================
+   TABLE DASHBOARD – HOVER HALUS SAJA
+========================================= */
+.dashboard-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.dashboard-table tbody tr:hover {
+  background-color: rgba(6, 95, 70, 0.04);
+}
+
+/* =========================================
+   BUTTON DASHBOARD – HOVER MINIMAL
+========================================= */
+.dashboard-btn {
+  transition: box-shadow 0.2s ease;
+}
+
+.dashboard-btn:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
