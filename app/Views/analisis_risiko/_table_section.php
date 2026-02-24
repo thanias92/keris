@@ -60,7 +60,9 @@
                                     data-identifikasi="<?= esc($row['id_identifikasi']) ?>"
                                     data-penilaian="<?= esc($row['id_penilaian'] ?? '') ?>"
                                     data-kode="<?= esc($row['kode_risiko']) ?>"
-                                    data-risiko="<?= esc($row['pernyataan_risiko']) ?>">
+                                    data-risiko="<?= esc($row['pernyataan_risiko']) ?>"
+                                    data-proses="<?= esc($row['kode_proses'] . ' - ' . $row['uraian_proses']) ?>"
+                                    data-sasaran="<?= esc($row['sasaran_kinerja'] ?? '') ?>">
 
                                     <td><?= $no++ ?></td>
 
@@ -143,12 +145,14 @@
 <script>
     document.querySelectorAll('.analisis-row').forEach(row => {
         row.addEventListener('click', function() {
-            const idIdentifikasi = this.dataset.identifikasi;
-            const idPenilaian = this.dataset.penilaian;
-            const kode = this.dataset.kode;
-            const risiko = this.dataset.risiko;
-
-            openAnalisisForm(idIdentifikasi, idPenilaian, kode, risiko);
+            openAnalisisForm(
+                this.dataset.identifikasi,
+                this.dataset.penilaian,
+                this.dataset.kode,
+                this.dataset.risiko,
+                this.dataset.proses,
+                this.dataset.sasaran
+            );
         });
     });
 </script>

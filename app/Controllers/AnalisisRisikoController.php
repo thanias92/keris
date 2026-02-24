@@ -59,8 +59,10 @@ class AnalisisRisikoController extends BaseController
                 identifikasi_risiko.kode_risiko,
                 identifikasi_risiko.pernyataan_risiko,
 
-                proses_bisnis.nama_proses,
-                proses_bisnis.sasaran_kinerja,
+                proses_bisnis.kode_proses,
+                proses_bisnis.uraian_proses,
+
+                sasaran_kinerja.uraian_sasaran AS sasaran_kinerja,
 
                 penilaian_risiko.id_penilaian,
                 penilaian_risiko.nilai_risiko,
@@ -75,6 +77,11 @@ class AnalisisRisikoController extends BaseController
             ->join(
                 'proses_bisnis',
                 'proses_bisnis.id_proses = identifikasi_risiko.id_proses'
+            )
+            ->join(
+                'sasaran_kinerja',
+                'sasaran_kinerja.id_proses = proses_bisnis.id_proses',
+                'left'
             )
             ->join(
                 'penilaian_risiko',
@@ -214,7 +221,39 @@ class AnalisisRisikoController extends BaseController
     public function detail($id)
     {
         $model = new PenilaianRisikoModel();
-        $data  = $model->find($id);
+
+        $data = $model
+            ->select('
+            penilaian_risiko.*,
+
+            identifikasi_risiko.kode_risiko,
+            identifikasi_risiko.pernyataan_risiko,
+
+            proses_bisnis.kode_proses,
+            proses_bisnis.uraian_proses,
+
+            sasaran_kinerja.uraian_sasaran AS sasaran_kinerja,
+
+            konteks.kegiatan,
+            konteks.tahun,
+            satuan_kerja.nama_satuan_kerja,
+            sasaran_strategis.uraian_sasaran AS sasaran_strategis,
+
+            matriks_risiko.level_kemungkinan,
+            matriks_risiko.level_dampak,
+
+            selera_risiko.nama_level
+        ')
+            ->join('identifikasi_risiko', 'identifikasi_risiko.id_identifikasi = penilaian_risiko.id_identifikasi')
+            ->join('proses_bisnis', 'proses_bisnis.id_proses = identifikasi_risiko.id_proses')
+            ->join('konteks', 'konteks.id_konteks = proses_bisnis.id_konteks')
+            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
+            ->join('sasaran_kinerja', 'sasaran_kinerja.id_proses = proses_bisnis.id_proses', 'left')
+            ->join('matriks_risiko', 'matriks_risiko.id_matriks = penilaian_risiko.id_matriks', 'left')
+            ->join('selera_risiko', 'selera_risiko.id_selera = penilaian_risiko.id_selera', 'left')
+            ->where('penilaian_risiko.id_penilaian', $id)
+            ->first();
 
         return $this->response->setJSON($data);
     }
@@ -265,11 +304,44 @@ class AnalisisRisikoController extends BaseController
 
     public function update($id)
     {
-        $model = new PenilaianRisikoModel();
+        $penilaianModel = new PenilaianRisikoModel();
+        $matriksModel   = new MatriksRisikoModel();
+        $seleraModel    = new SeleraRisikoModel();
 
-        $model->update($id, [
-            'efektivitas' => $this->request->getPost('efektivitas'),
-            'tindakan'    => $this->request->getPost('tindakan'),
+        $idKemungkinan = $this->request->getPost('id_kemungkinan');
+        $idDampak      = $this->request->getPost('id_dampak');
+
+        // Ambil level
+        $levelKemungkinan = (new KriteriaKemungkinanModel())
+            ->find($idKemungkinan)['level'];
+
+        $levelDampak = (new KriteriaDampakModel())
+            ->find($idDampak)['level'];
+
+        // Cari matriks baru
+        $matriks = $matriksModel
+            ->where('level_kemungkinan', $levelKemungkinan)
+            ->where('level_dampak', $levelDampak)
+            ->first();
+
+        $nilaiRisiko = $matriks['nilai_risiko'];
+
+        // Cari selera baru
+        $selera = $seleraModel
+            ->where('nilai_min <=', $nilaiRisiko)
+            ->where('nilai_max >=', $nilaiRisiko)
+            ->first();
+
+        // Update lengkap
+        $penilaianModel->update($id, [
+            'id_kemungkinan' => $idKemungkinan,
+            'id_dampak'      => $idDampak,
+            'id_matriks'     => $matriks['id_matriks'],
+            'id_selera'      => $selera['id_selera'],
+            'nilai_risiko'   => $nilaiRisiko,
+            'warna_risiko'   => $matriks['warna'],
+            'tindakan'       => $selera['tindakan'],
+            'catatan_analis' => $this->request->getPost('catatan_analis'),
         ]);
 
         return $this->response->setJSON(['status' => 'updated']);

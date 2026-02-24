@@ -1,4 +1,4 @@
-<!-- [ Sidebar Menu ] start -->
+[ Sidebar Menu ] start -->
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
@@ -98,8 +98,23 @@
                     </a>
                 </li>
 
+                <!-- Manajemen User -->
+                <?php if (isAdmin()): ?>
+                    <li class="pc-item pc-caption">
+                        <label>Administrasi</label>
+                    </li>
+
+                    <li class="pc-item">
+                        <a href="<?= base_url('manajemen-user') ?>" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ti ti-users"></i>
+                            </span>
+                            <span class="pc-mtext">Manajemen User</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>
 </nav>
-<!-- [ Sidebar Menu ] end -->
+<!-- [ Sidebar Menu ] end

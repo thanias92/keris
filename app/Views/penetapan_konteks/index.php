@@ -8,14 +8,13 @@
         <div class="page-block">
             <div class="row">
 
-                <!-- LEFT -->
                 <div class="col-12 col-lg-8">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-1">
                             <li class="breadcrumb-item">
-                                <a href="javascript:void(0)">Manajemen Risiko</a>
+                                <a href="#">Manajemen Risiko</a>
                             </li>
-                            <li class="breadcrumb-item active" aria-current="page">
+                            <li class="breadcrumb-item active">
                                 Penetapan Konteks
                             </li>
                         </ol>
@@ -23,122 +22,28 @@
                     <h2 class="page-title mb-0">Penetapan Konteks</h2>
                 </div>
 
-                <!-- RIGHT ACTION -->
-                <div class="col-12 col-lg-4 text-lg-end mt-3 mt-lg-0 pk-header-action">
-
-                    <?php if ($activeTab === 'proses_bisnis'): ?>
-                        <button class="btn btn-outline-primary me-2"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasKonteks">
-                            <i class="ti ti-plus"></i> Konteks
-                        </button>
-
-                        <button class="btn btn-primary"
-                            <?= !$activeKonteks ? 'disabled style="pointer-events:none;opacity:.6"' : '' ?>
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasProsesBisnis"
-                            onclick="resetProsesBisnisForm()">
-                            <i class="ti ti-plus"></i> Proses Bisnis
-                        </button>
-                    <?php endif; ?>
-
-                    <?php if ($activeTab === 'sasaran_kinerja'): ?>
-                        <button class="btn btn-primary <?= !$activeKonteks ? 'disabled' : '' ?>"
-                            <?= $activeKonteks ? 'data-bs-toggle="offcanvas" data-bs-target="#offcanvasSasaranKinerja"' : '' ?>
-                            id="btnOpenSasaran">
-                            <i class="ti ti-plus"></i> Sasaran Kinerja
-                        </button>
-                    <?php endif; ?>
-
-                    <?php if ($activeTab === 'pemangku'): ?>
-                        <button class="btn btn-primary"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasPemangkuKepentingan"
-                            onclick="resetPemangkuKepentinganForm()">
-                            <i class="ti ti-plus"></i> Pemangku
-                        </button>
-                    <?php endif; ?>
-
-                    <?php if ($activeTab === 'peraturan'): ?>
-                        <button class="btn btn-primary"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasPeraturan"
-                            onclick="resetPeraturanForm()">
-                            <i class="ti ti-plus"></i> Peraturan
-                        </button>
-                    <?php endif; ?>
-
-                </div>
             </div>
         </div>
     </div>
     <!-- ================= END HEADER ================= -->
 
+
+    <!-- ================= CONTEXT SELECTOR ================= -->
+    <?= view('penetapan_konteks/shared/_context_selector') ?>
+
+    <!-- ================= CONTEXT ACTIVE ================= -->
+    <?= view('penetapan_konteks/shared/_context_active') ?>
+
     <!-- ================= TABS ================= -->
-    <?= $this->include('penetapan_konteks/_tabs') ?>
+    <?= view('penetapan_konteks/shared/_tabs', ['activeTab' => $activeTab]) ?>
 
-    <!-- ================= CONTEXT SELECTOR (FIX) ================= -->
-    <?php if (in_array($activeTab, ['proses_bisnis', 'sasaran_kinerja'], true)): ?>
-        <?= view('penetapan_konteks/_context_selector', [
-            'listKonteks'    => $listKonteks ?? [],
-            'activeKonteks'  => $activeKonteks ?? null
-        ]) ?>
-    <?php endif; ?>
-
-    <!-- ================= CONTENT ================= -->
-    <div class="card">
+    <!-- ================= TAB CONTENT ================= -->
+    <div class="card mt-3">
         <div class="card-body">
-
-            <?php switch ($activeTab):
-
-                case 'proses_bisnis':
-                    echo $this->include('penetapan_konteks/proses_bisnis');
-                    break;
-
-                case 'sasaran_kinerja':
-                    echo $this->include('penetapan_konteks/sasaran_kinerja');
-                    break;
-
-                case 'pemangku':
-                    echo $this->include('penetapan_konteks/pemangku');
-                    break;
-
-                case 'peraturan':
-                    echo $this->include('penetapan_konteks/peraturan');
-                    break;
-
-                case 'kriteria':
-                    echo $this->include('penetapan_konteks/kriteria');
-                    break;
-
-                case 'matriks':
-                    echo $this->include('penetapan_konteks/matriks');
-                    break;
-
-                case 'selera':
-                    echo $this->include('penetapan_konteks/selera');
-                    break;
-
-                case 'sasaran_strategis':
-                    echo $this->include('penetapan_konteks/sasaran_strategis');
-                    break;
-
-            endswitch; ?>
-
+            <?= view('penetapan_konteks/tabs/' . $activeTab . '/content') ?>
         </div>
     </div>
+
 </div>
 
-<?= $this->include('penetapan_konteks/konteks_form') ?>
 <?= $this->endSection() ?>
-
-<?php if ($activeTab === 'proses_bisnis' && !$activeKonteks): ?>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const offcanvas = new bootstrap.Offcanvas(
-                document.getElementById('offcanvasKonteks')
-            );
-            offcanvas.show();
-        });
-    </script>
-<?php endif; ?>

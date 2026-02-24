@@ -94,7 +94,11 @@
     ]) ?>
 
     <!-- Offcanvas -->
-    <?= view('analisis_risiko/_offcanvas_form') ?>
+    <?= view('analisis_risiko/_offcanvas_form', [
+        'activeKonteks'   => $activeKonteks,
+        'kemungkinanList' => $kemungkinanList,
+        'dampakList'      => $dampakList
+    ]) ?>
 </div>
 <?= $this->endSection() ?>
 

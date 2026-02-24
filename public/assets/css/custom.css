@@ -129,28 +129,15 @@ body {
     border-bottom: 2px solid #0d6efd;
     background-color: transparent;
 }
-.pk-tabs {
+.pk-page .pk-tabs  {
     margin-top: -6px;
-}
-/* Tab utama melebar rata */
-.pk-tabs {
-    display: flex;
-}
-.pk-tabs .pk-tab-main {
-    flex: 1 1 0;
-    text-align: center;
-}
-.pk-tabs .pk-tab-main .nav-link {
-    padding: 12px 0;
+    margin-bottom: 10px;
 }
 
 /* Tab aktif lebih terasa */
 .pk-tabs .nav-link.active {
     background-color: rgba(13,110,253,0.06);
     border-radius: 6px 6px 0 0;
-}
-.pk-tabs {
-    margin-bottom: 10px; /* sebelumnya 16px default */
 }
 .pk-page .card {
     border-radius: 10px;
@@ -168,6 +155,48 @@ body {
 
 .pk-tabs .dropdown-item:hover {
     background-color: rgba(13,110,253,0.08);
+}
+
+/* ===================================== */
+/* PENETAPAN KONTEKS – EQUAL WIDTH TABS */
+/* Scoped ke .pk-page saja */
+/* ===================================== */
+
+.pk-page .pk-tabs {
+    display: flex;
+}
+
+.pk-page .pk-tabs > .nav-item:not(.dropdown) {
+    flex: 1 1 0;
+    text-align: center;
+}
+
+.pk-page .pk-tabs > .nav-item:not(.dropdown) .nav-link {
+    width: 100%;
+    padding: 12px 0;
+}
+
+/* ===================================== */
+/* CONTEXT SELECTOR – PENETAPAN KONTEKS */
+/* ===================================== */
+
+.pk-page .card .form-label {
+    letter-spacing: 0.3px;
+}
+
+.pk-page .card .form-select {
+    height: 42px;
+    border-radius: 8px;
+}
+
+.pk-page .card .btn-primary {
+    height: 42px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.pk-page .card {
+    border-radius: 12px;
 }
 
 /* === TABEL PROSES BISNIS === */
@@ -484,4 +513,13 @@ body:not(.sidebar-mini) .col-risiko {
 .pk-page .analisis-table .row-risiko-tinggi:hover,
 .pk-page .analisis-table .row-risiko-ekstrem:hover {
     background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* ===================================== */
+/* FIX HEADER STICKY TRANSPARENT ISSUE */
+/* ===================================== */
+.pc-header {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    z-index: 1025;
 }
