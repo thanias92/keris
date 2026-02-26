@@ -28,18 +28,20 @@ $routes->get('/', 'DashboardController::index');
 $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKonteks', 'filter' => 'auth'], function ($routes) {
 
     /* ==============================
-       DEFAULT (TAB KONTEKS)
+        DEFAULT (TAB KONTEKS)
     ============================== */
     $routes->get('/', 'KonteksController::index');
     $routes->get('konteks', 'KonteksController::index');
 
     // CRUD KONTEKS
     $routes->post('konteks/store', 'KonteksController::store');
-    $routes->post('konteks/update/(:num)', 'KonteksController::update/$1');
-    $routes->post('konteks/delete/(:num)', 'KonteksController::delete/$1');
+    $routes->post('konteks/update', 'KonteksController::update');
+    $routes->post('konteks/delete', 'KonteksController::delete');
     $routes->post('konteks/set-active', 'KonteksController::setActive');
     $routes->post('konteks/reset-active', 'KonteksController::resetActive');
 
+    // AJAX TABLE REFRESH
+    $routes->get('konteks/table', 'KonteksController::ajaxTable');
 
     /* ==============================
        PROSES BISNIS

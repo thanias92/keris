@@ -16,10 +16,12 @@ class BaseContextController extends BaseController
 
         $data = $model
             ->select('
-                konteks.*,
-                satuan_kerja.nama_satuan_kerja,
-                sasaran_strategis.uraian_sasaran
-            ')
+            konteks.*,
+            konteks.pengelola_risiko,
+            konteks.kegiatan,
+            satuan_kerja.nama_satuan_kerja,
+            sasaran_strategis.uraian_sasaran
+        ')
             ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
             ->where('konteks.id_konteks', $id)

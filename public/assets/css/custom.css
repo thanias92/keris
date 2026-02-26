@@ -232,6 +232,126 @@ body {
     padding-top: 20px; /* coba 4–8px sesuai selera */
 }
 
+/* === Icon Pilih & Reset Context Selector === */
+.pk-filter .btn-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+/* ===================================================== */
+/* KONTEKS TABLE – NEW CLEAN LAYOUT */
+/* Scoped ONLY ke .pk-konteks */
+/* ===================================================== */
+
+.pk-konteks .pk-table-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+/* BUTTON KHUSUS KONTEKS */
+.pk-konteks .pk-btn-konteks {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    background: #0d6efd;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.pk-konteks .pk-btn-konteks:hover {
+    background: #0b5ed7;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(13,110,253,0.25);
+}
+
+/* TABLE SCROLL */
+.pk-konteks .pk-table-scroll {
+    max-height: 420px;
+    overflow-y: auto;
+    border-radius: 8px;
+}
+
+/* STICKY HEADER */
+.pk-konteks .pk-table-scroll thead th {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    z-index: 2;
+}
+
+/* BOTTOM SECTION */
+.pk-konteks .pk-table-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+}
+
+/* LEFT INFO */
+.pk-konteks .pk-table-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pk-konteks .pk-info-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* PERPAGE */
+.pk-konteks .pk-perpage {
+    width: 70px;
+    height: 34px;
+    border-radius: 8px;
+    padding: 4px 8px;
+    border: 1px solid #dee2e6;
+}
+
+/* PAGINATION STYLE */
+.pk-konteks .pagination {
+    margin-bottom: 0;
+}
+
+.pk-konteks .page-link {
+    border-radius: 10px;
+    margin: 0 4px;
+    border: none;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.pk-konteks .page-item.active .page-link {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.pk-konteks .page-link:hover {
+    background-color: #e9f2ff;
+}
+
+/* === Row Click Context === */
+.pk-konteks .table-row-click {
+    cursor: pointer;
+}
+
+.pk-konteks td.text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 
 /* === SWEETALERT MANTIS FIX === */
 .swal2-popup.swal-mantis {

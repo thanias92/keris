@@ -3,50 +3,80 @@
     id="offcanvasKonteks">
 
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title">Form Konteks</h5>
+        <h5 class="offcanvas-title" id="pkOffcanvasTitle">
+            Tambah Konteks
+        </h5>
+
         <button type="button"
             class="btn-close"
-            data-bs-dismiss="offcanvas">
-        </button>
+            data-bs-dismiss="offcanvas"></button>
     </div>
 
     <div class="offcanvas-body">
 
-        <form method="post"
-            action="<?= site_url('penetapan-konteks/konteks/store') ?>">
+        <form id="pkFormKonteks">
 
-            <?= csrf_field() ?>
+            <input type="hidden" name="mode" id="pkMode" value="create">
+            <input type="hidden" name="id_konteks" id="pkId">
 
+            <!-- FIELD TAHUN -->
             <div class="mb-3">
                 <label class="form-label">Tahun</label>
-                <input type="number"
+                <input type="text"
                     name="tahun"
-                    class="form-control"
-                    required>
+                    id="pkTahun"
+                    class="form-control">
+            </div>
+
+            <!-- FIELD PENGELOLA -->
+            <div class="mb-3">
+                <label class="form-label">Pengelola Risiko</label>
+                <input type="text"
+                    name="pengelola_risiko"
+                    id="pkPengelola"
+                    class="form-control">
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Satuan Kerja</label>
-                <select name="id_satuan_kerja"
-                    class="form-select"
-                    required>
-                    <option value="">-- Pilih --</option>
+                <label class="form-label">Pemangku Kepentingan</label>
+                <select name="pemangku[]" multiple class="form-select">
+                    <?php foreach ($listPemangku as $p): ?>
+                        <option value="<?= $p['id_pemangku'] ?>">
+                            <?= esc($p['nama_instansi']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Sasaran Strategis</label>
-                <select name="id_sasaran_strategis"
-                    class="form-select"
-                    required>
-                    <option value="">-- Pilih --</option>
+                <label class="form-label">Peraturan Terkait</label>
+                <select name="peraturan[]" multiple class="form-select">
+                    <?php foreach ($listPeraturan as $pr): ?>
+                        <option value="<?= $pr['id_peraturan'] ?>"
+                            <?= $pr['is_default'] ? 'selected' : '' ?>>
+                            <?= esc($pr['nama_peraturan']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
-            <div class="mt-4">
-                <button class="btn btn-primary w-100">
+            <!-- ACTION BUTTONS -->
+            <div class="d-flex justify-content-between mt-4">
+
+                <button type="button"
+                    class="btn btn-outline-secondary"
+                    id="pkBtnEdit"
+                    onclick="pkSwitchToEditMode()"
+                    style="display:none;">
+                    Edit
+                </button>
+
+                <button type="submit"
+                    class="btn btn-primary"
+                    id="pkBtnSubmit">
                     Simpan
                 </button>
+
             </div>
 
         </form>

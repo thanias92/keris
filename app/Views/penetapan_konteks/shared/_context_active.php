@@ -4,9 +4,14 @@
         <div class="card-body py-3">
             <div class="row small">
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <strong>Satuan Kerja</strong><br>
                     <?= esc($activeKonteks['nama_satuan_kerja']) ?>
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Pengelola Risiko</strong><br>
+                    <?= esc($activeKonteks['pengelola_risiko']) ?>
                 </div>
 
                 <div class="col-md-2">
@@ -14,7 +19,12 @@
                     <?= esc($activeKonteks['tahun']) ?>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-2">
+                    <strong>Kegiatan</strong><br>
+                    <?= esc($activeKonteks['kegiatan']) ?>
+                </div>
+
+                <div class="col-md-2">
                     <strong>Sasaran Strategis</strong><br>
                     <?= esc($activeKonteks['uraian_sasaran']) ?>
                 </div>

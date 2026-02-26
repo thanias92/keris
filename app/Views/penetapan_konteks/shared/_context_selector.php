@@ -1,202 +1,128 @@
 <?php
+$filters = $filters ?? [];
 
-$map = [];
+$selectedSk = $filters['sk'] ?? '';
+$selectedPr = $filters['pr'] ?? '';
+$selectedTh = $filters['th'] ?? '';
+$selectedKg = $filters['kg'] ?? '';
+$selectedSs = $filters['ss'] ?? '';
 
-foreach ($listKonteks ?? [] as $k) {
-
-    if (!isset(
-        $k['nama_satuan_kerja'],
-        $k['pengelola_risiko'],
-        $k['tahun'],
-        $k['kegiatan'],
-        $k['uraian_sasaran'],
-        $k['id_konteks']
-    )) continue;
-
-    $sk = $k['nama_satuan_kerja'];
-    $pr = $k['pengelola_risiko'];
-    $th = $k['tahun'];
-    $kg = $k['kegiatan'];
-    $ss = $k['uraian_sasaran'];
-
-    $map[$sk][$pr][$th][$kg][$ss] = $k['id_konteks'];
-}
+// Ambil distinct value
+$skList = array_unique(array_column($listKonteks, 'nama_satuan_kerja'));
+$prList = array_unique(array_column($listKonteks, 'pengelola_risiko'));
+$thList = array_unique(array_column($listKonteks, 'tahun'));
+$kgList = array_unique(array_column($listKonteks, 'kegiatan'));
+$ssList = array_unique(array_column($listKonteks, 'uraian_sasaran'));
 ?>
 
-<div class="card mb-3 border-0 shadow-sm">
+<div class="card shadow-sm mb-4">
     <div class="card-body">
 
-        <form method="post"
-            action="<?= site_url('penetapan-konteks/konteks/set-active') ?>">
+        <form id="contextFilterForm" method="get" action="<?= site_url('penetapan-konteks') ?>">
 
-            <?= csrf_field() ?>
+            <div class="row g-3 align-items-end">
 
-            <input type="hidden"
-                name="id_konteks"
-                id="id_konteks_selected">
-
-            <div class="row g-4">
-
-                <!-- SATUAN KERJA -->
-                <div class="col-md-3">
-                    <label class="form-label small fw-semibold text-muted">
-                        Satuan Kerja
-                    </label>
-                    <select class="form-select" id="skSelect">
-                        <option value="">— Pilih —</option>
-                        <?php foreach (array_keys($map) as $sk): ?>
-                            <option value="<?= esc($sk) ?>"><?= esc($sk) ?></option>
+                <div class="col-md">
+                    <label class="form-label small text-muted">Satuan Kerja</label>
+                    <select name="sk" class="form-select">
+                        <option value="">Semua</option>
+                        <?php foreach ($skList as $sk): ?>
+                            <option value="<?= esc($sk) ?>"
+                                <?= $selectedSk == $sk ? 'selected' : '' ?>>
+                                <?= esc($sk) ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
 
-                <!-- PENGELOLA RISIKO -->
-                <div class="col-md-3">
-                    <label class="form-label small fw-semibold text-muted">
-                        Pengelola Risiko
-                    </label>
-                    <select class="form-select" id="prSelect">
-                        <option value="">— Pilih —</option>
+                <div class="col-md">
+                    <label class="form-label small text-muted">Pengelola Risiko</label>
+                    <select name="pr" class="form-select">
+                        <option value="">Semua</option>
+                        <?php foreach ($prList as $pr): ?>
+                            <option value="<?= esc($pr) ?>"
+                                <?= $selectedPr == $pr ? 'selected' : '' ?>>
+                                <?= esc($pr) ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
-                <!-- TAHUN -->
-                <div class="col-md-2">
-                    <label class="form-label small fw-semibold text-muted">
-                        Tahun
-                    </label>
-                    <select class="form-select" id="thSelect">
-                        <option value="">— Pilih —</option>
+                <div class="col-md">
+                    <label class="form-label small text-muted">Tahun</label>
+                    <select name="th" class="form-select">
+                        <option value="">Semua</option>
+                        <?php foreach ($thList as $th): ?>
+                            <option value="<?= esc($th) ?>"
+                                <?= $selectedTh == $th ? 'selected' : '' ?>>
+                                <?= esc($th) ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
-                <!-- KEGIATAN -->
-                <div class="col-md-2">
-                    <label class="form-label small fw-semibold text-muted">
-                        Kegiatan
-                    </label>
-                    <select class="form-select" id="kgSelect">
-                        <option value="">— Pilih —</option>
+                <div class="col-md">
+                    <label class="form-label small text-muted">Kegiatan</label>
+                    <select name="kg" class="form-select">
+                        <option value="">Semua</option>
+                        <?php foreach ($kgList as $kg): ?>
+                            <option value="<?= esc($kg) ?>"
+                                <?= $selectedKg == $kg ? 'selected' : '' ?>>
+                                <?= esc($kg) ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
-                <!-- SASARAN -->
-                <div class="col-md-4">
-                    <label class="form-label small fw-semibold text-muted">
-                        Sasaran Strategis
-                    </label>
-                    <select class="form-select" id="ssSelect">
-                        <option value="">— Pilih —</option>
+                <div class="col-md">
+                    <label class="form-label small text-muted">Sasaran Strategis</label>
+                    <select name="ss" class="form-select">
+                        <option value="">Semua</option>
+                        <?php foreach ($ssList as $ss): ?>
+                            <option value="<?= esc($ss) ?>"
+                                <?= $selectedSs == $ss ? 'selected' : '' ?>>
+                                <?= esc($ss) ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
-                <!-- BUTTON -->
-                <div class="col-md-2 d-flex align-items-end">
+                <div class="col-md-auto d-flex gap-2 pk-filter">
                     <button type="submit"
-                        class="btn btn-primary w-100">
-                        Aktifkan
+                        class="btn btn-primary btn-icon"
+                        title="Terapkan Filter">
+                        <i class="ti ti-search"></i>
                     </button>
-                </div>
 
+                    <a href="<?= site_url('penetapan-konteks') ?>"
+                        class="btn btn-outline-secondary btn-icon"
+                        title="Reset Filter">
+                        <i class="ti ti-refresh"></i>
+                    </a>
+                </div>
             </div>
         </form>
     </div>
 </div>
-
 <script>
-    const contextMap = <?= json_encode($map) ?>;
+    document.addEventListener('DOMContentLoaded', function() {
 
-    const skSelect = document.getElementById('skSelect');
-    const prSelect = document.getElementById('prSelect');
-    const thSelect = document.getElementById('thSelect');
-    const kgSelect = document.getElementById('kgSelect');
-    const ssSelect = document.getElementById('ssSelect');
-    const hiddenId = document.getElementById('id_konteks_selected');
+        const form = document.getElementById('contextFilterForm');
 
-    function resetSelect(select) {
-        select.innerHTML = '<option value="">— Pilih —</option>';
-    }
-
-    /* SK CHANGE */
-    skSelect.addEventListener('change', function() {
-
-        resetSelect(prSelect);
-        resetSelect(thSelect);
-        resetSelect(kgSelect);
-        resetSelect(ssSelect);
-        hiddenId.value = '';
-
-        if (!this.value) return;
-
-        Object.keys(contextMap[this.value]).forEach(pr => {
-            prSelect.innerHTML += `<option value="${pr}">${pr}</option>`;
-        });
-    });
-
-    /* PENGELOLA CHANGE */
-    prSelect.addEventListener('change', function() {
-
-        resetSelect(thSelect);
-        resetSelect(kgSelect);
-        resetSelect(ssSelect);
-        hiddenId.value = '';
-
-        const sk = skSelect.value;
-        if (!sk || !this.value) return;
-
-        Object.keys(contextMap[sk][this.value]).forEach(th => {
-            thSelect.innerHTML += `<option value="${th}">${th}</option>`;
-        });
-    });
-
-    /* TAHUN CHANGE */
-    thSelect.addEventListener('change', function() {
-
-        resetSelect(kgSelect);
-        resetSelect(ssSelect);
-        hiddenId.value = '';
-
-        const sk = skSelect.value;
-        const pr = prSelect.value;
-
-        if (!sk || !pr || !this.value) return;
-
-        Object.keys(contextMap[sk][pr][this.value]).forEach(kg => {
-            kgSelect.innerHTML += `<option value="${kg}">${kg}</option>`;
-        });
-    });
-
-    /* KEGIATAN CHANGE */
-    kgSelect.addEventListener('change', function() {
-
-        resetSelect(ssSelect);
-        hiddenId.value = '';
-
-        const sk = skSelect.value;
-        const pr = prSelect.value;
-        const th = thSelect.value;
-
-        if (!sk || !pr || !th || !this.value) return;
-
-        Object.keys(contextMap[sk][pr][th][this.value]).forEach(ss => {
-            ssSelect.innerHTML += `<option value="${ss}">${ss}</option>`;
-        });
-    });
-
-    /* SASARAN CHANGE */
-    ssSelect.addEventListener('change', function() {
-
-        const sk = skSelect.value;
-        const pr = prSelect.value;
-        const th = thSelect.value;
-        const kg = kgSelect.value;
-        const ss = this.value;
-
-        if (!sk || !pr || !th || !kg || !ss) {
-            hiddenId.value = '';
-            return;
+        if (form) {
+            form.addEventListener('submit', function() {
+                localStorage.setItem('scrollPosition', window.scrollY);
+            });
         }
 
-        hiddenId.value = contextMap[sk][pr][th][kg][ss];
+        window.scrollTo({
+            top: parseInt(scrollPosition),
+            behavior: 'smooth'
+        });
+        if (scrollPosition !== null) {
+            window.scrollTo(0, parseInt(scrollPosition));
+            localStorage.removeItem('scrollPosition');
+        }
+
     });
 </script>

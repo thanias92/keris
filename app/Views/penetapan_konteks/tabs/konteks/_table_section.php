@@ -1,51 +1,104 @@
-<div class="d-flex justify-content-between align-items-center mb-3">
+<div class="pk-table-wrapper">
 
-    <h5 class="mb-0">Daftar Konteks</h5>
+    <!-- ========================= -->
+    <!-- TABLE SCROLL WRAPPER -->
+    <!-- ========================= -->
+    <div class="pk-table-scroll">
 
-    <button class="btn btn-primary"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#offcanvasKonteks">
-        <i class="ti ti-plus"></i> Tambah Konteks
-    </button>
+        <table class="table table-hover align-middle pk-konteks-table">
+            <thead>
+                <tr>
+                    <th width="50">#</th>
+                    <th width="90">Tahun</th>
+                    <th>Satuan Kerja</th>
+                    <th>Pengelola Risiko</th>
+                    <th>Sasaran Strategis</th>
+                </tr>
+            </thead>
 
-</div>
+            <tbody>
 
-<div class="table-responsive">
-    <table class="table table-hover align-middle">
-        <thead class="table-light">
-            <tr>
-                <th>Tahun</th>
-                <th>Satuan Kerja</th>
-                <th>Sasaran Strategis</th>
-                <th width="120">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
+                <?php if (!empty($data)): ?>
+                    <?php $no = $from ?? 1; ?>
 
-            <?php if (!empty($data)): ?>
-                <?php foreach ($data as $row): ?>
+                    <?php foreach ($data as $row): ?>
+                        <tr class="table-row-click"
+                            data-row='<?= json_encode($row, JSON_HEX_APOS | JSON_HEX_QUOT) ?>'
+                            onclick="pkOpenViewMode(this)">
+
+                            <td><?= $no++ ?></td>
+                            <td><?= esc($row['tahun']) ?></td>
+                            <td><?= esc($row['nama_satuan_kerja'] ?? '-') ?></td>
+                            <td><?= esc($row['pengelola_risiko']) ?></td>
+                            <td class="pk-truncate">
+                                <?= esc($row['uraian_sasaran'] ?? '-') ?>
+                            </td>
+
+                        </tr>
+                    <?php endforeach; ?>
+
+                <?php else: ?>
                     <tr>
-                        <td><?= esc($row['tahun']) ?></td>
-                        <td><?= esc($row['nama_satuan_kerja']) ?></td>
-                        <td><?= esc($row['uraian_sasaran']) ?></td>
-                        <td>
-                            <button class="btn btn-sm btn-warning">
-                                Edit
-                            </button>
-                            <button class="btn btn-sm btn-danger">
-                                Hapus
-                            </button>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            Belum ada data konteks.
                         </td>
                     </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="4" class="text-center text-muted">
-                        Belum ada data konteks.
-                    </td>
-                </tr>
+                <?php endif; ?>
+
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- BOTTOM SECTION -->
+    <!-- ========================= -->
+    <?php if (!empty($total) && $total > 0): ?>
+
+        <div class="pk-table-bottom">
+
+            <!-- LEFT SIDE -->
+            <div class="pk-table-info">
+
+                <?php if (isset($filters)): ?>
+                    <form method="get" class="pk-perpage-form d-flex align-items-center gap-2">
+
+                        <?php foreach ($filters as $key => $value): ?>
+                            <input type="hidden" name="<?= $key ?>" value="<?= esc($value) ?>">
+                        <?php endforeach; ?>
+
+                        <select name="perPage"
+                            class="pk-perpage"
+                            onchange="this.form.submit()">
+
+                            <?php foreach ([5, 10, 25, 50] as $size): ?>
+                                <option value="<?= $size ?>"
+                                    <?= ($perPage ?? 5) == $size ? 'selected' : '' ?>>
+                                    <?= $size ?>
+                                </option>
+                            <?php endforeach; ?>
+
+                        </select>
+
+                    </form>
+                <?php endif; ?>
+
+                <div class="pk-info-text">
+                    Menampilkan <?= $from ?? 0 ?>–<?= $to ?? 0 ?> dari <?= $total ?? 0 ?> data
+                </div>
+
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <?php if (isset($pager)): ?>
+                <div class="pk-pagination">
+                    <?= $pager->links() ?>
+                </div>
             <?php endif; ?>
 
-        </tbody>
-    </table>
+        </div>
+
+    <?php endif; ?>
+
 </div>

@@ -6,8 +6,9 @@
     <!-- ================= PAGE HEADER ================= -->
     <div class="page-header pk-header">
         <div class="page-block">
-            <div class="row">
+            <div class="row align-items-center">
 
+                <!-- LEFT SIDE -->
                 <div class="col-12 col-lg-8">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-1">
@@ -22,20 +23,40 @@
                     <h2 class="page-title mb-0">Penetapan Konteks</h2>
                 </div>
 
+                <!-- RIGHT SIDE BUTTON -->
+                <div class="col-12 col-lg-4 text-lg-end mt-3 mt-lg-0">
+
+                    <?php
+                    $btn = pk_module_config('penetapan_konteks', $activeTab);
+                    ?>
+
+                    <?php if ($btn): ?>
+                        <button class="pk-btn-global"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvas<?= ucfirst($btn['module']) ?>"
+                            onclick="pkOpenCreateMode('<?= esc($btn['module']) ?>')">
+                            <i class="ti ti-plus"></i>
+                            + <?= esc($btn['label']) ?>
+                        </button>
+                    <?php endif; ?>
+
+                </div>
+
             </div>
         </div>
     </div>
     <!-- ================= END HEADER ================= -->
 
+    <!-- ================= TABS ================= -->
+    <?= view('penetapan_konteks/shared/_tabs', ['activeTab' => $activeTab]) ?>
 
     <!-- ================= CONTEXT SELECTOR ================= -->
     <?= view('penetapan_konteks/shared/_context_selector') ?>
 
     <!-- ================= CONTEXT ACTIVE ================= -->
-    <?= view('penetapan_konteks/shared/_context_active') ?>
-
-    <!-- ================= TABS ================= -->
-    <?= view('penetapan_konteks/shared/_tabs', ['activeTab' => $activeTab]) ?>
+    <?php if ($activeTab !== 'konteks'): ?>
+        <?= view('penetapan_konteks/shared/_context_active') ?>
+    <?php endif; ?>
 
     <!-- ================= TAB CONTENT ================= -->
     <div class="card mt-3">
@@ -45,5 +66,20 @@
     </div>
 
 </div>
+
+<?php
+$btn = pk_module_config('penetapan_konteks', $activeTab);
+?>
+
+<?php if ($btn): ?>
+    <?= view('penetapan_konteks/tabs/' . $btn['module'] . '/_offcanvas_form') ?>
+
+    <script>
+        window.pkCrudConfig = {
+            module: "<?= esc($btn['module']) ?>",
+            baseUrl: "<?= base_url($btn['routeBase']) ?>"
+        };
+    </script>
+<?php endif; ?>
 
 <?= $this->endSection() ?>
