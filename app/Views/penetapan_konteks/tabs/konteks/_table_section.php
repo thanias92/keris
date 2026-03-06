@@ -29,7 +29,7 @@
                             <td><?= $no++ ?></td>
                             <td><?= esc($row['tahun']) ?></td>
                             <td><?= esc($row['nama_satuan_kerja'] ?? '-') ?></td>
-                            <td><?= esc($row['pengelola_risiko']) ?></td>
+                            <td><?= esc($row['nama_pengelola'] ?? '-') ?></td>
                             <td class="pk-truncate">
                                 <?= esc($row['uraian_sasaran'] ?? '-') ?>
                             </td>

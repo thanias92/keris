@@ -12,9 +12,10 @@ class KonteksModel extends Model
     protected $returnType       = 'array';
     protected $useTimestamps    = true;
 
-    protected $allowedFields    = [
+    protected $allowedFields = [
         'id_satuan_kerja',
-        'pengelola_risiko',
+        'pemilik_risiko_id',
+        'pengelola_risiko_id',
         'kegiatan',
         'tahun',
         'id_sasaran_strategis',
@@ -26,8 +27,15 @@ class KonteksModel extends Model
     public function getAll()
     {
         return $this
-            ->select('konteks.*, satuan_kerja.nama_satuan_kerja')
+            ->select('
+            konteks.*,
+            satuan_kerja.nama_satuan_kerja,
+            p.nama as nama_pemilik,
+            g.nama as nama_pengelola
+        ')
             ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
+            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
             ->orderBy('tahun', 'DESC')
             ->orderBy('satuan_kerja.nama_satuan_kerja', 'ASC')
             ->findAll();

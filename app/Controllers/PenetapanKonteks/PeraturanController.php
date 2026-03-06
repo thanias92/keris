@@ -10,10 +10,19 @@ class PeraturanController extends BaseContextController
     {
         $model = new PeraturanTerkaitModel();
 
-        return view('penetapan_konteks/index', [
-            'activeTab' => 'peraturan',
-            'data'      => $model->paginate(10),
-            'pager'     => $model->pager
-        ]);
+        $data = $model->paginate(10);
+
+        return view(
+            'penetapan_konteks/index',
+            array_merge(
+                $this->contextData(),
+                [
+                    'activeTab' => 'peraturan',
+                    'data'      => $data,
+                    'pager'     => $model->pager,
+                    'filters'   => []
+                ]
+            )
+        );
     }
 }

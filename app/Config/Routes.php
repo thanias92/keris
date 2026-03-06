@@ -39,9 +39,13 @@ $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKo
     $routes->post('konteks/delete', 'KonteksController::delete');
     $routes->post('konteks/set-active', 'KonteksController::setActive');
     $routes->post('konteks/reset-active', 'KonteksController::resetActive');
+    $routes->get('konteks/detail/(:num)', 'KonteksController::detail/$1');
 
-    // AJAX TABLE REFRESH
+    // AJAX
     $routes->get('konteks/table', 'KonteksController::ajaxTable');
+    $routes->get('konteks/get-pemilik-provinsi', 'KonteksController::getPemilikProvinsi');
+    $routes->get('konteks/get-pengelola-list', 'KonteksController::getPengelolaList');
+    $routes->get('konteks/get-kegiatan/(:num)', 'KonteksController::getKegiatanBySatuanKerja/$1');
 
     /* ==============================
        PROSES BISNIS

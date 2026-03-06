@@ -140,7 +140,7 @@ body {
     border-radius: 6px 6px 0 0;
 }
 .pk-page .card {
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 .pk-tabs .dropdown-menu {
@@ -174,29 +174,6 @@ body {
 .pk-page .pk-tabs > .nav-item:not(.dropdown) .nav-link {
     width: 100%;
     padding: 12px 0;
-}
-
-/* ===================================== */
-/* CONTEXT SELECTOR – PENETAPAN KONTEKS */
-/* ===================================== */
-
-.pk-page .card .form-label {
-    letter-spacing: 0.3px;
-}
-
-.pk-page .card .form-select {
-    height: 42px;
-    border-radius: 8px;
-}
-
-.pk-page .card .btn-primary {
-    height: 42px;
-    border-radius: 8px;
-    font-weight: 500;
-}
-
-.pk-page .card {
-    border-radius: 12px;
 }
 
 /* === TABEL PROSES BISNIS === */
@@ -351,7 +328,6 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 
 /* === SWEETALERT MANTIS FIX === */
 .swal2-popup.swal-mantis {

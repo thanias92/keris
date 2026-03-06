@@ -4,5 +4,5 @@
 
 <div class="pk-konteks">
     <!-- TABLE SECTION -->
-    <?= view('penetapan_konteks/tabs/konteks/_table_section') ?>
+    <?= view('penetapan_konteks/kriteria') ?>
 </div>

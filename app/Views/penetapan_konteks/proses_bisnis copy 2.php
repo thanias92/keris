@@ -36,7 +36,7 @@
 <!-- ================= INFO PAGINATION ================= -->
 <div class="d-flex justify-content-between mb-2">
     <small class="text-muted">
-        Menampilkan <?= count($data) ?> dari <?= $pager->getTotal() ?> data
+        Menampilkan <?= count($data) ?> dari <?= $pager->getTotal('proses') ?> data
     </small>
     <?= $pager->links('default', 'bootstrap_pagination') ?>
 </div>

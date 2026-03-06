@@ -1,0 +1,79 @@
+/* ===============================
+   CUSTOM COMBOBOX (FINAL CLEAN)
+=============================== */
+
+.pk-combobox {
+    position: relative;
+    width: 100%;
+    z-index: 5;
+}
+
+.pk-combobox-input {
+    width: 100%;
+    height: 38px;
+    border-radius: 6px;
+    border: 1px solid #d0d5dd;
+    padding: 0 11px;
+    font-size: 13px;
+    font-weight: 400;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.pk-combobox-input:focus {
+    border-color: #4f6cff;
+    box-shadow: 0 0 0 3px rgba(79,108,255,0.15);
+}
+
+.pk-combobox-input::placeholder {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.pk-combobox-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 6px;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #eaecf0;
+    box-shadow: 0 16px 32px rgba(0,0,0,0.08);
+    display: none;
+    z-index: 9999;
+}
+
+.pk-combobox-dropdown.open {
+    display: block;
+}
+
+.pk-combobox-options {
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.pk-option {
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.pk-option:hover {
+    background: #eef2ff;
+}
+
+.pk-option.active {
+    background: #4f6cff;
+    color: #ffffff;
+}
+
+.pk-combobox-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.pk-combobox-options::-webkit-scrollbar-thumb {
+    background: #d0d5dd;
+    border-radius: 10px;
+}

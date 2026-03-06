@@ -4,7 +4,7 @@
 <div class="pk-page">
 
     <!-- ================= PAGE HEADER ================= -->
-    <div class="page-header pk-header">
+    <div class="page-header pk-header mb-3">
         <div class="page-block">
             <div class="row align-items-center">
 
@@ -31,12 +31,11 @@
                     ?>
 
                     <?php if ($btn): ?>
-                        <button class="pk-btn-global"
+                        <button class="btn btn-primary"
                             data-bs-toggle="offcanvas"
                             data-bs-target="#offcanvas<?= ucfirst($btn['module']) ?>"
-                            onclick="pkOpenCreateMode('<?= esc($btn['module']) ?>')">
-                            <i class="ti ti-plus"></i>
-                            + <?= esc($btn['label']) ?>
+                            onclick="pkOpenCreateMode()">
+                            <i class="ti ti-plus"></i> <?= esc($btn['label']) ?>
                         </button>
                     <?php endif; ?>
 
@@ -66,20 +65,15 @@
     </div>
 
 </div>
-
-<?php
-$btn = pk_module_config('penetapan_konteks', $activeTab);
-?>
-
 <?php if ($btn): ?>
     <?= view('penetapan_konteks/tabs/' . $btn['module'] . '/_offcanvas_form') ?>
-
-    <script>
-        window.pkCrudConfig = {
-            module: "<?= esc($btn['module']) ?>",
-            baseUrl: "<?= base_url($btn['routeBase']) ?>"
-        };
-    </script>
 <?php endif; ?>
+
+<?= $this->endSection() ?>
+<?= $this->section('scripts') ?>
+
+<script src="<?= base_url('assets/js/components/pk-alert.js') ?>"></script>
+<script src="<?= base_url('assets/js/components/pk-ajax.js') ?>"></script>
+<script src="<?= base_url('assets/js/modules/penetapan_konteks/' . $activeTab . '.js') ?>"></script>
 
 <?= $this->endSection() ?>

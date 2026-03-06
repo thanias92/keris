@@ -14,17 +14,27 @@
     <link rel="stylesheet" href="<?= base_url('assets/fonts/tabler-icons.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/fonts/feather.css') ?>">
 
-    <!-- Styles -->
+    <!-- Core Styles -->
     <link rel="stylesheet" href="<?= base_url('assets/css/style-preset.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/custom.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/context-selector.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/select2-custom.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/uikit.css') ?>">
+
+    <!-- OFFCANVAS KONTEKS CUSTOM CSS -->
+    <link rel="stylesheet" href="<?= base_url('assets/css/pk-offcanvas-konteks.css') ?>">
+
+    <!-- SELECT2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body>
+
     <?= $this->include('partials/sidebar') ?>
     <?= $this->include('partials/navbar') ?>
 
@@ -34,9 +44,15 @@
         </div>
     </div>
 
-    <!-- ✅ BOOTSTRAP 5 BUNDLE (WAJIB & SATU-SATUNYA) -->
+    <!-- ================= JS AREA ================= -->
+
+    <!-- Bootstrap Bundle (WAJIB & SATU-SATUNYA) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- jQuery (WAJIB untuk Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Tooltip Init -->
     <script>
         const tooltipTriggerList = [].slice.call(
             document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -57,6 +73,11 @@
     <script>
         feather.replace();
     </script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <?= $this->renderSection('scripts') ?>
 
     <!-- Flash Message -->
     <?php if (session()->getFlashdata('success')): ?>

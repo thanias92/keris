@@ -3,6 +3,7 @@
 namespace App\Controllers\PenetapanKonteks;
 
 use App\Models\SasaranKinerjaModel;
+use App\Models\ProsesBisnisModel;
 
 class SasaranKinerjaController extends BaseContextController
 {
@@ -20,12 +21,21 @@ class SasaranKinerjaController extends BaseContextController
 
         $data = $model->paginate(10);
 
+        $listProses = [];
+
+        if ($activeKonteks) {
+            $listProses = (new ProsesBisnisModel())
+                ->where('id_konteks', $activeKonteks['id_konteks'])
+                ->findAll();
+        }
+
         return view('penetapan_konteks/index', [
             'activeTab'     => 'sasaran_kinerja',
             'data'          => $data,
             'pager'         => $model->pager,
             'activeKonteks' => $activeKonteks,
             'listKonteks'   => $listKonteks,
+            'listProses' => $listProses,
         ]);
     }
 }

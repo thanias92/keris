@@ -11,9 +11,11 @@ class PemangkuController extends BaseContextController
         $model = new PemangkuKepentinganModel();
 
         return view('penetapan_konteks/index', [
-            'activeTab' => 'pemangku',
-            'data'      => $model->paginate(10),
-            'pager'     => $model->pager
+            'activeTab'     => 'pemangku',
+            'data'          => $model->paginate(10),
+            'pager'         => $model->pager,
+            'activeKonteks' => $this->getActiveKonteks(),
+            'listKonteks'   => $this->getListKonteks(),
         ]);
     }
 }

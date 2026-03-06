@@ -16,14 +16,18 @@ class BaseContextController extends BaseController
 
         $data = $model
             ->select('
-            konteks.*,
-            konteks.pengelola_risiko,
-            konteks.kegiatan,
-            satuan_kerja.nama_satuan_kerja,
-            sasaran_strategis.uraian_sasaran
-        ')
+                konteks.*,
+                kegiatan.nama_kegiatan,
+                satuan_kerja.nama_satuan_kerja,
+                sasaran_strategis.uraian_sasaran,
+                p.nama as nama_pemilik,
+                g.nama as nama_pengelola
+            ')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan')
             ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
+            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
+            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
             ->where('konteks.id_konteks', $id)
             ->first();
 
@@ -41,13 +45,17 @@ class BaseContextController extends BaseController
             ->select('
                 konteks.id_konteks,
                 konteks.tahun,
-                konteks.kegiatan,
-                konteks.pengelola_risiko,
+                kegiatan.nama_kegiatan,
                 satuan_kerja.nama_satuan_kerja,
-                sasaran_strategis.uraian_sasaran
+                sasaran_strategis.uraian_sasaran,
+                p.nama as nama_pemilik,
+                g.nama as nama_pengelola
             ')
             ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan')
+            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
+            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
             ->orderBy('konteks.created_at', 'DESC')
             ->findAll();
     }
