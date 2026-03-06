@@ -1,743 +1,1499 @@
-<!--
-
-=========================================================
-* Volt Free - Bootstrap 5 Dashboard
-=========================================================
-
-* Product Page: https://themesberg.com/product/admin-dashboard/volt-bootstrap-5-dashboard
-* Copyright 2021 Themesberg (https://www.themesberg.com)
-* License (https://themesberg.com/licensing)
-
-* Designed and coded by https://themesberg.com
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. Please contact us to request a removal.
-
--->
 <!doctype html>
 <html lang="en">
-  <head>
-    <style>
-      /* Keris Raja PROTOTYPE STYLE */
-      .Keris Raja-card {
-        border-radius: 18px;
-        padding: 20px;
-      }
 
-      .bg-soft-green {
-        background: #dff5e5;
-      }
-      .bg-soft-peach {
-        background: #fde7d9;
-      }
-      .bg-soft-yellow {
-        background: #fff1c9;
-      }
+<head>
+  <style>
+    .bg-soft-green {
+      background: #dff5e5;
+    }
 
-      .Keris Raja-title {
-        font-weight: 600;
-        font-size: 0.95rem;
-      }
+    .bg-soft-peach {
+      background: #fde7d9;
+    }
 
-      .Keris Raja-value {
-        font-size: 2rem;
-        font-weight: 700;
-      }
+    .bg-soft-yellow {
+      background: #fff1c9;
+    }
 
-      .card-soft {
-        border-radius: 18px;
-      }
-    </style>
+    .card-soft {
+      border-radius: 18px;
+    }
 
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <!-- Primary Meta Tags -->
-    <title>Dashboard Keris Raja</title>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="title" content="Volt - Free Bootstrap 5 Dashboard" />
-    <meta name="author" content="Themesberg" />
-    <meta
-      name="description"
-      content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS."
-    />
-    <meta
-      name="keywords"
-      content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, themesberg, themesberg dashboard, themesberg admin dashboard"
-    />
-    <link
-      rel="canonical"
-      href="https://themesberg.com/product/admin-dashboard/volt-premium-bootstrap-5-dashboard"
-    />
+    .tab-wrapper .tab-btn {
+      pointer-events: auto !important;
+      opacity: 1 !important;
+      cursor: pointer !important;
+    }
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://demo.themesberg.com/volt-pro" />
-    <meta property="og:title" content="Volt - Free Bootstrap 5 Dashboard" />
-    <meta
-      property="og:description"
-      content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS."
-    />
-    <meta
-      property="og:image"
-      content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg"
-    />
+    /* ===== INFO BAR ===== */
+    .info-bar {
+      background: #f8fdf9;
+      border: 1px solid #d1fae5;
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: center;
+      font-size: 0.82rem;
+    }
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta
-      property="twitter:url"
-      content="https://demo.themesberg.com/volt-pro"
-    />
-    <meta
-      property="twitter:title"
-      content="Volt - Free Bootstrap 5 Dashboard"
-    />
-    <meta
-      property="twitter:description"
-      content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS."
-    />
-    <meta
-      property="twitter:image"
-      content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg"
-    />
+    .info-bar .info-item {
+      display: flex;
+      flex-direction: column;
+    }
 
-    <!-- Favicon -->
-    <link
-      rel="apple-touch-icon"
-      sizes="120x120"
-      href="../../assets/img/favicon/apple-touch-icon.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="../../assets/img/favicon/favicon-32x32.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="../../assets/img/favicon/favicon-16x16.png"
-    />
-    <link rel="manifest" href="../../assets/img/favicon/site.webmanifest" />
-    <link
-      rel="mask-icon"
-      href="../../assets/img/favicon/safari-pinned-tab.svg"
-      color="#ffffff"
-    />
-    <meta name="msapplication-TileColor" content="#ffffff" />
-    <meta name="theme-color" content="#ffffff" />
+    .info-bar .info-label {
+      color: #6b7280;
+      font-size: 0.72rem;
+      font-weight: 500;
+    }
 
-    <!-- Sweet Alert -->
-    <link
-      type="text/css"
-      href="../../vendor/sweetalert2/dist/sweetalert2.min.css"
-      rel="stylesheet"
-    />
+    .info-bar .info-val {
+      font-weight: 700;
+      color: #1a3c1a;
+      font-size: 0.88rem;
+    }
 
-    <!-- Notyf -->
-    <link
-      type="text/css"
-      href="../../vendor/notyf/notyf.min.css"
-      rel="stylesheet"
-    />
+    /* ===== SUMMARY CARDS ===== */
+    .pm-summary .pm-card {
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-    <!-- Volt CSS -->
-    <link type="text/css" href="../../css/volt.css" rel="stylesheet" />
+    .pm-card .pm-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
 
-    <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
-  </head>
+    .pm-card .pm-val {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1;
+    }
 
-  <body>
-    <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
+    .pm-card .pm-lbl {
+      font-size: 0.7rem;
+      color: #6b7280;
+      margin-top: 2px;
+    }
 
-    <nav class="navbar navbar-dark navbar-theme-primary px-4 col-12 d-lg-none">
-      <a class="navbar-brand me-lg-5" href="../../index.html">
-        <img
-          class="navbar-brand-dark"
-          src="../../assets/img/brand/light.svg"
-          alt="Volt logo"
-        />
-        <img
-          class="navbar-brand-light"
-          src="../../assets/img/brand/dark.svg"
-          alt="Volt logo"
-        />
-      </a>
-      <div class="d-flex align-items-center">
-        <button
-          class="navbar-toggler d-lg-none collapsed"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#sidebarMenu"
-          aria-controls="sidebarMenu"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+    /* ===== TABLE ===== */
+    .tbl-pm thead th {
+      background: #1a3c1a !important;
+      color: #ffffff !important;
+      font-size: 0.78rem;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .tbl-pm tbody td {
+      font-size: 0.79rem;
+      vertical-align: middle;
+    }
+
+    .tbl-pm .td-no {
+      text-align: center;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+
+    .tbl-pm .td-ctr {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    /* ===== TRUNCATE ===== */
+    .cell-truncate {
+      max-width: 160px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.78rem;
+      display: block;
+    }
+
+    .cell-truncate-sm {
+      max-width: 120px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.78rem;
+      display: block;
+    }
+
+    /* ===== DETAIL BUTTON ===== */
+    .btn-detail {
+      background: none;
+      border: 1px solid #6366f1;
+      color: #6366f1;
+      border-radius: 5px;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .btn-detail:hover {
+      background: #6366f1;
+      color: #fff;
+    }
+
+    /* ===== MODAL ===== */
+    #modalDetail .modal-header {
+      background: #1a3c1a;
+      color: #fff;
+    }
+
+    #modalDetail .modal-header .btn-close {
+      filter: invert(1);
+    }
+
+    #modalDetail .modal-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    #modalDetail .detail-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    #modalDetail .detail-value {
+      font-size: 0.85rem;
+      color: #111827;
+      line-height: 1.6;
+    }
+
+    #modalDetail hr {
+      margin: 10px 0;
+      border-color: #e5e7eb;
+    }
+
+    /* ===== BADGES ===== */
+    .badge-terealisasi {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
+      border-radius: 6px;
+      padding: 3px 9px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .badge-belum {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+      border-radius: 6px;
+      padding: 3px 9px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .badge-proses {
+      background: #fef9c3;
+      color: #854d0e;
+      border: 1px solid #fde047;
+      border-radius: 6px;
+      padding: 3px 9px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .badge-tw-done {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 1rem;
+      font-weight: 700;
+      border: 1.5px solid #86efac;
+    }
+
+    .badge-tw-empty {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      color: #9ca3af;
+      font-size: 0.75rem;
+      border: 1.5px solid #e5e7eb;
+    }
+
+    .bukti-link {
+      display: inline-block;
+      font-size: 0.72rem;
+      color: #2563eb;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .bukti-link:hover {
+      text-decoration: underline;
+    }
+
+    .sr-badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .sr-sangat-tinggi {
+      background: #dc2626;
+    }
+
+    .sr-tinggi {
+      background: #ea580c;
+    }
+
+    .sr-sedang {
+      background: #ca8a04;
+    }
+
+    .sr-rendah {
+      background: #16a34a;
+    }
+
+    .sr-sangat-rendah {
+      background: #2563eb;
+    }
+
+    /* ===== TAB ===== */
+    .tab-pm-wrapper {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab-pm-btn {
+      padding: 7px 18px;
+      border-radius: 8px;
+      border: 1.5px solid #d1d5db;
+      background: #fff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer;
+      transition: all 0.15s;
+      pointer-events: auto !important;
+    }
+
+    .tab-pm-btn:hover {
+      border-color: #1a3c1a;
+      color: #1a3c1a;
+    }
+
+    .tab-pm-btn.active {
+      background: #1a3c1a;
+      color: #fff;
+      border-color: #1a3c1a;
+    }
+
+    .pm-search {
+      max-width: 380px;
+    }
+
+    .ttd-section {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 16px;
+      font-size: 0.82rem;
+    }
+  </style>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Dashboard Keris Raja</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <link rel="apple-touch-icon" sizes="120x120" href="../../assets/img/favicon/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/img/favicon/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/img/favicon/favicon-16x16.png" />
+  <link rel="manifest" href="../../assets/img/favicon/site.webmanifest" />
+  <link type="text/css" href="../../vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" />
+  <link type="text/css" href="../../vendor/notyf/notyf.min.css" rel="stylesheet" />
+  <link type="text/css" href="../../css/volt.css" rel="stylesheet" />
+</head>
+
+<body>
+  <!-- ===== MODAL DETAIL ===== -->
+  <div class="modal fade" id="modalDetail" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalDetailTitle">
+            Detail Pemantauan RTP
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalDetailBody"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+            Tutup
+          </button>
+        </div>
       </div>
-    </nav>
+    </div>
+  </div>
 
-    <nav
-      id="sidebarMenu"
-      class="sidebar d-lg-block bg-green-800 text-white collapse"
-      data-simplebar
-    >
-      <div class="sidebar-inner px-4 pt-3">
-        <div
-          class="user-card d-flex flex-column align-items-start pb-4 border-bottom border-green-700"
-        >
-          <a href="../../index.html" class="d-flex align-items-center mb-3">
-            <img
-              src="../../assets/img/brand/light.svg"
-              height="35"
-              class="me-2"
-              alt="Keris Raja Logo"
-            />
-            <span class="mt-1 sidebar-text fw-bolder fs-4">Keris Raja</span>
-          </a>
-          <hr class="w-100 my-2 opacity-25" />
-          <div class="d-flex align-items-center mt-2">
-            <img
-              src="../../assets/img/logo-bps.svg"
-              height="30"
-              class="me-2"
-              alt="BPS Logo"
-            />
-            <div class="sidebar-text">
-              <p
-                class="mb-0 fw-bold"
-                style="font-size: 0.75rem; line-height: 1.2"
-              >
-                Badan Pusat Statistik
-              </p>
-              <p
-                class="mb-0 text-success"
-                style="font-size: 0.7rem; font-weight: 600"
-              >
-                Provinsi Riau
-              </p>
-            </div>
+  <nav class="navbar navbar-dark navbar-theme-primary px-4 col-12 d-lg-none">
+    <a class="navbar-brand me-lg-5" href="../../index.html">
+      <img class="navbar-brand-dark" src="../../assets/img/brand/light.svg" alt="Volt logo" />
+      <img class="navbar-brand-light" src="../../assets/img/brand/dark.svg" alt="Volt logo" />
+    </a>
+    <div class="d-flex align-items-center">
+      <button class="navbar-toggler d-lg-none collapsed" type="button" data-bs-toggle="collapse"
+        data-bs-target="#sidebarMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </nav>
+
+  <nav id="sidebarMenu" class="sidebar d-lg-block bg-green-800 text-white collapse" data-simplebar>
+    <div class="sidebar-inner px-4 pt-3">
+      <div class="user-card d-flex flex-column align-items-start pb-4 border-bottom border-green-700">
+        <a href="../../index.html" class="d-flex align-items-center mb-3">
+          <img src="../../assets/img/brand/light.svg" height="35" class="me-2" alt="Keris Raja Logo" />
+          <span class="mt-1 sidebar-text fw-bolder fs-4">Keris Raja</span>
+        </a>
+        <hr class="w-100 my-2 opacity-25" />
+        <div class="d-flex align-items-center mt-2">
+          <img src="../../assets/img/logo-bps.svg" height="30" class="me-2" alt="BPS Logo" />
+          <div class="sidebar-text">
+            <p class="mb-0 fw-bold" style="font-size: 0.75rem; line-height: 1.2">
+              Badan Pusat Statistik
+            </p>
+            <p class="mb-0 text-success" style="font-size: 0.7rem; font-weight: 600">
+              Provinsi Riau
+            </p>
           </div>
         </div>
-
-        <ul class="nav flex-column pt-3 pt-md-0">
-          <li class="nav-item">
-            <a href="../../pages/dashboard/dashboard.html" class="nav-link">
-              <span class="sidebar-icon">
-                <svg
-                  class="icon icon-xs me-2"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-                  <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-                </svg>
-              </span>
-              <span class="sidebar-text">Dashboard</span>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a href="../../pages/bank-risiko/bank-risiko.html" class="nav-link">
-              <span class="sidebar-icon">
-                <svg
-                  class="icon icon-xs me-2"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
-                  <path
-                    fill-rule="evenodd"
-                    d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </span>
-              <span class="sidebar-text">Bank Risiko</span>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <span
-              class="nav-link d-flex justify-content-between align-items-center"
-              data-bs-toggle="collapse"
-              data-bs-target="#submenu-manajemen-risiko"
-              aria-expanded="true"
-            >
-              <span>
-                <span class="sidebar-icon">
-                  <svg
-                    class="icon icon-xs me-2"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                </span>
-                <span class="sidebar-text">Manajemen Risiko</span>
-              </span>
-              <span class="link-arrow">
-                <svg
-                  class="icon icon-sm"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </span>
-            </span>
-            <div
-              class="multi-level collapse show"
-              role="list"
-              id="submenu-manajemen-risiko"
-            >
-              <ul class="flex-column nav">
-                <li class="nav-item">
-                  <a
-                    class="nav-link"
-                    href="../../pages/manajemen-risiko/penetapan-konteks.html"
-                    ><span>Penetapan Konteks</span></a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a
-                    class="nav-link"
-                    href="../../pages/manajemen-risiko/identifikasi-risiko.html"
-                    ><span>Identifikasi Risiko</span></a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a
-                    class="nav-link"
-                    href="../../pages/manajemen-risiko/analisis-risiko.html"
-                    ><span>Analisis Risiko</span></a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a
-                    class="nav-link"
-                    href="../../pages/manajemen-risiko/evaluasi-risiko.html"
-                    ><span>Evaluasi Risiko</span></a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a
-                    class="nav-link"
-                    href="../../pages/manajemen-risiko/rencana-penanganan.html"
-                    ><span>Rencana Penanganan</span></a
-                  >
-                </li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="nav-item active">
-            <a
-              href="../../pages/pemantauan-risiko/pemantauan-risiko.html"
-              class="nav-link"
-            >
-              <span class="sidebar-icon">
-                <svg
-                  class="icon icon-xs me-2"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
-                  <path
-                    fill-rule="evenodd"
-                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </span>
-              <span class="sidebar-text">Pemantauan Risiko</span>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a
-              href="../../pages/pelaporan-risiko/pelaporan-risiko.html"
-              class="nav-link"
-            >
-              <span class="sidebar-icon">
-                <svg
-                  class="icon icon-xs me-2"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 100-2h4a1 1 0 100 2H8zm0 4a1 1 0 100-2h4a1 1 0 100 2H8z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </span>
-              <span class="sidebar-text">Pelaporan Risiko</span>
-            </a>
-          </li>
-
-          <li
-            role="separator"
-            class="dropdown-divider mt-4 mb-3 border-green-700"
-          ></li>
-
-          <li class="nav-item">
-            <a href="../../pages/settings.html" class="nav-link">
-              <span class="sidebar-icon">
-                <svg
-                  class="icon icon-xs me-2"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </span>
-              <span class="sidebar-text">Settings</span>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a
-              href="../../pages/examples/sign-in.html"
-              class="nav-link d-flex align-items-center"
-            >
-              <span class="sidebar-icon">
-                <svg
-                  class="icon icon-xs me-2 text-danger"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  ></path>
-                </svg>
-              </span>
-              <span class="sidebar-text">Logout</span>
-            </a>
-          </li>
-        </ul>
       </div>
-    </nav>
-
-    <main class="content">
-      <nav
-        class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0"
-      >
-        <div class="container-fluid px-0">
-          <div
-            class="d-flex justify-content-between w-100"
-            id="navbarSupportedContent"
-          >
-            <div class="d-flex align-items-center">
-              <button
-                id="sidebar-toggle"
-                class="sidebar-toggle me-3 btn btn-icon-only btn-lg btn-white d-none d-lg-inline-block shadow-sm text-green-800"
-              >
-                <svg
-                  class="icon icon-xs"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </button>
-            </div>
-
-            <ul class="navbar-nav align-items-center">
-              <li class="nav-item me-2 d-none d-md-block">
-                <form class="navbar-search form-inline" id="navbar-search-main">
-                  <div class="input-group input-group-merge search-bar">
-                    <span class="input-group-text" id="topbar-addon">
-                      <svg
-                        class="icon icon-xs"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                          clip-rule="evenodd"
-                        ></path>
-                      </svg>
-                    </span>
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Cari"
-                      aria-label="Search"
-                    />
-                  </div>
-                </form>
+      <ul class="nav flex-column pt-3 pt-md-0">
+        <li class="nav-item">
+          <a href="../../pages/dashboard/dashboard.html" class="nav-link"><span class="sidebar-icon"><svg
+                class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+              </svg></span><span class="sidebar-text">Dashboard</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="../../pages/bank-risiko/bank-risiko.html" class="nav-link"><span class="sidebar-icon"><svg
+                class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+                <path fill-rule="evenodd"
+                  d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                  clip-rule="evenodd"></path>
+              </svg></span><span class="sidebar-text">Bank Risiko</span></a>
+        </li>
+        <li class="nav-item">
+          <span class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+            data-bs-target="#submenu-manajemen-risiko" aria-expanded="false">
+            <span><span class="sidebar-icon"><svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                    clip-rule="evenodd"></path>
+                </svg></span><span class="sidebar-text">Manajemen Risiko</span></span>
+            <span class="link-arrow"><svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg></span>
+          </span>
+          <div class="multi-level show" role="list" id="submenu-manajemen-risiko">
+            <ul class="flex-column nav">
+              <li class="nav-item">
+                <a class="nav-link" href="../../pages/manajemen-risiko/penetapan-konteks.html"><span>Penetapan
+                    Konteks</span></a>
               </li>
-
-              <li class="nav-item dropdown me-2">
-                <a
-                  class="nav-link text-dark notification-bell unread dropdown-toggle"
-                  data-unread-notifications="true"
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <svg
-                    class="icon icon-sm text-green-800"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
-                    ></path>
-                  </svg>
-                </a>
+              <li class="nav-item">
+                <a class="nav-link" href="../../pages/manajemen-risiko/identifikasi-risiko.html"><span>Identifikasi
+                    Risiko</span></a>
               </li>
-
-              <li class="nav-item dropdown ms-lg-3">
-                <a
-                  class="nav-link dropdown-toggle pt-1 px-0"
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <div class="media d-flex align-items-center">
-                    <div
-                      class="media-body ms-2 text-dark align-items-center d-none d-lg-block me-2 text-end"
-                    >
-                      <span
-                        class="mb-0 font-small fw-bold text-green-900 d-block"
-                        >Ahmad Fauzi</span
-                      >
-                      <small class="text-muted">Administrator</small>
-                    </div>
-                    <img
-                      class="avatar rounded-circle border-2 border-green-500"
-                      alt="Image placeholder"
-                      src="../../assets/img/team/profile-picture-3.jpg"
-                    />
-                  </div>
-                </a>
-                <div
-                  class="dropdown-menu dashboard-dropdown dropdown-menu-end mt-2 py-1"
-                >
-                  <a class="dropdown-item d-flex align-items-center" href="#">
-                    <svg
-                      class="dropdown-icon text-gray-400 me-2"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
-                        clip-rule="evenodd"
-                      ></path>
-                    </svg>
-                    Profil Saya
-                  </a>
-                  <div role="separator" class="dropdown-divider my-1"></div>
-                  <a
-                    class="dropdown-item d-flex align-items-center"
-                    href="../../pages/examples/sign-in.html"
-                  >
-                    <svg
-                      class="dropdown-icon text-danger me-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                      ></path>
-                    </svg>
-                    Logout
-                  </a>
-                </div>
+              <li class="nav-item">
+                <a class="nav-link" href="../../pages/manajemen-risiko/analisis-risiko.html"><span>Analisis
+                    Risiko</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../../pages/manajemen-risiko/evaluasi-risiko.html"><span>Evaluasi
+                    Risiko</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../../pages/manajemen-risiko/rencana-penanganan.html"><span>Rencana
+                    Penanganan</span></a>
               </li>
             </ul>
           </div>
-        </div>
-      </nav>
+        </li>
+        <li class="nav-item active">
+          <a href="../../pages/pemantauan-risiko/pemantauan-risiko.html" class="nav-link"><span
+              class="sidebar-icon"><svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                <path fill-rule="evenodd"
+                  d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                  clip-rule="evenodd"></path>
+              </svg></span><span class="sidebar-text">Pemantauan Risiko</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="../../pages/pelaporan-risiko/pelaporan-risiko.html" class="nav-link"><span class="sidebar-icon"><svg
+                class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                  d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 100-2h4a1 1 0 100 2H8zm0 4a1 1 0 100-2h4a1 1 0 100 2H8z"
+                  clip-rule="evenodd"></path>
+              </svg></span><span class="sidebar-text">Pelaporan Risiko</span></a>
+        </li>
+        <li role="separator" class="dropdown-divider mt-4 mb-3 border-green-700"></li>
+        <li class="nav-item">
+          <a href="../../pages/settings.html" class="nav-link"><span class="sidebar-text">Settings</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="../../pages/examples/sign-in.html" class="nav-link d-flex align-items-center"><span
+              class="sidebar-text">Logout</span></a>
+        </li>
+      </ul>
+    </div>
+  </nav>
 
-      <div class="card pemantauan-card">
-        <div class="card-body">
-          <div class="d-flex justify-content-between mb-3">
-            <div>
-              <strong>Penanggung Jawab:</strong> ____________
-              <span class="text-muted">[otomatis]</span>
-            </div>
+  <main class="content">
+    <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
+      <div class="container-fluid px-0">
+        <div class="d-flex justify-content-between w-100" id="navbarSupportedContent">
+          <div class="d-flex align-items-center">
+            <button id="sidebar-toggle"
+              class="sidebar-toggle me-3 btn btn-icon-only btn-lg btn-white d-none d-lg-inline-block shadow-sm text-green-800">
+              <svg class="icon icon-xs" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                  d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                  clip-rule="evenodd"></path>
+              </svg>
+            </button>
           </div>
+          <ul class="navbar-nav align-items-center">
+            <li class="nav-item me-2 d-none d-md-block">
+              <form class="navbar-search form-inline">
+                <div class="input-group input-group-merge search-bar">
+                  <span class="input-group-text"><svg class="icon icon-xs" xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clip-rule="evenodd"></path>
+                    </svg></span><input type="text" class="form-control" placeholder="Cari" />
+                </div>
+              </form>
+            </li>
+            <li class="nav-item dropdown me-2">
+              <a class="nav-link text-dark notification-bell unread dropdown-toggle" href="#" role="button"
+                data-bs-toggle="dropdown"><svg class="icon icon-sm text-green-800" fill="currentColor"
+                  viewBox="0 0 20 20">
+                  <path
+                    d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+                  </path>
+                </svg></a>
+            </li>
+            <li class="nav-item dropdown ms-lg-3">
+              <a class="nav-link dropdown-toggle pt-1 px-0" href="#" role="button" data-bs-toggle="dropdown">
+                <div class="media d-flex align-items-center">
+                  <div class="media-body ms-2 text-dark d-none d-lg-block me-2 text-end">
+                    <span class="mb-0 font-small fw-bold text-green-900 d-block">Ahmad Fauzi</span><small
+                      class="text-muted">Administrator</small>
+                  </div>
+                  <img class="avatar rounded-circle border-2 border-green-500" alt="Image placeholder"
+                    src="../../assets/img/team/profile-picture-3.jpg" />
+                </div>
+              </a>
+              <div class="dropdown-menu dashboard-dropdown dropdown-menu-end mt-2 py-1">
+                <a class="dropdown-item d-flex align-items-center" href="#">Profil Saya</a>
+                <div role="separator" class="dropdown-divider my-1"></div>
+                <a class="dropdown-item d-flex align-items-center" href="../../pages/examples/sign-in.html">Logout</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-          <div class="table-responsive">
-            <table
-              class="table table-bordered pemantauan-table text-center align-middle"
-            >
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Pernyataan Risiko</th>
-                  <th>RTP</th>
-                  <th>Target Output</th>
-                  <th>Waktu</th>
-                  <th>Realisasi Output</th>
-                  <th>Waktu</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1.</td>
-                  <td>XXXXXXXXXXXX</td>
-                  <td>XXXXXXXX</td>
-                  <td>XXXXXXXX</td>
-                  <td>1/1/2025</td>
-                  <td class="text-danger fw-bold">XXXXXXXX</td>
-                  <td class="text-danger">1/1/2025</td>
-                </tr>
-                <tr>
-                  <td>2.</td>
-                  <td>XXXXXXXXXXXX</td>
-                  <td>XXXXXXXX</td>
-                  <td>XXXXXXXX</td>
-                  <td>1/1/2025</td>
-                  <td class="text-danger fw-bold">XXXXXXXX</td>
-                  <td class="text-danger">1/1/2025</td>
-                </tr>
-                <tr>
-                  <td>3.</td>
-                  <td>XXXXXXXXXXXX</td>
-                  <td>XXXXXXXX</td>
-                  <td>XXXXXXXX</td>
-                  <td>1/1/2025</td>
-                  <td class="text-danger fw-bold">XXXXXXXX</td>
-                  <td class="text-danger">1/1/2025</td>
-                </tr>
-                <tr>
-                  <td>4.</td>
-                  <td>XXXXXXXXXXXX</td>
-                  <td>XXXXXXXX</td>
-                  <td>XXXXXXXX</td>
-                  <td>1/1/2025</td>
-                  <td class="text-danger fw-bold">XXXXXXXX</td>
-                  <td class="text-danger">1/1/2025</td>
-                </tr>
-                <tr>
-                  <td>5.</td>
-                  <td>XXXXXXXXXXXX</td>
-                  <td>XXXXXXXX</td>
-                  <td>XXXXXXXX</td>
-                  <td>1/1/2025</td>
-                  <td class="text-danger fw-bold">XXXXXXXX</td>
-                  <td class="text-danger">1/1/2025</td>
-                </tr>
-              </tbody>
-            </table>
+    <!-- ===== KONTEN UTAMA ===== -->
+    <div class="filter-wrapper army-theme">
+      <div class="page-title mb-2">
+        <h6 class="mb-0">Pemantauan Risiko</h6>
+      </div>
+    </div>
+
+    <!-- INFO BAR -->
+    <div class="info-bar">
+      <div class="info-item">
+        <span class="info-label">Unit Organisasi</span><span class="info-val">BPS Provinsi Riau</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Ruang Lingkup</span><span class="info-val">SUPAS 2025</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Periode</span><span class="info-val">2025 (Semester II)</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Penanggung Jawab</span><span class="info-val">Ketua Tim Statistik Sosial</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Pemilik Risiko</span><span class="info-val">Kepala BPS Provinsi Riau</span>
+      </div>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="row g-3 mb-3 pm-summary">
+      <div class="col-6 col-md-3">
+        <div class="pm-card" style="background: #f0fdf4; border: 1px solid #bbf7d0">
+          <div class="pm-icon" style="background: #dcfce7">📋</div>
+          <div>
+            <div class="pm-val" style="color: #15803d">6</div>
+            <div class="pm-lbl">Total RTP Dipantau</div>
           </div>
         </div>
       </div>
+      <div class="col-6 col-md-3">
+        <div class="pm-card" style="background: #f0fdf4; border: 1px solid #86efac">
+          <div class="pm-icon" style="background: #dcfce7">✅</div>
+          <div>
+            <div class="pm-val" style="color: #15803d">5</div>
+            <div class="pm-lbl">Terealisasi (TW III)</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="pm-card" style="background: #fffbeb; border: 1px solid #fde68a">
+          <div class="pm-icon" style="background: #fef3c7">🔄</div>
+          <div>
+            <div class="pm-val" style="color: #b45309">1</div>
+            <div class="pm-lbl">Dalam Proses (TW IV)</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="pm-card" style="background: #eff6ff; border: 1px solid #bfdbfe">
+          <div class="pm-icon" style="background: #dbeafe">📉</div>
+          <div>
+            <div class="pm-val" style="color: #1d4ed8">SR: 3–7</div>
+            <div class="pm-lbl">Rentang Risiko Residu</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <footer class="bg-white rounded shadow p-5 mb-4 mt-4">
-        <p class="mb-0 text-center">
-          © 2025 <b>BPS Provinsi Riau</b> - Sistem Informasi Manajemen Risiko
-          (Keris Raja)
+    <!-- TAB -->
+    <div class="tab-pm-wrapper">
+      <button class="tab-pm-btn active" data-target="tab-rtp-monitor">
+        Pemantauan RTP
+      </button>
+      <button class="tab-pm-btn" data-target="tab-residu">
+        Risiko Residu
+      </button>
+      <button class="tab-pm-btn" data-target="tab-rekapitulasi">
+        Rekapitulasi TW
+      </button>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <input type="text" id="pmSearch" class="form-control pm-search" placeholder="Cari risiko atau RTP..." />
+      <button class="btn ms-2" style="background: #1a3c1a; color: #fff" id="btnPmExport">
+        ⬇ Ekspor
+      </button>
+    </div>
+
+    <!-- ===== TAB 1: PEMANTAUAN RTP ===== -->
+    <div id="tab-rtp-monitor" class="pm-tab-content">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover tbl-pm" id="tbl-monitor">
+          <thead>
+            <tr>
+              <th style="width: 50px; text-align: center">Prioritas</th>
+              <th style="width: 150px">Pernyataan Risiko</th>
+              <th style="width: 150px">RTP</th>
+              <th style="width: 130px">Target Output</th>
+              <th style="width: 90px; text-align: center">Waktu</th>
+              <th style="width: 100px; text-align: center">PJ</th>
+              <th style="width: 140px">Realisasi / Bukti</th>
+              <th style="width: 90px; text-align: center">Status</th>
+              <th style="width: 65px; text-align: center">TW III</th>
+              <th style="width: 65px; text-align: center">TW IV</th>
+              <th style="width: 60px; text-align: center">Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Prioritas 1 -->
+            <tr
+              data-detail='{"prioritas":"1","risiko":"Target penyelesaian pemutakhiran rumah tangga sampel tidak mencapai 100 persen","rtp":"1. Identifikasi potensi kendala pada seluruh SLS terpilih\n2. Monitoring progres pemutakhiran secara berkala\n3. Evaluasi berkala dan penyesuaian strategi","target_output":"1. Identifikasi DS SLS potensi kendala & force majeur\n2. Laporan/notula evaluasi berkala\n3. Dashboard monitoring progres SUPAS 2025","waktu":"31 Juli 2025","pj":"Ketua Tim Statistik Sosial","realisasi":"[15 Jun 2025 – WhatsApp] Tim SUPAS 2025 BPS KabKota se-Riau: identifikasi SLS force majeur (muatan prelist kecil <30, konflik daerah). Dashboard monitoring progres aktif.","bukti":"","status":"Terealisasi","tw3":"✓","tw4":"–"}'>
+              <td class="td-no">
+                <span style="
+                      display: inline-block;
+                      min-width: 28px;
+                      padding: 3px 8px;
+                      border-radius: 20px;
+                      font-weight: 700;
+                      font-size: 0.78rem;
+                      text-align: center;
+                      background: #374151;
+                      color: #fff;
+                    ">1</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Target penyelesaian pemutakhiran rumah tangga sampel tidak
+                  mencapai 100 persen</span>
+              </td>
+              <td>
+                <span class="cell-truncate">1. Identifikasi kendala SLS; 2. Monitoring berkala; 3.
+                  Evaluasi strategi</span>
+              </td>
+              <td>
+                <span class="cell-truncate">DS SLS force majeur, laporan evaluasi, dashboard
+                  monitoring</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                31 Jul 2025
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem">
+                Ketua Tim Statistik Sosial
+              </td>
+              <td>
+                <span class="cell-truncate">[15 Jun 2025] Identifikasi SLS force majeur, dashboard
+                  aktif</span>
+              </td>
+              <td class="td-ctr">
+                <span class="badge-terealisasi">✓ Terealisasi</span>
+              </td>
+              <td class="td-ctr"><span class="badge-tw-done">✓</span></td>
+              <td class="td-ctr"><span class="badge-tw-empty">–</span></td>
+              <td class="td-ctr">
+                <button class="btn-detail" onclick="showDetail(this)">
+                  🔍 Lihat
+                </button>
+              </td>
+            </tr>
+            <!-- Prioritas 2 -->
+            <tr
+              data-detail='{"prioritas":"2","risiko":"Target penyelesaian pencacahan rumah tangga sampel tidak mencapai 100 persen","rtp":"1. Feedback bug aplikasi pencacahan ke BPS RI\n2. Kerjasama tim menyelesaikan wilayah tugas\n3. Monitoring petugas berkala via aplikasi","target_output":"1. Share rekap permasalahan & solusi Fasih SUPAS 2025\n2. QnA permasalahan Non-Fasih\n3. Dashboard monitoring progres SUPAS 2025","waktu":"31 Juli 2025","pj":"Ketua Tim Statistik Sosial","realisasi":"Link rekap disampaikan ke BPS Kab/Kota via WhatsApp SUPAS2025 pada 12 Jun 2025.","bukti":"https://github.com/Rasyidarfan/RekapSupas","status":"Terealisasi","tw3":"✓","tw4":"–"}'>
+              <td class="td-no">
+                <span style="
+                      display: inline-block;
+                      min-width: 28px;
+                      padding: 3px 8px;
+                      border-radius: 20px;
+                      font-weight: 700;
+                      font-size: 0.78rem;
+                      text-align: center;
+                      background: #374151;
+                      color: #fff;
+                    ">2</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Target penyelesaian pencacahan rumah tangga sampel tidak
+                  mencapai 100 persen</span>
+              </td>
+              <td>
+                <span class="cell-truncate">1. Feedback bug ke BPS RI; 2. Kerjasama tim; 3. Monitoring
+                  via aplikasi</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Rekap permasalahan Fasih SUPAS, QnA, dashboard
+                  monitoring</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                31 Jul 2025
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem">
+                Ketua Tim Statistik Sosial
+              </td>
+              <td>
+                <span class="cell-truncate">[12 Jun 2025] Link rekap via WhatsApp SUPAS2025</span>
+              </td>
+              <td class="td-ctr">
+                <span class="badge-terealisasi">✓ Terealisasi</span>
+              </td>
+              <td class="td-ctr"><span class="badge-tw-done">✓</span></td>
+              <td class="td-ctr"><span class="badge-tw-empty">–</span></td>
+              <td class="td-ctr">
+                <button class="btn-detail" onclick="showDetail(this)">
+                  🔍 Lihat
+                </button>
+              </td>
+            </tr>
+            <!-- Prioritas 3 -->
+            <tr
+              data-detail='{"prioritas":"3","risiko":"Data yang dikirim petugas tidak sampai di server","rtp":"1. Instruksi update aplikasi versi terbaru\n2. Instruksi mencari waktu, tempat & provider terbaik\n3. Meminta petugas mengkondisikan perangkat","target_output":"1. Share rekap permasalahan & solusi Fasih SUPAS 2025\n2. Laporan/notula evaluasi berkala","waktu":"31 Juli 2025","pj":"Ketua Tim Statistik Sosial","realisasi":"Link disampaikan ke BPS Kab/Kota via WhatsApp SUPAS2025 pada 12 Jun 2025.","bukti":"https://github.com/Rasyidarfan/RekapSupas\nhttps://sites.google.com/view/rapatsupas2025riau/home","status":"Terealisasi","tw3":"✓","tw4":"–"}'>
+              <td class="td-no">
+                <span style="
+                      display: inline-block;
+                      min-width: 28px;
+                      padding: 3px 8px;
+                      border-radius: 20px;
+                      font-weight: 700;
+                      font-size: 0.78rem;
+                      text-align: center;
+                      background: #374151;
+                      color: #fff;
+                    ">3</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Data yang dikirim petugas tidak sampai di server</span>
+              </td>
+              <td>
+                <span class="cell-truncate">1. Update aplikasi terbaru; 2. Cari waktu/provider terbaik;
+                  3. Kondisikan perangkat</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Rekap solusi Fasih SUPAS, laporan evaluasi berkala</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                31 Jul 2025
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem">
+                Ketua Tim Statistik Sosial
+              </td>
+              <td>
+                <span class="cell-truncate">[12 Jun 2025] Link Fasih & Rapat SUPAS via WhatsApp</span>
+              </td>
+              <td class="td-ctr">
+                <span class="badge-terealisasi">✓ Terealisasi</span>
+              </td>
+              <td class="td-ctr"><span class="badge-tw-done">✓</span></td>
+              <td class="td-ctr"><span class="badge-tw-empty">–</span></td>
+              <td class="td-ctr">
+                <button class="btn-detail" onclick="showDetail(this)">
+                  🔍 Lihat
+                </button>
+              </td>
+            </tr>
+            <!-- Prioritas 4 -->
+            <tr
+              data-detail='{"prioritas":"4","risiko":"Daftar sampel tidak representatif dengan kondisi lapangan","rtp":"1. Komunikasi dan koordinasi dengan PJK terkait\n2. Menyampaikan urgensi identifikasi daftar sampel","target_output":"1. Dokumen Identifikasi DS SLS\n2. QnA Identifikasi DS SLS","waktu":"23 Juni 2025","pj":"Ketua Tim Statistik Sosial","realisasi":"Spreadsheet Identifikasi DS SLS SUPAS 2025 tersedia dan dibagikan ke BPS Kab/Kota.","bukti":"https://docs.google.com/spreadsheets/d/17SNNZ9atkVHH4033ZLFQvuLQVTfjPaDgpyQVRWYF42I/edit","status":"Terealisasi","tw3":"✓","tw4":"–"}'>
+              <td class="td-no">
+                <span style="
+                      display: inline-block;
+                      min-width: 28px;
+                      padding: 3px 8px;
+                      border-radius: 20px;
+                      font-weight: 700;
+                      font-size: 0.78rem;
+                      text-align: center;
+                      background: #374151;
+                      color: #fff;
+                    ">4</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Daftar sampel tidak representatif dengan kondisi
+                  lapangan</span>
+              </td>
+              <td>
+                <span class="cell-truncate">1. Koordinasi dengan PJK; 2. Sampaikan urgensi identifikasi
+                  daftar sampel</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Dokumen Identifikasi DS SLS, QnA DS SLS</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                23 Jun 2025
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem">
+                Ketua Tim Statistik Sosial
+              </td>
+              <td>
+                <span class="cell-truncate">Spreadsheet Identifikasi DS SLS dibagikan ke BPS
+                  Kab/Kota</span>
+              </td>
+              <td class="td-ctr">
+                <span class="badge-terealisasi">✓ Terealisasi</span>
+              </td>
+              <td class="td-ctr"><span class="badge-tw-done">✓</span></td>
+              <td class="td-ctr"><span class="badge-tw-empty">–</span></td>
+              <td class="td-ctr">
+                <button class="btn-detail" onclick="showDetail(this)">
+                  🔍 Lihat
+                </button>
+              </td>
+            </tr>
+            <!-- Prioritas 5 -->
+            <tr
+              data-detail='{"prioritas":"5","risiko":"Pelatihan yang waktunya terbatas dan skemanya online berisiko terhadap pemahaman materi petugas","rtp":"1. Monitoring pelaksanaan pelatihan SUPAS 2025\n2. Menyediakan bahan ajar pada satu portal\n3. Menyusun jadwal pelatihan optimal","target_output":"1. Data monitoring pelaksanaan pelatihan\n2. Link portal materi bahan ajar\n3. Jadwal pelatihan optimal","waktu":"28 Mei 2025","pj":"Ketua Tim Statistik Sosial","realisasi":"Monitoring pelatihan terlaksana. Portal materi aktif.","bukti":"https://docs.google.com/spreadsheets/d/1rPZQVG-2-FnOaa1JSfmKOSWNHvlaOIELfzDSjDzTu6Y/edit\nhttps://sites.google.com/view/supas2025riau/home","status":"Terealisasi","tw3":"✓","tw4":"–"}'>
+              <td class="td-no">
+                <span style="
+                      display: inline-block;
+                      min-width: 28px;
+                      padding: 3px 8px;
+                      border-radius: 20px;
+                      font-weight: 700;
+                      font-size: 0.78rem;
+                      text-align: center;
+                      background: #374151;
+                      color: #fff;
+                    ">5</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Pelatihan yang waktunya terbatas dan skemanya online
+                  berisiko terhadap pemahaman materi petugas</span>
+              </td>
+              <td>
+                <span class="cell-truncate">1. Monitoring pelatihan; 2. Portal bahan ajar terpusat; 3.
+                  Jadwal optimal</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Data monitoring, link portal bahan ajar, jadwal
+                  pelatihan</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                28 Mei 2025
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem">
+                Ketua Tim Statistik Sosial
+              </td>
+              <td>
+                <span class="cell-truncate">Monitoring terlaksana, portal materi aktif di
+                  sites.google.com</span>
+              </td>
+              <td class="td-ctr">
+                <span class="badge-terealisasi">✓ Terealisasi</span>
+              </td>
+              <td class="td-ctr"><span class="badge-tw-done">✓</span></td>
+              <td class="td-ctr"><span class="badge-tw-empty">–</span></td>
+              <td class="td-ctr">
+                <button class="btn-detail" onclick="showDetail(this)">
+                  🔍 Lihat
+                </button>
+              </td>
+            </tr>
+            <!-- Prioritas 6 -->
+            <tr
+              data-detail='{"prioritas":"6","risiko":"Analisis yang dihasilkan belum sesuai dengan literatur","rtp":"1. Mengumpulkan informasi dan data pendukung\n2. Evaluasi analisis data dan indikator\n3. Koordinasi dengan OPD terkait (Dinkes, BKKBN, DP3AP2KB, Bappeda, PMD Dukcapil, Diskominfotik)","target_output":"Daftar data pendukung dan analisis data SUPAS","waktu":"Desember 2025","pj":"Ketua Tim Statistik Sosial","realisasi":"RTL: Koordinasi dengan OPD terkait: Dinkes, BKKBN, DP3AP2KB, Bappeda, PMD Dukcapil, Diskominfotik. Masih dalam proses pengumpulan data pendukung.","bukti":"","status":"Dalam Proses","tw3":"✓","tw4":"–"}'>
+              <td class="td-no">
+                <span style="
+                      display: inline-block;
+                      min-width: 28px;
+                      padding: 3px 8px;
+                      border-radius: 20px;
+                      font-weight: 700;
+                      font-size: 0.78rem;
+                      text-align: center;
+                      background: #374151;
+                      color: #fff;
+                    ">6</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Analisis yang dihasilkan belum sesuai dengan
+                  literatur</span>
+              </td>
+              <td>
+                <span class="cell-truncate">1. Kumpulkan data pendukung; 2. Evaluasi analisis; 3.
+                  Koordinasi OPD terkait</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Daftar data pendukung dan analisis data SUPAS</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                Des 2025
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem">
+                Ketua Tim Statistik Sosial
+              </td>
+              <td>
+                <span class="cell-truncate">RTL: Koordinasi OPD (Dinkes, BKKBN, dll) masih
+                  berjalan</span>
+              </td>
+              <td class="td-ctr">
+                <span class="badge-proses">⏳ Dalam Proses</span>
+              </td>
+              <td class="td-ctr"><span class="badge-tw-done">✓</span></td>
+              <td class="td-ctr"><span class="badge-tw-empty">–</span></td>
+              <td class="td-ctr">
+                <button class="btn-detail" onclick="showDetail(this)">
+                  🔍 Lihat
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- TTD -->
+      <div class="ttd-section">
+        <div class="row text-center">
+          <div class="col-6">
+            <p class="mb-0 text-muted" style="font-size: 0.78rem">
+              Pekanbaru, 31 Desember 2025
+            </p>
+            <p class="mb-4 fw-semibold" style="font-size: 0.8rem">
+              Pengelola Risiko
+            </p>
+            <p class="mb-0 fw-bold" style="font-size: 0.85rem">
+              Meita Komalasari, S.ST., M.Si.
+            </p>
+            <p class="mb-0 text-muted" style="font-size: 0.75rem">
+              NIP. 197905012000122002
+            </p>
+            <p class="mb-0" style="font-size: 0.75rem">
+              Ketua Tim Statistik Sosial
+            </p>
+          </div>
+          <div class="col-6">
+            <p class="mb-0 text-muted" style="font-size: 0.78rem">
+              Pekanbaru, 31 Desember 2025
+            </p>
+            <p class="mb-4 fw-semibold" style="font-size: 0.8rem">
+              Pemilik Risiko
+            </p>
+            <p class="mb-0 fw-bold" style="font-size: 0.85rem">
+              Asep Riyadi, S.Si., M.M.
+            </p>
+            <p class="mb-0 text-muted" style="font-size: 0.75rem">
+              NIP. 19670118 198901 1 001
+            </p>
+            <p class="mb-0" style="font-size: 0.75rem">
+              Kepala BPS Provinsi Riau
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TAB 2: RISIKO RESIDU ===== -->
+    <div id="tab-residu" class="pm-tab-content d-none">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover tbl-pm" id="tbl-residu">
+          <thead>
+            <tr>
+              <th style="width: 50px; text-align: center">Prioritas</th>
+              <th style="min-width: 220px">Pernyataan Risiko</th>
+              <th style="width: 130px; text-align: center">
+                Risiko Aktual<br /><small style="font-weight: 400">(P × D = SR)</small>
+              </th>
+              <th style="width: 130px; text-align: center">
+                Risiko Residu<br /><small style="font-weight: 400">(P × D = SR)</small>
+              </th>
+              <th style="width: 110px; text-align: center">Penurunan SR</th>
+              <th style="width: 120px; text-align: center">Level Residu</th>
+              <th style="min-width: 140px">Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="td-no">1</td>
+              <td style="font-size: 0.78rem; font-weight: 500">
+                Target penyelesaian pemutakhiran rumah tangga sampel tidak
+                mencapai 100 persen
+              </td>
+              <td class="td-ctr">
+                <div style="font-size: 0.72rem">
+                  P: <b>3</b> × D: <b>5</b>
+                </div>
+                <span class="sr-badge sr-sangat-tinggi">SR: 22</span>
+              </td>
+              <td class="td-ctr">
+                <div style="font-size: 0.72rem">
+                  P: <b>2</b> × D: <b>2</b>
+                </div>
+                <span class="sr-badge sr-rendah">SR: 7</span>
+              </td>
+              <td class="td-ctr">
+                <span style="color: #15803d; font-weight: 700; font-size: 0.85rem">↓ 15</span>
+              </td>
+              <td class="td-ctr">
+                <span class="sr-badge sr-rendah">Rendah</span>
+              </td>
+              <td style="font-size: 0.78rem">
+                Penurunan signifikan setelah identifikasi kendala &amp;
+                supervisi berjenjang
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">2</td>
+              <td style="font-size: 0.78rem; font-weight: 500">
+                Target penyelesaian pencacahan rumah tangga sampel tidak
+                mencapai 100 persen
+              </td>
+              <td class="td-ctr">
+                <div style="font-size: 0.72rem">
+                  P: <b>3</b> × D: <b>5</b>
+                </div>
+                <span class="sr-badge sr-sangat-tinggi">SR: 22</span>
+              </td>
+              <td class="td-ctr">
+                <div style="font-size: 0.72rem">
+                  P: <b>2</b> × D: <b>2</b>
+                </div>
+                <span class="sr-badge sr-rendah">SR: 7</span>
+              </td>
+              <td class="td-ctr">
+                <span style="color: #15803d; font-weight: 700; font-size: 0.85rem">↓ 15</span>
+              </td>
+              <td class="td-ctr">
+                <span class="sr-badge sr-rendah">Rendah</span>
+              </td>
+              <td style="font-size: 0.78rem">
+                Monitoring petugas &amp; koordinasi SLS efektif mengurangi
+                risiko
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">3</td>
+              <td style="font-size: 0.78rem; font-weight: 500">
+                Data yang dikirim petugas tidak sampai di server
+              </td>
+              <td class="td-ctr">
+                <div style="font-size: 0.72rem">
+                  P: <b>3</b> × D: <b>3</b>
+                </div>
+                <span class="sr-badge sr-sedang">SR: 14</span>
+              </td>
+              <td class="td-ctr">
+                <div style="font-size: 0.72rem">
+                  P: <b>2</b> × D: <b>2</b>
+                </div>
+                <span class="sr-badge sr-rendah">SR: 7</span>
+              </td>
+              <td class="td-ctr">
+                <span style="color: #15803d; font-weight: 700; font-size: 0.85rem">↓ 7</span>
+              </td>
+              <td class="td-ctr">
+                <span class="sr-badge sr-rendah">Rendah</span>
+              </td>
+              <td style="font-size: 0.78rem">
+                Penanganan teknis &amp; update aplikasi berhasil menurunkan
+                probabilitas
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">4</td>
+              <td style="font-size: 0.78rem; font-weight: 500">
+                Daftar sampel tidak representatif dengan kondisi lapangan
+              </td>
+              <td class="td-ctr">
+                <div style="font-size: 0.72rem">
+                  P: <b>4</b> × D: <b>2</b>
+                </div>
+                <span class="sr-badge sr-sedang">SR: 12</span>
+              </td>
+              <td class="td-ctr">
+                <div style="font-size: 0.72rem">
+                  P: <b>2</b> × D: <b>2</b>
+                </div>
+                <span class="sr-badge sr-rendah">SR: 7</span>
+              </td>
+              <td class="td-ctr">
+                <span style="color: #15803d; font-weight: 700; font-size: 0.85rem">↓ 5</span>
+              </td>
+              <td class="td-ctr">
+                <span class="sr-badge sr-rendah">Rendah</span>
+              </td>
+              <td style="font-size: 0.78rem">
+                Identifikasi DS SLS dan koordinasi PJK berhasil dilaksanakan
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">5</td>
+              <td style="font-size: 0.78rem; font-weight: 500">
+                Pelatihan yang waktunya terbatas dan skemanya online berisiko
+                terhadap pemahaman materi petugas
+              </td>
+              <td class="td-ctr">
+                <div style="font-size: 0.72rem">
+                  P: <b>4</b> × D: <b>2</b>
+                </div>
+                <span class="sr-badge sr-sedang">SR: 12</span>
+              </td>
+              <td class="td-ctr">
+                <div style="font-size: 0.72rem">
+                  P: <b>1</b> × D: <b>2</b>
+                </div>
+                <span class="sr-badge sr-sangat-rendah">SR: 3</span>
+              </td>
+              <td class="td-ctr">
+                <span style="color: #15803d; font-weight: 700; font-size: 0.85rem">↓ 9</span>
+              </td>
+              <td class="td-ctr">
+                <span class="sr-badge sr-sangat-rendah">Sangat Rendah</span>
+              </td>
+              <td style="font-size: 0.78rem">
+                Portal materi &amp; monitoring pelatihan efektif menekan
+                probabilitas
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">6</td>
+              <td style="font-size: 0.78rem; font-weight: 500">
+                Analisis yang dihasilkan belum sesuai dengan literatur
+              </td>
+              <td class="td-ctr">
+                <div style="font-size: 0.72rem">
+                  P: <b>2</b> × D: <b>3</b>
+                </div>
+                <span class="sr-badge sr-sedang">SR: 11</span>
+              </td>
+              <td class="td-ctr">
+                <div style="font-size: 0.72rem">
+                  P: <b>1</b> × D: <b>2</b>
+                </div>
+                <span class="sr-badge sr-sangat-rendah">SR: 3</span>
+              </td>
+              <td class="td-ctr">
+                <span style="color: #15803d; font-weight: 700; font-size: 0.85rem">↓ 8</span>
+              </td>
+              <td class="td-ctr">
+                <span class="sr-badge sr-sangat-rendah">Sangat Rendah</span>
+              </td>
+              <td style="font-size: 0.78rem">
+                Koordinasi OPD sedang berjalan, target selesai Desember 2025
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== TAB 3: REKAPITULASI TW ===== -->
+    <div id="tab-rekapitulasi" class="pm-tab-content d-none">
+      <p style="font-size: 0.82rem; color: #6b7280; margin-bottom: 12px">
+        Sumber: Laporan Semester II Manajemen Risiko Tahun 2025 — Tim
+        Statistik Sosial (SUPAS)
+      </p>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover tbl-pm" id="tbl-rekap">
+          <thead>
+            <tr>
+              <th style="width: 50px; text-align: center">No</th>
+              <th>Pernyataan Risiko</th>
+              <th style="width: 110px; text-align: center">Waktu Target</th>
+              <th style="width: 130px; text-align: center">
+                Penanggung Jawab
+              </th>
+              <th style="width: 90px; text-align: center">
+                TW III<br /><small style="font-weight: 400">(Jul–Sep)</small>
+              </th>
+              <th style="width: 90px; text-align: center">
+                TW IV<br /><small style="font-weight: 400">(Okt–Des)</small>
+              </th>
+              <th style="width: 110px; text-align: center">Status Akhir</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="td-no">1</td>
+              <td style="font-size: 0.78rem; font-weight: 500">
+                Target penyelesaian pemutakhiran rumah tangga sampel tidak
+                mencapai 100 persen
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem">31 Jul 2025</td>
+              <td class="td-ctr" style="font-size: 0.78rem">
+                Tim Statistik Sosial
+              </td>
+              <td class="td-ctr"><span class="badge-tw-done">✓</span></td>
+              <td class="td-ctr"><span class="badge-tw-empty">–</span></td>
+              <td class="td-ctr">
+                <span class="badge-terealisasi">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">2</td>
+              <td style="font-size: 0.78rem; font-weight: 500">
+                Target penyelesaian pencacahan rumah tangga sampel tidak
+                mencapai 100 persen
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem">31 Jul 2025</td>
+              <td class="td-ctr" style="font-size: 0.78rem">
+                Tim Statistik Sosial
+              </td>
+              <td class="td-ctr"><span class="badge-tw-done">✓</span></td>
+              <td class="td-ctr"><span class="badge-tw-empty">–</span></td>
+              <td class="td-ctr">
+                <span class="badge-terealisasi">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">3</td>
+              <td style="font-size: 0.78rem; font-weight: 500">
+                Data yang dikirim petugas tidak sampai di server
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem">31 Jul 2025</td>
+              <td class="td-ctr" style="font-size: 0.78rem">
+                Tim Statistik Sosial
+              </td>
+              <td class="td-ctr"><span class="badge-tw-done">✓</span></td>
+              <td class="td-ctr"><span class="badge-tw-empty">–</span></td>
+              <td class="td-ctr">
+                <span class="badge-terealisasi">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">4</td>
+              <td style="font-size: 0.78rem; font-weight: 500">
+                Daftar sampel tidak representatif dengan kondisi lapangan
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem">23 Jun 2025</td>
+              <td class="td-ctr" style="font-size: 0.78rem">
+                Tim Statistik Sosial
+              </td>
+              <td class="td-ctr"><span class="badge-tw-done">✓</span></td>
+              <td class="td-ctr"><span class="badge-tw-empty">–</span></td>
+              <td class="td-ctr">
+                <span class="badge-terealisasi">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">5</td>
+              <td style="font-size: 0.78rem; font-weight: 500">
+                Pelatihan yang waktunya terbatas dan skemanya online berisiko
+                terhadap pemahaman materi petugas
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem">28 Mei 2025</td>
+              <td class="td-ctr" style="font-size: 0.78rem">
+                Tim Statistik Sosial
+              </td>
+              <td class="td-ctr"><span class="badge-tw-done">✓</span></td>
+              <td class="td-ctr"><span class="badge-tw-empty">–</span></td>
+              <td class="td-ctr">
+                <span class="badge-terealisasi">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">6</td>
+              <td style="font-size: 0.78rem; font-weight: 500">
+                Analisis yang dihasilkan belum sesuai dengan literatur
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem">Des 2025</td>
+              <td class="td-ctr" style="font-size: 0.78rem">
+                Tim Statistik Sosial
+              </td>
+              <td class="td-ctr"><span class="badge-tw-done">✓</span></td>
+              <td class="td-ctr"><span class="badge-tw-empty">–</span></td>
+              <td class="td-ctr">
+                <span class="badge-proses">Dalam Proses</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card border-0 shadow-sm mt-3 p-3" style="border-radius: 10px; background: #f9fafb">
+        <p class="mb-2 fw-bold" style="font-size: 0.82rem">
+          📊 Rekapitulasi Keseluruhan — Tim Sosial (Sumber: Laporan Semester
+          II 2025)
         </p>
-      </footer>
-    </main>
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered mb-0" style="font-size: 0.78rem">
+            <thead style="background: #1a3c1a; color: #fff">
+              <tr>
+                <th>Tim</th>
+                <th>Kegiatan</th>
+                <th style="text-align: center">Prioritas TP</th>
+                <th style="text-align: center">TW III</th>
+                <th style="text-align: center">TW IV</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background: #f0fdf4">
+                <td rowspan="3"><strong>Sosial</strong></td>
+                <td>Susenas</td>
+                <td style="text-align: center">2</td>
+                <td style="text-align: center">
+                  <span class="badge-tw-done">✓</span>
+                </td>
+                <td style="text-align: center">
+                  <span class="badge-tw-empty">–</span>
+                </td>
+              </tr>
+              <tr style="background: #f0fdf4">
+                <td>Sakernas</td>
+                <td style="text-align: center">2</td>
+                <td style="text-align: center">
+                  <span class="badge-tw-done">✓</span>
+                </td>
+                <td style="text-align: center">
+                  <span class="badge-tw-done">✓</span>
+                </td>
+              </tr>
+              <tr style="background: #dcfce7; font-weight: 600">
+                <td><strong>SUPAS</strong></td>
+                <td style="text-align: center"><strong>1</strong></td>
+                <td style="text-align: center">
+                  <span class="badge-tw-done">✓</span>
+                </td>
+                <td style="text-align: center">
+                  <span class="badge-tw-empty">–</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mb-0 mt-2 text-muted" style="font-size: 0.72rem">
+          Ket: ✓ = Terealisasi pada triwulan tersebut. SUPAS memiliki
+          prioritas TP tertinggi (1) di Tim Sosial.
+        </p>
+      </div>
+    </div>
 
-    <!-- Core -->
-    <script src="../../vendor/@popperjs/core/dist/umd/popper.min.js"></script>
-    <script src="../../vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+    <footer class="bg-white rounded shadow p-5 mb-4 mt-4">
+      <p class="mb-0 text-center">
+        © 2025 <b>BPS Provinsi Riau</b> - Sistem Informasi Manajemen Risiko
+        (Keris Raja)
+      </p>
+    </footer>
+  </main>
 
-    <!-- Vendor JS -->
-    <script src="../../vendor/onscreen/dist/on-screen.umd.min.js"></script>
+  <script src="../../vendor/@popperjs/core/dist/umd/popper.min.js"></script>
+  <script src="../../vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="../../vendor/onscreen/dist/on-screen.umd.min.js"></script>
+  <script src="../../vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+  <script src="../../vendor/sweetalert2/dist/sweetalert2.all.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+  <script src="../../vendor/notyf/notyf.min.js"></script>
+  <script src="../../vendor/simplebar/dist/simplebar.min.js"></script>
+  <script src="../../assets/js/volt.js"></script>
+  <script src="../../assets/js/sidebar.js"></script>
 
-    <!-- Slider -->
-    <script src="../../vendor/nouislider/distribute/nouislider.min.js"></script>
+  <script>
+    function showDetail(btn) {
+      const row = btn.closest("tr");
+      const d = JSON.parse(row.getAttribute("data-detail"));
+      document.getElementById("modalDetailTitle").textContent =
+        "Detail Pemantauan RTP — Prioritas " + (d.prioritas || "");
 
-    <!-- Smooth scroll -->
-    <script src="../../vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+      function nl2br(s) {
+        return s ? s.replace(/\n/g, "<br/>") : "–";
+      }
+      function section(label, value, full) {
+        return `<div class="mb-3">
+            <div class="detail-label">${label}</div>
+            <div class="detail-value">${full ? nl2br(value) : value || "–"}</div>
+          </div>`;
+      }
 
-    <!-- Charts -->
-    <script src="../../vendor/chartist/dist/chartist.min.js"></script>
-    <script src="../../vendor/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
+      const statusColor = d.status === "Terealisasi" ? "#15803d" : "#854d0e";
+      const statusBg = d.status === "Terealisasi" ? "#dcfce7" : "#fef9c3";
 
-    <!-- Datepicker -->
-    <script src="../../vendor/vanillajs-datepicker/dist/js/datepicker.min.js"></script>
+      let html = `<div class="mb-3 p-3" style="background:#f0fdf4; border-radius:8px; border-left:4px solid #1a3c1a;">
+          <div style="font-size:0.9rem; font-weight:700; color:#1b3a2d;">${d.risiko || ""}</div>
+        </div>`;
 
-    <!-- Sweet Alerts 2 -->
-    <script src="../../vendor/sweetalert2/dist/sweetalert2.all.min.js"></script>
+      html += "<hr/>";
+      html += section("Rencana Tindak Penanganan (RTP)", d.rtp, true);
+      html += section("Target Output", d.target_output, true);
+      html += `<div class="d-flex gap-3 mb-3 flex-wrap">
+          <div><div class="detail-label">Waktu Target</div><div class="detail-value">${d.waktu || "–"}</div></div>
+          <div><div class="detail-label">Penanggung Jawab</div><div class="detail-value">${d.pj || "–"}</div></div>
+        </div>`;
 
-    <!-- Moment JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+      html += "<hr/>";
+      html += section("Realisasi / Bukti", d.realisasi);
 
-    <!-- Vanilla JS Datepicker -->
-    <script src="../../vendor/vanillajs-datepicker/dist/js/datepicker.min.js"></script>
-
-    <!-- Notyf -->
-    <script src="../../vendor/notyf/notyf.min.js"></script>
-
-    <!-- Simplebar -->
-    <script src="../../vendor/simplebar/dist/simplebar.min.js"></script>
-
-    <!-- Github buttons -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-
-    <!-- Volt JS -->
-    <script src="../../assets/js/volt.js"></script>
-
-    <script src="../../assets/js/sidebar.js"></script>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const toggleBtn = document.getElementById("sidebar-toggle");
-        const sidebar = document.getElementById("sidebarMenu");
-        const content = document.querySelector(".content");
-
-        if (toggleBtn) {
-          toggleBtn.addEventListener("click", function () {
-            sidebar.classList.toggle("sidebar-hidden");
-            content.classList.toggle("content-full");
-          });
+      if (d.bukti) {
+        const links = d.bukti.split("\n").filter((l) => l.trim());
+        if (links.length) {
+          html += `<div class="mb-3">
+              <div class="detail-label">Link Bukti</div>
+              <div class="detail-value">${links.map((l) => `<a href="${l.trim()}" class="bukti-link d-block" target="_blank">${l.trim()}</a>`).join("")}</div>
+            </div>`;
         }
+      }
+
+      html += "<hr/>";
+      html += `<div class="d-flex gap-4 flex-wrap">
+          <div><div class="detail-label">Status</div><div class="mt-1"><span style="background:${statusBg}; color:${statusColor}; padding:3px 10px; border-radius:6px; font-size:0.78rem; font-weight:700;">${d.status}</span></div></div>
+          <div><div class="detail-label">TW III</div><div class="mt-1">${d.tw3 === "✓" ? '<span class="badge-tw-done">✓</span>' : '<span class="badge-tw-empty">–</span>'}</div></div>
+          <div><div class="detail-label">TW IV</div><div class="mt-1">${d.tw4 === "✓" ? '<span class="badge-tw-done">✓</span>' : '<span class="badge-tw-empty">–</span>'}</div></div>
+        </div>`;
+
+      document.getElementById("modalDetailBody").innerHTML = html;
+      new bootstrap.Modal(document.getElementById("modalDetail")).show();
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const toggleBtn = document.getElementById("sidebar-toggle");
+      const sidebar = document.getElementById("sidebarMenu");
+      const content = document.querySelector(".content");
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", function () {
+          sidebar.classList.toggle("sidebar-hidden");
+          content.classList.toggle("content-full");
+        });
+      }
+
+      const tabBtns = document.querySelectorAll(".tab-pm-btn");
+      const tabPanels = document.querySelectorAll(".pm-tab-content");
+      const pmSearch = document.getElementById("pmSearch");
+
+      tabBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          tabBtns.forEach(function (b) {
+            b.classList.remove("active");
+          });
+          tabPanels.forEach(function (p) {
+            p.classList.add("d-none");
+          });
+          btn.classList.add("active");
+          document
+            .getElementById(btn.dataset.target)
+            .classList.remove("d-none");
+          pmSearch.value = "";
+          filterRows("");
+        });
       });
-    </script>
-  </body>
+
+      pmSearch.addEventListener("input", function () {
+        filterRows(pmSearch.value.toLowerCase());
+      });
+
+      function filterRows(kw) {
+        var active = document.querySelector(".pm-tab-content:not(.d-none)");
+        if (!active) return;
+        active.querySelectorAll("tbody tr").forEach(function (row) {
+          row.style.display =
+            kw === "" || row.innerText.toLowerCase().includes(kw)
+              ? ""
+              : "none";
+        });
+      }
+
+      document
+        .getElementById("btnPmExport")
+        .addEventListener("click", function () {
+          var activeTab =
+            document.querySelector(".tab-pm-btn.active").innerText;
+          alert(
+            'Ekspor tab "' + activeTab + '" akan diunduh sebagai file Excel.',
+          );
+        });
+    });
+  </script>
+</body>
+
 </html>
