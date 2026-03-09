@@ -1,0 +1,2353 @@
+<!--
+
+=========================================================
+* Volt Free - Bootstrap 5 Dashboard
+=========================================================
+
+* Product Page: https://themesberg.com/product/admin-dashboard/volt-bootstrap-5-dashboard
+* Copyright 2021 Themesberg (https://www.themesberg.com)
+* License (https://themesberg.com/licensing)
+
+* Designed and coded by https://themesberg.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. Please contact us to request a removal.
+
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <style>
+      /* Keris Jaya PROTOTYPE STYLE */
+      .Keris-Jaya-card {
+        border-radius: 18px;
+        padding: 20px;
+      }
+
+      .bg-soft-green {
+        background: #dff5e5;
+      }
+      .bg-soft-peach {
+        background: #fde7d9;
+      }
+      .bg-soft-yellow {
+        background: #fff1c9;
+      }
+
+      .Keris-Jaya-title {
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+      .Keris-Jaya-value {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+      .card-soft {
+        border-radius: 18px;
+      }
+
+      /* ===== TAMBAHAN STYLE BANK RISIKO ===== */
+      .badge-risiko-sr {
+        display: inline-block;
+        min-width: 36px;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.78rem;
+        text-align: center;
+        color: #fff;
+      }
+      .badge-sr-sangat-tinggi {
+        background: #dc2626;
+      }
+      .badge-sr-tinggi {
+        background: #ea580c;
+      }
+      .badge-sr-sedang {
+        background: #ca8a04;
+      }
+      .badge-sr-rendah {
+        background: #16a34a;
+      }
+      .badge-sr-sangat-rendah {
+        background: #2563eb;
+      }
+
+      .badge-prioritas {
+        display: inline-block;
+        min-width: 28px;
+        padding: 3px 8px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.78rem;
+        text-align: center;
+        background: #374151;
+        color: #fff;
+      }
+
+      .badge-efek-efektif {
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #86efac;
+        border-radius: 5px;
+        padding: 2px 7px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .badge-efek-kurang {
+        background: #fef9c3;
+        color: #854d0e;
+        border: 1px solid #fde047;
+        border-radius: 5px;
+        padding: 2px 7px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .badge-efek-tidak {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fca5a5;
+        border-radius: 5px;
+        padding: 2px 7px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .badge-respon {
+        background: #e0f2fe;
+        color: #0369a1;
+        border: 1px solid #7dd3fc;
+        border-radius: 5px;
+        padding: 2px 7px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .badge-respon-terima {
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #86efac;
+        border-radius: 5px;
+        padding: 2px 7px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .badge-sumber {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #d1d5db;
+        border-radius: 5px;
+        padding: 2px 7px;
+        font-size: 0.72rem;
+      }
+
+      /* ===== FIX TAB BUTTONS ===== */
+      .tab-wrapper .tab-btn {
+        pointer-events: auto !important;
+        opacity: 1 !important;
+        cursor: pointer !important;
+      }
+      .tab-wrapper .tab-btn:not(.active) {
+        pointer-events: auto !important;
+        opacity: 1 !important;
+        cursor: pointer !important;
+      }
+
+      /* ===== TABLE STYLES ===== */
+      .tbl-bank th {
+        background: #1a3c1a !important;
+        color: #ffffff !important;
+        font-size: 0.78rem;
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+      .tbl-bank td {
+        font-size: 0.8rem;
+        vertical-align: middle;
+      }
+      .tbl-bank td.td-proses {
+        font-weight: 600;
+        color: #15532e;
+        white-space: nowrap;
+      }
+      .tbl-bank td.td-no {
+        text-align: center;
+        font-weight: 700;
+        color: #374151;
+      }
+
+      /* ===== TRUNCATE STYLES ===== */
+      .cell-truncate {
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.8rem;
+      }
+      .cell-truncate-sm {
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.78rem;
+      }
+
+      /* ===== DETAIL BUTTON ===== */
+      .btn-detail {
+        background: none;
+        border: 1px solid #6366f1;
+        color: #6366f1;
+        border-radius: 5px;
+        padding: 2px 8px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.15s;
+      }
+      .btn-detail:hover {
+        background: #6366f1;
+        color: #fff;
+      }
+
+      /* ===== MODAL DETAIL ===== */
+      #modalDetail .modal-header {
+        background: #1a3c1a;
+        color: #fff;
+        border-radius: 0;
+      }
+      #modalDetail .modal-header .btn-close {
+        filter: invert(1);
+      }
+      #modalDetail .modal-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+      }
+      #modalDetail .detail-section {
+        margin-bottom: 14px;
+      }
+      #modalDetail .detail-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 4px;
+      }
+      #modalDetail .detail-value {
+        font-size: 0.85rem;
+        color: #111827;
+        line-height: 1.6;
+      }
+      #modalDetail .detail-section hr {
+        margin: 12px 0;
+        border-color: #e5e7eb;
+      }
+
+      .tbl-rtp th {
+        background: #1a3c1a !important;
+        color: #ffffff !important;
+        font-size: 0.78rem;
+        vertical-align: middle;
+      }
+      .tbl-rtp td {
+        font-size: 0.8rem;
+        vertical-align: middle;
+      }
+      .td-rtp {
+        min-width: 200px;
+        font-size: 0.78rem;
+      }
+      .td-target {
+        min-width: 160px;
+        font-size: 0.78rem;
+      }
+
+      .skor-pds {
+        font-size: 0.72rem;
+        line-height: 1.6;
+      }
+      .skor-label {
+        color: #6b7280;
+      }
+      .skor-val {
+        font-weight: 700;
+      }
+      .skor-residu {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .summary-cards .card-summary {
+        border-radius: 12px;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .card-summary .cs-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+      .card-summary .cs-val {
+        font-size: 1.7rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .card-summary .cs-lbl {
+        font-size: 0.72rem;
+        color: #6b7280;
+        margin-top: 2px;
+      }
+
+      /* Pengendalian truncate */
+      .td-pengendalian {
+        max-width: 180px;
+        font-size: 0.78rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    </style>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Dashboard Keris Jaya</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="author" content="Themesberg" />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="../../assets/img/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="../../assets/img/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../../assets/img/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="../../assets/img/favicon/site.webmanifest" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <link
+      type="text/css"
+      href="../../vendor/sweetalert2/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      type="text/css"
+      href="../../vendor/notyf/notyf.min.css"
+      rel="stylesheet"
+    />
+    <link type="text/css" href="../../css/volt.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <!-- Modal Detail -->
+    <div class="modal fade" id="modalDetail" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalDetailTitle">Detail Risiko</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body" id="modalDetailBody">
+            <!-- filled by JS -->
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-sm btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="navbar navbar-dark navbar-theme-primary px-4 col-12 d-lg-none">
+      <a class="navbar-brand me-lg-5" href="../../index.html">
+        <img
+          class="navbar-brand-dark"
+          src="../../assets/img/brand/light.svg"
+          alt="Volt logo"
+        />
+        <img
+          class="navbar-brand-light"
+          src="../../assets/img/brand/dark.svg"
+          alt="Volt logo"
+        />
+      </a>
+      <div class="d-flex align-items-center">
+        <button
+          class="navbar-toggler d-lg-none collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#sidebarMenu"
+          aria-controls="sidebarMenu"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+
+    <nav
+      id="sidebarMenu"
+      class="sidebar d-lg-block bg-green-800 text-white collapse"
+      data-simplebar
+    >
+      <div class="sidebar-inner px-4 pt-3">
+        <div
+          class="user-card d-flex flex-column align-items-start pb-4 border-bottom border-green-700"
+        >
+          <a href="../../index.html" class="d-flex align-items-center mb-3">
+            <img
+              src="../../assets/img/brand/light.svg"
+              height="35"
+              class="me-2"
+              alt="Keris Jaya Logo"
+            />
+            <span class="mt-1 sidebar-text fw-bolder fs-4">Keris Jaya</span>
+          </a>
+          <hr class="w-100 my-2 opacity-25" />
+          <div class="d-flex align-items-center mt-2">
+            <img
+              src="../../assets/img/logo-bps.svg"
+              height="30"
+              class="me-2"
+              alt="BPS Logo"
+            />
+            <div class="sidebar-text">
+              <p
+                class="mb-0 fw-bold"
+                style="font-size: 0.75rem; line-height: 1.2"
+              >
+                Badan Pusat Statistik
+              </p>
+              <p
+                class="mb-0 text-success"
+                style="font-size: 0.7rem; font-weight: 600"
+              >
+                Provinsi Riau
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <ul class="nav flex-column pt-3 pt-md-0">
+          <li class="nav-item">
+            <a href="../../pages/dashboard/dashboard.html" class="nav-link">
+              <span class="sidebar-icon">
+                <svg
+                  class="icon icon-xs me-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                  <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                </svg>
+              </span>
+              <span class="sidebar-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item active">
+            <a href="../../pages/bank-risiko/bank-risiko.html" class="nav-link">
+              <span class="sidebar-icon">
+                <svg
+                  class="icon icon-xs me-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span class="sidebar-text">Bank Risiko</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <span
+              class="nav-link d-flex justify-content-between align-items-center"
+              data-bs-toggle="collapse"
+              data-bs-target="#submenu-manajemen-risiko"
+              aria-expanded="true"
+            >
+              <span>
+                <span class="sidebar-icon">
+                  <svg
+                    class="icon icon-xs me-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                </span>
+                <span class="sidebar-text">Manajemen Risiko</span>
+              </span>
+              <span class="link-arrow">
+                <svg
+                  class="icon icon-sm"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+            </span>
+            <div
+              class="multi-level collapse show"
+              role="list"
+              id="submenu-manajemen-risiko"
+            >
+              <ul class="flex-column nav">
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="../../pages/manajemen-risiko/penetapan-konteks.html"
+                    ><span>Penetapan Konteks</span></a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="../../pages/manajemen-risiko/identifikasi-risiko.html"
+                    ><span>Identifikasi Risiko</span></a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="../../pages/manajemen-risiko/analisis-risiko.html"
+                    ><span>Analisis Risiko</span></a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="../../pages/manajemen-risiko/evaluasi-risiko.html"
+                    ><span>Evaluasi Risiko</span></a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="../../pages/manajemen-risiko/rencana-penanganan.html"
+                    ><span>Rencana Penanganan</span></a
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a
+              href="../../pages/pemantauan-risiko/pemantauan-risiko.html"
+              class="nav-link"
+            >
+              <span class="sidebar-icon">
+                <svg
+                  class="icon icon-xs me-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                  <path
+                    fill-rule="evenodd"
+                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span class="sidebar-text">Pemantauan Risiko</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              href="../../pages/pelaporan-risiko/pelaporan-risiko.html"
+              class="nav-link"
+            >
+              <span class="sidebar-icon">
+                <svg
+                  class="icon icon-xs me-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 100-2h4a1 1 0 100 2H8zm0 4a1 1 0 100-2h4a1 1 0 100 2H8z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span class="sidebar-text">Pelaporan Risiko</span>
+            </a>
+          </li>
+          <li
+            role="separator"
+            class="dropdown-divider mt-4 mb-3 border-green-700"
+          ></li>
+          <li class="nav-item">
+            <a href="../../pages/settings.html" class="nav-link">
+              <span class="sidebar-icon">
+                <svg
+                  class="icon icon-xs me-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span class="sidebar-text">Settings</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              href="../../pages/examples/sign-in.html"
+              class="nav-link d-flex align-items-center"
+            >
+              <span class="sidebar-icon">
+                <svg
+                  class="icon icon-xs me-2 text-danger"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  ></path>
+                </svg>
+              </span>
+              <span class="sidebar-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="content">
+      <nav
+        class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0"
+      >
+        <div class="container-fluid px-0">
+          <div
+            class="d-flex justify-content-between w-100"
+            id="navbarSupportedContent"
+          >
+            <div class="d-flex align-items-center">
+              <button
+                id="sidebar-toggle"
+                class="sidebar-toggle me-3 btn btn-icon-only btn-lg btn-white d-none d-lg-inline-block shadow-sm text-green-800"
+              >
+                <svg
+                  class="icon icon-xs"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <ul class="navbar-nav align-items-center">
+              <li class="nav-item me-2 d-none d-md-block">
+                <form class="navbar-search form-inline" id="navbar-search-main">
+                  <div class="input-group input-group-merge search-bar">
+                    <span class="input-group-text" id="topbar-addon">
+                      <svg
+                        class="icon icon-xs"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Cari"
+                      aria-label="Search"
+                    />
+                  </div>
+                </form>
+              </li>
+              <li class="nav-item dropdown me-2">
+                <a
+                  class="nav-link text-dark notification-bell unread dropdown-toggle"
+                  data-unread-notifications="true"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <svg
+                    class="icon icon-sm text-green-800"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
+                    ></path>
+                  </svg>
+                </a>
+              </li>
+              <li class="nav-item dropdown ms-lg-3">
+                <a
+                  class="nav-link dropdown-toggle pt-1 px-0"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <div class="media d-flex align-items-center">
+                    <div
+                      class="media-body ms-2 text-dark align-items-center d-none d-lg-block me-2 text-end"
+                    >
+                      <span
+                        class="mb-0 font-small fw-bold text-green-900 d-block"
+                        >Ahmad Fauzi</span
+                      >
+                      <small class="text-muted">Administrator</small>
+                    </div>
+                    <img
+                      class="avatar rounded-circle border-2 border-green-500"
+                      alt="Image placeholder"
+                      src="../../assets/img/team/profile-picture-3.jpg"
+                    />
+                  </div>
+                </a>
+                <div
+                  class="dropdown-menu dashboard-dropdown dropdown-menu-end mt-2 py-1"
+                >
+                  <a class="dropdown-item d-flex align-items-center" href="#">
+                    <svg
+                      class="dropdown-icon text-gray-400 me-2"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                    Profil Saya
+                  </a>
+                  <div role="separator" class="dropdown-divider my-1"></div>
+                  <a
+                    class="dropdown-item d-flex align-items-center"
+                    href="../../pages/examples/sign-in.html"
+                  >
+                    <svg
+                      class="dropdown-icon text-danger me-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      ></path>
+                    </svg>
+                    Logout
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- ===== KONTEN UTAMA ===== -->
+      <div class="filter-wrapper army-theme">
+        <div class="page-title mb-2">
+          <h6 class="mb-0">Bank Risiko</h6>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-9">
+            <div class="filter-box">
+              <div class="filter-row">
+                <label>Satuan Kerja</label>
+                <select id="filterSatker">
+                  <option value="">- Pilih -</option>
+                  <option>Pimpinan</option>
+                  <option>SDM &amp; Hukum</option>
+                  <option>Umum &amp; Perencanaan</option>
+                  <option>Keuangan &amp; PBJ</option>
+                  <option selected>Statistik Sosial</option>
+                  <option>Statistik Produksi</option>
+                  <option>Statistik Distribusi</option>
+                  <option>Nerwilis</option>
+                  <option>DLS</option>
+                  <option>IPD &amp; PAS</option>
+                  <option>Infrastruktur TI &amp; SD</option>
+                  <option>Sektoral &amp; UKK</option>
+                  <option>Humas &amp; Protokoler</option>
+                </select>
+              </div>
+              <div class="filter-row">
+                <label>Ruang Lingkup Penerapan</label>
+                <select id="filterRuangLingkup">
+                  <option value="">- Pilih -</option>
+                  <option value="SUPAS" selected>SUPAS</option>
+                </select>
+              </div>
+              <div class="filter-row">
+                <label>Proses Bisnis</label>
+                <select id="filterProses">
+                  <option value="">Semua Proses</option>
+                  <option value="Identifikasi Daftar Sampel">
+                    Identifikasi Daftar Sampel
+                  </option>
+                  <option value="Pelatihan Petugas">Pelatihan Petugas</option>
+                  <option value="Pengumpulan Data">Pengumpulan Data</option>
+                  <option value="Pengolahan Data">Pengolahan Data</option>
+                  <option value="Analisis Data">Analisis Data</option>
+                  <option value="Diseminasi Data">Diseminasi Data</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="filter-box h-100 text-center">
+              <label class="periode-label">Pilih Periode</label>
+              <select class="periode-select" id="filterPeriode">
+                <option value="">- Pilih -</option>
+                <option value="2025" selected>2025</option>
+                <option value="2026">2026</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="row g-3 mb-3 summary-cards">
+        <div class="col-6 col-md-3">
+          <div
+            class="card-summary"
+            style="background: #f0fdf4; border: 1px solid #bbf7d0"
+          >
+            <div class="cs-icon" style="background: #dcfce7">📋</div>
+            <div>
+              <div class="cs-val" style="color: #15803d">9</div>
+              <div class="cs-lbl">Total Risiko</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div
+            class="card-summary"
+            style="background: #fff7ed; border: 1px solid #fed7aa"
+          >
+            <div class="cs-icon" style="background: #ffedd5">⚠️</div>
+            <div>
+              <div class="cs-val" style="color: #c2410c">2</div>
+              <div class="cs-lbl">Risiko Sangat Tinggi</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div
+            class="card-summary"
+            style="background: #fffbeb; border: 1px solid #fde68a"
+          >
+            <div class="cs-icon" style="background: #fef3c7">🔶</div>
+            <div>
+              <div class="cs-val" style="color: #b45309">3</div>
+              <div class="cs-lbl">Risiko Sedang–Tinggi</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div
+            class="card-summary"
+            style="background: #eff6ff; border: 1px solid #bfdbfe"
+          >
+            <div class="cs-icon" style="background: #dbeafe">✅</div>
+            <div>
+              <div class="cs-val" style="color: #1d4ed8">6</div>
+              <div class="cs-lbl">Memiliki RTP</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB -->
+      <div class="tab-wrapper mb-3">
+        <button class="tab-btn active" data-target="tab-risiko">Risiko</button>
+        <button class="tab-btn" data-target="tab-penyebab">
+          Penyebab &amp; Dampak
+        </button>
+        <button class="tab-btn" data-target="tab-pengendalian">
+          Pengendalian
+        </button>
+        <button class="tab-btn" data-target="tab-rtp">RTP</button>
+      </div>
+
+      <!-- SEARCH -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <input
+          type="text"
+          id="searchInput"
+          class="form-control search-box"
+          placeholder="Cari data risiko..."
+        />
+        <button class="btn btn-army ms-2" id="btnExport">⬇ Ekspor</button>
+      </div>
+
+      <!-- ===== TAB: RISIKO ===== -->
+      <div id="tab-risiko" class="tab-content">
+        <div class="table-responsive">
+          <table
+            class="table table-bordered table-hover tbl-bank"
+            id="tabel-risiko"
+          >
+            <thead>
+              <tr>
+                <th style="width: 40px">Prioritas</th>
+                <th style="width: 130px">Proses Bisnis</th>
+                <th style="width: 200px">Pernyataan Risiko</th>
+                <th style="width: 100px">Kategori</th>
+                <th style="width: 70px">Sumber</th>
+                <th style="width: 120px; text-align: center">
+                  Skor Risiko<br /><small style="font-weight: 400"
+                    >(P × D)</small
+                  >
+                </th>
+                <th style="width: 90px">Level</th>
+                <th style="width: 90px">Respon</th>
+                <th style="width: 60px; text-align: center">Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                data-proses="Pengumpulan Data"
+                data-detail='{"judul":"Target penyelesaian pemutakhiran rumah tangga sampel tidak mencapai 100 persen","proses":"Pengumpulan Data","kategori":"Risiko Operasional","sumber":"Internal","skor":"P: 3, D: 5, SR: 22","level":"Sangat Tinggi","respon":"Mengurangi"}'
+              >
+                <td class="td-no"><span class="badge-prioritas">1</span></td>
+                <td class="td-proses">Pengumpulan Data</td>
+                <td>
+                  <div
+                    class="cell-truncate"
+                    title="Target penyelesaian pemutakhiran rumah tangga sampel tidak mencapai 100 persen"
+                  >
+                    Target penyelesaian pemutakhiran rumah tangga sampel tidak
+                    mencapai 100 persen
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td><span class="badge-sumber">Internal</span></td>
+                <td class="td-skor" style="text-align: center">
+                  <div class="skor-pds">
+                    <span class="skor-label">P: </span
+                    ><span class="skor-val">3</span> &nbsp;
+                    <span class="skor-label">D: </span
+                    ><span class="skor-val">5</span>
+                  </div>
+                  <span class="badge-risiko-sr badge-sr-sangat-tinggi"
+                    >SR: 22</span
+                  >
+                </td>
+                <td>
+                  <span class="badge-risiko-sr badge-sr-sangat-tinggi"
+                    >Sangat Tinggi</span
+                  >
+                </td>
+                <td><span class="badge-respon">Mengurangi</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengumpulan Data"
+                data-detail='{"judul":"Target penyelesaian pencacahan rumah tangga sampel tidak mencapai 100 persen","proses":"Pengumpulan Data","kategori":"Risiko Operasional","sumber":"Internal","skor":"P: 3, D: 5, SR: 22","level":"Sangat Tinggi","respon":"Mengurangi"}'
+              >
+                <td class="td-no"><span class="badge-prioritas">2</span></td>
+                <td class="td-proses">Pengumpulan Data</td>
+                <td>
+                  <div
+                    class="cell-truncate"
+                    title="Target penyelesaian pencacahan rumah tangga sampel tidak mencapai 100 persen"
+                  >
+                    Target penyelesaian pencacahan rumah tangga sampel tidak
+                    mencapai 100 persen
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td><span class="badge-sumber">Internal</span></td>
+                <td class="td-skor" style="text-align: center">
+                  <div class="skor-pds">
+                    <span class="skor-label">P: </span
+                    ><span class="skor-val">3</span> &nbsp;
+                    <span class="skor-label">D: </span
+                    ><span class="skor-val">5</span>
+                  </div>
+                  <span class="badge-risiko-sr badge-sr-sangat-tinggi"
+                    >SR: 22</span
+                  >
+                </td>
+                <td>
+                  <span class="badge-risiko-sr badge-sr-sangat-tinggi"
+                    >Sangat Tinggi</span
+                  >
+                </td>
+                <td><span class="badge-respon">Mengurangi</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengolahan Data"
+                data-detail='{"judul":"Data yang dikirim petugas tidak sampai di server","proses":"Pengolahan Data","kategori":"Risiko Operasional","sumber":"Internal","skor":"P: 3, D: 3, SR: 14","level":"Sedang","respon":"Mengurangi"}'
+              >
+                <td class="td-no"><span class="badge-prioritas">3</span></td>
+                <td class="td-proses">Pengolahan Data</td>
+                <td>
+                  <div
+                    class="cell-truncate"
+                    title="Data yang dikirim petugas tidak sampai di server"
+                  >
+                    Data yang dikirim petugas tidak sampai di server
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td><span class="badge-sumber">Internal</span></td>
+                <td class="td-skor" style="text-align: center">
+                  <div class="skor-pds">
+                    <span class="skor-label">P: </span
+                    ><span class="skor-val">3</span> &nbsp;
+                    <span class="skor-label">D: </span
+                    ><span class="skor-val">3</span>
+                  </div>
+                  <span class="badge-risiko-sr badge-sr-sedang">SR: 14</span>
+                </td>
+                <td>
+                  <span class="badge-risiko-sr badge-sr-sedang">Sedang</span>
+                </td>
+                <td><span class="badge-respon">Mengurangi</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Identifikasi Daftar Sampel"
+                data-detail='{"judul":"Daftar sampel tidak representatif dengan kondisi lapangan","proses":"Identifikasi Daftar Sampel","kategori":"Risiko Operasional","sumber":"Internal","skor":"P: 4, D: 2, SR: 12","level":"Sedang","respon":"Mengurangi"}'
+              >
+                <td class="td-no"><span class="badge-prioritas">4</span></td>
+                <td class="td-proses">Identifikasi Daftar Sampel</td>
+                <td>
+                  <div
+                    class="cell-truncate"
+                    title="Daftar sampel tidak representatif dengan kondisi lapangan"
+                  >
+                    Daftar sampel tidak representatif dengan kondisi lapangan
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td><span class="badge-sumber">Internal</span></td>
+                <td class="td-skor" style="text-align: center">
+                  <div class="skor-pds">
+                    <span class="skor-label">P: </span
+                    ><span class="skor-val">4</span> &nbsp;
+                    <span class="skor-label">D: </span
+                    ><span class="skor-val">2</span>
+                  </div>
+                  <span class="badge-risiko-sr badge-sr-sedang">SR: 12</span>
+                </td>
+                <td>
+                  <span class="badge-risiko-sr badge-sr-sedang">Sedang</span>
+                </td>
+                <td><span class="badge-respon">Mengurangi</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pelatihan Petugas"
+                data-detail='{"judul":"Pelatihan yang waktunya terbatas dan skemanya online berisiko terhadap pemahaman materi petugas","proses":"Pelatihan Petugas","kategori":"Risiko Operasional","sumber":"Internal","skor":"P: 4, D: 2, SR: 12","level":"Sedang","respon":"Mengurangi"}'
+              >
+                <td class="td-no"><span class="badge-prioritas">5</span></td>
+                <td class="td-proses">Pelatihan Petugas</td>
+                <td>
+                  <div
+                    class="cell-truncate"
+                    title="Pelatihan yang waktunya terbatas dan skemanya online berisiko terhadap pemahaman materi petugas"
+                  >
+                    Pelatihan yang waktunya terbatas dan skemanya online
+                    berisiko terhadap pemahaman materi petugas
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td><span class="badge-sumber">Internal</span></td>
+                <td class="td-skor" style="text-align: center">
+                  <div class="skor-pds">
+                    <span class="skor-label">P: </span
+                    ><span class="skor-val">4</span> &nbsp;
+                    <span class="skor-label">D: </span
+                    ><span class="skor-val">2</span>
+                  </div>
+                  <span class="badge-risiko-sr badge-sr-sedang">SR: 12</span>
+                </td>
+                <td>
+                  <span class="badge-risiko-sr badge-sr-sedang">Sedang</span>
+                </td>
+                <td><span class="badge-respon">Mengurangi</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Analisis Data"
+                data-detail='{"judul":"Analisis yang dihasilkan belum sesuai dengan literatur","proses":"Analisis Data","kategori":"Risiko Reputasi","sumber":"Internal","skor":"P: 2, D: 3, SR: 11","level":"Sedang","respon":"Mengurangi"}'
+              >
+                <td class="td-no"><span class="badge-prioritas">6</span></td>
+                <td class="td-proses">Analisis Data</td>
+                <td>
+                  <div
+                    class="cell-truncate"
+                    title="Analisis yang dihasilkan belum sesuai dengan literatur"
+                  >
+                    Analisis yang dihasilkan belum sesuai dengan literatur
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Reputasi</td>
+                <td><span class="badge-sumber">Internal</span></td>
+                <td class="td-skor" style="text-align: center">
+                  <div class="skor-pds">
+                    <span class="skor-label">P: </span
+                    ><span class="skor-val">2</span> &nbsp;
+                    <span class="skor-label">D: </span
+                    ><span class="skor-val">3</span>
+                  </div>
+                  <span class="badge-risiko-sr badge-sr-sedang">SR: 11</span>
+                </td>
+                <td>
+                  <span class="badge-risiko-sr badge-sr-sedang">Sedang</span>
+                </td>
+                <td><span class="badge-respon">Mengurangi</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Diseminasi Data"
+                data-detail='{"judul":"Rilis tidak tepat waktu karena ada proses yang terlambat","proses":"Diseminasi Data","kategori":"Risiko Reputasi","sumber":"Internal","skor":"P: 3, D: 2, SR: 10","level":"Rendah","respon":"Menerima"}'
+              >
+                <td class="td-no">
+                  <span class="badge-prioritas" style="background: #9ca3af"
+                    >–</span
+                  >
+                </td>
+                <td class="td-proses">Diseminasi Data</td>
+                <td>
+                  <div
+                    class="cell-truncate"
+                    title="Rilis tidak tepat waktu karena ada proses yang terlambat"
+                  >
+                    Rilis tidak tepat waktu karena ada proses yang terlambat
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Reputasi</td>
+                <td><span class="badge-sumber">Internal</span></td>
+                <td class="td-skor" style="text-align: center">
+                  <div class="skor-pds">
+                    <span class="skor-label">P: </span
+                    ><span class="skor-val">3</span> &nbsp;
+                    <span class="skor-label">D: </span
+                    ><span class="skor-val">2</span>
+                  </div>
+                  <span class="badge-risiko-sr badge-sr-rendah">SR: 10</span>
+                </td>
+                <td>
+                  <span class="badge-risiko-sr badge-sr-rendah">Rendah</span>
+                </td>
+                <td><span class="badge-respon-terima">Menerima</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengolahan Data"
+                data-detail='{"judul":"Data yang tidak konsisten atau di luar rentang (terjadi anomali)","proses":"Pengolahan Data","kategori":"Risiko Operasional","sumber":"Internal","skor":"P: 2, D: 2, SR: 7","level":"Rendah","respon":"Menerima"}'
+              >
+                <td class="td-no">
+                  <span class="badge-prioritas" style="background: #9ca3af"
+                    >–</span
+                  >
+                </td>
+                <td class="td-proses">Pengolahan Data</td>
+                <td>
+                  <div
+                    class="cell-truncate"
+                    title="Data yang tidak konsisten atau di luar rentang (terjadi anomali)"
+                  >
+                    Data yang tidak konsisten atau di luar rentang (terjadi
+                    anomali)
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td><span class="badge-sumber">Internal</span></td>
+                <td class="td-skor" style="text-align: center">
+                  <div class="skor-pds">
+                    <span class="skor-label">P: </span
+                    ><span class="skor-val">2</span> &nbsp;
+                    <span class="skor-label">D: </span
+                    ><span class="skor-val">2</span>
+                  </div>
+                  <span class="badge-risiko-sr badge-sr-rendah">SR: 7</span>
+                </td>
+                <td>
+                  <span class="badge-risiko-sr badge-sr-rendah">Rendah</span>
+                </td>
+                <td><span class="badge-respon-terima">Menerima</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengolahan Data"
+                data-detail='{"judul":"Kesalahan merumuskan syntax ketika melakukan tabulasi data","proses":"Pengolahan Data","kategori":"Risiko Operasional","sumber":"Internal","skor":"P: 2, D: 2, SR: 7","level":"Rendah","respon":"Menerima"}'
+              >
+                <td class="td-no">
+                  <span class="badge-prioritas" style="background: #9ca3af"
+                    >–</span
+                  >
+                </td>
+                <td class="td-proses">Pengolahan Data</td>
+                <td>
+                  <div
+                    class="cell-truncate"
+                    title="Kesalahan merumuskan syntax ketika melakukan tabulasi data"
+                  >
+                    Kesalahan merumuskan syntax ketika melakukan tabulasi data
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td><span class="badge-sumber">Internal</span></td>
+                <td class="td-skor" style="text-align: center">
+                  <div class="skor-pds">
+                    <span class="skor-label">P: </span
+                    ><span class="skor-val">2</span> &nbsp;
+                    <span class="skor-label">D: </span
+                    ><span class="skor-val">2</span>
+                  </div>
+                  <span class="badge-risiko-sr badge-sr-rendah">SR: 7</span>
+                </td>
+                <td>
+                  <span class="badge-risiko-sr badge-sr-rendah">Rendah</span>
+                </td>
+                <td><span class="badge-respon-terima">Menerima</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== TAB: PENYEBAB & DAMPAK ===== -->
+      <div id="tab-penyebab" class="tab-content d-none">
+        <div class="table-responsive">
+          <table
+            class="table table-bordered table-hover tbl-bank"
+            id="tabel-penyebab"
+          >
+            <thead>
+              <tr>
+                <th style="width: 40px">No</th>
+                <th style="width: 130px">Proses Bisnis</th>
+                <th style="width: 180px">Pernyataan Risiko</th>
+                <th style="width: 200px">Penyebab Risiko</th>
+                <th style="width: 200px">Dampak Risiko</th>
+                <th style="width: 100px">Kategori</th>
+                <th style="width: 60px; text-align: center">Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                data-proses="Identifikasi Daftar Sampel"
+                data-detail='{"judul":"Daftar sampel tidak representatif dengan kondisi lapangan","penyebab":"Informasi muatan tidak tersedia dan tidak update","dampak":"Beberapa indikator dapat memiliki RSE tinggi","kategori":"Risiko Operasional"}'
+              >
+                <td class="td-no">1</td>
+                <td class="td-proses">Identifikasi Daftar Sampel</td>
+                <td>
+                  <div class="cell-truncate">
+                    Daftar sampel tidak representatif dengan kondisi lapangan
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    Informasi muatan tidak tersedia dan tidak update
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    Beberapa indikator dapat memiliki RSE tinggi
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pelatihan Petugas"
+                data-detail='{"judul":"Pelatihan yang waktunya terbatas dan skemanya online berisiko terhadap pemahaman materi petugas","penyebab":"Efisiensi anggaran","dampak":"Petugas tidak optimal menyerap materi","kategori":"Risiko Operasional"}'
+              >
+                <td class="td-no">2</td>
+                <td class="td-proses">Pelatihan Petugas</td>
+                <td>
+                  <div class="cell-truncate">
+                    Pelatihan yang waktunya terbatas dan skemanya online
+                    berisiko terhadap pemahaman materi petugas
+                  </div>
+                </td>
+                <td><div class="cell-truncate">Efisiensi anggaran</div></td>
+                <td>
+                  <div class="cell-truncate">
+                    Petugas tidak optimal menyerap materi
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengumpulan Data"
+                data-detail='{"judul":"Target penyelesaian pemutakhiran rumah tangga sampel tidak mencapai 100 persen","penyebab":"1. Keterbatasan petugas, anggaran, hambatan teknis dan geografis\n2. Bencana alam (banjir, gempa, kebakaran)\n3. Gangguan keamanan (kerusuhan, penggusuran)","dampak":"1. Indikator demografi tidak tepat\n2. RSE yang dihasilkan cukup tinggi","kategori":"Risiko Operasional"}'
+              >
+                <td class="td-no">3</td>
+                <td class="td-proses">Pengumpulan Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Target penyelesaian pemutakhiran rumah tangga sampel tidak
+                    mencapai 100 persen
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    1. Keterbatasan petugas, anggaran, hambatan teknis &amp;
+                    geografis; 2. Bencana alam; 3. Gangguan keamanan
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    1. Indikator demografi tidak tepat; 2. RSE yang dihasilkan
+                    cukup tinggi
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengumpulan Data"
+                data-detail='{"judul":"Target penyelesaian pencacahan rumah tangga sampel tidak mencapai 100 persen","penyebab":"1. Aplikasi belum sempurna\n2. Petugas berkurang (sakit, meninggal, mundur)\n3. Responden sulit ditemui\n4. Kurangnya koordinasi antar tim","dampak":"1. Pendataan tidak efektif\n2. Data kurang lengkap\n3. Hasil estimasi tidak akurat","kategori":"Risiko Operasional"}'
+              >
+                <td class="td-no">4</td>
+                <td class="td-proses">Pengumpulan Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Target penyelesaian pencacahan rumah tangga sampel tidak
+                    mencapai 100 persen
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    1. Aplikasi belum sempurna; 2. Petugas berkurang; 3.
+                    Responden sulit ditemui; 4. Kurang koordinasi
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    1. Pendataan tidak efektif; 2. Data kurang lengkap; 3.
+                    Estimasi tidak akurat
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengolahan Data"
+                data-detail='{"judul":"Data yang tidak konsisten atau di luar rentang (terjadi anomali)","penyebab":"1. Petugas tidak teliti dalam pengisian dokumen\n2. Rule validasi aplikasi pengolahan belum sesuai","dampak":"Informasi penting terhapus, menyebabkan ketidaklengkapan/kecacatan data","kategori":"Risiko Operasional"}'
+              >
+                <td class="td-no">5</td>
+                <td class="td-proses">Pengolahan Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Data yang tidak konsisten atau di luar rentang (terjadi
+                    anomali)
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    1. Petugas tidak teliti; 2. Rule validasi aplikasi belum
+                    sesuai
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    Informasi penting terhapus, menyebabkan
+                    ketidaklengkapan/kecacatan data
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengolahan Data"
+                data-detail='{"judul":"Data yang dikirim petugas tidak sampai di server","penyebab":"1. Bandwidth sinyal kurang\n2. Faktor teknis gadget petugas\n3. Masalah pada CAPI","dampak":"1. Data tidak lengkap\n2. Pendataan lapangan tidak efisien","kategori":"Risiko Operasional"}'
+              >
+                <td class="td-no">6</td>
+                <td class="td-proses">Pengolahan Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Data yang dikirim petugas tidak sampai di server
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    1. Bandwidth sinyal kurang; 2. Faktor teknis gadget; 3.
+                    Masalah pada CAPI
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    1. Data tidak lengkap; 2. Pendataan tidak efisien
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengolahan Data"
+                data-detail='{"judul":"Kesalahan merumuskan syntax ketika melakukan tabulasi data","penyebab":"1. Faktor SDM\n2. Perbedaan rumus/metode penghitungan indikator","dampak":"1. Hasil tabulasi tidak akurat\n2. Proses pengolahan membutuhkan waktu lebih lama","kategori":"Risiko Operasional"}'
+              >
+                <td class="td-no">7</td>
+                <td class="td-proses">Pengolahan Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Kesalahan merumuskan syntax ketika melakukan tabulasi data
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    1. Faktor SDM; 2. Perbedaan rumus/metode penghitungan
+                    indikator
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    1. Hasil tabulasi tidak akurat; 2. Proses lebih lama
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Operasional</td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Analisis Data"
+                data-detail='{"judul":"Analisis yang dihasilkan belum sesuai dengan literatur","penyebab":"1. Faktor SDM\n2. Keterbatasan literatur\n3. Alat analisis statistik tidak tepat","dampak":"1. Analisis tidak tepat, kebijakan kurang akurat\n2. Kepercayaan publik menurun","kategori":"Risiko Reputasi"}'
+              >
+                <td class="td-no">8</td>
+                <td class="td-proses">Analisis Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Analisis yang dihasilkan belum sesuai dengan literatur
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    1. Faktor SDM; 2. Keterbatasan literatur; 3. Alat analisis
+                    tidak tepat
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    1. Analisis tidak tepat; 2. Kepercayaan publik menurun
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Reputasi</td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Diseminasi Data"
+                data-detail='{"judul":"Rilis tidak tepat waktu karena ada proses yang terlambat","penyebab":"Kurangnya koordinasi antar tim","dampak":"Menurunnya kepercayaan publik","kategori":"Risiko Reputasi"}'
+              >
+                <td class="td-no">9</td>
+                <td class="td-proses">Diseminasi Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Rilis tidak tepat waktu karena ada proses yang terlambat
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">
+                    Kurangnya koordinasi antar tim
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-truncate">Menurunnya kepercayaan publik</div>
+                </td>
+                <td style="font-size: 0.78rem">Risiko Reputasi</td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== TAB: PENGENDALIAN ===== -->
+      <div id="tab-pengendalian" class="tab-content d-none">
+        <div class="table-responsive">
+          <table
+            class="table table-bordered table-hover tbl-bank"
+            id="tabel-pengendalian"
+          >
+            <thead>
+              <tr>
+                <th style="width: 40px">No</th>
+                <th style="width: 130px">Proses Bisnis</th>
+                <th style="width: 180px">Pernyataan Risiko</th>
+                <th style="width: 220px">
+                  Pengendalian yang Telah Dilaksanakan
+                </th>
+                <th style="width: 110px; text-align: center">
+                  Efek Pengendalian
+                </th>
+                <th style="width: 100px">Respon Risiko</th>
+                <th style="width: 60px; text-align: center">Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                data-proses="Identifikasi Daftar Sampel"
+                data-detail='{"judul":"Daftar sampel tidak representatif dengan kondisi lapangan","pengendalian":"1. Komunikasi dan koordinasi dengan PJK terkait\n2. Menyampaikan urgensi identifikasi daftar sampel agar mendapatkan informasi terbaik","efek":"Tidak Efektif","respon":"Mengurangi risiko"}'
+              >
+                <td class="td-no">1</td>
+                <td class="td-proses">Identifikasi Daftar Sampel</td>
+                <td>
+                  <div class="cell-truncate">
+                    Daftar sampel tidak representatif dengan kondisi lapangan
+                  </div>
+                </td>
+                <td class="td-pengendalian">
+                  1. Komunikasi dan koordinasi dengan PJK terkait; 2.
+                  Menyampaikan urgensi identifikasi daftar sampel
+                </td>
+                <td style="text-align: center">
+                  <span class="badge-efek-tidak">Tidak Efektif</span>
+                </td>
+                <td><span class="badge-respon">Mengurangi risiko</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pelatihan Petugas"
+                data-detail='{"judul":"Pelatihan yang waktunya terbatas dan skemanya online berisiko terhadap pemahaman materi petugas","pengendalian":"1. Monitoring pelaksanaan pelatihan petugas SUPAS 2025\n2. Menyediakan bahan ajar dan kelengkapan pelatihan pada satu portal\n3. Menyusun jadwal pelatihan dengan optimal","efek":"Tidak Efektif","respon":"Mengurangi risiko"}'
+              >
+                <td class="td-no">2</td>
+                <td class="td-proses">Pelatihan Petugas</td>
+                <td>
+                  <div class="cell-truncate">
+                    Pelatihan yang waktunya terbatas dan skemanya online
+                    berisiko terhadap pemahaman materi petugas
+                  </div>
+                </td>
+                <td class="td-pengendalian">
+                  1. Monitoring pelaksanaan pelatihan; 2. Menyediakan bahan ajar
+                  di satu portal; 3. Menyusun jadwal optimal
+                </td>
+                <td style="text-align: center">
+                  <span class="badge-efek-tidak">Tidak Efektif</span>
+                </td>
+                <td><span class="badge-respon">Mengurangi risiko</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengumpulan Data"
+                data-detail='{"judul":"Target penyelesaian pemutakhiran rumah tangga sampel tidak mencapai 100 persen","pengendalian":"1. Evaluasi berkala selama pelaksanaan pendataan\n2. Menyesuaikan alokasi petugas dengan cakupan wilayah\n3. Mengoptimalkan supervisi berjenjang dari BPS Provinsi hingga BPS Kabupaten/Kota","efek":"Tidak Efektif","respon":"Mengurangi risiko"}'
+              >
+                <td class="td-no">3</td>
+                <td class="td-proses">Pengumpulan Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Target penyelesaian pemutakhiran rumah tangga sampel tidak
+                    mencapai 100 persen
+                  </div>
+                </td>
+                <td class="td-pengendalian">
+                  1. Evaluasi berkala; 2. Menyesuaikan alokasi petugas; 3.
+                  Supervisi berjenjang Provinsi–Kab/Kota
+                </td>
+                <td style="text-align: center">
+                  <span class="badge-efek-tidak">Tidak Efektif</span>
+                </td>
+                <td><span class="badge-respon">Mengurangi risiko</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengumpulan Data"
+                data-detail='{"judul":"Target penyelesaian pencacahan rumah tangga sampel tidak mencapai 100 persen","pengendalian":"1. Memberikan feedback bug pada aplikasi pencacahan ke BPS RI\n2. Kerjasama tim menyelesaikan wilayah tugas\n3. Monitoring kualitas petugas secara berkala melalui PML\n4. Koordinasi petugas dengan pengurus SLS\n5. Petugas melakukan kunjungan ulang","efek":"Efektif","respon":"Mengurangi risiko"}'
+              >
+                <td class="td-no">4</td>
+                <td class="td-proses">Pengumpulan Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Target penyelesaian pencacahan rumah tangga sampel tidak
+                    mencapai 100 persen
+                  </div>
+                </td>
+                <td class="td-pengendalian">
+                  1. Feedback bug ke BPS RI; 2. Kerjasama tim; 3. Monitoring via
+                  PML; 4. Koordinasi SLS; 5. Kunjungan ulang
+                </td>
+                <td style="text-align: center">
+                  <span class="badge-efek-efektif">Efektif</span>
+                </td>
+                <td><span class="badge-respon">Mengurangi risiko</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengolahan Data"
+                data-detail='{"judul":"Data yang tidak konsisten atau di luar rentang (terjadi anomali)","pengendalian":"1. Instruksi petugas selalu update aplikasi versi terbaru\n2. Membuat syntax anomali tambahan di luar daftar BPS RI\n3. Koordinasi antar tim","efek":"Efektif","respon":"Menerima risiko"}'
+              >
+                <td class="td-no">5</td>
+                <td class="td-proses">Pengolahan Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Data yang tidak konsisten atau di luar rentang (terjadi
+                    anomali)
+                  </div>
+                </td>
+                <td class="td-pengendalian">
+                  1. Update aplikasi versi terbaru; 2. Syntax anomali tambahan;
+                  3. Koordinasi antar tim
+                </td>
+                <td style="text-align: center">
+                  <span class="badge-efek-efektif">Efektif</span>
+                </td>
+                <td>
+                  <span class="badge-respon-terima">Menerima risiko</span>
+                </td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengolahan Data"
+                data-detail='{"judul":"Data yang dikirim petugas tidak sampai di server","pengendalian":"1. Instruksi petugas selalu update aplikasi versi terbaru\n2. Mencari waktu, tempat dan provider terbaik untuk pengiriman data\n3. Mengkondisikan perangkat petugas","efek":"Tidak Efektif","respon":"Mengurangi risiko"}'
+              >
+                <td class="td-no">6</td>
+                <td class="td-proses">Pengolahan Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Data yang dikirim petugas tidak sampai di server
+                  </div>
+                </td>
+                <td class="td-pengendalian">
+                  1. Update aplikasi versi terbaru; 2. Cari
+                  waktu/tempat/provider terbaik; 3. Kondisikan perangkat
+                </td>
+                <td style="text-align: center">
+                  <span class="badge-efek-tidak">Tidak Efektif</span>
+                </td>
+                <td><span class="badge-respon">Mengurangi risiko</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengolahan Data"
+                data-detail='{"judul":"Kesalahan merumuskan syntax ketika melakukan tabulasi data","pengendalian":"1. Perbaikan syntax\n2. Koordinasi antar tim","efek":"Efektif","respon":"Menerima risiko"}'
+              >
+                <td class="td-no">7</td>
+                <td class="td-proses">Pengolahan Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Kesalahan merumuskan syntax ketika melakukan tabulasi data
+                  </div>
+                </td>
+                <td class="td-pengendalian">
+                  1. Perbaikan syntax; 2. Koordinasi antar tim
+                </td>
+                <td style="text-align: center">
+                  <span class="badge-efek-efektif">Efektif</span>
+                </td>
+                <td>
+                  <span class="badge-respon-terima">Menerima risiko</span>
+                </td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Analisis Data"
+                data-detail='{"judul":"Analisis yang dihasilkan belum sesuai dengan literatur","pengendalian":"1. Evaluasi kembali analisis data\n2. Eksplorasi literatur dan alat analisis yang tepat\n3. Pemeriksaan keterbandingan data dari sumber lain","efek":"Tidak Efektif","respon":"Mengurangi risiko"}'
+              >
+                <td class="td-no">8</td>
+                <td class="td-proses">Analisis Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Analisis yang dihasilkan belum sesuai dengan literatur
+                  </div>
+                </td>
+                <td class="td-pengendalian">
+                  1. Evaluasi kembali analisis data; 2. Eksplorasi literatur dan
+                  alat analisis; 3. Pemeriksaan keterbandingan
+                </td>
+                <td style="text-align: center">
+                  <span class="badge-efek-tidak">Tidak Efektif</span>
+                </td>
+                <td><span class="badge-respon">Mengurangi risiko</span></td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Diseminasi Data"
+                data-detail='{"judul":"Rilis tidak tepat waktu karena ada proses yang terlambat","pengendalian":"1. Penyiapan bahan rilis dilakukan lebih awal\n2. Koordinasi intensif antar tim","efek":"Efektif","respon":"Menerima risiko"}'
+              >
+                <td class="td-no">9</td>
+                <td class="td-proses">Diseminasi Data</td>
+                <td>
+                  <div class="cell-truncate">
+                    Rilis tidak tepat waktu karena ada proses yang terlambat
+                  </div>
+                </td>
+                <td class="td-pengendalian">
+                  1. Bahan rilis disiapkan lebih awal; 2. Koordinasi intensif
+                  antar tim
+                </td>
+                <td style="text-align: center">
+                  <span class="badge-efek-efektif">Efektif</span>
+                </td>
+                <td>
+                  <span class="badge-respon-terima">Menerima risiko</span>
+                </td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== TAB: RTP ===== -->
+      <div id="tab-rtp" class="tab-content d-none">
+        <div class="table-responsive">
+          <table
+            class="table table-bordered table-hover tbl-rtp"
+            id="tabel-rtp"
+          >
+            <thead>
+              <tr>
+                <th style="width: 60px; text-align: center">Prioritas</th>
+                <th style="width: 180px">Pernyataan Risiko</th>
+                <th style="width: 200px">Rencana Tindak Penanganan (RTP)</th>
+                <th style="width: 160px">Output / Target</th>
+                <th style="width: 90px">Waktu</th>
+                <th style="width: 130px">Penanggung Jawab</th>
+                <th style="width: 120px; text-align: center">
+                  Risiko Residu<br /><small style="font-weight: 400"
+                    >(P × D = SR)</small
+                  >
+                </th>
+                <th style="width: 60px; text-align: center">Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                data-proses="Pengumpulan Data"
+                data-detail='{"judul":"Target penyelesaian pemutakhiran rumah tangga sampel tidak mencapai 100 persen","rtp":"1. Melakukan identifikasi potensi kendala pada seluruh SLS terpilih\n2. Evaluasi berkala dan penyesuaian strategi\n3. Supervisi berjenjang BPS Provinsi sampai BPS Kabupaten/Kota","output":"1. Identifikasi DS SLS potensi kendala\n2. Laporan evaluasi berkala","waktu":"31 Juli 2025","pj":"Ketua Tim Statistik Sosial","residu":"P: 2, D: 2, SR: 7"}'
+              >
+                <td style="text-align: center">
+                  <span class="badge-prioritas">1</span>
+                </td>
+                <td style="font-size: 0.78rem">
+                  <div class="cell-truncate">
+                    Target penyelesaian pemutakhiran rumah tangga sampel tidak
+                    mencapai 100 persen
+                  </div>
+                </td>
+                <td class="td-rtp">
+                  <div class="cell-truncate">
+                    1. Identifikasi potensi kendala SLS; 2. Evaluasi berkala; 3.
+                    Supervisi berjenjang BPS Provinsi–Kab/Kota
+                  </div>
+                </td>
+                <td class="td-target">
+                  <div class="cell-truncate">
+                    1. Identifikasi DS SLS; 2. Laporan evaluasi berkala
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem; white-space: nowrap">
+                  31 Juli 2025
+                </td>
+                <td style="font-size: 0.78rem">Ketua Tim Statistik Sosial</td>
+                <td style="text-align: center">
+                  <div class="skor-pds">P: <b>2</b> &nbsp; D: <b>2</b></div>
+                  <span class="badge-risiko-sr badge-sr-rendah">SR: 7</span>
+                </td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengumpulan Data"
+                data-detail='{"judul":"Target penyelesaian pencacahan rumah tangga sampel tidak mencapai 100 persen","rtp":"1. Memberikan feedback bug aplikasi kepada BPS RI\n2. Kerjasama tim menyelesaikan wilayah tugas\n3. Monitoring kualitas petugas melalui PML\n4. Koordinasi dengan pengurus SLS dan kunjungan ulang","output":"1. Share rekap permasalahan & solusi Fasih SUPAS 2025\n2. Laporan monitoring kualitas","waktu":"31 Juli 2025","pj":"Ketua Tim Statistik Sosial","residu":"P: 2, D: 2, SR: 7"}'
+              >
+                <td style="text-align: center">
+                  <span class="badge-prioritas">2</span>
+                </td>
+                <td style="font-size: 0.78rem">
+                  <div class="cell-truncate">
+                    Target penyelesaian pencacahan rumah tangga sampel tidak
+                    mencapai 100 persen
+                  </div>
+                </td>
+                <td class="td-rtp">
+                  <div class="cell-truncate">
+                    1. Feedback bug BPS RI; 2. Kerjasama tim; 3. Monitoring via
+                    PML; 4. Koordinasi SLS & kunjungan ulang
+                  </div>
+                </td>
+                <td class="td-target">
+                  <div class="cell-truncate">
+                    1. Rekap permasalahan & solusi Fasih SUPAS; 2. Laporan
+                    monitoring
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem; white-space: nowrap">
+                  31 Juli 2025
+                </td>
+                <td style="font-size: 0.78rem">Ketua Tim Statistik Sosial</td>
+                <td style="text-align: center">
+                  <div class="skor-pds">P: <b>2</b> &nbsp; D: <b>2</b></div>
+                  <span class="badge-risiko-sr badge-sr-rendah">SR: 7</span>
+                </td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pengolahan Data"
+                data-detail='{"judul":"Data yang dikirim petugas tidak sampai di server","rtp":"1. Instruksi update aplikasi versi terbaru\n2. Instruksi mencari waktu, tempat dan provider terbaik\n3. Meminta petugas mengkondisikan perangkat","output":"Share rekap permasalahan & solusi Fasih SUPAS 2025 ke BPS Kabupaten/Kota","waktu":"31 Juli 2025","pj":"Ketua Tim Statistik Sosial","residu":"P: 2, D: 2, SR: 7"}'
+              >
+                <td style="text-align: center">
+                  <span class="badge-prioritas">3</span>
+                </td>
+                <td style="font-size: 0.78rem">
+                  <div class="cell-truncate">
+                    Data yang dikirim petugas tidak sampai di server
+                  </div>
+                </td>
+                <td class="td-rtp">
+                  <div class="cell-truncate">
+                    1. Update aplikasi terbaru; 2. Cari waktu/tempat/provider
+                    terbaik; 3. Kondisikan perangkat petugas
+                  </div>
+                </td>
+                <td class="td-target">
+                  <div class="cell-truncate">
+                    Share rekap permasalahan & solusi Fasih SUPAS 2025 ke BPS
+                    Kab/Kota
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem; white-space: nowrap">
+                  31 Juli 2025
+                </td>
+                <td style="font-size: 0.78rem">Ketua Tim Statistik Sosial</td>
+                <td style="text-align: center">
+                  <div class="skor-pds">P: <b>2</b> &nbsp; D: <b>2</b></div>
+                  <span class="badge-risiko-sr badge-sr-rendah">SR: 7</span>
+                </td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Identifikasi Daftar Sampel"
+                data-detail='{"judul":"Daftar sampel tidak representatif dengan kondisi lapangan","rtp":"1. Komunikasi dan koordinasi dengan PJK terkait\n2. Menyampaikan urgensi identifikasi daftar sampel","output":"1. Dokumen Identifikasi DS SLS\n2. QnA Identifikasi DS SLS","waktu":"23 Juni 2025","pj":"Ketua Tim Statistik Sosial","residu":"P: 2, D: 2, SR: 7"}'
+              >
+                <td style="text-align: center">
+                  <span class="badge-prioritas">4</span>
+                </td>
+                <td style="font-size: 0.78rem">
+                  <div class="cell-truncate">
+                    Daftar sampel tidak representatif dengan kondisi lapangan
+                  </div>
+                </td>
+                <td class="td-rtp">
+                  <div class="cell-truncate">
+                    1. Komunikasi dengan PJK terkait; 2. Menyampaikan urgensi
+                    identifikasi daftar sampel
+                  </div>
+                </td>
+                <td class="td-target">
+                  <div class="cell-truncate">
+                    1. Dokumen Identifikasi DS SLS; 2. QnA Identifikasi DS SLS
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem; white-space: nowrap">
+                  23 Juni 2025
+                </td>
+                <td style="font-size: 0.78rem">Ketua Tim Statistik Sosial</td>
+                <td style="text-align: center">
+                  <div class="skor-pds">P: <b>2</b> &nbsp; D: <b>2</b></div>
+                  <span class="badge-risiko-sr badge-sr-rendah">SR: 7</span>
+                </td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Pelatihan Petugas"
+                data-detail='{"judul":"Pelatihan yang waktunya terbatas dan skemanya online berisiko terhadap pemahaman materi petugas","rtp":"1. Monitoring pelaksanaan pelatihan SUPAS 2025\n2. Menyediakan bahan ajar dan kelengkapan pelatihan pada satu portal\n3. Menyusun jadwal pelatihan dengan optimal","output":"1. Data monitoring pelaksanaan pelatihan\n2. Link portal materi pelatihan","waktu":"28 Mei 2025","pj":"Ketua Tim Statistik Sosial","residu":"P: 1, D: 2, SR: 3"}'
+              >
+                <td style="text-align: center">
+                  <span class="badge-prioritas">5</span>
+                </td>
+                <td style="font-size: 0.78rem">
+                  <div class="cell-truncate">
+                    Pelatihan yang waktunya terbatas dan skemanya online
+                    berisiko terhadap pemahaman materi petugas
+                  </div>
+                </td>
+                <td class="td-rtp">
+                  <div class="cell-truncate">
+                    1. Monitoring pelaksanaan pelatihan; 2. Bahan ajar di satu
+                    portal; 3. Jadwal pelatihan optimal
+                  </div>
+                </td>
+                <td class="td-target">
+                  <div class="cell-truncate">
+                    1. Data monitoring pelatihan; 2. Link portal materi
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem; white-space: nowrap">
+                  28 Mei 2025
+                </td>
+                <td style="font-size: 0.78rem">Ketua Tim Statistik Sosial</td>
+                <td style="text-align: center">
+                  <div class="skor-pds">P: <b>1</b> &nbsp; D: <b>2</b></div>
+                  <span class="badge-risiko-sr badge-sr-sangat-rendah"
+                    >SR: 3</span
+                  >
+                </td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr
+                data-proses="Analisis Data"
+                data-detail='{"judul":"Analisis yang dihasilkan belum sesuai dengan literatur","rtp":"1. Mengumpulkan informasi dan data pendukung\n2. Evaluasi analisis data dan indikator\n3. Koordinasi dengan OPD terkait (Dinkes, BKKBN, DP3AP2KB, Bappeda, PMD Dukcapil, Diskominfotik)","output":"Daftar data pendukung dan analisis data SUPAS","waktu":"Desember 2025","pj":"Ketua Tim Statistik Sosial","residu":"P: 1, D: 2, SR: 3"}'
+              >
+                <td style="text-align: center">
+                  <span class="badge-prioritas">6</span>
+                </td>
+                <td style="font-size: 0.78rem">
+                  <div class="cell-truncate">
+                    Analisis yang dihasilkan belum sesuai dengan literatur
+                  </div>
+                </td>
+                <td class="td-rtp">
+                  <div class="cell-truncate">
+                    1. Kumpulkan data pendukung; 2. Evaluasi analisis &
+                    indikator; 3. Koordinasi OPD terkait
+                  </div>
+                </td>
+                <td class="td-target">
+                  <div class="cell-truncate">
+                    Daftar data pendukung dan analisis data SUPAS
+                  </div>
+                </td>
+                <td style="font-size: 0.78rem; white-space: nowrap">
+                  Desember 2025
+                </td>
+                <td style="font-size: 0.78rem">Ketua Tim Statistik Sosial</td>
+                <td style="text-align: center">
+                  <div class="skor-pds">P: <b>1</b> &nbsp; D: <b>2</b></div>
+                  <span class="badge-risiko-sr badge-sr-sangat-rendah"
+                    >SR: 3</span
+                  >
+                </td>
+                <td style="text-align: center">
+                  <button class="btn-detail" onclick="showDetail(this)">
+                    🔍 Lihat
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Info TTD -->
+        <div
+          class="card border-0 shadow-sm mt-3 p-3"
+          style="border-radius: 10px; background: #f9fafb"
+        >
+          <div class="row text-center">
+            <div class="col-6">
+              <p class="mb-1" style="font-size: 0.8rem; color: #6b7280">
+                Pekanbaru, 18 April 2025
+              </p>
+              <p class="mb-4" style="font-size: 0.8rem; font-weight: 600">
+                Pengelola Risiko
+              </p>
+              <p class="mb-0" style="font-size: 0.85rem; font-weight: 700">
+                Meita Komalasari, S.ST., M.Si.
+              </p>
+              <p class="mb-0" style="font-size: 0.75rem; color: #6b7280">
+                NIP. 197905012000122002
+              </p>
+              <p class="mb-0" style="font-size: 0.75rem; color: #374151">
+                Ketua Tim Statistik Sosial
+              </p>
+            </div>
+            <div class="col-6">
+              <p class="mb-1" style="font-size: 0.8rem; color: #6b7280">
+                Pekanbaru, 18 April 2025
+              </p>
+              <p class="mb-4" style="font-size: 0.8rem; font-weight: 600">
+                Pemilik Risiko
+              </p>
+              <p class="mb-0" style="font-size: 0.85rem; font-weight: 700">
+                Asep Riyadi, S.Si., M.M.
+              </p>
+              <p class="mb-0" style="font-size: 0.75rem; color: #6b7280">
+                NIP. 19670118 198901 1 001
+              </p>
+              <p class="mb-0" style="font-size: 0.75rem; color: #374151">
+                Kepala BPS Provinsi Riau
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="bg-white rounded shadow p-5 mb-4 mt-4">
+        <p class="mb-0 text-center">
+          © 2025 <b>BPS Provinsi Riau</b> - Sistem Informasi Manajemen Risiko
+          (Keris Jaya)
+        </p>
+      </footer>
+    </main>
+
+    <!-- Core -->
+    <script src="../../vendor/@popperjs/core/dist/umd/popper.min.js"></script>
+    <script src="../../vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../../vendor/onscreen/dist/on-screen.umd.min.js"></script>
+    <script src="../../vendor/nouislider/distribute/nouislider.min.js"></script>
+    <script src="../../vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+    <script src="../../vendor/chartist/dist/chartist.min.js"></script>
+    <script src="../../vendor/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
+    <script src="../../vendor/vanillajs-datepicker/dist/js/datepicker.min.js"></script>
+    <script src="../../vendor/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+    <script src="../../vendor/notyf/notyf.min.js"></script>
+    <script src="../../vendor/simplebar/dist/simplebar.min.js"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="../../assets/js/volt.js"></script>
+    <script src="../../assets/js/sidebar.js"></script>
+
+    <script>
+      // ===== SHOW DETAIL MODAL =====
+      function showDetail(btn) {
+        const row = btn.closest("tr");
+        const rawDetail = row.getAttribute("data-detail");
+        if (!rawDetail) return;
+        const d = JSON.parse(rawDetail);
+
+        document.getElementById("modalDetailTitle").textContent =
+          d.judul || "Detail Risiko";
+
+        let html = "";
+
+        // Pernyataan Risiko
+        html += `<div class="detail-section">
+          <div class="detail-label">Pernyataan Risiko</div>
+          <div class="detail-value" style="font-weight:600">${d.judul || "–"}</div>
+        </div><hr/>`;
+
+        if (d.proses) html += buildRow("Proses Bisnis", d.proses);
+        if (d.kategori) html += buildRow("Kategori", d.kategori);
+        if (d.sumber) html += buildRow("Sumber", d.sumber);
+        if (d.skor) html += buildRow("Skor Risiko", d.skor);
+        if (d.level) html += buildRow("Level Risiko", d.level);
+        if (d.respon) html += buildRow("Respon Risiko", d.respon);
+
+        if (d.penyebab) {
+          html += `<hr/><div class="detail-section">
+            <div class="detail-label">Penyebab Risiko</div>
+            <div class="detail-value">${nl2br(d.penyebab)}</div>
+          </div>`;
+        }
+        if (d.dampak) {
+          html += `<div class="detail-section">
+            <div class="detail-label">Dampak Risiko</div>
+            <div class="detail-value">${nl2br(d.dampak)}</div>
+          </div>`;
+        }
+
+        if (d.pengendalian) {
+          html += `<hr/><div class="detail-section">
+            <div class="detail-label">Pengendalian yang Telah Dilaksanakan</div>
+            <div class="detail-value">${nl2br(d.pengendalian)}</div>
+          </div>`;
+        }
+        if (d.efek) html += buildRow("Efek Pengendalian", d.efek);
+
+        if (d.rtp) {
+          html += `<hr/><div class="detail-section">
+            <div class="detail-label">Rencana Tindak Penanganan (RTP)</div>
+            <div class="detail-value">${nl2br(d.rtp)}</div>
+          </div>`;
+        }
+        if (d.output) {
+          html += `<div class="detail-section">
+            <div class="detail-label">Output / Target</div>
+            <div class="detail-value">${nl2br(d.output)}</div>
+          </div>`;
+        }
+        if (d.waktu) html += buildRow("Waktu", d.waktu);
+        if (d.pj) html += buildRow("Penanggung Jawab", d.pj);
+        if (d.residu) html += buildRow("Risiko Residu", d.residu);
+
+        document.getElementById("modalDetailBody").innerHTML = html;
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalDetail"),
+        );
+        modal.show();
+      }
+
+      function buildRow(label, value) {
+        return `<div class="detail-section d-flex gap-3">
+          <div class="detail-label" style="min-width:140px">${label}</div>
+          <div class="detail-value">${value}</div>
+        </div>`;
+      }
+
+      function nl2br(str) {
+        return str.replace(/\n/g, "<br/>");
+      }
+
+      // ===== MAIN =====
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggleBtn = document.getElementById("sidebar-toggle");
+        const sidebar = document.getElementById("sidebarMenu");
+        const content = document.querySelector(".content");
+        if (toggleBtn) {
+          toggleBtn.addEventListener("click", function () {
+            sidebar.classList.toggle("sidebar-hidden");
+            content.classList.toggle("content-full");
+          });
+        }
+
+        /* ===== TAB ===== */
+        const tabs = document.querySelectorAll(".tab-btn");
+        const contents = document.querySelectorAll(".tab-content");
+        const searchInput = document.getElementById("searchInput");
+        const filterProses = document.getElementById("filterProses");
+
+        tabs.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            tabs.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            contents.forEach((c) => c.classList.add("d-none"));
+            document
+              .getElementById(btn.dataset.target)
+              .classList.remove("d-none");
+            searchInput.value = "";
+            applyFilters();
+          });
+        });
+
+        /* ===== SEARCH + FILTER PROSES ===== */
+        searchInput.addEventListener("input", applyFilters);
+        filterProses.addEventListener("change", applyFilters);
+
+        function applyFilters() {
+          const keyword = searchInput.value.toLowerCase();
+          const proses = filterProses.value.toLowerCase();
+          const activeContent = document.querySelector(
+            ".tab-content:not(.d-none)",
+          );
+          if (!activeContent) return;
+          const rows = activeContent.querySelectorAll("tbody tr");
+          rows.forEach((row) => {
+            const text = row.innerText.toLowerCase();
+            const rowProses = (row.dataset.proses || "").toLowerCase();
+            const matchKeyword = keyword === "" || text.includes(keyword);
+            const matchProses = proses === "" || rowProses.includes(proses);
+            row.style.display = matchKeyword && matchProses ? "" : "none";
+          });
+        }
+
+        /* ===== EKSPOR (placeholder) ===== */
+        document.getElementById("btnExport").addEventListener("click", () => {
+          const activeTab = document.querySelector(".tab-btn.active").innerText;
+          alert(
+            "Ekspor tab \u201c" +
+              activeTab +
+              "\u201d akan diunduh sebagai file Excel.",
+          );
+        });
+      });
+    </script>
+  </body>
+</html>

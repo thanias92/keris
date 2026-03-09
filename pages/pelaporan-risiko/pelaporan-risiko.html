@@ -1,0 +1,1797 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <style>
+    .bg-soft-green {
+      background: #dff5e5;
+    }
+
+    .bg-soft-peach {
+      background: #fde7d9;
+    }
+
+    .bg-soft-yellow {
+      background: #fff1c9;
+    }
+
+    .card-soft {
+      border-radius: 18px;
+    }
+
+    /* ===== TAB BUTTONS ===== */
+    .tab-pl-wrapper {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab-pl-btn {
+      padding: 7px 18px;
+      border-radius: 8px;
+      border: 1.5px solid #d1d5db;
+      background: #fff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      opacity: 1 !important;
+      transition: all 0.15s;
+    }
+
+    .tab-pl-btn:hover {
+      border-color: #1a3c1a;
+      color: #1a3c1a;
+    }
+
+    .tab-pl-btn.active {
+      background: #1a3c1a;
+      color: #fff;
+      border-color: #1a3c1a;
+    }
+
+    /* ===== INFO BAR ===== */
+    .info-bar {
+      background: #f8fdf9;
+      border: 1px solid #d1fae5;
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: center;
+      font-size: 0.82rem;
+    }
+
+    .info-bar .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-bar .info-label {
+      color: #6b7280;
+      font-size: 0.72rem;
+      font-weight: 500;
+    }
+
+    .info-bar .info-val {
+      font-weight: 700;
+      color: #1a3c1a;
+      font-size: 0.88rem;
+    }
+
+    /* ===== SUMMARY CARDS ===== */
+    .pl-summary .pl-card {
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pl-card .pl-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .pl-card .pl-val {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .pl-card .pl-lbl {
+      font-size: 0.7rem;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    /* ===== TABEL ===== */
+    .tbl-pl thead th {
+      background: #1a3c1a !important;
+      color: #ffffff !important;
+      font-size: 0.78rem;
+      vertical-align: middle;
+    }
+
+    .tbl-pl tbody td {
+      font-size: 0.79rem;
+      vertical-align: middle;
+    }
+
+    .tbl-pl .td-no {
+      text-align: center;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+
+    .tbl-pl .td-ctr {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    /* ===== TRUNCATE ===== */
+    .cell-truncate {
+      max-width: 160px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.78rem;
+      display: block;
+    }
+
+    .cell-truncate-sm {
+      max-width: 120px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.78rem;
+      display: block;
+    }
+
+    /* ===== DETAIL BUTTON ===== */
+    .btn-detail {
+      background: none;
+      border: 1px solid #6366f1;
+      color: #6366f1;
+      border-radius: 5px;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .btn-detail:hover {
+      background: #6366f1;
+      color: #fff;
+    }
+
+    /* ===== MODAL ===== */
+    #modalDetail .modal-header {
+      background: #1a3c1a;
+      color: #fff;
+    }
+
+    #modalDetail .modal-header .btn-close {
+      filter: invert(1);
+    }
+
+    #modalDetail .modal-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    #modalDetail .detail-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    #modalDetail .detail-value {
+      font-size: 0.85rem;
+      color: #111827;
+      line-height: 1.6;
+    }
+
+    #modalDetail hr {
+      margin: 10px 0;
+      border-color: #e5e7eb;
+    }
+
+    /* ===== BADGES ===== */
+    .bdg {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .bdg-tercapai {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
+    }
+
+    .bdg-proses {
+      background: #fef9c3;
+      color: #854d0e;
+      border: 1px solid #fde047;
+    }
+
+    .bdg-belum {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+    }
+
+    .bdg-final {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
+    }
+
+    .bdg-draft {
+      background: #fef9c3;
+      color: #854d0e;
+      border: 1px solid #fde047;
+    }
+
+    .sr-bdg {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .sr-sangat-tinggi {
+      background: #dc2626;
+    }
+
+    .sr-sedang {
+      background: #ca8a04;
+    }
+
+    .sr-rendah {
+      background: #16a34a;
+    }
+
+    .sr-sangat-rendah {
+      background: #2563eb;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    .prog-bar {
+      height: 7px;
+      border-radius: 4px;
+      background: #e5e7eb;
+      overflow: hidden;
+    }
+
+    .prog-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    /* ===== ACCORDION ===== */
+    .acc-laporan .acc-header {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+
+    .acc-laporan .acc-header:hover {
+      background: #dcfce7;
+    }
+
+    .acc-laporan .acc-body {
+      border: 1px solid #d1fae5;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      display: none;
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: #374151;
+    }
+
+    .acc-laporan .acc-body.open {
+      display: block;
+    }
+
+    /* ===== TTD ===== */
+    .ttd-section {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 16px;
+      font-size: 0.82rem;
+    }
+
+    @media print {
+
+      .sidebar,
+      .navbar,
+      .tab-pl-wrapper,
+      #plSearch,
+      #btnPrint,
+      .btn {
+        display: none !important;
+      }
+
+      .content {
+        margin-left: 0 !important;
+      }
+
+     @media print {
+    .tbl-pl thead th {
+        background: #1a3c1a !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact;
+    }
+}
+    
+    }
+  </style>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Dashboard Keris Raja — Pelaporan Risiko</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <link rel="apple-touch-icon" sizes="120x120" href="../../assets/img/favicon/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/img/favicon/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/img/favicon/favicon-16x16.png" />
+  <link rel="manifest" href="../../assets/img/favicon/site.webmanifest" />
+  <link type="text/css" href="../../vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" />
+  <link type="text/css" href="../../vendor/notyf/notyf.min.css" rel="stylesheet" />
+  <link type="text/css" href="../../css/volt.css" rel="stylesheet" />
+</head>
+
+<body>
+  <!-- ===== MODAL DETAIL ===== -->
+  <div class="modal fade" id="modalDetail" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalDetailTitle">
+            Detail Laporan RTP
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalDetailBody"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- mobile navbar -->
+  <nav class="navbar navbar-dark navbar-theme-primary px-4 col-12 d-lg-none">
+    <a class="navbar-brand me-lg-5" href="../../index.html">
+      <img class="navbar-brand-dark" src="../../assets/img/brand/light.svg" alt="Volt logo" />
+      <img class="navbar-brand-light" src="../../assets/img/brand/dark.svg" alt="Volt logo" />
+    </a>
+    <div class="d-flex align-items-center">
+      <button class="navbar-toggler d-lg-none collapsed" type="button" data-bs-toggle="collapse"
+        data-bs-target="#sidebarMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- SIDEBAR -->
+  <nav id="sidebarMenu" class="sidebar d-lg-block bg-green-800 text-white collapse" data-simplebar>
+    <div class="sidebar-inner px-4 pt-3">
+      <div class="user-card d-flex flex-column align-items-start pb-4 border-bottom border-green-700">
+        <a href="../../index.html" class="d-flex align-items-center mb-3">
+          <img src="../../assets/img/brand/light.svg" height="35" class="me-2" alt="Logo" />
+          <span class="mt-1 sidebar-text fw-bolder fs-4">Keris Raja</span>
+        </a>
+        <hr class="w-100 my-2 opacity-25" />
+        <div class="d-flex align-items-center mt-2">
+          <img src="../../assets/img/logo-bps.svg" height="30" class="me-2" alt="BPS" />
+          <div class="sidebar-text">
+            <p class="mb-0 fw-bold" style="font-size: 0.75rem; line-height: 1.2">
+              Badan Pusat Statistik
+            </p>
+            <p class="mb-0 text-success" style="font-size: 0.7rem; font-weight: 600">
+              Provinsi Riau
+            </p>
+          </div>
+        </div>
+      </div>
+      <ul class="nav flex-column pt-3 pt-md-0">
+        <li class="nav-item">
+          <a href="../../pages/dashboard/dashboard.html" class="nav-link"><span class="sidebar-icon"><svg
+                class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+              </svg></span><span class="sidebar-text">Dashboard</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="../../pages/bank-risiko/bank-risiko.html" class="nav-link"><span class="sidebar-icon"><svg
+                class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+                <path fill-rule="evenodd"
+                  d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                  clip-rule="evenodd"></path>
+              </svg></span><span class="sidebar-text">Bank Risiko</span></a>
+        </li>
+        <li class="nav-item">
+          <span class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+            data-bs-target="#submenu-manajemen-risiko" aria-expanded="false">
+            <span><span class="sidebar-icon"><svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                    clip-rule="evenodd"></path>
+                </svg></span><span class="sidebar-text">Manajemen Risiko</span></span>
+            <span class="link-arrow"><svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg></span>
+          </span>
+          <div class="multi-level show" role="list" id="submenu-manajemen-risiko">
+            <ul class="flex-column nav">
+              <li class="nav-item">
+                <a class="nav-link" href="../../pages/manajemen-risiko/penetapan-konteks.html"><span>Penetapan
+                    Konteks</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../../pages/manajemen-risiko/identifikasi-risiko.html"><span>Identifikasi
+                    Risiko</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../../pages/manajemen-risiko/analisis-risiko.html"><span>Analisis
+                    Risiko</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../../pages/manajemen-risiko/evaluasi-risiko.html"><span>Evaluasi
+                    Risiko</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../../pages/manajemen-risiko/rencana-penanganan.html"><span>Rencana
+                    Penanganan</span></a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a href="../../pages/pemantauan-risiko/pemantauan-risiko.html" class="nav-link"><span
+              class="sidebar-icon"><svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                <path fill-rule="evenodd"
+                  d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                  clip-rule="evenodd"></path>
+              </svg></span><span class="sidebar-text">Pemantauan Risiko</span></a>
+        </li>
+        <li class="nav-item active">
+          <a href="../../pages/pelaporan-risiko/pelaporan-risiko.html" class="nav-link"><span class="sidebar-icon"><svg
+                class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                  d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 100-2h4a1 1 0 100 2H8zm0 4a1 1 0 100-2h4a1 1 0 100 2H8z"
+                  clip-rule="evenodd"></path>
+              </svg></span><span class="sidebar-text">Pelaporan Risiko</span></a>
+        </li>
+        <li role="separator" class="dropdown-divider mt-4 mb-3 border-green-700"></li>
+        <li class="nav-item">
+          <a href="../../pages/settings.html" class="nav-link"><span class="sidebar-text">Settings</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="../../pages/examples/sign-in.html" class="nav-link d-flex align-items-center"><span
+              class="sidebar-text">Logout</span></a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="content">
+    <!-- TOP NAV -->
+    <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
+      <div class="container-fluid px-0">
+        <div class="d-flex justify-content-between w-100" id="navbarSupportedContent">
+          <div class="d-flex align-items-center">
+            <button id="sidebar-toggle"
+              class="sidebar-toggle me-3 btn btn-icon-only btn-lg btn-white d-none d-lg-inline-block shadow-sm text-green-800">
+              <svg class="icon icon-xs" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                  d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                  clip-rule="evenodd"></path>
+              </svg>
+            </button>
+          </div>
+          <ul class="navbar-nav align-items-center">
+            <li class="nav-item me-2 d-none d-md-block">
+              <form class="navbar-search form-inline">
+                <div class="input-group input-group-merge search-bar">
+                  <span class="input-group-text"><svg class="icon icon-xs" xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clip-rule="evenodd"></path>
+                    </svg></span><input type="text" class="form-control" placeholder="Cari" />
+                </div>
+              </form>
+            </li>
+            <li class="nav-item dropdown me-2">
+              <a class="nav-link text-dark notification-bell unread dropdown-toggle" href="#" role="button"
+                data-bs-toggle="dropdown"><svg class="icon icon-sm text-green-800" fill="currentColor"
+                  viewBox="0 0 20 20">
+                  <path
+                    d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+                  </path>
+                </svg></a>
+            </li>
+            <li class="nav-item dropdown ms-lg-3">
+              <a class="nav-link dropdown-toggle pt-1 px-0" href="#" role="button" data-bs-toggle="dropdown">
+                <div class="media d-flex align-items-center">
+                  <div class="media-body ms-2 text-dark d-none d-lg-block me-2 text-end">
+                    <span class="mb-0 font-small fw-bold text-green-900 d-block">Ahmad Fauzi</span><small
+                      class="text-muted">Administrator</small>
+                  </div>
+                  <img class="avatar rounded-circle" alt="Avatar" src="../../assets/img/team/profile-picture-3.jpg" />
+                </div>
+              </a>
+              <div class="dropdown-menu dashboard-dropdown dropdown-menu-end mt-2 py-1">
+                <a class="dropdown-item d-flex align-items-center" href="#">Profil Saya</a>
+                <div role="separator" class="dropdown-divider my-1"></div>
+                <a class="dropdown-item d-flex align-items-center" href="../../pages/examples/sign-in.html">Logout</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ===== KONTEN ===== -->
+    <div class="filter-wrapper army-theme">
+      <div class="page-title mb-2">
+        <h6 class="mb-0">Pelaporan Risiko</h6>
+      </div>
+    </div>
+
+    <!-- INFO BAR -->
+    <div class="info-bar">
+      <div class="info-item">
+        <span class="info-label">Satuan Kerja</span><span class="info-val">BPS Provinsi Riau</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Ruang Lingkup</span><span class="info-val">SUPAS 2025</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Periode Laporan</span><span class="info-val">Semester II — 2025</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Status Laporan</span><span class="info-val"><span class="bdg bdg-final">✓
+            Final</span></span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Disusun Oleh</span><span class="info-val">Meita Komalasari, S.ST., M.Si.</span>
+      </div>
+      <div class="ms-auto">
+        <button id="btnPrint" class="btn btn-sm" style="background: #1a3c1a; color: #fff; border-radius: 8px"
+          onclick="window.print()">
+          🖨 Cetak Laporan
+        </button>
+      </div>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="row g-3 mb-3 pl-summary">
+      <div class="col-6 col-md-3">
+        <div class="pl-card" style="background: #f0fdf4; border: 1px solid #bbf7d0">
+          <div class="pl-icon" style="background: #dcfce7">📋</div>
+          <div>
+            <div class="pl-val" style="color: #15803d">212</div>
+            <div class="pl-lbl">Total Risiko Teridentifikasi</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="pl-card" style="background: #fff7ed; border: 1px solid #fed7aa">
+          <div class="pl-icon" style="background: #ffedd5">⚡</div>
+          <div>
+            <div class="pl-val" style="color: #c2410c">54</div>
+            <div class="pl-lbl">Risiko Prioritas (RTP)</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="pl-card" style="background: #eff6ff; border: 1px solid #bfdbfe">
+          <div class="pl-icon" style="background: #dbeafe">🎯</div>
+          <div>
+            <div class="pl-val" style="color: #1d4ed8">9</div>
+            <div class="pl-lbl">Risiko SUPAS 2025</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="pl-card" style="background: #f0fdf4; border: 1px solid #86efac">
+          <div class="pl-icon" style="background: #dcfce7">✅</div>
+          <div>
+            <div class="pl-val" style="color: #15803d">83%</div>
+            <div class="pl-lbl">Tingkat Realisasi RTP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB -->
+    <div class="tab-pl-wrapper">
+      <button class="tab-pl-btn active" data-target="tab-laporan-rtp">
+        Laporan RTP SUPAS
+      </button>
+      <button class="tab-pl-btn" data-target="tab-rekap-tim">
+        Rekapitulasi Per Tim
+      </button>
+      <button class="tab-pl-btn" data-target="tab-ringkasan">
+        Ringkasan Laporan
+      </button>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <input type="text" id="plSearch" class="form-control" style="max-width: 380px"
+        placeholder="Cari risiko atau status..." />
+      <button class="btn ms-2" style="background: #1a3c1a; color: #fff"
+        onclick="alert('Ekspor laporan akan diunduh sebagai PDF/Excel.')">
+        ⬇ Ekspor
+      </button>
+    </div>
+
+    <!-- ========== TAB 1: LAPORAN RTP SUPAS ========== -->
+    <div id="tab-laporan-rtp" class="pl-tab-content">
+      <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 10px">
+        Laporan realisasi RTP Tim Statistik Sosial – Kegiatan SUPAS 2025 ·
+        Semester II Tahun 2025
+      </p>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover tbl-pl" id="tbl-rtp">
+          <thead>
+            <tr>
+              <th style="width: 45px; text-align: center">No</th>
+              <th style="width: 155px">Pernyataan Risiko</th>
+              <th style="width: 150px">RTP</th>
+              <th style="width: 130px">Target Output</th>
+              <th style="width: 85px; text-align: center">Waktu Target</th>
+              <th style="width: 140px">Realisasi Output</th>
+              <th style="width: 85px; text-align: center">Waktu Realisasi</th>
+              <th style="width: 85px; text-align: center">Status</th>
+              <th style="width: 80px; text-align: center">Risiko Residu</th>
+              <th style="width: 60px; text-align: center">Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              data-detail='{"no":"1","risiko":"Target penyelesaian pemutakhiran rumah tangga sampel tidak mencapai 100 persen","rtp":"1. Identifikasi potensi kendala SLS terpilih\n2. Monitoring progres berkala\n3. Evaluasi dan penyesuaian strategi","target_output":"Identifikasi DS SLS & Laporan evaluasi berkala","waktu_target":"31 Jul 2025","realisasi":"Identifikasi SLS force majeur selesai; dashboard monitoring aktif. Instruksi via WhatsApp 15 Jun 2025.","waktu_realisasi":"Jun – Jul 2025","status":"Tercapai","residu":"SR: 7 (Rendah)"}'>
+              <td class="td-no">1</td>
+              <td>
+                <span class="cell-truncate">Target penyelesaian pemutakhiran rumah tangga sampel tidak
+                  mencapai 100 persen</span>
+              </td>
+              <td>
+                <span class="cell-truncate">1. Identifikasi potensi kendala SLS; 2. Monitoring berkala;
+                  3. Evaluasi strategi</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Identifikasi DS SLS & Laporan evaluasi berkala</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                31 Jul 2025
+              </td>
+              <td>
+                <span class="cell-truncate">Identifikasi SLS force majeur selesai; dashboard monitoring
+                  aktif</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                Jun–Jul 2025
+              </td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">✓ Tercapai</span>
+              </td>
+              <td class="td-ctr">
+                <span class="sr-bdg sr-rendah">SR: 7</span>
+              </td>
+              <td class="td-ctr">
+                <button class="btn-detail" onclick="showDetail(this)">
+                  🔍 Lihat
+                </button>
+              </td>
+            </tr>
+            <tr
+              data-detail='{"no":"2","risiko":"Target penyelesaian pencacahan rumah tangga sampel tidak mencapai 100 persen","rtp":"1. Feedback bug aplikasi ke BPS RI\n2. Kerjasama tim selesaikan wilayah\n3. Monitoring petugas via aplikasi","target_output":"Share rekap permasalahan & solusi Fasih SUPAS 2025","waktu_target":"31 Jul 2025","realisasi":"Rekap permasalahan & solusi dibagikan ke grup WhatsApp SUPAS2025 pada 12 Jun 2025.","waktu_realisasi":"12 Jun 2025","status":"Tercapai","residu":"SR: 7 (Rendah)"}'>
+              <td class="td-no">2</td>
+              <td>
+                <span class="cell-truncate">Target penyelesaian pencacahan rumah tangga sampel tidak
+                  mencapai 100 persen</span>
+              </td>
+              <td>
+                <span class="cell-truncate">1. Feedback bug ke BPS RI; 2. Kerjasama tim; 3. Monitoring
+                  petugas via aplikasi</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Share rekap permasalahan & solusi Fasih SUPAS 2025</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                31 Jul 2025
+              </td>
+              <td>
+                <span class="cell-truncate">Rekap permasalahan & solusi dibagikan ke grup WhatsApp
+                  SUPAS2025</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                12 Jun 2025
+              </td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">✓ Tercapai</span>
+              </td>
+              <td class="td-ctr">
+                <span class="sr-bdg sr-rendah">SR: 7</span>
+              </td>
+              <td class="td-ctr">
+                <button class="btn-detail" onclick="showDetail(this)">
+                  🔍 Lihat
+                </button>
+              </td>
+            </tr>
+            <tr
+              data-detail='{"no":"3","risiko":"Data yang dikirim petugas tidak sampai di server","rtp":"1. Instruksi update aplikasi terbaru\n2. Pilih waktu & provider terbaik\n3. Kondisikan perangkat petugas","target_output":"Share rekap solusi Fasih & laporan evaluasi berkala","waktu_target":"31 Jul 2025","realisasi":"Rekap solusi dibagikan via WhatsApp; link rekap & rapat SUPAS tersedia.","waktu_realisasi":"12 Jun 2025","status":"Tercapai","residu":"SR: 7 (Rendah)"}'>
+              <td class="td-no">3</td>
+              <td>
+                <span class="cell-truncate">Data yang dikirim petugas tidak sampai di server</span>
+              </td>
+              <td>
+                <span class="cell-truncate">1. Update aplikasi terbaru; 2. Pilih waktu/provider
+                  terbaik; 3. Kondisikan perangkat</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Share rekap solusi Fasih & laporan evaluasi berkala</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                31 Jul 2025
+              </td>
+              <td>
+                <span class="cell-truncate">Rekap solusi dibagikan via WhatsApp; link rekap & rapat
+                  SUPAS tersedia</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                12 Jun 2025
+              </td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">✓ Tercapai</span>
+              </td>
+              <td class="td-ctr">
+                <span class="sr-bdg sr-rendah">SR: 7</span>
+              </td>
+              <td class="td-ctr">
+                <button class="btn-detail" onclick="showDetail(this)">
+                  🔍 Lihat
+                </button>
+              </td>
+            </tr>
+            <tr
+              data-detail='{"no":"4","risiko":"Daftar sampel tidak representatif dengan kondisi lapangan","rtp":"1. Koordinasi dengan PJK terkait\n2. Sampaikan urgensi identifikasi daftar sampel","target_output":"Dokumen Identifikasi DS SLS & QnA","waktu_target":"23 Jun 2025","realisasi":"Spreadsheet identifikasi DS SLS tersedia dan dibagikan ke BPS Kab/Kota.","waktu_realisasi":"Jun 2025","status":"Tercapai","residu":"SR: 7 (Rendah)"}'>
+              <td class="td-no">4</td>
+              <td>
+                <span class="cell-truncate">Daftar sampel tidak representatif dengan kondisi
+                  lapangan</span>
+              </td>
+              <td>
+                <span class="cell-truncate">1. Koordinasi dengan PJK; 2. Sampaikan urgensi identifikasi
+                  daftar sampel</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Dokumen Identifikasi DS SLS & QnA</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                23 Jun 2025
+              </td>
+              <td>
+                <span class="cell-truncate">Spreadsheet identifikasi DS SLS tersedia dan dibagikan ke
+                  BPS Kab/Kota</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                Jun 2025
+              </td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">✓ Tercapai</span>
+              </td>
+              <td class="td-ctr">
+                <span class="sr-bdg sr-rendah">SR: 7</span>
+              </td>
+              <td class="td-ctr">
+                <button class="btn-detail" onclick="showDetail(this)">
+                  🔍 Lihat
+                </button>
+              </td>
+            </tr>
+            <tr
+              data-detail='{"no":"5","risiko":"Pelatihan yang waktunya terbatas dan skemanya online berisiko terhadap pemahaman materi petugas","rtp":"1. Monitoring pelatihan SUPAS 2025\n2. Portal bahan ajar terpusat\n3. Jadwal pelatihan optimal","target_output":"Data monitoring & link portal materi pelatihan","waktu_target":"28 Mei 2025","realisasi":"Monitoring terlaksana; portal materi aktif di sites.google.com/view/supas2025riau.","waktu_realisasi":"Mei 2025","status":"Tercapai","residu":"SR: 3 (Sangat Rendah)"}'>
+              <td class="td-no">5</td>
+              <td>
+                <span class="cell-truncate">Pelatihan yang waktunya terbatas dan skemanya online
+                  berisiko terhadap pemahaman materi petugas</span>
+              </td>
+              <td>
+                <span class="cell-truncate">1. Monitoring pelatihan; 2. Portal bahan ajar terpusat; 3.
+                  Jadwal optimal</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Data monitoring & link portal materi pelatihan</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                28 Mei 2025
+              </td>
+              <td>
+                <span class="cell-truncate">Monitoring terlaksana; portal materi aktif di
+                  sites.google.com</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                Mei 2025
+              </td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">✓ Tercapai</span>
+              </td>
+              <td class="td-ctr">
+                <span class="sr-bdg sr-sangat-rendah">SR: 3</span>
+              </td>
+              <td class="td-ctr">
+                <button class="btn-detail" onclick="showDetail(this)">
+                  🔍 Lihat
+                </button>
+              </td>
+            </tr>
+            <tr
+              data-detail='{"no":"6","risiko":"Analisis yang dihasilkan belum sesuai dengan literatur","rtp":"1. Kumpulkan data & informasi pendukung\n2. Evaluasi analisis & indikator\n3. Koordinasi OPD terkait (Dinkes, BKKBN, DP3AP2KB, Bappeda, Dukcapil, Diskominfotik)","target_output":"Daftar data pendukung & analisis data SUPAS","waktu_target":"Des 2025","realisasi":"RTL: koordinasi OPD (Dinkes, BKKBN, DP3AP2KB, Bappeda, Dukcapil, Diskominfotik) masih berjalan.","waktu_realisasi":"— (Des 2025)","status":"Proses","residu":"SR: 3 (Sangat Rendah)"}'>
+              <td class="td-no">6</td>
+              <td>
+                <span class="cell-truncate">Analisis yang dihasilkan belum sesuai dengan
+                  literatur</span>
+              </td>
+              <td>
+                <span class="cell-truncate">1. Kumpulkan data pendukung; 2. Evaluasi analisis; 3.
+                  Koordinasi OPD terkait</span>
+              </td>
+              <td>
+                <span class="cell-truncate">Daftar data pendukung & analisis data SUPAS</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                Des 2025
+              </td>
+              <td>
+                <span class="cell-truncate">Koordinasi OPD terkait masih berjalan (Dinkes, BKKBN,
+                  dll)</span>
+              </td>
+              <td class="td-ctr" style="font-size: 0.78rem; white-space: nowrap">
+                — (Des 2025)
+              </td>
+              <td class="td-ctr">
+                <span class="bdg bdg-proses">⏳ Proses</span>
+              </td>
+              <td class="td-ctr">
+                <span class="sr-bdg sr-sangat-rendah">SR: 3</span>
+              </td>
+              <td class="td-ctr">
+                <button class="btn-detail" onclick="showDetail(this)">
+                  🔍 Lihat
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Catatan -->
+      <div class="mt-3 p-3" style="
+            background: #f8fdf9;
+            border: 1px solid #d1fae5;
+            border-radius: 8px;
+            font-size: 0.8rem;
+          ">
+        <strong>📝 Catatan Laporan:</strong>
+        <p class="mb-0 mt-1" style="color: #374151">
+          Laporan ini merupakan rekapitulasi realisasi Rencana Tindak
+          Penanganan (RTP) SUPAS 2025 yang disusun sebagai bagian dari Laporan
+          Semester II Tahun 2025 BPS Provinsi Riau. Dari 6 RTP yang
+          diprioritaskan, sebanyak 5 RTP telah terealisasi pada Triwulan III
+          (TW III) dan 1 RTP masih dalam proses dengan target penyelesaian
+          Desember 2025. Seluruh risiko mengalami penurunan Skor Risiko (SR)
+          yang signifikan dari kisaran SR 11–22 menjadi SR 3–7 setelah
+          penanganan dilaksanakan.
+        </p>
+      </div>
+
+      <!-- TTD -->
+      <div class="ttd-section mt-3">
+        <div class="row text-center">
+          <div class="col-6">
+            <p class="mb-0 text-muted" style="font-size: 0.78rem">
+              Pekanbaru, 31 Desember 2025
+            </p>
+            <p class="mb-4 fw-semibold" style="font-size: 0.8rem">
+              Pengelola Risiko / Penyusun
+            </p>
+            <p class="mb-0 fw-bold" style="font-size: 0.85rem">
+              Meita Komalasari, S.ST., M.Si.
+            </p>
+            <p class="mb-0 text-muted" style="font-size: 0.75rem">
+              NIP. 197905012000122002
+            </p>
+            <p class="mb-0" style="font-size: 0.75rem">
+              Ketua Tim Statistik Sosial
+            </p>
+          </div>
+          <div class="col-6">
+            <p class="mb-0 text-muted" style="font-size: 0.78rem">
+              Pekanbaru, 31 Desember 2025
+            </p>
+            <p class="mb-4 fw-semibold" style="font-size: 0.8rem">
+              Pemilik Risiko / Mengetahui
+            </p>
+            <p class="mb-0 fw-bold" style="font-size: 0.85rem">
+              Asep Riyadi, S.Si., M.M.
+            </p>
+            <p class="mb-0 text-muted" style="font-size: 0.75rem">
+              NIP. 19670118 198901 1 001
+            </p>
+            <p class="mb-0" style="font-size: 0.75rem">
+              Kepala BPS Provinsi Riau
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== TAB 2: REKAPITULASI PER TIM ========== -->
+    <div id="tab-rekap-tim" class="pl-tab-content d-none">
+      <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 10px">
+        Sumber: Laporan Semester II Manajemen Risiko Tahun 2025 — BPS Provinsi
+        Riau (212 risiko, 9 Tim, 33 Kegiatan)
+      </p>
+      <!-- Bar chart visual sederhana per tim -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm p-3" style="border-radius: 10px">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span style="font-weight: 600; font-size: 0.82rem">1. SDM &amp; Hukum + Umum</span><span class="sr-bdg"
+                style="background: #374151">19 risiko</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 4px">
+              Kenaikan Pangkat (8) · Ujian Kompetensi (7) · BMN (4)
+            </div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width: 9%; background: #16a34a"></div>
+            </div>
+            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 2px">
+              9% dari total
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm p-3" style="border-radius: 10px">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span style="font-weight: 600; font-size: 0.82rem">2. Administrasi</span><span class="sr-bdg"
+                style="background: #374151">25 risiko</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 4px">
+              Penggantian UP (16) · Laporan Keuangan (9)
+            </div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width: 12%; background: #ca8a04"></div>
+            </div>
+            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 2px">
+              12% dari total
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm p-3" style="border-radius: 10px; border: 2px solid #86efac !important">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span style="font-weight: 600; font-size: 0.82rem">3. Statistik Sosial ⭐</span><span class="sr-bdg"
+                style="background: #15803d">40 risiko</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 4px">
+              Susenas (11) · Sakernas (12) · SNLIK (8) · <b>SUPAS (9)</b>
+            </div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width: 19%; background: #15803d"></div>
+            </div>
+            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 2px">
+              19% dari total — Tim terbesar risiko
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm p-3" style="border-radius: 10px">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span style="font-weight: 600; font-size: 0.82rem">4. Statistik Produksi</span><span class="sr-bdg"
+                style="background: #374151">32 risiko</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 4px">
+              Perkebunan (6) · Manufaktur (8) · IBS (7) · Ubinan (6) · KSA (5)
+            </div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width: 15%; background: #2563eb"></div>
+            </div>
+            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 2px">
+              15% dari total
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm p-3" style="border-radius: 10px">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span style="font-weight: 600; font-size: 0.82rem">5. Statistik Distribusi</span><span class="sr-bdg"
+                style="background: #374151">30 risiko</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 4px">
+              SHP-S (7) · VHTS (7) · Harga Konsumen (6) · K3 (6) · SLK (4)
+            </div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width: 14%; background: #7c3aed"></div>
+            </div>
+            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 2px">
+              14% dari total
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm p-3" style="border-radius: 10px">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span style="font-weight: 600; font-size: 0.82rem">6. Nerwilis</span><span class="sr-bdg"
+                style="background: #374151">19 risiko</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 4px">
+              IPM (4) · SKTNP (5) · SKLNP (5) · SKSPPI (5)
+            </div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width: 9%; background: #0891b2"></div>
+            </div>
+            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 2px">
+              9% dari total
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm p-3" style="border-radius: 10px">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span style="font-weight: 600; font-size: 0.82rem">7. IPDS</span><span class="sr-bdg"
+                style="background: #374151">21 risiko</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 4px">
+              Romantik (4) · Wilkerstat (9) · Perpustakaan (4) · TI (4)
+            </div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width: 10%; background: #dc2626"></div>
+            </div>
+            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 2px">
+              10% dari total
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm p-3" style="border-radius: 10px">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span style="font-weight: 600; font-size: 0.82rem">8. Sektoral</span><span class="sr-bdg"
+                style="background: #374151">16 risiko</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 4px">
+              Pojok Statistik (5) · Pembinaan (5) · Desa Cantik (6)
+            </div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width: 8%; background: #ea580c"></div>
+            </div>
+            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 2px">
+              8% dari total
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm p-3" style="border-radius: 10px">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span style="font-weight: 600; font-size: 0.82rem">9. Humas &amp; UKK</span><span class="sr-bdg"
+                style="background: #374151">10 risiko</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 4px">
+              Media Humas (5) · Materi Pimpinan (5)
+            </div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width: 5%; background: #6b7280"></div>
+            </div>
+            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 2px">
+              5% dari total
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabel ringkasan per tim -->
+      <div class="table-responsive mt-2">
+        <table class="table table-bordered table-hover tbl-pl" id="tbl-rekap">
+          <thead>
+            <tr>
+              <th style="width: 35px; text-align: center">No</th>
+              <th>Tim</th>
+              <th>Kegiatan</th>
+              <th style="width: 90px; text-align: center">Jml Risiko</th>
+              <th style="width: 70px; text-align: center">TW III</th>
+              <th style="width: 70px; text-align: center">TW IV</th>
+              <th style="width: 110px; text-align: center">Status Akhir</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="td-no">1</td>
+              <td>SDM &amp; Hukum</td>
+              <td>Kenaikan Pangkat Pegawai</td>
+              <td class="td-ctr">8</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">2</td>
+              <td>SDM &amp; Hukum</td>
+              <td>Ujian Kompetensi</td>
+              <td class="td-ctr">7</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">3</td>
+              <td>Umum</td>
+              <td>Pengelolaan BMN</td>
+              <td class="td-ctr">4</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">4</td>
+              <td>Administrasi</td>
+              <td>Pengajuan Penggantian UP</td>
+              <td class="td-ctr">16</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">5</td>
+              <td>Administrasi</td>
+              <td>Penyusunan Laporan Keuangan</td>
+              <td class="td-ctr">9</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">6</td>
+              <td>Sosial</td>
+              <td>Susenas</td>
+              <td class="td-ctr">11</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">7</td>
+              <td>Sosial</td>
+              <td>Sakernas</td>
+              <td class="td-ctr">12</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">8</td>
+              <td>Sosial</td>
+              <td>SNLIK</td>
+              <td class="td-ctr">8</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-proses">Proses</span>
+              </td>
+            </tr>
+            <tr style="background: #f0fdf4; font-weight: 600">
+              <td class="td-no">9</td>
+              <td>Sosial ⭐</td>
+              <td><strong>SUPAS 2025</strong></td>
+              <td class="td-ctr"><strong>9</strong></td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai (TW III)</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">10</td>
+              <td>Produksi</td>
+              <td>Survei Perkebunan</td>
+              <td class="td-ctr">6</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">11</td>
+              <td>Produksi</td>
+              <td>Survei Industri Manufaktur</td>
+              <td class="td-ctr">8</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">12</td>
+              <td>Produksi</td>
+              <td>Survei IBS Bulanan</td>
+              <td class="td-ctr">7</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">13</td>
+              <td>Produksi</td>
+              <td>Survei Ubinan</td>
+              <td class="td-ctr">6</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">14</td>
+              <td>Produksi</td>
+              <td>KSA Padi</td>
+              <td class="td-ctr">5</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">15</td>
+              <td>Distribusi</td>
+              <td>SHP-S (HP, HP-J, HP-T)</td>
+              <td class="td-ctr">7</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">16</td>
+              <td>Distribusi</td>
+              <td>Survei VHTS</td>
+              <td class="td-ctr">7</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">17</td>
+              <td>Distribusi</td>
+              <td>Survei Harga Konsumen</td>
+              <td class="td-ctr">6</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">18</td>
+              <td>Distribusi</td>
+              <td>Statistik Keuangan Pemerintah Desa (K3)</td>
+              <td class="td-ctr">6</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">19</td>
+              <td>Distribusi</td>
+              <td>Survei Statistik Lembaga Keuangan (SLK)</td>
+              <td class="td-ctr">4</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">20</td>
+              <td>Nerwilis</td>
+              <td>Penghitungan Angka IPM</td>
+              <td class="td-ctr">4</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">21</td>
+              <td>Nerwilis</td>
+              <td>Survei SKTNP Triwulanan</td>
+              <td class="td-ctr">5</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">22</td>
+              <td>Nerwilis</td>
+              <td>Survei SKLNP Triwulanan</td>
+              <td class="td-ctr">5</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">23</td>
+              <td>Nerwilis</td>
+              <td>Survei SKSPPI</td>
+              <td class="td-ctr">5</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">24</td>
+              <td>IPDS</td>
+              <td>Romantik</td>
+              <td class="td-ctr">4</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-proses">Proses</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">25</td>
+              <td>IPDS</td>
+              <td>Wilkerstat</td>
+              <td class="td-ctr">9</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">26</td>
+              <td>IPDS</td>
+              <td>Layanan Perpustakaan</td>
+              <td class="td-ctr">4</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-proses">Proses</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">27</td>
+              <td>IPDS</td>
+              <td>Pengelolaan Layanan TI</td>
+              <td class="td-ctr">4</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">28</td>
+              <td>Sektoral</td>
+              <td>Pojok Statistik</td>
+              <td class="td-ctr">5</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-proses">Proses</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">29</td>
+              <td>Sektoral</td>
+              <td>Pembinaan Statistik Sektoral</td>
+              <td class="td-ctr">5</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">30</td>
+              <td>Sektoral</td>
+              <td>Desa Cantik</td>
+              <td class="td-ctr">6</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-proses">Proses</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">31</td>
+              <td>Humas &amp; UKK</td>
+              <td>Pengelolaan Media Humas</td>
+              <td class="td-ctr">5</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-no">32</td>
+              <td>Humas &amp; UKK</td>
+              <td>Penyiapan Materi Pimpinan</td>
+              <td class="td-ctr">5</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">✓</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">Selesai</span>
+              </td>
+            </tr>
+            <tr style="background: #f9fafb; font-weight: 700">
+              <td colspan="3" class="td-ctr">JUMLAH TOTAL</td>
+              <td class="td-ctr">212</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">—</td>
+              <td class="td-ctr">
+                <span class="bdg bdg-tercapai">54 RTP Selesai</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== TAB 3: RINGKASAN LAPORAN ========== -->
+    <div id="tab-ringkasan" class="pl-tab-content d-none">
+      <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 14px">
+        Ringkasan eksekutif berdasarkan Laporan Semester II Manajemen Risiko
+        Tahun 2025 — BPS Provinsi Riau
+      </p>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm p-3" style="
+                border-radius: 10px;
+                border-left: 4px solid #15803d !important;
+              ">
+            <p class="mb-1 fw-bold" style="font-size: 0.85rem; color: #15803d">
+              📌 Ruang Lingkup &amp; Periode
+            </p>
+            <p class="mb-0" style="font-size: 0.8rem; line-height: 1.7; color: #374151">
+              Penilaian risiko mencakup seluruh Tim di BPS Provinsi Riau (9
+              Tim, 33 Kegiatan). Periode pelaporan:
+              <strong>Semester II Tahun 2025</strong>. Dasar hukum: PP No. 60
+              Tahun 2008 tentang SPIP dan Buku Pedoman Implementasi Manajemen
+              Risiko BPS Tahun 2022.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm p-3" style="
+                border-radius: 10px;
+                border-left: 4px solid #2563eb !important;
+              ">
+            <p class="mb-1 fw-bold" style="font-size: 0.85rem; color: #2563eb">
+              📊 Profil Risiko Organisasi
+            </p>
+            <p class="mb-0" style="font-size: 0.8rem; line-height: 1.7; color: #374151">
+              Total <strong>212 risiko</strong> teridentifikasi dari 33
+              kegiatan. Risiko terbanyak: Tim Sosial (40 risiko, 19%). Risiko
+              yang memerlukan prioritas penanganan:
+              <strong>54 risiko</strong> (25,5%). Kategori dominan: Risiko
+              Operasional dan Risiko Reputasi.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm p-3" style="
+                border-radius: 10px;
+                border-left: 4px solid #ca8a04 !important;
+              ">
+            <p class="mb-1 fw-bold" style="font-size: 0.85rem; color: #ca8a04">
+              ⚙️ Implementasi &amp; Kapabilitas
+            </p>
+            <p class="mb-0" style="font-size: 0.8rem; line-height: 1.7; color: #374151">
+              Manajemen risiko dilaksanakan secara sistematis melalui 5
+              tahapan: penetapan konteks, identifikasi, analisis &amp;
+              evaluasi, penanganan, serta pemantauan &amp; pelaporan.
+              Pemantauan dilakukan <strong>secara triwulanan</strong> (TW III
+              &amp; TW IV). Anggaran khusus manajemen risiko belum tersedia
+              pada periode ini.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm p-3" style="
+                border-radius: 10px;
+                border-left: 4px solid #dc2626 !important;
+              ">
+            <p class="mb-1 fw-bold" style="font-size: 0.85rem; color: #dc2626">
+              🎯 Fokus SUPAS 2025
+            </p>
+            <p class="mb-0" style="font-size: 0.8rem; line-height: 1.7; color: #374151">
+              SUPAS 2025 memiliki <strong>9 risiko</strong> dengan
+              <strong>6 RTP prioritas</strong> (Prioritas 1 tertinggi di Tim
+              Sosial). 5 dari 6 RTP terealisasi pada TW III. Seluruh risiko
+              mengalami penurunan SR signifikan: dari SR 11–22 menjadi SR 3–7
+              setelah penanganan.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-laporan">
+        <div class="acc-header" onclick="toggleAcc('acc1', this)">
+          <span>📖 Latar Belakang</span><span>▼</span>
+        </div>
+        <div class="acc-body" id="acc1">
+          BPS Provinsi Riau sebagai unit kerja eselon II berperan sebagai
+          penyelenggara statistik di tingkat daerah. Dalam menjalankan tugas
+          dan fungsinya, BPS Provinsi Riau mengacu pada Rencana Strategis
+          (Renstra) dan Indikator Kinerja Utama (IKU). Pencapaian sasaran
+          strategis dan IKU tidak terlepas dari berbagai risiko yang
+          berpotensi menghambat kinerja organisasi. Oleh karena itu,
+          pengelolaan risiko menjadi bagian yang tidak terpisahkan dari upaya
+          pencapaian kinerja. Sebagai lembaga pemerintah, BPS Provinsi Riau
+          berkewajiban menerapkan Sistem Pengendalian Intern Pemerintah (SPIP)
+          sebagaimana diatur dalam PP No. 60 Tahun 2008.
+        </div>
+
+        <div class="acc-header" onclick="toggleAcc('acc2', this)">
+          <span>🎯 Tujuan &amp; Manfaat Laporan</span><span>▼</span>
+        </div>
+        <div class="acc-body" id="acc2">
+          Tujuan utama penilaian risiko di BPS Provinsi Riau adalah untuk
+          mengidentifikasi, menganalisis, dan mendokumentasikan risiko secara
+          sistematis sehingga diperoleh register risiko yang memuat informasi
+          komprehensif. Penilaian risiko ini juga bertujuan menjadi bahan
+          evaluasi atas efektivitas pengendalian intern. Dengan tercapainya
+          tujuan tersebut, penilaian risiko diharapkan dapat mendukung
+          peningkatan kualitas tata kelola, memperkuat manajemen risiko, serta
+          memastikan pelaksanaan kegiatan di BPS Provinsi Riau berjalan secara
+          efektif, efisien, akuntabel, dan transparan.
+        </div>
+
+        <div class="acc-header" onclick="toggleAcc('acc3', this)">
+          <span>🏛 Tata Kelola &amp; Struktur Manajemen Risiko</span><span>▼</span>
+        </div>
+        <div class="acc-body" id="acc3">
+          Kepala BPS Provinsi Riau sebagai pimpinan tertinggi berperan sentral
+          dalam memastikan penerapan manajemen risiko sebagai bagian integral
+          dari tata kelola organisasi. Koordinasi dilakukan secara berjenjang
+          melibatkan Kepala BPS Provinsi Riau, pejabat struktural, koordinator
+          fungsi, serta pegawai pelaksana. Kerangka manajemen risiko mencakup:
+          penetapan konteks organisasi, identifikasi risiko, analisis dan
+          evaluasi risiko, penanganan risiko, serta pemantauan dan pelaporan
+          risiko. Penguatan kapabilitas dilakukan melalui sosialisasi,
+          bimbingan teknis, dan pelatihan.
+        </div>
+
+        <div class="acc-header" onclick="toggleAcc('acc4', this)">
+          <span>📉 Hasil Penanganan &amp; Pemantauan</span><span>▼</span>
+        </div>
+        <div class="acc-body" id="acc4">
+          Dari 212 pernyataan risiko yang teridentifikasi, terdapat 54 risiko
+          yang memerlukan prioritas untuk ditangani. Pemantauan dilakukan
+          secara triwulanan (TW III: Jul–Sep dan TW IV: Okt–Des 2025). Untuk
+          SUPAS 2025, seluruh 6 RTP prioritas telah dilaksanakan dengan 5
+          terealisasi penuh pada TW III dan 1 masih dalam proses (target Des
+          2025). Seluruh risiko SUPAS mengalami penurunan Skor Risiko yang
+          signifikan: dua risiko sangat tinggi (SR 22) berhasil diturunkan
+          menjadi rendah (SR 7).
+        </div>
+
+        <div class="acc-header" onclick="toggleAcc('acc5', this)">
+          <span>✅ Penutup &amp; Rekomendasi</span><span>▼</span>
+        </div>
+        <div class="acc-body" id="acc5">
+          Penyusunan laporan manajemen risiko merupakan langkah penting dalam
+          upaya meningkatkan efektivitas, efisiensi, dan akuntabilitas
+          pelaksanaan tugas dan fungsi BPS Provinsi Riau. Proses identifikasi
+          dan analisis risiko telah memberikan gambaran yang lebih jelas
+          mengenai potensi risiko yang dihadapi. Laporan ini diharapkan dapat
+          menjadi acuan dalam pengelolaan risiko yang lebih efektif di masa
+          mendatang serta mendukung pencapaian visi dan misi BPS Provinsi
+          Riau. Rekomendasi ke depan: alokasi anggaran khusus manajemen
+          risiko, penguatan budaya sadar risiko, dan peningkatan sistem
+          pemantauan digital terintegrasi.
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-white rounded shadow p-5 mb-4 mt-4">
+      <p class="mb-0 text-center">
+        © 2025 <b>BPS Provinsi Riau</b> - Sistem Informasi Manajemen Risiko
+        (Keris Raja)
+      </p>
+    </footer>
+  </main>
+
+  <script src="../../vendor/@popperjs/core/dist/umd/popper.min.js"></script>
+  <script src="../../vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="../../vendor/onscreen/dist/on-screen.umd.min.js"></script>
+  <script src="../../vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+  <script src="../../vendor/sweetalert2/dist/sweetalert2.all.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+  <script src="../../vendor/notyf/notyf.min.js"></script>
+  <script src="../../vendor/simplebar/dist/simplebar.min.js"></script>
+  <script src="../../assets/js/volt.js"></script>
+  <script src="../../assets/js/sidebar.js"></script>
+
+  <script>
+    function showDetail(btn) {
+      const row = btn.closest("tr");
+      const d = JSON.parse(row.getAttribute("data-detail"));
+      document.getElementById("modalDetailTitle").textContent =
+        "Detail Laporan RTP — No. " + (d.no || "");
+
+      function nl2br(s) {
+        return s ? s.replace(/\n/g, "<br/>") : "–";
+      }
+      function section(label, value, full) {
+        return `<div class="mb-3">
+            <div class="detail-label">${label}</div>
+            <div class="detail-value">${full ? nl2br(value) : value || "–"}</div>
+          </div>`;
+      }
+
+      let html = `<div class="mb-3 p-3" style="background:#f0fdf4; border-radius:8px; border-left:4px solid #1a3c1a;">
+          <div style="font-size:0.9rem; font-weight:700; color:#1b3a2d;">${d.risiko || ""}</div>
+        </div>`;
+
+      html += "<hr/>";
+      html += section("Rencana Tindak Penanganan (RTP)", d.rtp, true);
+      html += section("Target Output", d.target_output);
+      html += section("Waktu Target", d.waktu_target);
+      html += "<hr/>";
+      html += section("Realisasi Output", d.realisasi);
+      html += section("Waktu Realisasi", d.waktu_realisasi);
+
+      const statusColor = d.status === "Tercapai" ? "#15803d" : "#854d0e";
+      const statusBg = d.status === "Tercapai" ? "#dcfce7" : "#fef9c3";
+      html += `<div class="mb-3 d-flex gap-3">
+          <div class="detail-label" style="min-width:120px;">Status</div>
+          <div><span style="background:${statusBg}; color:${statusColor}; padding:3px 10px; border-radius:6px; font-size:0.78rem; font-weight:700;">${d.status}</span></div>
+        </div>`;
+
+      html += "<hr/>";
+      html += section("Risiko Residu", d.residu);
+
+      document.getElementById("modalDetailBody").innerHTML = html;
+      new bootstrap.Modal(document.getElementById("modalDetail")).show();
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      var toggleBtn = document.getElementById("sidebar-toggle");
+      var sidebar = document.getElementById("sidebarMenu");
+      var content = document.querySelector(".content");
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", function () {
+          sidebar.classList.toggle("sidebar-hidden");
+          content.classList.toggle("content-full");
+        });
+      }
+
+      var tabBtns = document.querySelectorAll(".tab-pl-btn");
+      var tabPanels = document.querySelectorAll(".pl-tab-content");
+      var plSearch = document.getElementById("plSearch");
+
+      tabBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          tabBtns.forEach(function (b) {
+            b.classList.remove("active");
+          });
+          tabPanels.forEach(function (p) {
+            p.classList.add("d-none");
+          });
+          btn.classList.add("active");
+          document
+            .getElementById(btn.dataset.target)
+            .classList.remove("d-none");
+          plSearch.value = "";
+          filterRows("");
+        });
+      });
+
+      plSearch.addEventListener("input", function () {
+        filterRows(plSearch.value.toLowerCase());
+      });
+
+      function filterRows(kw) {
+        var active = document.querySelector(".pl-tab-content:not(.d-none)");
+        if (!active) return;
+        active.querySelectorAll("tbody tr").forEach(function (row) {
+          row.style.display =
+            kw === "" || row.innerText.toLowerCase().includes(kw)
+              ? ""
+              : "none";
+        });
+      }
+    });
+
+    function toggleAcc(id, header) {
+      var body = document.getElementById(id);
+      var arrow = header.querySelector("span:last-child");
+      if (body.classList.contains("open")) {
+        body.classList.remove("open");
+        arrow.textContent = "\u25BC";
+      } else {
+        body.classList.add("open");
+        arrow.textContent = "\u25B2";
+      }
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KERIS RAJA</title>
+
+<!-- ================= CSS MANTIS ================= -->
+<link rel="stylesheet" href="../assets/css/plugins/bootstrap.min.css">
+<link rel="stylesheet" href="../assets/css/plugins/tabler-icons.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+
+<!-- ================= CUSTOM CSS ================= -->
+<style>
+  /* Sidebar hide */
+  body.sidebar-collapsed .pc-sidebar {
+    margin-left: -260px;
+  }
+
+  body.sidebar-collapsed .pc-container {
+    margin-left: 0;
+  }
+
+  /* Smooth transition */
+  .pc-sidebar,
+  .pc-container {
+    transition: all 0.3s ease;
+  }
+
+  /* Submenu default hidden */
+  .pc-submenu {
+    display: none;
+  }
+
+  /* Arrow rotate */
+  .pc-item.active > .pc-link .pc-arrow i {
+    transform: rotate(90deg);
+    transition: transform 0.3s ease;
+  }
+</style>
