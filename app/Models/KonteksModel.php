@@ -16,7 +16,7 @@ class KonteksModel extends Model
         'id_satuan_kerja',
         'pemilik_risiko_id',
         'pengelola_risiko_id',
-        'kegiatan',
+        'id_kegiatan',
         'tahun',
         'id_sasaran_strategis',
     ];

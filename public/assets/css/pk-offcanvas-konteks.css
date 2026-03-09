@@ -1,11 +1,10 @@
 /* ================= OFFCANVAS SIZE ================= */
-
 .pk-offcanvas {
     width: 880px !important;
+    overflow: visible;
 }
 
 /* ================= HEADER ================= */
-
 .pk-offcanvas .offcanvas-header {
     padding: 14px 20px;
 }
@@ -13,6 +12,8 @@
 .pk-offcanvas .offcanvas-title {
     font-size: 15px;
     font-weight: 600;
+    margin-bottom: 2px;
+    line-height: 1.2;
 }
 
 .pk-offcanvas small {
@@ -20,20 +21,17 @@
 }
 
 /* ================= BODY ================= */
-
 .pk-offcanvas .offcanvas-body {
-    padding: 18px 20px;
-    font-size: 13px;
+    padding: 5px 20px 18px 20px;
 }
 
 /* ================= GRID SECTION ================= */
-
 .pk-section{
-    margin-top:14px;
+    margin-top:10px;
 }
 
 .pk-section:first-child{
-    margin-top:6px;
+    margin-top:0;
 }
 
 .pk-grid-2 {
@@ -45,13 +43,13 @@
 /* ================= FIELD ROW ================= */
 
 .pk-field-row {
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    align-items:center;
     gap: 16px;
 }
 
 .pk-field-label {
-    width: 140px;
     font-size: 13px;
     font-weight: 500;
 }
@@ -228,4 +226,294 @@
     font-weight:600;
     font-size:13px;
     margin-bottom:10px;
+}
+
+/* ================================
+   KEGIATAN DROPDOWN LEBAR
+================================ */
+#pkKegiatanBox .pk-combobox-dropdown {
+    width: 100%;
+}
+
+#pkKegiatanBox .pk-option {
+    white-space: normal;
+    line-height: 1.35;
+}
+
+/* BATASI LEBAR SATUAN KERJA */
+#pkSatuanKerjaBox {
+    max-width: 420px;
+    z-index: 40;
+}
+
+/* COMBOBOX PRIORITY */
+#pkKegiatanBox {
+    max-width: 520px;
+    z-index: 30;
+}
+
+#pkTahunBox {
+    max-width: 60px;
+    z-index: 5;
+}
+/* ===============================
+   INFORMASI KONTEKS PANEL
+=============================== */
+
+.pk-context-panel{
+    border:1px solid #e6eaf0;
+    border-radius:12px;
+    padding:18px;
+    margin-top:10px;
+    background:#fafbfc;
+}
+
+/* spacing antar field */
+
+.pk-context-panel .pk-field-row{
+    margin-top:12px;
+}
+
+.pk-context-panel .pk-field-row:first-child{
+    margin-top:0;
+}
+
+/* ============================
+   MULTI INPUT GROUP
+============================ */
+
+.pk-multi-input{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+/* ============================
+   SECTION DEPTH
+============================ */
+
+.pk-context-panel{
+    border:1px solid #e6eaf0;
+    border-radius:12px;
+    padding:18px;
+    margin-top:10px;
+    background:linear-gradient(
+        to bottom,
+        #ffffff,
+        #fafbfc
+    );
+    box-shadow:0 2px 8px rgba(0,0,0,0.03);
+}
+
+
+/* ============================
+   FIELD SPACING
+============================ */
+
+.pk-field-row + .pk-field-row{
+    margin-top:14px;
+}
+
+/* =========================
+   TAG MULTI SELECT
+========================= */
+
+.pk-tagbox{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    min-height:38px;
+    border:1px solid #d0d5dd;
+    border-radius:6px;
+    padding:4px 6px;
+    align-items:center;
+    background:#fff;
+}
+
+.pk-tag-input{
+    border:none;
+    outline:none;
+    flex:1;
+    min-width:120px;
+    height:28px;
+    font-size:13px;
+}
+
+.pk-tag{
+    background:#eef2ff;
+    border-radius:4px;
+    padding:3px 8px;
+    font-size:12px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.pk-tag-remove{
+    cursor:pointer;
+    font-weight:600;
+}
+
+.pk-tag-container{
+display:flex;
+flex-wrap:wrap;
+gap:6px;
+}
+
+.pk-tag-default{
+background:#e8eefc;
+border:1px solid #d6def5;
+font-weight:500;
+cursor:default;
+}
+
+.pk-tag-default .pk-tag-remove{
+display:none;
+}
+
+/* =============================
+   LAW CHIP
+============================= */
+
+.pk-law-chip{
+padding:6px 10px;
+border-radius:6px;
+border:1px solid #e5e7eb;
+background:#f9fafb;
+font-size:12px;
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.pk-law-title{
+flex:1;
+color:#374151;
+}
+
+.pk-law-chip .pk-tag-remove{
+cursor:pointer;
+font-weight:600;
+}
+
+.pk-option-entity{
+display:flex;
+flex-direction:column;
+gap:2px;
+}
+
+.pk-option-title{
+font-weight:500;
+}
+
+.pk-option-meta{
+font-size:11px;
+color:#6b7280;
+}
+
+/* GROUP HEADER */
+
+.pk-option-group{
+font-size:11px;
+font-weight:600;
+padding:6px 12px;
+color:#6b7280;
+background:#f3f4f6;
+text-transform:uppercase;
+letter-spacing:.4px;
+}
+
+/* PEMANGKU GROUP */
+
+.pk-pemangku-group {
+    margin-bottom: 6px;
+}
+
+.pk-pemangku-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 2px;
+}
+
+.pk-pemangku-items {
+    display: flex;
+    flex-direction: column;
+}
+
+.pk-pemangku-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 0 2px 12px;
+    font-size: 13px;
+    color: #1f2937;
+}
+
+.pk-pemangku-item .pk-tag-remove {
+    font-size: 14px;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.pk-pemangku-item .pk-tag-remove:hover {
+    color: #ef4444;
+}
+
+/* PERATURAN LIST */
+
+.pk-law-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pk-law-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #f9fafb;
+    font-size: 12px;
+}
+
+.pk-law-item.pk-law-default {
+    background: #f0f4ff;
+    border-color: #d6def5;
+}
+
+.pk-law-number {
+    font-weight: 600;
+    color: #6b7280;
+    width: 20px;
+    flex-shrink: 0;
+}
+
+.pk-law-title {
+    flex: 1;
+    color: #374151;
+}
+
+.pk-law-item .pk-tag-remove {
+    font-size: 14px;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0 4px;
+    flex-shrink: 0;
+}
+
+.pk-law-item .pk-tag-remove:hover {
+    color: #ef4444;
+}
+
+.pk-truncate {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

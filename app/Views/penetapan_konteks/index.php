@@ -72,8 +72,6 @@
 <?= $this->endSection() ?>
 <?= $this->section('scripts') ?>
 
-<script src="<?= base_url('assets/js/components/pk-alert.js') ?>"></script>
-<script src="<?= base_url('assets/js/components/pk-ajax.js') ?>"></script>
 <script src="<?= base_url('assets/js/modules/penetapan_konteks/' . $activeTab . '.js') ?>"></script>
 
 <?= $this->endSection() ?>

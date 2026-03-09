@@ -8,32 +8,27 @@
         <table class="table table-hover align-middle pk-konteks-table">
             <thead>
                 <tr>
-                    <th width="50">#</th>
-                    <th width="90">Tahun</th>
-                    <th>Satuan Kerja</th>
-                    <th>Pengelola Risiko</th>
-                    <th>Sasaran Strategis</th>
+                    <th width="30">#</th>
+                    <th width="60">Tahun</th>
+                    <th width="180">Satuan Kerja</th>
+                    <th width="180">Pengelola Risiko</th>
+                    <th>Kegiatan</th>
                 </tr>
             </thead>
 
             <tbody>
-
                 <?php if (!empty($data)): ?>
                     <?php $no = $from ?? 1; ?>
-
                     <?php foreach ($data as $row): ?>
                         <tr class="table-row-click"
-                            data-row='<?= json_encode($row, JSON_HEX_APOS | JSON_HEX_QUOT) ?>'
+                            data-row="<?= esc(json_encode($row), 'attr') ?>"
                             onclick="pkOpenViewMode(this)">
 
                             <td><?= $no++ ?></td>
                             <td><?= esc($row['tahun']) ?></td>
-                            <td><?= esc($row['nama_satuan_kerja'] ?? '-') ?></td>
-                            <td><?= esc($row['nama_pengelola'] ?? '-') ?></td>
-                            <td class="pk-truncate">
-                                <?= esc($row['uraian_sasaran'] ?? '-') ?>
-                            </td>
-
+                            <td class="pk-truncate" style="max-width:180px"><?= esc($row['nama_satuan_kerja'] ?? '-') ?></td>
+                            <td class="pk-truncate" style="max-width:180px"><?= esc($row['nama_pengelola'] ?? '-') ?></td>
+                            <td class="pk-truncate"><?= esc($row['nama_kegiatan'] ?? '-') ?></td>
                         </tr>
                     <?php endforeach; ?>
 
@@ -44,12 +39,9 @@
                         </td>
                     </tr>
                 <?php endif; ?>
-
             </tbody>
         </table>
-
     </div>
-
 
     <!-- ========================= -->
     <!-- BOTTOM SECTION -->

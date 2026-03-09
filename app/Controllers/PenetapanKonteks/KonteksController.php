@@ -34,14 +34,17 @@ class KonteksController extends BaseContextController
 
         $builder = $this->model
             ->select('
-                konteks.*,
-                satuan_kerja.nama_satuan_kerja,
-                sasaran_strategis.uraian_sasaran,
-                kegiatan.nama_kegiatan
-            ')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
-            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
-            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan');
+        konteks.*,
+        satuan_kerja.nama_satuan_kerja,
+        sasaran_strategis.uraian_sasaran,
+        kegiatan.nama_kegiatan,
+        p.nama as nama_pemilik,
+        g.nama as nama_pengelola')
+            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
+            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
+            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left');
 
         // FILTER
         $sk  = $this->request->getGet('sk');
@@ -235,12 +238,16 @@ class KonteksController extends BaseContextController
     {
         $data = $this->model
             ->select('
-                konteks.*,
-                kegiatan.nama_kegiatan,
-                p.nama as nama_pemilik,
-                g.nama as nama_pengelola
-            ')
-            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan')
+            konteks.*,
+            kegiatan.nama_kegiatan,
+            satuan_kerja.nama_satuan_kerja,
+            sasaran_strategis.uraian_sasaran,
+            p.nama as nama_pemilik,
+            g.nama as nama_pengelola
+        ')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
+            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
             ->orderBy('tahun', 'DESC')
@@ -249,12 +256,12 @@ class KonteksController extends BaseContextController
         return view(
             'penetapan_konteks/tabs/konteks/_table_section',
             [
-                'data'     => $data,
-                'from'     => 1,
-                'to'       => count($data),
-                'total'    => count($data),
-                'filters'  => [],
-                'perPage'  => 5
+                'data'    => $data,
+                'from'    => 1,
+                'to'      => count($data),
+                'total'   => count($data),
+                'filters' => [],
+                'perPage' => 5
             ]
         );
     }
@@ -282,8 +289,10 @@ class KonteksController extends BaseContextController
         }
 
         $konteks = $this->model
-            ->select('konteks.*, kegiatan.nama_kegiatan')
-            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan')
+            ->select('konteks.*, kegiatan.nama_kegiatan, satuan_kerja.nama_satuan_kerja, sasaran_strategis.uraian_sasaran')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
+            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->where('konteks.id_konteks', $id)
             ->first();
 

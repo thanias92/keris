@@ -4,5 +4,7 @@
 
 <div class="pk-konteks">
     <!-- TABLE SECTION -->
-    <?= view('penetapan_konteks/tabs/konteks/_table_section') ?>
+    <div id="pkKonteksTableWrapper">
+        <?= view('penetapan_konteks/tabs/konteks/_table_section') ?>
+    </div>
 </div>

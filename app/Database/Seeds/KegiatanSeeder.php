@@ -72,6 +72,9 @@ class KegiatanSeeder extends Seeder
             [12, 'Edukasi Statistik'],
             [12, 'Penyiapan Rilis Berita Resmi Statistik (BRS)'],
 
+            [14, 'Sensus Ekonomi'],
+            [14, 'Pembangunan Zona Integritas'],
+
         ];
 
         foreach ($data as $row) {

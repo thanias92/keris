@@ -10,8 +10,11 @@ const KonteksModule = {
     this.initStrukturOrganisasi();
     this.initKabKotaCombobox();
     this.initSatuanKerjaCombobox();
-    this.initKegiatanCombobox();
-    this.initYearPicker();
+    this.initTahunCombobox();
+    this.initSasaranCombobox();
+    this.initPeraturanCombobox();
+    this.initPemangkuCombobox();
+    this.initFormSubmit();
   },
 
   // ======================================================
@@ -66,150 +69,20 @@ const KonteksModule = {
     });
 
     this.loadProvinsiPemilik();
-    },
-  
+  },
+
+  // ======================================================
+  // KAB/KOTA COMBOBOX
+  // ======================================================
+
   initKabKotaCombobox() {
-
-  const combo = document.getElementById("pkKabKotaBox");
-  if (!combo) return;
-
-  const input = document.getElementById("pkKabKotaInput");
-  const hidden = document.getElementById("pkKabKotaValue");
-
-  const dropdown = combo.querySelector(".pk-combobox-dropdown");
-  const options = combo.querySelectorAll(".pk-option");
-
-  let current = -1;
-  let selected = false;
-
-  const open = () => dropdown.classList.add("open");
-  const close = () => dropdown.classList.remove("open");
-
-  const removeActive = () =>
-    options.forEach(o => o.classList.remove("active"));
-
-  const setActive = (i) => {
-
-    removeActive();
-
-    const visible = [...options].filter(o => o.style.display !== "none");
-
-    if (visible[i]) {
-      visible[i].classList.add("active");
-      visible[i].scrollIntoView({ block: "nearest" });
-    }
-
-  };
-
-  const filter = (keyword) => {
-
-    options.forEach(o => {
-
-      o.style.display = o.innerText.toLowerCase().includes(keyword)
-        ? "block"
-        : "none";
-
+    Combobox.init({
+      boxId: "pkKabKotaBox",
+      inputId: "pkKabKotaInput",
+      hiddenId: "pkKabKotaValue",
+      optionsSelector: ".pk-option",
     });
-
-  };
-
-  const select = (option) => {
-
-    input.value = option.innerText;
-    hidden.value = option.dataset.value;
-
-    selected = true;
-
-    close();
-
-  };
-
-  input.addEventListener("focus", () => {
-    if (!selected) open();
-  });
-
-  input.addEventListener("click", () => {
-
-    if (selected) {
-
-      selected = false;
-      input.value = "";
-      hidden.value = "";
-
-    }
-
-    open();
-
-  });
-
-  input.addEventListener("input", function () {
-
-    selected = false;
-
-    filter(this.value.toLowerCase());
-    open();
-
-    current = -1;
-
-  });
-
-  input.addEventListener("keydown", (e) => {
-
-    const visible = [...options].filter(o => o.style.display !== "none");
-
-    if (e.key === "ArrowDown") {
-
-      e.preventDefault();
-
-      current++;
-      if (current >= visible.length) current = 0;
-
-      setActive(current);
-
-    }
-
-    if (e.key === "ArrowUp") {
-
-      e.preventDefault();
-
-      current--;
-      if (current < 0) current = visible.length - 1;
-
-      setActive(current);
-
-    }
-
-    if (e.key === "Enter") {
-
-      e.preventDefault();
-
-      if (visible[current]) select(visible[current]);
-
-      if (visible.length === 1) select(visible[0]);
-
-    }
-
-    if (e.key === "Escape") close();
-
-  });
-
-  options.forEach(o => {
-
-    o.addEventListener("click", function () {
-
-      select(this);
-
-    });
-
-  });
-
-  document.addEventListener("click", function (e) {
-
-    if (!combo.contains(e.target)) close();
-
-  });
-
-},
+  },
 
   // ======================================================
   // PEMILIK RISIKO
@@ -237,11 +110,6 @@ const KonteksModule = {
     document.getElementById("pkPemilikNama").innerText = "-";
     document.getElementById("pkPemilikNip").innerText = "-";
     document.getElementById("pkPemilikJabatan").innerText = "-";
-  },
-
-  clearKabKota() {
-    const kab = document.getElementById("pkKabKota");
-    if (kab) kab.value = "";
   },
 
   // ======================================================
@@ -279,120 +147,22 @@ const KonteksModule = {
   },
 
   // ======================================================
-  // SATUAN KERJA COMBOBOX (IMPROVED UX)
+  // SATUAN KERJA COMBOBOX
   // ======================================================
 
   initSatuanKerjaCombobox() {
-    const combo = document.getElementById("pkSatuanKerjaBox");
-    if (!combo) return;
+    Combobox.init({
+      boxId: "pkSatuanKerjaBox",
+      inputId: "pkSatuanKerjaInput",
+      hiddenId: "pkSatuanKerjaValue",
+      optionsSelector: ".pk-option",
 
-    const input = combo.querySelector(".pk-combobox-input");
-    const dropdown = combo.querySelector(".pk-combobox-dropdown");
-    const options = combo.querySelectorAll(".pk-option");
-    const hidden = document.getElementById("pkSatuanKerjaValue");
+      onSelect: (value) => {
+        KonteksModule.resetKegiatan();
 
-    let current = -1;
-    let selected = false;
-
-    const open = () => dropdown.classList.add("open");
-    const close = () => dropdown.classList.remove("open");
-
-    const removeActive = () =>
-      options.forEach((o) => o.classList.remove("active"));
-
-    const setActive = (i) => {
-      removeActive();
-
-      const visible = [...options].filter((o) => o.style.display !== "none");
-
-      if (visible[i]) {
-        visible[i].classList.add("active");
-        visible[i].scrollIntoView({ block: "nearest" });
-      }
-    };
-
-    const filter = (keyword) => {
-      options.forEach((o) => {
-        o.style.display = o.innerText.toLowerCase().includes(keyword)
-          ? "block"
-          : "none";
-      });
-    };
-
-    const select = (option) => {
-      input.value = option.innerText;
-      hidden.value = option.dataset.value;
-
-      selected = true;
-
-      KonteksModule.loadPengelolaBySatuanKerja(option.dataset.value);
-      KonteksModule.loadKegiatanBySatuanKerja(option.dataset.value);
-
-      close();
-    };
-
-    input.addEventListener("focus", () => {
-      if (!selected) open();
-    });
-
-    input.addEventListener("click", () => {
-      if (selected) {
-        selected = false;
-        input.value = "";
-        hidden.value = "";
-      }
-
-      open();
-    });
-
-    input.addEventListener("input", function () {
-      selected = false;
-
-      filter(this.value.toLowerCase());
-      open();
-      current = -1;
-    });
-
-    input.addEventListener("keydown", (e) => {
-      const visible = [...options].filter((o) => o.style.display !== "none");
-
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-
-        current++;
-        if (current >= visible.length) current = 0;
-
-        setActive(current);
-      }
-
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-
-        current--;
-        if (current < 0) current = visible.length - 1;
-
-        setActive(current);
-      }
-
-      if (e.key === "Enter") {
-        e.preventDefault();
-
-        if (visible[current]) select(visible[current]);
-
-        if (visible.length === 1) select(visible[0]);
-      }
-
-      if (e.key === "Escape") close();
-    });
-
-    options.forEach((o) => {
-      o.addEventListener("click", function () {
-        select(this);
-      });
-    });
-
-    document.addEventListener("click", function (e) {
-      if (!combo.contains(e.target)) close();
+        KonteksModule.loadPengelolaBySatuanKerja(value);
+        KonteksModule.loadKegiatanBySatuanKerja(value);
+      },
     });
   },
 
@@ -400,15 +170,34 @@ const KonteksModule = {
   // KEGIATAN
   // ======================================================
 
+  resetKegiatan() {
+    const input = document.getElementById("pkKegiatanInput");
+    const hidden = document.getElementById("pkKegiatanValue");
+    const wrapper = document.getElementById("pkKegiatanOptions");
+
+    if (input) input.value = "";
+    if (hidden) hidden.value = "";
+
+    if (wrapper) {
+      wrapper.innerHTML =
+        '<div class="pk-option text-muted">Pilih satuan kerja terlebih dahulu</div>';
+    }
+  },
+
   loadKegiatanBySatuanKerja(id) {
     if (!id) return;
 
     const wrapper = document.getElementById("pkKegiatanOptions");
     const input = document.getElementById("pkKegiatanInput");
     const hidden = document.getElementById("pkKegiatanValue");
+    const dropdown = document.querySelector(
+      "#pkKegiatanBox .pk-combobox-dropdown",
+    );
 
     $.get("/penetapan-konteks/konteks/get-kegiatan/" + id, function (res) {
       wrapper.innerHTML = "";
+      input.value = "";
+      hidden.value = "";
 
       if (!res || res.length === 0) {
         wrapper.innerHTML =
@@ -418,66 +207,346 @@ const KonteksModule = {
 
       res.forEach(function (item) {
         const div = document.createElement("div");
-
         div.className = "pk-option";
         div.innerText = item.nama_kegiatan;
         div.dataset.value = item.id_kegiatan;
 
-        div.onclick = function () {
-          input.value = this.innerText;
-          hidden.value = this.dataset.value;
-        };
+        div.addEventListener("mousedown", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          input.value = item.nama_kegiatan;
+          hidden.value = item.id_kegiatan;
+          dropdown.classList.remove("open");
+        });
 
         wrapper.appendChild(div);
       });
+
+      // buka/tutup dropdown saat klik input
+      input.onclick = () => dropdown.classList.toggle("open");
+      input.oninput = function () {
+        const q = this.value.toLowerCase();
+        wrapper.querySelectorAll(".pk-option").forEach((o) => {
+          o.style.display = o.innerText.toLowerCase().includes(q) ? "" : "none";
+        });
+        dropdown.classList.add("open");
+      };
+
+      document.addEventListener(
+        "click",
+        function (e) {
+          if (!document.getElementById("pkKegiatanBox").contains(e.target)) {
+            dropdown.classList.remove("open");
+          }
+        },
+        { once: false },
+      );
+    });
+  },
+
+  initTahunCombobox() {
+    Combobox.init({
+      boxId: "pkTahunBox",
+      inputId: "pkTahunInput",
+      hiddenId: "pkTahun",
+      optionsSelector: ".pk-option",
     });
   },
 
   // ======================================================
-  // YEAR PICKER
+  // SASARAN STRATEGIS
   // ======================================================
 
-  initYearPicker() {
-    const items = document.querySelectorAll(".pk-year-item");
-    const hidden = document.getElementById("pkTahun");
+  initSasaranCombobox() {
+    Combobox.init({
+      boxId: "pkSasaranBox",
+      inputId: "pkSasaranInput",
+      hiddenId: "pkSasaranValue",
+      optionsSelector: ".pk-option",
+    });
+  },
 
-    items.forEach((item) => {
-      item.addEventListener("click", function () {
-        items.forEach((i) => i.classList.remove("active"));
+  // ======================================================
+  // PERATURAN MULTI SELECT
+  // ======================================================
 
-        this.classList.add("active");
+  initPeraturanCombobox() {
+    const tags = document.getElementById("pkPeraturanTags");
 
-        hidden.value = this.dataset.year;
+    Combobox.init({
+      boxId: "pkPeraturanBox",
+      inputId: "pkPeraturanInput",
+      hiddenId: null,
+      optionsSelector: ".pk-option",
+
+      onSelect: (value, text) => {
+        // cegah duplikat
+        if (tags.querySelector(`[data-id="${value}"]`)) return;
+
+        const index = tags.querySelectorAll(".pk-law-item").length + 1;
+
+        const tag = document.createElement("div");
+        tag.className = "pk-law-item";
+        tag.dataset.id = value;
+        tag.innerHTML = `
+          <div class="pk-law-number">${index}.</div>
+          <div class="pk-law-title">${text}</div>
+          <span class="pk-tag-remove">×</span>
+        `;
+
+        const hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = "peraturan[]";
+        hidden.value = value;
+        tag.appendChild(hidden);
+
+        tags.appendChild(tag);
+
+        // sembunyikan option yang sudah dipilih dari dropdown
+        const option = document.querySelector(
+          `#pkPeraturanBox .pk-option[data-value="${value}"]`,
+        );
+        if (option) option.style.display = "none";
+
+        tag.querySelector(".pk-tag-remove").onclick = () => {
+          tag.remove();
+          // tampilkan kembali option di dropdown
+          if (option) option.style.display = "";
+          KonteksModule.reindexPeraturan();
+        };
+
+        document.getElementById("pkPeraturanInput").value = "";
+      },
+    });
+  },
+
+  reindexPeraturan() {
+    const items = document.querySelectorAll("#pkPeraturanTags .pk-law-item");
+
+    items.forEach((el, i) => {
+      const num = el.querySelector(".pk-law-number");
+      if (num) num.innerText = i + 1 + ".";
+    });
+  },
+
+  // ======================================================
+  // PEMANGKU TAG INPUT
+  // ======================================================
+  initPemangkuCombobox() {
+    const container = document.getElementById("pkPemangkuTags");
+
+    Combobox.init({
+      boxId: "pkPemangkuBox",
+      inputId: "pkPemangkuInput",
+      hiddenId: null,
+      optionsSelector: ".pk-option",
+
+      onSelect: (value, text) => {
+        if (container.querySelector(`[data-id="${value}"]`)) return;
+
+        const option = document.querySelector(
+          `#pkPemangkuBox .pk-option[data-value="${value}"]`,
+        );
+        const role = option?.dataset.role || "";
+
+        let group = container.querySelector(
+          `.pk-pemangku-group[data-role="${CSS.escape(role)}"]`,
+        );
+
+        if (!group) {
+          group = document.createElement("div");
+          group.className = "pk-pemangku-group";
+          group.dataset.role = role;
+          group.innerHTML = `
+            <div class="pk-pemangku-title">${role}</div>
+            <div class="pk-pemangku-items"></div>
+          `;
+          container.appendChild(group);
+        }
+
+        const list = group.querySelector(".pk-pemangku-items");
+
+        const item = document.createElement("div");
+        item.className = "pk-pemangku-item";
+        item.dataset.id = value;
+        item.innerHTML = `
+          <span>${text}</span>
+          <span class="pk-tag-remove">×</span>
+        `;
+
+        const hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = "pemangku[]";
+        hidden.value = value;
+        item.appendChild(hidden);
+
+        list.appendChild(item);
+
+        item.querySelector(".pk-tag-remove").onclick = function () {
+          item.remove();
+          if (list.children.length === 0) {
+            group.remove();
+          }
+        };
+
+        document.getElementById("pkPemangkuInput").value = "";
+      },
+    });
+  },
+
+  // ======================================================
+  // FORM SUBMIT (CREATE / UPDATE)
+  // ======================================================
+
+  initFormSubmit() {
+    const form = document.getElementById("pkFormKonteks");
+    if (!form) return;
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      PkAlert.confirm({
+        text: "Simpan data konteks ini?",
+        confirmText: "Simpan",
+      }).then((result) => {
+        if (!result.isConfirmed) return;
+
+        const mode = document.getElementById("pkMode").value;
+        const url =
+          mode === "edit"
+            ? "/penetapan-konteks/konteks/update"
+            : "/penetapan-konteks/konteks/store";
+
+        PkAjax.post({
+          url,
+          data: $(form).serialize(),
+          onSuccess(res) {
+            if (res.status !== "success") return;
+            bootstrap.Offcanvas.getInstance(
+              document.getElementById("offcanvasKonteks"),
+            ).hide();
+            KonteksModule.refreshTable();
+            PkAlert.success({ text: res.message });
+          },
+        });
       });
     });
   },
+
+  // ======================================================
+  // DELETE
+  // ======================================================
+
+  deleteKonteks(id) {
+    PkAlert.warning({
+      title: "Hapus data ini?",
+      text: "Data yang dihapus tidak bisa dikembalikan.",
+      confirmText: "Hapus",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      PkAjax.post({
+        url: "/penetapan-konteks/konteks/delete",
+        data: { id_konteks: id },
+        onSuccess(res) {
+          if (res.status !== "success") return;
+          bootstrap.Offcanvas.getInstance(
+            document.getElementById("offcanvasKonteks"),
+          )?.hide();
+          KonteksModule.refreshTable();
+          PkAlert.success({ title: "Terhapus", text: res.message });
+        },
+      });
+    });
+  },
+
+  // ======================================================
+  // REFRESH TABLE (AJAX)
+  // ======================================================
+
+  refreshTable() {
+    $.get("/penetapan-konteks/konteks/table", function (html) {
+      $("#pkKonteksTableWrapper").html(html);
+    });
+  },
 };
+
 
 // ======================================================
 // INIT
 // ======================================================
 
 $(document).ready(function () {
+
   KonteksModule.init();
+
 });
 
 // ======================================================
 // GLOBAL FUNCTION
 // ======================================================
 
+window.pkOpenViewMode = function (el) {
+  const row = JSON.parse(el.dataset.row);
+  const id = row.id_konteks;
+
+  // set mode & id
+  document.getElementById("pkMode").value = "view";
+  document.getElementById("pkId").value = id;
+
+  // set title
+  document.getElementById("pkOffcanvasTitle").innerText = "Detail Konteks";
+
+  // tampilkan button mode view
+  document.getElementById("pkBtnCreate").style.display = "none";
+  document.getElementById("pkBtnView").style.display = "flex";
+  document.getElementById("pkBtnEdit").style.display = "none";
+
+  // tombol hapus
+  document.getElementById("pkBtnDelete").onclick = () => {
+    KonteksModule.deleteKonteks(id);
+  };
+
+  // tombol switch ke edit
+  document.getElementById("pkBtnSwitchEdit").onclick = () => {
+    document.getElementById("pkMode").value = "edit";
+    document.getElementById("pkOffcanvasTitle").innerText = "Edit Konteks";
+    document.getElementById("pkBtnView").style.display = "none";
+    document.getElementById("pkBtnEdit").style.display = "flex";
+  };
+
+  // load detail via AJAX lalu isi form
+  $.get(`/penetapan-konteks/konteks/detail/${id}`, (res) => {
+    const k = res.konteks;
+
+    // isi hidden fields
+    document.getElementById("pkSatuanKerjaValue").value = k.id_satuan_kerja;
+    document.getElementById("pkSatuanKerjaInput").value =
+      k.nama_satuan_kerja ?? "";
+    document.getElementById("pkTahun").value = k.tahun;
+    document.getElementById("pkTahunInput").value = k.tahun;
+    document.getElementById("pkSasaranValue").value = k.id_sasaran_strategis;
+    document.getElementById("pkSasaranInput").value = k.uraian_sasaran ?? "";
+    document.getElementById("pkKegiatanValue").value = k.id_kegiatan;
+    document.getElementById("pkKegiatanInput").value = k.nama_kegiatan ?? "";
+  });
+
+  // buka offcanvas
+  new bootstrap.Offcanvas(document.getElementById("offcanvasKonteks")).show();
+};
+
 window.pkOpenCreateMode = function () {
   const mode = document.getElementById("pkMode");
-
   if (!mode) return;
 
   mode.value = "create";
 
-  const title = document.getElementById("pkOffcanvasTitle");
+  document.getElementById("pkOffcanvasTitle").innerText = "Tambah Konteks";
 
-  if (title) title.innerText = "Tambah Konteks";
+  document.getElementById("pkBtnCreate").style.display = "flex";
+  document.getElementById("pkBtnView").style.display = "none";
+  document.getElementById("pkBtnEdit").style.display = "none";
 
   const form = document.getElementById("pkFormKonteks");
-
   if (form) form.reset();
 };
-

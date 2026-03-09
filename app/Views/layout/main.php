@@ -77,6 +77,11 @@
     <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+    <!-- GLOBAL COMPONENT -->
+    <script src="<?= base_url('assets/js/components/combobox.js') ?>"></script>
+    <script src="<?= base_url('assets/js/components/pk-alert.js') ?>"></script>
+    <script src="<?= base_url('assets/js/components/pk-ajax.js') ?>"></script>
+
     <?= $this->renderSection('scripts') ?>
 
     <!-- Flash Message -->
