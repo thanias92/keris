@@ -1,8 +1,11 @@
 <?php
-// TAB KONTEKS - CONTENT WRAPPER
+// TAB PROSES BISNIS - CONTENT WRAPPER
 ?>
 
-<div class="pk-konteks">
-    <!-- TABLE SECTION -->
-    <?= $this->include('penetapan_konteks/proses_bisnis') ?>
+<div class="pk-proses-bisnis">
+    <div id="pkProsesBisnisTableWrapper">
+        <?= view('penetapan_konteks/tabs/proses_bisnis/_table_section', [
+            'data' => $selectedProsesData ?? []
+        ]) ?>
+    </div>
 </div>

@@ -77,3 +77,17 @@ if (!function_exists('tindakan_selera_risiko')) {
         return $selera['tindakan'] ?? '-';
     }
 }
+
+if (!function_exists('hex_warna_selera_risiko')) {
+    function hex_warna_selera_risiko(?string $warna): string
+    {
+        return match ($warna) {
+            'biru'   => '#0d6efd',
+            'hijau'  => '#198754',
+            'kuning' => '#ffc107',
+            'oranye' => '#fd7e14',
+            'merah'  => '#dc3545',
+            default  => '#6c757d',
+        };
+    }
+}

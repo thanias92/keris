@@ -1,7 +1,3 @@
-<?php
-// TAB KONTEKS - CONTENT WRAPPER
-?>
-
 <div class="pk-konteks">
     <!-- TABLE SECTION -->
     <div id="pkKonteksTableWrapper">

@@ -64,4 +64,62 @@ const PkAlert = {
       confirmButtonColor: confirmColor,
     });
   },
+
+  toast({ text, icon = "success", duration = 3000 } = {}) {
+    const existing = document.getElementById("pkToastEl");
+    if (existing) existing.remove();
+
+    const colors = {
+      success: { border: "#22c55e", iconColor: "#22c55e", icon: "✓" },
+      warning: { border: "#f59e0b", iconColor: "#f59e0b", icon: "⚠" },
+      error: { border: "#ef4444", iconColor: "#ef4444", icon: "✕" },
+      info: { border: "#3b82f6", iconColor: "#3b82f6", icon: "ℹ" },
+    };
+
+    const c = colors[icon] ?? colors.info;
+
+    const toast = document.createElement("div");
+    toast.id = "pkToastEl";
+    toast.style.cssText = `
+        position: fixed;
+        top: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        border-left: 4px solid ${c.border};
+        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        white-space: nowrap;
+        animation: pkToastIn 0.25s ease;
+    `;
+
+    toast.innerHTML = `
+        <style>
+            @keyframes pkToastIn {
+                from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+                to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+            }
+            @keyframes pkToastOut {
+                from { opacity: 1; transform: translateX(-50%) translateY(0); }
+                to   { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+            }
+        </style>
+        <span style="font-size:14px; color:${c.iconColor};">${c.icon}</span>
+        <span style="font-size:13px; color:#374151;">${text}</span>
+    `;
+
+    document.body.appendChild(toast);
+
+    const remove = () => {
+      toast.style.animation = "pkToastOut 0.25s ease forwards";
+      setTimeout(() => toast.remove(), 250);
+    };
+
+    setTimeout(remove, duration);
+  },
 };

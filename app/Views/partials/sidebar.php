@@ -1,9 +1,14 @@
-[ Sidebar Menu ] start -->
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
-        <div class="m-header">
-            <a href="<?= base_url('/') ?>" class="b-brand">
-                <img src="<?= base_url('assets/images/logo-dark.svg') ?>" class="logo-lg" alt="logo">
+        <div class="m-header keris-header">
+            <a href="<?= base_url('/') ?>" class="b-brand keris-brand">
+                <img src="<?= base_url('assets/images/logo-keris-raja.png') ?>"
+                    class="keris-logo-full"
+                    alt="KERIS RAJA">
+
+                <img src="<?= base_url('assets/images/logo-keris.png') ?>"
+                    class="keris-logo-mini"
+                    alt="KERIS">
             </a>
         </div>
 
@@ -76,7 +81,7 @@
                         <li class="pc-item">
                             <a href="<?= base_url('rencana-penanganan') ?>" class="pc-link">
                                 <span class="pc-micon"><i class="ti ti-list-check"></i></span>
-                                <span class="pc-mtext">Penanganan Risiko</span>
+                                <span class="pc-mtext">RTP</span>
                             </a>
                         </li>
                     </ul>

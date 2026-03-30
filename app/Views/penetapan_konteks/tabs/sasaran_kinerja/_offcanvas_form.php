@@ -1,134 +1,77 @@
-<div class="offcanvas offcanvas-end shadow-lg"
-    tabindex="-1"
-    id="offcanvasSasaranKinerja"
-    style="width:420px">
+<?php $idKonteks = $activeKonteks['id_konteks'] ?? null; ?>
 
-    <div class="offcanvas-header border-bottom" style="background:#f8f9fa">
+<div class="offcanvas offcanvas-end pk-offcanvas" tabindex="-1" id="offcanvasSasaranKinerja">
+    <div class="offcanvas-header border-bottom">
         <div>
-            <h5 id="offcanvasTitleSasaran" class="mb-0 fw-semibold">
-                Tambah Sasaran Kinerja
-            </h5>
+            <h5 class="offcanvas-title mb-0" id="skOffcanvasTitle">Tambah Sasaran Kinerja</h5>
             <small class="text-muted">Penetapan Konteks</small>
         </div>
-        <button type="button"
-            class="btn-close"
-            data-bs-dismiss="offcanvas">
-        </button>
     </div>
 
     <div class="offcanvas-body">
-        <!-- CONTEXT INFO -->
-        <?php if ($activeKonteks): ?>
-            <div class="card bg-light border-0 mb-3">
-                <div class="card-body py-2">
-                    <div class="row small text-muted">
-                        <div class="col-6 mb-1">
-                            <strong>Satuan Kerja</strong><br>
-                            <?= esc($activeKonteks['nama_satuan_kerja']) ?>
-                        </div>
-                        <div class="col-6 mb-1">
-                            <strong>Tahun</strong><br>
-                            <?= esc($activeKonteks['tahun']) ?>
-                        </div>
-                        <div class="col-6">
-                            <strong>Kegiatan</strong><br>
-                            <?= esc($activeKonteks['kegiatan']) ?>
-                        </div>
-                        <div class="col-6">
-                            <strong>Sasaran Strategis</strong><br>
-                            <?= esc($activeKonteks['uraian_sasaran']) ?>
-                        </div>
-                    </div>
+        <?php if (!$idKonteks): ?>
+            <div class="alert alert-warning">
+                <i class="ti ti-alert-circle me-1"></i>
+                Pilih konteks aktif terlebih dahulu.
+            </div>
+        <?php else: ?>
+            <form id="skForm">
+                <input type="hidden" id="skIdSasaran" name="id_sasaran">
+                <input type="hidden" name="id_konteks" value="<?= $idKonteks ?>">
+
+                <!-- PROSES BISNIS -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Proses Bisnis</label>
+                    <select name="id_konteks_proses" id="skIdKonteksProses" class="form-select" required>
+                        <option value="">-- Pilih Proses Bisnis --</option>
+                        <?php if (empty($listProses)): ?>
+                            <option value="" disabled>Belum ada proses bisnis dipilih</option>
+                        <?php else: ?>
+                            <?php foreach ($listProses as $p): ?>
+                                <option value="<?= $p['id_konteks_proses'] ?>">
+                                    <?= esc($p['kode_proses']) ?> — <?= esc($p['uraian_proses']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
                 </div>
-            </div>
+
+                <!-- URAIAN SASARAN -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Uraian Sasaran Kinerja</label>
+                    <textarea name="uraian_sasaran" id="skUraianSasaran"
+                        class="form-control" rows="4"
+                        placeholder="Contoh: Tersedianya daftar sampel yang berkualitas"
+                        required></textarea>
+                </div>
+            </form>
         <?php endif; ?>
+    </div>
 
-        <form id="formSasaranKinerja"
-            method="post"
-            action="<?= site_url('penetapan-konteks/sasaran-kinerja/store') ?>">
+    <?php if ($idKonteks): ?>
+        <div class="offcanvas-footer border-top p-3">
+            <div class="pk-action-wrapper">
 
-            <input type="hidden" name="id_sasaran" id="id_sasaran">
-            <?php if ($activeKonteks): ?>
-                <input type="hidden" name="id_konteks"
-                    value="<?= esc($activeKonteks['id_konteks']) ?>">
-            <?php endif; ?>
-
-            <!-- KODE SASARAN -->
-            <div class="mb-3">
-                <label class="form-label">Kode Sasaran</label>
-                <input type="text"
-                    id="kode_sasaran"
-                    name="kode_sasaran"
-                    class="form-control bg-light"
-                    placeholder="Otomatis"
-                    readonly>
-            </div>
-
-            <!-- PROSES BISNIS -->
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Proses Bisnis</label>
-                <select name="id_proses"
-                    id="id_proses"
-                    class="form-select"
-                    required>
-                    <option value="">-- Pilih Proses Bisnis --</option>
-                    <?php if (empty($listProses)): ?>
-                        <option value="">Tidak ada Proses Bisnis pada Konteks ini</option>
-                    <?php else: ?>
-                        <?php foreach ($listProses as $p): ?>
-                            <option value="<?= $p['id_proses'] ?>">
-                                <?= esc($p['kode_proses']) ?> - <?= esc($p['uraian_proses']) ?>
-                            </option>
-                        <?php endforeach ?>
-                    <?php endif; ?>
-                </select>
-            </div>
-
-            <!-- SASARAN KINERJA -->
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Sasaran Kinerja</label>
-                <textarea name="uraian_sasaran"
-                    id="uraian_sasaran"
-                    class="form-control"
-                    rows="4"
-                    placeholder="Contoh: Tersedianya daftar sampel yang berkualitas"
-                    required></textarea>
-            </div>
-
-            <!-- ACTION BUTTON -->
-            <div class="d-flex align-items-center mt-4 pt-3 border-top">
-                <div class="me-auto">
-                    <button type="button"
-                        id="btnDeleteSasaran"
-                        class="btn btn-outline-danger btn-icon d-none"
-                        title="Hapus Sasaran Kinerja">
+                <!-- VIEW MODE -->
+                <div class="pk-mode" id="skBtnView" style="display:none;">
+                    <button type="button" class="btn btn-danger" id="skBtnDelete">
                         <i class="ti ti-trash"></i>
                     </button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="offcanvas">Tutup</button>
+                        <button type="button" class="btn btn-warning text-white" id="skBtnSwitchEdit">
+                            <i class="ti ti-pencil me-1"></i> Edit
+                        </button>
+                    </div>
                 </div>
 
-                <div class="d-flex gap-2">
-                    <button type="button"
-                        class="btn btn-light"
-                        data-bs-dismiss="offcanvas">
-                        Tutup
-                    </button>
-
-                    <button type="button"
-                        id="btnEditSasaran"
-                        class="btn btn-warning d-none">
-                        Edit
-                    </button>
-
-                    <button type="button"
-                        id="btnSimpanSasaran"
-                        class="btn btn-primary px-4">
-                        Simpan
-                    </button>
+                <!-- CREATE / EDIT MODE -->
+                <div class="pk-mode" id="skBtnEdit" style="display:none;">
+                    <button type="button" class="btn btn-light" id="skBtnCancel">Batal</button>
+                    <button type="button" class="btn btn-primary" id="skBtnSimpan">Simpan</button>
                 </div>
+
             </div>
-        </form>
-
-        <form id="formDeleteSasaran" method="post" class="d-none"></form>
-
-    </div>
+        </div>
+    <?php endif; ?>
 </div>

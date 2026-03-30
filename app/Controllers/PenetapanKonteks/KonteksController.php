@@ -10,6 +10,7 @@ use App\Models\PeraturanTerkaitModel;
 use App\Models\SatuanKerjaModel;
 use App\Models\SasaranStrategisModel;
 use App\Models\PengelolaRisikoModel;
+use App\Models\PenugasanPengelolaModel;
 use App\Models\KegiatanModel;
 use App\Models\WilayahModel;
 
@@ -34,12 +35,13 @@ class KonteksController extends BaseContextController
 
         $builder = $this->model
             ->select('
-        konteks.*,
-        satuan_kerja.nama_satuan_kerja,
-        sasaran_strategis.uraian_sasaran,
-        kegiatan.nama_kegiatan,
-        p.nama as nama_pemilik,
-        g.nama as nama_pengelola')
+                konteks.*,
+                satuan_kerja.nama_satuan_kerja,
+                sasaran_strategis.uraian_sasaran,
+                kegiatan.nama_kegiatan,
+                p.nama as nama_pemilik,
+                g.nama as nama_pengelola
+            ')
             ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
@@ -47,34 +49,31 @@ class KonteksController extends BaseContextController
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left');
 
         // FILTER
-        $sk  = $this->request->getGet('sk');
-        $pr  = $this->request->getGet('pr');
-        $th  = $this->request->getGet('th');
-        $kg  = $this->request->getGet('kg');
-        $ss  = $this->request->getGet('ss');
+        $sk = $this->request->getGet('sk');
+        $pg = $this->request->getGet('pg');
+        $th = $this->request->getGet('th');
+        $kg = $this->request->getGet('kg');
+        $ss = $this->request->getGet('ss');
 
-        if ($sk) $builder->where('satuan_kerja.nama_satuan_kerja', $sk);
-        if ($pr) $builder->where('konteks.pengelola_risiko_id', $pr);
+        if ($sk) $builder->where('konteks.id_satuan_kerja', $sk);
+        if ($pg) $builder->where('konteks.pengelola_risiko_id', $pg);
         if ($th) $builder->where('konteks.tahun', $th);
-        if ($kg) $builder->where('kegiatan.id_kegiatan', $kg);
-        if ($ss) $builder->where('sasaran_strategis.uraian_sasaran', $ss);
+        if ($kg) $builder->where('konteks.id_kegiatan', $kg);
+        if ($ss) $builder->where('konteks.id_sasaran_strategis', $ss);
 
         $perPage = (int) ($this->request->getGet('perPage') ?? 5);
 
-        $data = $builder
-            ->orderBy('tahun', 'DESC')
-            ->paginate($perPage);
-
+        $data  = $builder->orderBy('tahun', 'DESC')->paginate($perPage);
         $pager = $this->model->pager;
 
-        $total = $pager->getTotal();
+        $total       = $pager->getTotal();
         $currentPage = $pager->getCurrentPage();
-        $from = ($currentPage - 1) * $perPage + 1;
-        $to = $from + count($data) - 1;
+        $from        = ($currentPage - 1) * $perPage + 1;
+        $to          = $from + count($data) - 1;
 
         if ($total == 0) {
             $from = 0;
-            $to = 0;
+            $to   = 0;
         }
 
         $listWilayah = (new WilayahModel())
@@ -86,19 +85,19 @@ class KonteksController extends BaseContextController
             array_merge(
                 $this->contextData(),
                 [
-                    'activeTab' => 'konteks',
-                    'data'      => $data,
-                    'pager'     => $pager,
-                    'from'      => $from,
-                    'to'        => $to,
-                    'total'     => $total,
-                    'perPage'   => $perPage,
-                    'listPemangku'      => $listPemangku,
-                    'listPeraturan'     => $listPeraturan,
-                    'listSatuanKerja'   => $listSatuanKerja,
-                    'listSasaran'       => $listSasaran,
-                    'listWilayah' => $listWilayah,
-                    'filters'   => compact('sk', 'pr', 'th', 'kg', 'ss')
+                    'activeTab'       => 'konteks',
+                    'data'            => $data,
+                    'pager'           => $pager,
+                    'from'            => $from,
+                    'to'              => $to,
+                    'total'           => $total,
+                    'perPage'         => $perPage,
+                    'listPemangku'    => $listPemangku,
+                    'listPeraturan'   => $listPeraturan,
+                    'listSatuanKerja' => $listSatuanKerja,
+                    'listSasaran'     => $listSasaran,
+                    'listWilayah'     => $listWilayah,
+                    'filters'         => compact('sk', 'pg', 'th', 'kg', 'ss'),
                 ]
             )
         );
@@ -113,46 +112,34 @@ class KonteksController extends BaseContextController
             return redirect()->back();
         }
 
+        $toInt = fn($v) => $v !== '' && $v !== null ? (int) $v : null;
+
         $data = [
-            'tahun' => $this->request->getPost('tahun'),
-            'pemilik_risiko_id' => $this->request->getPost('pemilik_risiko_id'),
-            'pengelola_risiko_id' => $this->request->getPost('pengelola_risiko_id'),
-            'id_kegiatan' => $this->request->getPost('id_kegiatan'),
-            'id_satuan_kerja' => $this->request->getPost('id_satuan_kerja'),
-            'id_sasaran_strategis' => $this->request->getPost('id_sasaran_strategis'),
+            'tahun'                => (int) $this->request->getPost('tahun'),
+            'pemilik_risiko_id'    => $toInt($this->request->getPost('pemilik_risiko_id')),
+            'pengelola_risiko_id'  => $toInt($this->request->getPost('pengelola_risiko_id')),
+            'id_kegiatan'          => $toInt($this->request->getPost('id_kegiatan')),
+            'id_satuan_kerja'      => $toInt($this->request->getPost('id_satuan_kerja')),
+            'id_sasaran_strategis' => $toInt($this->request->getPost('id_sasaran_strategis')),
         ];
 
-        $this->model->insert($data);
-        $idKonteks = $this->model->getInsertID();
+        $db = \Config\Database::connect();
+        $db->table('konteks')->insert($data);
+        $idKonteks = $db->insertID();
 
         // === SIMPAN PEMANGKU ===
-        $pemangkuIds = $this->request->getPost('pemangku') ?? [];
-
         $pemangkuModel = new KonteksPemangkuModel();
-
-        foreach ($pemangkuIds as $idPemangku) {
-            $pemangkuModel->insert([
-                'id_konteks' => $idKonteks,
-                'id_pemangku' => $idPemangku,
-            ]);
+        foreach ($this->request->getPost('pemangku') ?? [] as $idPemangku) {
+            $pemangkuModel->insert(['id_konteks' => $idKonteks, 'id_pemangku' => $idPemangku]);
         }
 
         // === SIMPAN PERATURAN ===
-        $peraturanIds = $this->request->getPost('peraturan') ?? [];
-
         $peraturanModel = new KonteksPeraturanModel();
-
-        foreach ($peraturanIds as $idPeraturan) {
-            $peraturanModel->insert([
-                'id_konteks' => $idKonteks,
-                'id_peraturan' => $idPeraturan,
-            ]);
+        foreach ($this->request->getPost('peraturan') ?? [] as $idPeraturan) {
+            $peraturanModel->insert(['id_konteks' => $idKonteks, 'id_peraturan' => $idPeraturan]);
         }
 
-        return $this->response->setJSON([
-            'status' => 'success',
-            'message' => 'Data berhasil disimpan'
-        ]);
+        return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil disimpan']);
     }
 
     /* =====================================================
@@ -164,52 +151,36 @@ class KonteksController extends BaseContextController
             return redirect()->back();
         }
 
-        $id = $this->request->getPost('id_konteks');
+        $id    = $this->request->getPost('id_konteks');
+        $toInt = fn($v) => $v !== '' && $v !== null ? (int) $v : null;
 
         $data = [
-            'tahun' => $this->request->getPost('tahun'),
-            'pengelola_risiko_id' => $this->request->getPost('pengelola_risiko_id'),
-            'pemilik_risiko_id' => $this->request->getPost('pemilik_risiko_id'),
-            'id_kegiatan' => $this->request->getPost('id_kegiatan'),
-            'id_satuan_kerja' => $this->request->getPost('id_satuan_kerja'),
-            'id_sasaran_strategis' => $this->request->getPost('id_sasaran_strategis'),
+            'tahun'                => (int) $this->request->getPost('tahun'),
+            'pengelola_risiko_id'  => $toInt($this->request->getPost('pengelola_risiko_id')),
+            'pemilik_risiko_id'    => $toInt($this->request->getPost('pemilik_risiko_id')),
+            'id_kegiatan'          => $toInt($this->request->getPost('id_kegiatan')),
+            'id_satuan_kerja'      => $toInt($this->request->getPost('id_satuan_kerja')),
+            'id_sasaran_strategis' => $toInt($this->request->getPost('id_sasaran_strategis')),
         ];
 
-        $this->model->update($id, $data);
+        $db = \Config\Database::connect();
+        $db->table('konteks')->where('id_konteks', (int) $id)->update($data);
 
         // === UPDATE PEMANGKU ===
         $pemangkuModel = new KonteksPemangkuModel();
-
-        // hapus relasi lama
         $pemangkuModel->where('id_konteks', $id)->delete();
-
-        $pemangkuIds = $this->request->getPost('pemangku') ?? [];
-
-        foreach ($pemangkuIds as $idPemangku) {
-            $pemangkuModel->insert([
-                'id_konteks' => $id,
-                'id_pemangku' => $idPemangku,
-            ]);
+        foreach ($this->request->getPost('pemangku') ?? [] as $idPemangku) {
+            $pemangkuModel->insert(['id_konteks' => $id, 'id_pemangku' => $idPemangku]);
         }
 
         // === UPDATE PERATURAN ===
         $peraturanModel = new KonteksPeraturanModel();
-
         $peraturanModel->where('id_konteks', $id)->delete();
-
-        $peraturanIds = $this->request->getPost('peraturan') ?? [];
-
-        foreach ($peraturanIds as $idPeraturan) {
-            $peraturanModel->insert([
-                'id_konteks' => $id,
-                'id_peraturan' => $idPeraturan,
-            ]);
+        foreach ($this->request->getPost('peraturan') ?? [] as $idPeraturan) {
+            $peraturanModel->insert(['id_konteks' => $id, 'id_peraturan' => $idPeraturan]);
         }
 
-        return $this->response->setJSON([
-            'status'  => 'success',
-            'message' => 'Data berhasil diubah'
-        ]);
+        return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil diubah']);
     }
 
     /* =====================================================
@@ -221,14 +192,9 @@ class KonteksController extends BaseContextController
             return redirect()->back();
         }
 
-        $id = $this->request->getPost('id_konteks');
+        $this->model->delete($this->request->getPost('id_konteks'));
 
-        $this->model->delete($id);
-
-        return $this->response->setJSON([
-            'status'  => 'success',
-            'message' => 'Data berhasil dihapus'
-        ]);
+        return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil dihapus']);
     }
 
     /* =====================================================
@@ -238,13 +204,13 @@ class KonteksController extends BaseContextController
     {
         $data = $this->model
             ->select('
-            konteks.*,
-            kegiatan.nama_kegiatan,
-            satuan_kerja.nama_satuan_kerja,
-            sasaran_strategis.uraian_sasaran,
-            p.nama as nama_pemilik,
-            g.nama as nama_pengelola
-        ')
+                konteks.*,
+                kegiatan.nama_kegiatan,
+                satuan_kerja.nama_satuan_kerja,
+                sasaran_strategis.uraian_sasaran,
+                p.nama as nama_pemilik,
+                g.nama as nama_pengelola
+            ')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
             ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
@@ -253,17 +219,14 @@ class KonteksController extends BaseContextController
             ->orderBy('tahun', 'DESC')
             ->findAll();
 
-        return view(
-            'penetapan_konteks/tabs/konteks/_table_section',
-            [
-                'data'    => $data,
-                'from'    => 1,
-                'to'      => count($data),
-                'total'   => count($data),
-                'filters' => [],
-                'perPage' => 5
-            ]
-        );
+        return view('penetapan_konteks/tabs/konteks/_table_section', [
+            'data'    => $data,
+            'from'    => 1,
+            'to'      => count($data),
+            'total'   => count($data),
+            'filters' => [],
+            'perPage' => 5,
+        ]);
     }
 
     /* =====================================================
@@ -272,21 +235,15 @@ class KonteksController extends BaseContextController
     public function setActive()
     {
         $id = $this->request->getPost('id_konteks');
-
-        if (!$id) {
-            return redirect()->back();
-        }
-
+        if (!$id) return redirect()->back();
         session()->set('id_konteks_aktif', $id);
-
-        return redirect()->to(site_url('penetapan-konteks'));
+        $redirect = $this->request->getPost('redirect') ?? site_url('penetapan-konteks');
+        return redirect()->to($redirect);
     }
 
     public function detail($id)
     {
-        if (!$this->request->isAJAX()) {
-            return redirect()->back();
-        }
+        if (!$this->request->isAJAX()) return redirect()->back();
 
         $konteks = $this->model
             ->select('konteks.*, kegiatan.nama_kegiatan, satuan_kerja.nama_satuan_kerja, sasaran_strategis.uraian_sasaran')
@@ -296,67 +253,76 @@ class KonteksController extends BaseContextController
             ->where('konteks.id_konteks', $id)
             ->first();
 
-        $pemangkuModel = new KonteksPemangkuModel();
-        $peraturanModel = new KonteksPeraturanModel();
+        $pemangku  = (new KonteksPemangkuModel())->select('id_pemangku')->where('id_konteks', $id)->findAll();
+        $peraturan = (new KonteksPeraturanModel())->select('id_peraturan')->where('id_konteks', $id)->findAll();
 
-        $pemangku = $pemangkuModel
-            ->select('id_pemangku')
-            ->where('id_konteks', $id)
-            ->findAll();
-
-        $peraturan = $peraturanModel
-            ->select('id_peraturan')
-            ->where('id_konteks', $id)
-            ->findAll();
+        // Ambil sasaran kinerja untuk konteks ini
+        $db = \Config\Database::connect();
+        $sasaranKinerja = $db->table('sasaran_kinerja sk')
+            ->select('sk.uraian_sasaran, pb.kode_proses, pb.jenis_proses, pb.uraian_proses')
+            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = sk.id_konteks_proses')
+            ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
+            ->where('kpb.id_konteks', $id)
+            ->orderBy('pb.kode_proses', 'ASC')
+            ->get()
+            ->getResultArray();
 
         return $this->response->setJSON([
-            'konteks'   => $konteks,
-            'pemangku'  => array_column($pemangku, 'id_pemangku'),
-            'peraturan' => array_column($peraturan, 'id_peraturan'),
+            'konteks'        => $konteks,
+            'pemangku'       => array_column($pemangku, 'id_pemangku'),
+            'peraturan'      => array_column($peraturan, 'id_peraturan'),
+            'sasaranKinerja' => $sasaranKinerja,
         ]);
     }
 
+    /* =====================================================
+       GET PEMILIK PROVINSI (AJAX)
+    ===================================================== */
     public function getPemilikProvinsi()
     {
-        $model = new PengelolaRisikoModel();
-
-        $data = $model
+        $data = (new PengelolaRisikoModel())
             ->where('is_pemilik', true)
             ->first();
 
         return $this->response->setJSON($data);
     }
+    /* =====================================================
+       GET PENGELOLA LIST BY SATUAN KERJA & TAHUN (AJAX)
+       → sekarang pakai penugasan_pengelola
+    ===================================================== */
     public function getPengelolaList()
     {
         $id_satuan = $this->request->getGet('satuan');
+        $tahun     = (int) ($this->request->getGet('tahun') ?? date('Y'));
 
         if (!$id_satuan) {
             return $this->response->setJSON([]);
         }
 
-        $db = \Config\Database::connect();
+        $penugasanModel = new PenugasanPengelolaModel();
+        $data           = $penugasanModel->getKetuaTimWithFallback((int) $id_satuan, $tahun);
 
-        $data = $db->table('pengelola_risiko')
-            ->where('id_satuan_kerja', $id_satuan)
-            ->where('is_pengelola', true)
-            ->get()
-            ->getResult();
-
-        return $this->response->setJSON($data);
+        return $this->response->setJSON($data ?? []);
     }
+    /* =====================================================
+       GET KEGIATAN BY SATUAN KERJA (AJAX)
+    ===================================================== */
     public function getKegiatanBySatuanKerja($id)
     {
-        if (!$this->request->isAJAX()) {
-            return redirect()->back();
-        }
+        if (!$this->request->isAJAX()) return redirect()->back();
 
-        $model = new KegiatanModel();
-
-        $data = $model
+        $data = (new KegiatanModel())
             ->where('id_satuan_kerja', $id)
             ->orderBy('nama_kegiatan', 'ASC')
             ->findAll();
 
         return $this->response->setJSON($data);
+    }
+
+    public function resetActive()
+    {
+        session()->remove('id_konteks_aktif');
+        $redirect = $this->request->getPost('redirect') ?? site_url('penetapan-konteks/proses-bisnis');
+        return redirect()->to($redirect);
     }
 }

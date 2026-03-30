@@ -3,6 +3,7 @@
     <div class="header-wrapper"> <!-- [Mobile Media Block] start -->
         <div class="me-auto pc-mob-drp">
             <ul class="list-unstyled">
+
                 <!-- ======= Menu collapse Icon ===== -->
                 <li class="pc-h-item pc-sidebar-collapse">
                     <a href="#" class="pc-head-link ms-0" id="sidebar-hide">
@@ -33,13 +34,14 @@
                         </form>
                     </div>
                 </li>
-                <li class="pc-h-item d-none d-md-inline-flex">
-                    <form class="header-search">
-                        <i data-feather="search" class="icon-search"></i>
-                        <input type="search" class="form-control" placeholder="Search here. . .">
-                    </form>
-                </li>
             </ul>
+            <div class="navbar-bps-logo">
+                <img src="<?= base_url('assets/images/logo-bps.png') ?>" alt="BPS">
+                <div class="navbar-bps-text">
+                    <div class="navbar-bps-main">Badan Pusat Statistik</div>
+                    <div class="navbar-bps-sub">Provinsi Riau</div>
+                </div>
+            </div>
         </div>
         <!-- [Mobile Media Block end] -->
         <div class="ms-auto">

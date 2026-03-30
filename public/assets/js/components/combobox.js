@@ -122,10 +122,10 @@ const Combobox = {
 
       if (e.key === "Enter") {
         e.preventDefault();
+        e.stopPropagation();
 
         if (visible[current]) select(visible[current]);
-
-        if (visible.length === 1) select(visible[0]);
+        else if (visible.length === 1) select(visible[0]); // ← ganti if jadi else if
       }
 
       if (e.key === "Escape") close();

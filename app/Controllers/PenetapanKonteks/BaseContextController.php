@@ -43,14 +43,18 @@ class BaseContextController extends BaseController
     {
         return (new KonteksModel())
             ->select('
-                konteks.id_konteks,
-                konteks.tahun,
-                kegiatan.nama_kegiatan,
-                satuan_kerja.nama_satuan_kerja,
-                sasaran_strategis.uraian_sasaran,
-                p.nama as nama_pemilik,
-                g.nama as nama_pengelola
-            ')
+            konteks.id_konteks,
+            konteks.tahun,
+            konteks.id_satuan_kerja,
+            konteks.pengelola_risiko_id,
+            konteks.id_kegiatan,
+            konteks.id_sasaran_strategis,
+            kegiatan.nama_kegiatan,
+            satuan_kerja.nama_satuan_kerja,
+            sasaran_strategis.uraian_sasaran,
+            p.nama as nama_pemilik,
+            g.nama as nama_pengelola
+        ')
             ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan')

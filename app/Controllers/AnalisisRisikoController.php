@@ -4,8 +4,6 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\KonteksModel;
-use App\Models\IdentifikasiRisikoModel;
-use App\Models\PenilaianRisikoModel;
 use App\Models\KriteriaKemungkinanModel;
 use App\Models\KriteriaDampakModel;
 use App\Models\MatriksRisikoModel;
@@ -13,348 +11,452 @@ use App\Models\SeleraRisikoModel;
 
 class AnalisisRisikoController extends BaseController
 {
+    /* ======================================================
+       HELPER — ambil konteks aktif dari session
+    ====================================================== */
+    private function getActiveKonteks(): ?array
+    {
+        $id = session('id_konteks_ar');
+        if (!$id) return null;
+
+        $data = (new KonteksModel())
+            ->select('
+                konteks.*,
+                kegiatan.nama_kegiatan,
+                satuan_kerja.nama_satuan_kerja,
+                sasaran_strategis.uraian_sasaran,
+                p.nama as nama_pemilik,
+                g.nama as nama_pengelola
+            ')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
+            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
+            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
+            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
+            ->where('konteks.id_konteks', $id)
+            ->first();
+
+        if (!$data) {
+            session()->remove('id_konteks_ar');
+            return null;
+        }
+
+        return $data;
+    }
+
+    private function getListKonteks(): array
+    {
+        return (new KonteksModel())
+            ->select('
+                konteks.id_konteks,
+                konteks.tahun,
+                konteks.id_satuan_kerja,
+                konteks.id_kegiatan,
+                konteks.pengelola_risiko_id,
+                satuan_kerja.nama_satuan_kerja,
+                sasaran_strategis.uraian_sasaran,
+                kegiatan.nama_kegiatan,
+                p.nama as nama_pemilik,
+                g.nama as nama_pengelola
+            ')
+            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
+            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
+            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
+            ->orderBy('konteks.created_at', 'DESC')
+            ->findAll();
+    }
+
+    /* ======================================================
+       INDEX
+    ====================================================== */
     public function index()
     {
-        $konteksModel      = new KonteksModel();
-        $identifikasiModel = new IdentifikasiRisikoModel();
-        $kemungkinanList   = new KriteriaKemungkinanModel();
-        $dampakList        = new KriteriaDampakModel();
+        $activeKonteks = $this->getActiveKonteks();
+        $idKonteks     = $activeKonteks ? $activeKonteks['id_konteks'] : null;
+        $db            = \Config\Database::connect();
 
-        $idKonteks = $this->request->getGet('id_konteks');
-        $filter = $this->request->getGet('filter');
+        /* PAGINATION CONFIG */
+        $perPage = (int) ($this->request->getGet('perPage') ?? 5);
+        $page    = (int) ($this->request->getGet('page') ?? 1);
+        $offset  = ($page - 1) * $perPage;
 
-        $activeKonteks   = null;
-        $selectedContext = null;
+        /* QUERY UTAMA */
+        $builder = $db->table('identifikasi_risiko ir')
+            ->select('
+            ir.id_identifikasi,
+            ir.pernyataan_risiko,
+            ir.penyebab_risiko,
+            ir.dampak_risiko,
+            kpb.id_konteks,
+            kpb.id_konteks_proses,
+            pb.kode_proses,
+            pb.uraian_proses,
+            pb.jenis_proses,
+            sk_kinerja.uraian_sasaran as sasaran_kinerja,
+            pr.id_penilaian,
+            pr.id_kemungkinan,
+            pr.id_dampak,
+            pr.nilai_risiko,
+            pr.warna_risiko,
+            pr.tindakan,
+            pr.efektivitas,
+            pr.uraian_pengendalian,
+            km.level as level_kemungkinan,
+            km.nama_level as nama_kemungkinan,
+            kd.level as level_dampak,
+            kd.nama_level as nama_dampak,
+            sl.nama_level as nama_selera,
+            sl.warna as warna_selera
+        ')
+            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+            ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
+            ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
+            ->join('penilaian_risiko pr', 'pr.id_identifikasi = ir.id_identifikasi', 'left')
+            ->join('kriteria_kemungkinan km', 'km.id_kriteria = pr.id_kemungkinan', 'left')
+            ->join('kriteria_dampak kd', 'kd.id_kriteria = pr.id_dampak', 'left')
+            ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left');
 
-        /* GET ACTIVE CONTEXT */
         if ($idKonteks) {
+            $builder->where('kpb.id_konteks', $idKonteks);
+        }
 
-            $activeKonteks = $konteksModel
-                ->select('
-                    konteks.*,
-                    satuan_kerja.nama_satuan_kerja,
-                    sasaran_strategis.uraian_sasaran
-                ')
-                ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
-                ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
-                ->where('konteks.id_konteks', $idKonteks)
-                ->first();
+        $filter = $this->request->getGet('filter');
+        if ($filter === 'sudah') {
+            $builder->where('pr.id_penilaian IS NOT NULL', null, false);
+        } elseif ($filter === 'belum') {
+            $builder->where('pr.id_penilaian IS NULL', null, false);
+        }
 
-            if ($activeKonteks) {
-                $selectedContext = [
-                    'nama_satuan_kerja' => $activeKonteks['nama_satuan_kerja'],
-                    'tahun'             => $activeKonteks['tahun'],
-                    'uraian_sasaran'    => $activeKonteks['uraian_sasaran'],
-                ];
+        $builder->orderBy('pb.kode_proses', 'ASC');
+
+        /* TOTAL & PAGINATED DATA */
+        $total = $builder->countAllResults(false); // false = jangan reset query
+        $data  = $builder->limit($perPage, $offset)->get()->getResultArray();
+
+        $from = $total > 0 ? $offset + 1 : 0;
+        $to   = min($offset + $perPage, $total);
+
+        /* MANUAL PAGER */
+        $totalPages = (int) ceil($total / $perPage);
+        $pager = [
+            'currentPage' => $page,
+            'totalPages'  => $totalPages,
+            'perPage'     => $perPage,
+            'total'       => $total,
+            'filter'      => $filter,
+        ];
+
+        /* SUMMARY */
+        if ($idKonteks) {
+            $totalRisiko = $db->table('identifikasi_risiko ir')
+                ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+                ->where('kpb.id_konteks', $idKonteks)
+                ->countAllResults();
+
+            $totalSudah = $db->table('identifikasi_risiko ir')
+                ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+                ->join('penilaian_risiko pr', 'pr.id_identifikasi = ir.id_identifikasi')
+                ->where('kpb.id_konteks', $idKonteks)
+                ->countAllResults();
+        } else {
+            $totalRisiko = $db->table('identifikasi_risiko')->countAllResults();
+            $totalSudah  = $db->table('penilaian_risiko')->countAllResults();
+        }
+
+        $totalBelum = $totalRisiko - $totalSudah;
+
+        /* DISTRIBUSI LEVEL */
+        $levelRisiko       = ['Rendah' => 0, 'Sedang' => 0, 'Tinggi' => 0, 'Ekstrem' => 0];
+        $distribusiBuilder = $db->table('identifikasi_risiko ir')
+            ->select('sl.nama_level, COUNT(*) as total')
+            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+            ->join('penilaian_risiko pr', 'pr.id_identifikasi = ir.id_identifikasi')
+            ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera')
+            ->groupBy('sl.nama_level');
+
+        if ($idKonteks) {
+            $distribusiBuilder->where('kpb.id_konteks', $idKonteks);
+        }
+
+        foreach ($distribusiBuilder->get()->getResultArray() as $row) {
+            if (isset($levelRisiko[$row['nama_level']])) {
+                $levelRisiko[$row['nama_level']] = (int) $row['total'];
             }
         }
 
-        /* MAIN DATA QUERY
-        |---------------------------------------
-        | Menampilkan SEMUA Identifikasi Risiko
-        | LEFT JOIN ke Penilaian Risiko */
-        $builder = $identifikasiModel
-            ->select('
-                identifikasi_risiko.id_identifikasi,
-                identifikasi_risiko.kode_risiko,
-                identifikasi_risiko.pernyataan_risiko,
-
-                proses_bisnis.kode_proses,
-                proses_bisnis.uraian_proses,
-
-                sasaran_kinerja.uraian_sasaran AS sasaran_kinerja,
-
-                penilaian_risiko.id_penilaian,
-                penilaian_risiko.nilai_risiko,
-                penilaian_risiko.tindakan,
-                penilaian_risiko.efektivitas,
-
-                matriks_risiko.level_kemungkinan,
-                matriks_risiko.level_dampak,
-
-                selera_risiko.nama_level as nama_selera
-            ')
-            ->join(
-                'proses_bisnis',
-                'proses_bisnis.id_proses = identifikasi_risiko.id_proses'
-            )
-            ->join(
-                'sasaran_kinerja',
-                'sasaran_kinerja.id_proses = proses_bisnis.id_proses',
-                'left'
-            )
-            ->join(
-                'penilaian_risiko',
-                'penilaian_risiko.id_identifikasi = identifikasi_risiko.id_identifikasi',
-                'left'
-            )
-            ->join(
-                'matriks_risiko',
-                'matriks_risiko.id_matriks = penilaian_risiko.id_matriks',
-                'left'
-            )
-            ->join(
-                'selera_risiko',
-                'selera_risiko.id_selera = penilaian_risiko.id_selera',
-                'left'
-            );
-
-        if ($activeKonteks) {
-            $builder->where('proses_bisnis.id_konteks', $idKonteks);
-        }
-
-        // FILTER LOGIC
-        if ($filter === 'sudah') {
-            $builder->where('penilaian_risiko.id_penilaian IS NOT NULL');
-        }
-
-        if ($filter === 'belum') {
-            $builder->where('penilaian_risiko.id_penilaian IS NULL');
-        }
-
-        $data = $builder
-            ->orderBy('identifikasi_risiko.kode_risiko', 'ASC')
-            ->findAll();
-
-        /* SUMMARY DATA (SEPARATE QUERY) */
-        $identifikasiSummary = new IdentifikasiRisikoModel();
-
-        /* TOTAL RISIKO */
-        $builderTotal = $identifikasiSummary
-            ->join('proses_bisnis', 'proses_bisnis.id_proses = identifikasi_risiko.id_proses');
-
-        if ($activeKonteks) {
-            $builderTotal->where('proses_bisnis.id_konteks', $idKonteks);
-        }
-
-        $totalRisiko = $builderTotal->countAllResults();
-
-        /* TOTAL SUDAH DIANALISIS */
-        $identifikasiSudah = new IdentifikasiRisikoModel();
-
-        $builderSudah = $identifikasiSudah
-            ->join('proses_bisnis', 'proses_bisnis.id_proses = identifikasi_risiko.id_proses')
-            ->join('penilaian_risiko', 'penilaian_risiko.id_identifikasi = identifikasi_risiko.id_identifikasi');
-
-        if ($activeKonteks) {
-            $builderSudah->where('proses_bisnis.id_konteks', $idKonteks);
-        }
-
-        $totalSudah = $builderSudah->countAllResults();
-
-        /* TOTAL BELUM */
-        $totalBelum = $totalRisiko - $totalSudah;
-
-        /* DISTRIBUSI LEVEL RISIKO */
-        $builderDistribusi = $identifikasiModel
-            ->select('selera_risiko.nama_level, COUNT(*) as total')
-            ->join('proses_bisnis', 'proses_bisnis.id_proses = identifikasi_risiko.id_proses')
-            ->join(
-                'penilaian_risiko',
-                'penilaian_risiko.id_identifikasi = identifikasi_risiko.id_identifikasi'
-            )
-            ->join(
-                'selera_risiko',
-                'selera_risiko.id_selera = penilaian_risiko.id_selera'
-            )
-            ->groupBy('selera_risiko.nama_level');
-
-        if ($activeKonteks) {
-            $builderDistribusi->where('proses_bisnis.id_konteks', $idKonteks);
-        }
-
-        $distribusi = $builderDistribusi->findAll();
-
-        /* Format ke array associative */
-        $levelRisiko = [
-            'Rendah'  => 0,
-            'Sedang'  => 0,
-            'Tinggi'  => 0,
-            'Ekstrem' => 0
-        ];
-
-        foreach ($distribusi as $row) {
-            $levelRisiko[$row['nama_level']] = $row['total'];
-        }
-
-        /* GET ALL CONTEXT FOR DROPDOWN */
-        $konteksList = $konteksModel
-            ->select('
-                konteks.id_konteks,
-                konteks.kegiatan,
-                konteks.tahun,
-                satuan_kerja.nama_satuan_kerja,
-                sasaran_strategis.uraian_sasaran
-            ')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
-            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
-            ->orderBy('nama_satuan_kerja')
-            ->findAll();
-
-        $kemungkinanList = $kemungkinanList
-            ->select('id_kriteria as id_kemungkinan, level, nama_level, deskripsi_frekuensi')
+        /* KRITERIA */
+        $kemungkinanList = (new KriteriaKemungkinanModel())
+            ->select('id_kriteria, level, nama_level, deskripsi_frekuensi')
             ->orderBy('level', 'ASC')
             ->findAll();
 
-        $dampakList = $dampakList
-            ->select('id_kriteria as id_dampak, level, nama_level, deskripsi')
+        $dampakList = (new KriteriaDampakModel())
+            ->select('id_kriteria, level, nama_level, deskripsi')
             ->orderBy('level', 'ASC')
             ->findAll();
 
         return view('analisis_risiko/index', [
-            'activeKonteks'   => $activeKonteks,
-            'selectedContext' => $selectedContext,
-            'konteksList'     => $konteksList,
             'data'            => $data,
+            'listKonteks'     => $this->getListKonteks(),
+            'activeKonteks'   => $activeKonteks,
             'kemungkinanList' => $kemungkinanList,
             'dampakList'      => $dampakList,
-            // SUMMARY
             'totalRisiko'     => $totalRisiko,
             'totalSudah'      => $totalSudah,
             'totalBelum'      => $totalBelum,
+            'levelRisiko'     => $levelRisiko,
             'filter'          => $filter,
-            'levelRisiko'     => $levelRisiko
+            'total'           => $total,
+            'from'            => $from,
+            'to'              => $to,
+            'perPage'         => $perPage,
+            'pager'           => $pager,
         ]);
     }
 
-    /* DETAIL (AJAX) */
+    /* ======================================================
+       SET / RESET ACTIVE KONTEKS
+    ====================================================== */
+    public function setActive()
+    {
+        $id = $this->request->getPost('id_konteks');
+        if (!$id) return redirect()->back();
+        session()->set('id_konteks_ar', $id);
+        return redirect()->to(site_url('analisis-risiko'));
+    }
+
+    public function resetActive()
+    {
+        session()->remove('id_konteks_ar');
+        return redirect()->to(site_url('analisis-risiko'));
+    }
+
+    /* ======================================================
+       DETAIL PENILAIAN (AJAX — view/edit mode)
+    ====================================================== */
     public function detail($id)
     {
-        $model = new PenilaianRisikoModel();
-
-        $data = $model
+        $db   = \Config\Database::connect();
+        $data = $db->table('penilaian_risiko pr')
             ->select('
-            penilaian_risiko.*,
-
-            identifikasi_risiko.kode_risiko,
-            identifikasi_risiko.pernyataan_risiko,
-
-            proses_bisnis.kode_proses,
-            proses_bisnis.uraian_proses,
-
-            sasaran_kinerja.uraian_sasaran AS sasaran_kinerja,
-
-            konteks.kegiatan,
-            konteks.tahun,
-            satuan_kerja.nama_satuan_kerja,
-            sasaran_strategis.uraian_sasaran AS sasaran_strategis,
-
-            matriks_risiko.level_kemungkinan,
-            matriks_risiko.level_dampak,
-
-            selera_risiko.nama_level
-        ')
-            ->join('identifikasi_risiko', 'identifikasi_risiko.id_identifikasi = penilaian_risiko.id_identifikasi')
-            ->join('proses_bisnis', 'proses_bisnis.id_proses = identifikasi_risiko.id_proses')
-            ->join('konteks', 'konteks.id_konteks = proses_bisnis.id_konteks')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
-            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
-            ->join('sasaran_kinerja', 'sasaran_kinerja.id_proses = proses_bisnis.id_proses', 'left')
-            ->join('matriks_risiko', 'matriks_risiko.id_matriks = penilaian_risiko.id_matriks', 'left')
-            ->join('selera_risiko', 'selera_risiko.id_selera = penilaian_risiko.id_selera', 'left')
-            ->where('penilaian_risiko.id_penilaian', $id)
-            ->first();
+                pr.*,
+                ir.pernyataan_risiko,
+                ir.penyebab_risiko,
+                ir.dampak_risiko,
+                ir.id_konteks_proses,
+                kpb.id_konteks,
+                pb.kode_proses,
+                pb.uraian_proses,
+                sk_kinerja.uraian_sasaran as sasaran_kinerja,
+                k.tahun,
+                satuan_kerja.nama_satuan_kerja,
+                ss.uraian_sasaran as sasaran_strategis,
+                g.nama as nama_pengelola
+            ')
+            ->join('identifikasi_risiko ir', 'ir.id_identifikasi = pr.id_identifikasi')
+            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+            ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
+            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
+            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = k.id_satuan_kerja', 'left')
+            ->join('sasaran_strategis ss', 'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
+            ->join('pengelola_risiko g', 'g.id = k.pengelola_risiko_id', 'left')
+            ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
+            ->where('pr.id_penilaian', $id)
+            ->get()->getRowArray();
 
         return $this->response->setJSON($data);
     }
 
-    /* STORE ANALISIS */
-    public function store()
+    /* ======================================================
+       DETAIL IDENTIFIKASI (AJAX — create mode)
+    ====================================================== */
+    public function detailIdentifikasi($id)
     {
-        $penilaianModel = new PenilaianRisikoModel();
-        $matriksModel   = new MatriksRisikoModel();
-        $seleraModel    = new SeleraRisikoModel();
+        $db   = \Config\Database::connect();
+        $data = $db->table('identifikasi_risiko ir')
+            ->select('
+                ir.*,
+                kpb.id_konteks,
+                pb.kode_proses,
+                pb.uraian_proses,
+                sk_kinerja.uraian_sasaran as sasaran_kinerja,
+                k.tahun,
+                satuan_kerja.nama_satuan_kerja,
+                ss.uraian_sasaran as sasaran_strategis,
+                g.nama as nama_pengelola
+            ')
+            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+            ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
+            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
+            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = k.id_satuan_kerja', 'left')
+            ->join('sasaran_strategis ss', 'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
+            ->join('pengelola_risiko g', 'g.id = k.pengelola_risiko_id', 'left')
+            ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
+            ->where('ir.id_identifikasi', $id)
+            ->get()->getRowArray();
 
-        $idKemungkinan = $this->request->getPost('id_kemungkinan');
-        $idDampak      = $this->request->getPost('id_dampak');
-
-        $levelKemungkinan = (new KriteriaKemungkinanModel())
-            ->find($idKemungkinan)['level'];
-
-        $levelDampak = (new KriteriaDampakModel())
-            ->find($idDampak)['level'];
-
-        $matriks = $matriksModel
-            ->where('level_kemungkinan', $levelKemungkinan)
-            ->where('level_dampak', $levelDampak)
-            ->first();
-
-        $nilaiRisiko = $matriks['nilai_risiko'];
-
-        $selera = $seleraModel
-            ->where('nilai_min <=', $nilaiRisiko)
-            ->where('nilai_max >=', $nilaiRisiko)
-            ->first();
-
-        $penilaianModel->insert([
-            'id_identifikasi' => $this->request->getPost('id_identifikasi'),
-            'id_kemungkinan'  => $idKemungkinan,
-            'id_dampak'       => $idDampak,
-            'id_matriks'      => $matriks['id_matriks'],
-            'id_selera'       => $selera['id_selera'],
-            'nilai_risiko'    => $nilaiRisiko,
-            'warna_risiko'    => $matriks['warna'],
-            'tindakan'        => $selera['tindakan'],
-            'status_penilaian' => 'final',
-            'catatan_analis' => $this->request->getPost('catatan_analis')
-        ]);
-
-        return $this->response->setJSON(['status' => 'success']);
+        return $this->response->setJSON($data);
     }
 
+    /* ======================================================
+       STORE
+    ====================================================== */
+    public function store()
+    {
+        try {
+            $db            = \Config\Database::connect();
+            $idKemungkinan = $this->request->getPost('id_kemungkinan');
+            $idDampak      = $this->request->getPost('id_dampak');
+
+            $kemungkinan = (new KriteriaKemungkinanModel())->find($idKemungkinan);
+            $dampak      = (new KriteriaDampakModel())->find($idDampak);
+
+            $matriks = (new MatriksRisikoModel())
+                ->where('level_kemungkinan', $kemungkinan['level'])
+                ->where('level_dampak', $dampak['level'])
+                ->first();
+
+            $nilaiRisiko = $matriks['nilai_risiko'];
+
+            $selera = (new SeleraRisikoModel())
+                ->where('nilai_min <=', $nilaiRisiko)
+                ->where('nilai_max >=', $nilaiRisiko)
+                ->first();
+
+            $db->table('penilaian_risiko')->insert([
+                'id_identifikasi'     => $this->request->getPost('id_identifikasi'),
+                'id_kemungkinan'      => $idKemungkinan,
+                'id_dampak'           => $idDampak,
+                'id_matriks'          => $matriks['id_matriks'],
+                'id_selera'           => $selera['id_selera'],
+                'nilai_risiko'        => $nilaiRisiko,
+                'warna_risiko'        => $matriks['warna'],
+                'tindakan'            => $selera['tindakan'],
+                'efektivitas'         => $this->request->getPost('efektivitas'),
+                'uraian_pengendalian' => $this->request->getPost('uraian_pengendalian'),
+            ]);
+
+            return $this->response->setJSON([
+                'status'     => 'success',
+                'csrf_token' => csrf_hash(),
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'AR Store Error: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'status'  => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /* ======================================================
+       UPDATE
+    ====================================================== */
     public function update($id)
     {
-        $penilaianModel = new PenilaianRisikoModel();
-        $matriksModel   = new MatriksRisikoModel();
-        $seleraModel    = new SeleraRisikoModel();
+        try {
+            $db            = \Config\Database::connect();
+            $idKemungkinan = $this->request->getPost('id_kemungkinan');
+            $idDampak      = $this->request->getPost('id_dampak');
 
-        $idKemungkinan = $this->request->getPost('id_kemungkinan');
-        $idDampak      = $this->request->getPost('id_dampak');
+            $kemungkinan = (new KriteriaKemungkinanModel())->find($idKemungkinan);
+            $dampak      = (new KriteriaDampakModel())->find($idDampak);
 
-        // Ambil level
-        $levelKemungkinan = (new KriteriaKemungkinanModel())
-            ->find($idKemungkinan)['level'];
+            $matriks = (new MatriksRisikoModel())
+                ->where('level_kemungkinan', $kemungkinan['level'])
+                ->where('level_dampak', $dampak['level'])
+                ->first();
 
-        $levelDampak = (new KriteriaDampakModel())
-            ->find($idDampak)['level'];
+            $nilaiRisiko = $matriks['nilai_risiko'];
 
-        // Cari matriks baru
-        $matriks = $matriksModel
-            ->where('level_kemungkinan', $levelKemungkinan)
-            ->where('level_dampak', $levelDampak)
-            ->first();
+            $selera = (new SeleraRisikoModel())
+                ->where('nilai_min <=', $nilaiRisiko)
+                ->where('nilai_max >=', $nilaiRisiko)
+                ->first();
 
-        $nilaiRisiko = $matriks['nilai_risiko'];
+            $db->table('penilaian_risiko')
+                ->where('id_penilaian', $id)
+                ->update([
+                    'id_kemungkinan'      => $idKemungkinan,
+                    'id_dampak'           => $idDampak,
+                    'id_matriks'          => $matriks['id_matriks'],
+                    'id_selera'           => $selera['id_selera'],
+                    'nilai_risiko'        => $nilaiRisiko,
+                    'warna_risiko'        => $matriks['warna'],
+                    'tindakan'            => $selera['tindakan'],
+                    'efektivitas'         => $this->request->getPost('efektivitas'),
+                    'uraian_pengendalian' => $this->request->getPost('uraian_pengendalian'),
+                ]);
 
-        // Cari selera baru
-        $selera = $seleraModel
-            ->where('nilai_min <=', $nilaiRisiko)
-            ->where('nilai_max >=', $nilaiRisiko)
-            ->first();
-
-        // Update lengkap
-        $penilaianModel->update($id, [
-            'id_kemungkinan' => $idKemungkinan,
-            'id_dampak'      => $idDampak,
-            'id_matriks'     => $matriks['id_matriks'],
-            'id_selera'      => $selera['id_selera'],
-            'nilai_risiko'   => $nilaiRisiko,
-            'warna_risiko'   => $matriks['warna'],
-            'tindakan'       => $selera['tindakan'],
-            'catatan_analis' => $this->request->getPost('catatan_analis'),
-        ]);
-
-        return $this->response->setJSON(['status' => 'updated']);
+            return $this->response->setJSON([
+                'status'     => 'success',
+                'csrf_token' => csrf_hash(),
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'AR Update Error: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'status'  => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function delete($id)
     {
-        $model = new PenilaianRisikoModel();
-        $model->delete($id);
+        $db = \Config\Database::connect();
 
-        return $this->response->setJSON(['status' => 'deleted']);
+        try {
+            $db->transStart();
+
+            // Ambil semua id_evaluasi yang terkait penilaian ini
+            $evaluasiList = $db->table('evaluasi_risiko')
+                ->select('id_evaluasi')
+                ->where('id_penilaian', $id)
+                ->get()->getResultArray();
+
+            $idEvaluasiList = array_column($evaluasiList, 'id_evaluasi');
+
+            if (!empty($idEvaluasiList)) {
+                // Hapus RTP dulu (child paling bawah)
+                $db->table('rencana_penanganan_risiko')
+                    ->whereIn('id_penilaian_awal', $idEvaluasiList)
+                    ->delete();
+
+                // Hapus Evaluasi
+                $db->table('evaluasi_risiko')
+                    ->whereIn('id_evaluasi', $idEvaluasiList)
+                    ->delete();
+            }
+
+            // Hapus Penilaian Risiko
+            $db->table('penilaian_risiko')
+                ->where('id_penilaian', $id)
+                ->delete();
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \RuntimeException('Transaksi gagal.');
+            }
+
+            return $this->response->setJSON([
+                'status'     => 'success',
+                'csrf_token' => csrf_hash(),
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'AR Delete Error: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'status'  => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
+    /* ======================================================
+       PREVIEW SKOR (AJAX)
+    ====================================================== */
     public function preview()
     {
         $idKemungkinan = $this->request->getPost('id_kemungkinan');
@@ -386,11 +488,11 @@ class AnalisisRisikoController extends BaseController
             ->first();
 
         return $this->response->setJSON([
-            'status'        => 'success',
-            'nilai_risiko'  => $matriks['nilai_risiko'],
-            'warna'         => $matriks['warna'],
-            'nama_selera'   => $selera['nama_level'] ?? '-',
-            'tindakan'      => $selera['tindakan'] ?? '-'
+            'status'       => 'success',
+            'nilai_risiko' => $matriks['nilai_risiko'],
+            'warna'        => $matriks['warna'],
+            'nama_selera'  => $selera['nama_level'] ?? '-',
+            'tindakan'     => $selera['tindakan'] ?? '-',
         ]);
     }
 }

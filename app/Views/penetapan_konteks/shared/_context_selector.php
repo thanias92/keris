@@ -1,77 +1,123 @@
 <?php
-$filters = $filters ?? [];
+$konteksMap = [];
+$satuanKerjaOpt = [];
+$tahunOpt = [];
+$sasaranOpt = [];
+$pengelolaOpt = [];
+$kegiatanOpt = [];
 
-$selectedSk = $filters['sk'] ?? '';
-$selectedPr = $filters['pr'] ?? '';
-$selectedTh = $filters['th'] ?? '';
-$selectedKg = $filters['kg'] ?? '';
-$selectedSs = $filters['ss'] ?? '';
+foreach ($listKonteks as $k) {
+    $id = $k['id_konteks'];
 
-// Ambil distinct value
-$skList = array_unique(array_column($listKonteks, 'nama_satuan_kerja'));
-$prList = array_unique(array_column($listKonteks, 'pengelola_risiko'));
-$thList = array_unique(array_column($listKonteks, 'tahun'));
-$kgList = array_unique(array_column($listKonteks, 'kegiatan'));
-$ssList = array_unique(array_column($listKonteks, 'uraian_sasaran'));
+    $konteksMap[$id] = [
+        'id_satuan_kerja'      => $k['id_satuan_kerja'] ?? '',
+        'pengelola_risiko_id'  => $k['pengelola_risiko_id'] ?? '',
+        'id_kegiatan'          => $k['id_kegiatan'] ?? '',
+        'id_sasaran_strategis' => $k['id_sasaran_strategis'] ?? '',
+        'tahun'                => $k['tahun'],
+    ];
+
+    if (!empty($k['id_satuan_kerja']))
+        $satuanKerjaOpt[$k['id_satuan_kerja']] = $k['nama_satuan_kerja'];
+
+    if (!empty($k['tahun']))
+        $tahunOpt[$k['tahun']] = true;
+
+    if (!empty($k['id_sasaran_strategis']))
+        $sasaranOpt[$k['id_sasaran_strategis']] = $k['uraian_sasaran'];
+
+    if (!empty($k['pengelola_risiko_id']))
+        $pengelolaOpt[$k['pengelola_risiko_id']] = $k['nama_pengelola'];
+
+    if (!empty($k['id_kegiatan']))
+        $kegiatanOpt[$k['id_kegiatan']] = $k['nama_kegiatan'];
+}
+
+asort($satuanKerjaOpt);
+asort($pengelolaOpt);
+asort($kegiatanOpt);
+asort($sasaranOpt);
+ksort($tahunOpt);
+
+$isFilterMode = ($activeTab ?? 'konteks') === 'konteks';
+
+if ($isFilterMode) {
+    $sel = [
+        'id_satuan_kerja'      => $_GET['sk'] ?? '',
+        'pengelola_risiko_id'  => $_GET['pg'] ?? '',
+        'id_kegiatan'          => $_GET['kg'] ?? '',
+        'id_sasaran_strategis' => $_GET['ss'] ?? '',
+        'tahun'                => $_GET['th'] ?? '',
+    ];
+} else {
+    $sel = $activeKonteks ?? [];
+}
 ?>
 
 <div class="card shadow-sm mb-4 pk-context-filter">
     <div class="card-body">
+        <form id="contextSelectorForm"
+            method="<?= $isFilterMode ? 'get' : 'post' ?>"
+            action="<?= $isFilterMode ? site_url('penetapan-konteks/konteks') : site_url('penetapan-konteks/konteks/set-active') ?>">
 
-        <form id="contextFilterForm" method="get" action="<?= site_url('penetapan-konteks') ?>">
+            <?php if (!$isFilterMode): ?>
+                <?= csrf_field() ?>
+                <input type="hidden" name="redirect" value="<?= current_url() ?>">
+                <input type="hidden" name="id_konteks" id="csIdKonteks">
+            <?php endif; ?>
 
             <div class="row">
 
                 <!-- LEFT SIDE -->
                 <div class="col-7">
 
-                    <!-- Satuan Kerja -->
                     <div class="pk-filter-row">
-                        <label>Satuan Kerja</label>
-                        <select name="sk" class="pk-select">
+                        <label>Tim Kerja</label>
+                        <select class="pk-select" id="csSatuanKerja" name="sk">
                             <option value="">– Pilih –</option>
-                            <?php foreach ($skList as $sk): ?>
-                                <option value="<?= esc($sk) ?>" <?= $selectedSk == $sk ? 'selected' : '' ?>>
-                                    <?= esc($sk) ?>
+                            <?php foreach ($satuanKerjaOpt as $id => $nama): ?>
+                                <option value="<?= $id ?>"
+                                    <?= isset($sel['id_satuan_kerja']) && (string)$sel['id_satuan_kerja'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
-                    <!-- Pengelola Risiko -->
                     <div class="pk-filter-row">
                         <label>Pengelola Risiko</label>
-                        <select name="pr" class="pk-select">
+                        <select class="pk-select" id="csPengelola" name="pg">
                             <option value="">– Pilih –</option>
-                            <?php foreach ($prList as $pr): ?>
-                                <option value="<?= esc($pr) ?>" <?= $selectedPr == $pr ? 'selected' : '' ?>>
-                                    <?= esc($pr) ?>
+                            <?php foreach ($pengelolaOpt as $id => $nama): ?>
+                                <option value="<?= $id ?>"
+                                    <?= isset($sel['pengelola_risiko_id']) && (string)$sel['pengelola_risiko_id'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
-                    <!-- Kegiatan -->
                     <div class="pk-filter-row">
                         <label>Kegiatan</label>
-                        <select name="kg" class="pk-select">
+                        <select class="pk-select" id="csKegiatan" name="kg">
                             <option value="">– Pilih –</option>
-                            <?php foreach ($kgList as $kg): ?>
-                                <option value="<?= esc($kg) ?>" <?= $selectedKg == $kg ? 'selected' : '' ?>>
-                                    <?= esc($kg) ?>
+                            <?php foreach ($kegiatanOpt as $id => $nama): ?>
+                                <option value="<?= $id ?>"
+                                    <?= isset($sel['id_kegiatan']) && (string)$sel['id_kegiatan'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
-                    <!-- Sasaran Strategis -->
                     <div class="pk-filter-row">
                         <label>Sasaran Strategis</label>
-                        <select name="ss" class="pk-select">
+                        <select class="pk-select" id="csSasaran" name="ss">
                             <option value="">– Pilih –</option>
-                            <?php foreach ($ssList as $ss): ?>
-                                <option value="<?= esc($ss) ?>" <?= $selectedSs == $ss ? 'selected' : '' ?>>
-                                    <?= esc($ss) ?>
+                            <?php foreach ($sasaranOpt as $id => $uraian): ?>
+                                <option value="<?= $id ?>"
+                                    <?= isset($sel['id_sasaran_strategis']) && (string)$sel['id_sasaran_strategis'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= esc($uraian) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -82,57 +128,42 @@ $ssList = array_unique(array_column($listKonteks, 'uraian_sasaran'));
                 <!-- RIGHT SIDE -->
                 <div class="col-4 pk-right-side">
 
-                    <!-- Tahun -->
                     <div class="pk-filter-row">
                         <label>Tahun</label>
-                        <select name="th" class="pk-select">
+                        <select class="pk-select" id="csTahun" name="th" style="width: 80px;">
                             <option value="">– Pilih –</option>
-                            <?php foreach ($thList as $th): ?>
-                                <option value="<?= esc($th) ?>" <?= $selectedTh == $th ? 'selected' : '' ?>>
-                                    <?= esc($th) ?>
+                            <?php foreach ($tahunOpt as $tahun => $_): ?>
+                                <option value="<?= $tahun ?>"
+                                    <?= isset($sel['tahun']) && (string)$sel['tahun'] === (string)$tahun ? 'selected' : '' ?>>
+                                    <?= esc($tahun) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
-                    <!-- Action Buttons -->
                     <div class="pk-action-wrapper">
                         <button type="submit" class="btn btn-primary btn-icon" title="Terapkan">
                             <i class="ti ti-search"></i>
                         </button>
-
-                        <a href="<?= site_url('penetapan-konteks') ?>"
-                            class="btn btn-light btn-icon"
-                            title="Reset">
+                        <button type="button" id="csBtnReset"
+                            class="btn btn-light btn-icon" title="Reset">
                             <i class="ti ti-refresh"></i>
-                        </a>
+                        </button>
                     </div>
 
                 </div>
-
             </div>
         </form>
     </div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
 
-        const form = document.getElementById('contextFilterForm');
-
-        if (form) {
-            form.addEventListener('submit', function() {
-                localStorage.setItem('scrollPosition', window.scrollY);
-            });
-        }
-
-        window.scrollTo({
-            top: parseInt(scrollPosition),
-            behavior: 'smooth'
-        });
-        if (scrollPosition !== null) {
-            window.scrollTo(0, parseInt(scrollPosition));
-            localStorage.removeItem('scrollPosition');
-        }
-
-    });
-</script>
+<?php if (!$isFilterMode): ?>
+    <script>
+        window.CS_DATA = {
+            konteksMap: <?= json_encode($konteksMap) ?>,
+            resetUrl: "<?= site_url('penetapan-konteks/konteks/reset-active') ?>",
+            csrfToken: "<?= csrf_hash() ?>",
+            currentUrl: "<?= current_url() ?>",
+        };
+    </script>
+<?php endif; ?>

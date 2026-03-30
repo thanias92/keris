@@ -1,148 +1,131 @@
 <?php
-
-$konteksMap = [];
+$konteksMap     = [];
 $satuanKerjaOpt = [];
-$tahunOpt = [];
-$sasaranOpt = [];
+$tahunOpt       = [];
+$kegiatanOpt    = [];
+$pengelolaOpt   = [];
 
-foreach ($konteksList as $k) {
-
+foreach ($listKonteks as $k) {
     $id = $k['id_konteks'];
 
     $konteksMap[$id] = [
-        'nama_satuan_kerja' => $k['nama_satuan_kerja'],
-        'tahun'             => $k['tahun'],
-        'uraian_sasaran'    => $k['uraian_sasaran'],
+        'id_satuan_kerja'     => $k['id_satuan_kerja']     ?? '',
+        'pengelola_risiko_id' => $k['pengelola_risiko_id'] ?? '',
+        'id_kegiatan'         => $k['id_kegiatan']         ?? '',
+        'tahun'               => $k['tahun'],
     ];
 
-    $satuanKerjaOpt[$k['nama_satuan_kerja']] = true;
-    $tahunOpt[$k['tahun']] = true;
-    $sasaranOpt[$k['uraian_sasaran']] = true;
+    if (!empty($k['id_satuan_kerja']))
+        $satuanKerjaOpt[$k['id_satuan_kerja']] = $k['nama_satuan_kerja'];
+    if (!empty($k['tahun']))
+        $tahunOpt[$k['tahun']] = true;
+    if (!empty($k['id_kegiatan']))
+        $kegiatanOpt[$k['id_kegiatan']] = $k['nama_kegiatan'];
+    if (!empty($k['pengelola_risiko_id']))
+        $pengelolaOpt[$k['pengelola_risiko_id']] = $k['nama_pengelola'];
 }
 
-ksort($satuanKerjaOpt);
+asort($satuanKerjaOpt);
+asort($kegiatanOpt);
+asort($pengelolaOpt);
 ksort($tahunOpt);
-ksort($sasaranOpt);
+
+$sel = $activeKonteks ?? [];
 ?>
 
-<div class="card mb-4 border-0 shadow-sm">
+<div class="card shadow-sm mb-3 pk-context-filter">
     <div class="card-body">
+        <form id="irContextSelectorForm" method="post"
+            action="<?= site_url('identifikasi-risiko/set-active') ?>">
 
-        <form method="get"
-            action="<?= site_url('identifikasi-risiko') ?>"
-            id="formContextSelector">
+            <?= csrf_field() ?>
+            <input type="hidden" name="id_konteks" id="irCsIdKonteks">
 
-            <input type="hidden" name="id_konteks" id="id_konteks_selected">
-
-            <div class="row g-3 align-items-end">
-
-                <!-- SATUAN KERJA -->
-                <div class="col-md-4">
-                    <label class="form-label small text-muted">Satuan Kerja</label>
-                    <select class="form-select" id="filterSatuanKerja">
-                        <option value="">— Semua —</option>
-                        <?php foreach ($satuanKerjaOpt as $nama => $_): ?>
-                            <option value="<?= esc($nama) ?>"
-                                <?= isset($selectedContext) &&
-                                    $selectedContext['nama_satuan_kerja'] === $nama
-                                    ? 'selected' : '' ?>>
-                                <?= esc($nama) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+            <div class="row">
+                <!-- LEFT SIDE -->
+                <div class="col-7">
+                    <div class="pk-filter-row">
+                        <label>Tim Kerja</label>
+                        <select class="pk-select" id="irCsSatuanKerja">
+                            <option value="">– Pilih –</option>
+                            <?php foreach ($satuanKerjaOpt as $id => $nama): ?>
+                                <option value="<?= $id ?>"
+                                    <?= isset($sel['id_satuan_kerja']) && (string)$sel['id_satuan_kerja'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= esc($nama) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="pk-filter-row">
+                        <label>Pengelola Risiko</label>
+                        <select class="pk-select" id="irCsPengelola">
+                            <option value="">– Pilih –</option>
+                            <?php foreach ($pengelolaOpt as $id => $nama): ?>
+                                <option value="<?= $id ?>"
+                                    <?= isset($sel['pengelola_risiko_id']) && (string)$sel['pengelola_risiko_id'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= esc($nama) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="pk-filter-row">
+                        <label>Kegiatan</label>
+                        <select class="pk-select" id="irCsKegiatan">
+                            <option value="">– Pilih –</option>
+                            <?php foreach ($kegiatanOpt as $id => $nama): ?>
+                                <option value="<?= $id ?>"
+                                    <?= isset($sel['id_kegiatan']) && (string)$sel['id_kegiatan'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= esc($nama) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                 </div>
 
-                <!-- TAHUN -->
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">Tahun</label>
-                    <select class="form-select" id="filterTahun">
-                        <option value="">— Semua —</option>
-                        <?php foreach ($tahunOpt as $tahun => $_): ?>
-                            <option value="<?= esc($tahun) ?>"
-                                <?= isset($selectedContext) &&
-                                    (string)$selectedContext['tahun'] === (string)$tahun
-                                    ? 'selected' : '' ?>>
-                                <?= esc($tahun) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                <!-- RIGHT SIDE -->
+                <div class="col-4 pk-right-side">
+                    <div class="pk-filter-row">
+                        <label>Tahun</label>
+                        <select class="pk-select" id="irCsTahun" style="width:80px;">
+                            <option value="">– Pilih –</option>
+                            <?php foreach ($tahunOpt as $tahun => $_): ?>
+                                <option value="<?= $tahun ?>"
+                                    <?= isset($sel['tahun']) && (string)$sel['tahun'] === (string)$tahun ? 'selected' : '' ?>>
+                                    <?= esc($tahun) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="pk-action-wrapper">
+                        <!-- Tombol Apply -->
+                        <button type="submit" class="btn btn-primary btn-icon"
+                            id="irCsBtnApply" title="Terapkan" disabled>
+                            <i class="ti ti-check"></i>
+                        </button>
+                        <!-- Tombol Reset — selalu ada, JS yang hide/show -->
+                        <button type="button" class="btn btn-light btn-icon"
+                            id="irCsBtnReset" title="Reset Konteks"
+                            style="<?= $activeKonteks ? '' : 'display:none;' ?>">
+                            <i class="ti ti-refresh"></i>
+                        </button>
+                    </div>
                 </div>
-
-                <!-- SASARAN -->
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">Sasaran Strategis</label>
-                    <select class="form-select" id="filterSasaran">
-                        <option value="">— Semua —</option>
-                        <?php foreach ($sasaranOpt as $uraian => $_): ?>
-                            <option value="<?= esc($uraian) ?>"
-                                <?= isset($selectedContext) &&
-                                    $selectedContext['uraian_sasaran'] === $uraian
-                                    ? 'selected' : '' ?>>
-                                <?= esc($uraian) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <!-- BUTTON -->
-                <div class="col-md-2 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        Pilih
-                    </button>
-
-                    <button type="button"
-                        class="btn btn-outline-secondary w-100"
-                        id="btnResetContext">
-                        Reset
-                    </button>
-                </div>
-
             </div>
         </form>
     </div>
 </div>
 
+<!-- Form reset di luar form selector -->
+<form id="irResetForm" method="post"
+    action="<?= site_url('identifikasi-risiko/reset-active') ?>"
+    style="display:none;">
+    <?= csrf_field() ?>
+</form>
+
 <script>
-    (function() {
-
-        const konteksMap = <?= json_encode($konteksMap) ?>;
-
-        const skEl = document.getElementById('filterSatuanKerja');
-        const thEl = document.getElementById('filterTahun');
-        const ssEl = document.getElementById('filterSasaran');
-        const idEl = document.getElementById('id_konteks_selected');
-        const formEl = document.getElementById('formContextSelector');
-        const resetBtn = document.getElementById('btnResetContext');
-
-        function resolveKonteksId() {
-
-            const sk = skEl.value;
-            const th = thEl.value;
-            const ss = ssEl.value;
-
-            idEl.value = '';
-
-            if (!sk || !th || !ss) return;
-
-            for (const [id, k] of Object.entries(konteksMap)) {
-                if (
-                    k.nama_satuan_kerja === sk &&
-                    String(k.tahun) === String(th) &&
-                    k.uraian_sasaran === ss
-                ) {
-                    idEl.value = id;
-                    break;
-                }
-            }
-        }
-
-        skEl.addEventListener('change', resolveKonteksId);
-        thEl.addEventListener('change', resolveKonteksId);
-        ssEl.addEventListener('change', resolveKonteksId);
-
-        resetBtn.addEventListener('click', function() {
-            window.location.href = "<?= site_url('identifikasi-risiko') ?>";
-        });
-
-    })();
+    window.IR_CS_DATA = {
+        konteksMap: <?= json_encode($konteksMap) ?>,
+        hasActive: <?= $activeKonteks ? 'true' : 'false' ?>,
+    };
 </script>

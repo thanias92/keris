@@ -22,9 +22,22 @@ $routes->group('manajemen-user', ['filter' => ['auth', 'admin']], function ($rou
 // Dashboard
 $routes->get('/', 'DashboardController::index');
 
-// =====================================================
-// PENETAPAN KONTEKS (MODULAR CONTROLLER VERSION)
-// =====================================================
+// Bank Risiko
+$routes->group('bank-risiko', ['filter' => 'auth'], function ($routes) {
+
+    $routes->get('/', 'BankRisikoController::index');
+
+    $routes->get('table', 'BankRisikoController::ajaxTable');
+    $routes->get('list', 'BankRisikoController::list');
+
+    $routes->group('', ['filter' => 'admin'], function ($routes) {
+        $routes->post('store', 'BankRisikoController::store');
+        $routes->post('update/(:num)', 'BankRisikoController::update/$1');
+        $routes->post('delete/(:num)', 'BankRisikoController::delete/$1');
+    });
+});
+
+// PENETAPAN KONTEKS
 $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKonteks', 'filter' => 'auth'], function ($routes) {
 
     /* ==============================
@@ -51,14 +64,10 @@ $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKo
        PROSES BISNIS
     ============================== */
     $routes->get('proses-bisnis', 'ProsesBisnisController::index');
-
-    $routes->post('proses-bisnis/store', 'ProsesBisnisController::store');
-    $routes->post('proses-bisnis/update/(:num)', 'ProsesBisnisController::update/$1');
-    $routes->post('proses-bisnis/delete/(:num)', 'ProsesBisnisController::delete/$1');
+    $routes->post('proses-bisnis/sync', 'ProsesBisnisController::sync');
 
     // AJAX
-    $routes->get('proses-bisnis/detail/(:num)', 'ProsesBisnisController::detail/$1');
-    $routes->get('proses-bisnis/generate-kode', 'ProsesBisnisController::generateKode');
+    $routes->get('proses-bisnis/table', 'ProsesBisnisController::ajaxTable');
 
 
     /* ==============================
@@ -69,23 +78,21 @@ $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKo
     $routes->post('sasaran-kinerja/store', 'SasaranKinerjaController::store');
     $routes->post('sasaran-kinerja/update/(:num)', 'SasaranKinerjaController::update/$1');
     $routes->post('sasaran-kinerja/delete/(:num)', 'SasaranKinerjaController::delete/$1');
+    $routes->get('sasaran-kinerja/detail/(:num)', 'SasaranKinerjaController::detail/$1');
 
     // AJAX
-    $routes->get('sasaran-kinerja/detail/(:num)', 'SasaranKinerjaController::detail/$1');
-    $routes->get('sasaran-kinerja/generate-kode', 'SasaranKinerjaController::generateKode');
+    $routes->get('sasaran-kinerja/table', 'SasaranKinerjaController::ajaxTable');
 
 
     /* ==============================
        PEMANGKU KEPENTINGAN
     ============================== */
     $routes->get('pemangku', 'PemangkuController::index');
-
+    $routes->get('pemangku/table', 'PemangkuController::ajaxTable');
+    $routes->get('pemangku/detail/(:num)', 'PemangkuController::detail/$1');
     $routes->post('pemangku/store', 'PemangkuController::store');
     $routes->post('pemangku/update/(:num)', 'PemangkuController::update/$1');
     $routes->post('pemangku/delete/(:num)', 'PemangkuController::delete/$1');
-
-    $routes->get('pemangku/detail/(:num)', 'PemangkuController::detail/$1');
-
 
     /* ==============================
        PERATURAN TERKAIT
@@ -109,27 +116,97 @@ $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKo
 });
 
 // Identifikasi Risiko
-$routes->group('identifikasi-risiko', function ($routes) {
+$routes->group('identifikasi-risiko', ['filter' => 'auth'], function ($routes) {
+
+    // INDEX
     $routes->get('/', 'IdentifikasiRisikoController::index');
 
-    // ===== AJAX GENERATE =====
-    $routes->get('generate-kode','IdentifikasiRisikoController::generateKodeRisiko');
+    // KONTEKS AKTIF
+    $routes->post('set-active', 'IdentifikasiRisikoController::setActive');
+    $routes->post('reset-active', 'IdentifikasiRisikoController::resetActive');
 
-    // ===== CRUD =====
+    // CRUD
     $routes->post('store', 'IdentifikasiRisikoController::store');
     $routes->post('update/(:num)', 'IdentifikasiRisikoController::update/$1');
     $routes->post('delete/(:num)', 'IdentifikasiRisikoController::delete/$1');
-    // ===== AJAX DETAIL =====
+
+    // AJAX DETAIL
     $routes->get('detail/(:num)', 'IdentifikasiRisikoController::detail/$1');
     $routes->get('detail-area/(:num)', 'IdentifikasiRisikoController::detailArea/$1');
+
+    // AJAX TABLE
+    $routes->get('table', 'IdentifikasiRisikoController::ajaxTable');
+
+    // BANK RISIKO (autocomplete)
+    $routes->get('bank-risiko', 'IdentifikasiRisikoController::getBankRisiko');
 });
 
 // Analisis Risiko
-$routes->group('analisis-risiko', function ($routes) {
+$routes->group('analisis-risiko', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'AnalisisRisikoController::index');
-    $routes->get('detail/(:num)', 'AnalisisRisikoController::detail/$1');
+
+    // KONTEKS AKTIF
+    $routes->post('set-active', 'AnalisisRisikoController::setActive');
+    $routes->post('reset-active', 'AnalisisRisikoController::resetActive');
+
+    // CRUD
     $routes->post('store', 'AnalisisRisikoController::store');
     $routes->post('update/(:num)', 'AnalisisRisikoController::update/$1');
     $routes->post('delete/(:num)', 'AnalisisRisikoController::delete/$1');
+
+    // AJAX DETAIL
+    $routes->get('detail/(:num)', 'AnalisisRisikoController::detail/$1');
+    $routes->get('detail-identifikasi/(:num)', 'AnalisisRisikoController::detailIdentifikasi/$1');
+
+    // PREVIEW SKOR
     $routes->post('preview', 'AnalisisRisikoController::preview');
+});
+
+// EVALUASI RISIKO
+$routes->group('evaluasi-risiko', ['filter' => 'auth'], function ($routes) {
+
+    // INDEX
+    $routes->get('/', 'EvaluasiRisikoController::index');
+
+    // KONTEKS AKTIF
+    $routes->post('set-active', 'EvaluasiRisikoController::setActive');
+    $routes->post('reset-active', 'EvaluasiRisikoController::resetActive');
+
+    // CRUD
+    $routes->post('store', 'EvaluasiRisikoController::store');
+    $routes->post('update/(:num)', 'EvaluasiRisikoController::update/$1');
+    $routes->post('delete/(:num)', 'EvaluasiRisikoController::delete/$1');
+
+    // AJAX DETAIL
+    $routes->get('detail/(:num)', 'EvaluasiRisikoController::detail/$1');
+    $routes->get('detail-analisis/(:num)', 'EvaluasiRisikoController::detailAnalisis/$1');
+
+    // AJAX TABLE
+    $routes->get('table', 'EvaluasiRisikoController::ajaxTable');
+
+    // DATA ANALISIS (untuk dropdown / referensi)
+    $routes->get('analisis-list', 'EvaluasiRisikoController::getAnalisisList');
+});
+
+// RENCANA PENANGANAN RISIKO
+$routes->group('rencana-penanganan', ['filter' => 'auth'], function ($routes) {
+
+    // INDEX
+    $routes->get('/', 'RencanaPenangananController::index');
+
+    // KONTEKS AKTIF
+    $routes->post('set-active', 'RencanaPenangananController::setActive');
+    $routes->post('reset-active', 'RencanaPenangananController::resetActive');
+
+    // CRUD
+    $routes->post('store', 'RencanaPenangananController::store');
+    $routes->post('update/(:num)', 'RencanaPenangananController::update/$1');
+    $routes->post('delete/(:num)', 'RencanaPenangananController::delete/$1');
+
+    // AJAX DETAIL
+    $routes->get('detail/(:num)', 'RencanaPenangananController::detail/$1');
+    $routes->get('detail-evaluasi/(:num)', 'RencanaPenangananController::detailEvaluasi/$1');
+
+    $routes->get('kriteria-kemungkinan', 'RencanaPenangananController::getKriteriaKemungkinan');
+    $routes->get('kriteria-dampak',      'RencanaPenangananController::getKriteriaDampak');
 });

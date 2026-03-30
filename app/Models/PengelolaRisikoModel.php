@@ -17,11 +17,10 @@ class PengelolaRisikoModel extends Model
         'jabatan',
         'wilayah_id',
         'is_pemilik',
-        'is_pengelola',
         'aktif',
-        'id_satuan_kerja',
     ];
 
+    // Ambil pemilik risiko berdasarkan wilayah
     public function getPemilikByWilayah($wilayah_id)
     {
         return $this
@@ -31,19 +30,19 @@ class PengelolaRisikoModel extends Model
             ->first();
     }
 
-    public function getPengelolaByWilayah($wilayah_id)
+    // Ambil semua pengelola berdasarkan satuan kerja & tahun
+    // → delegasi ke PenugasanPengelolaModel
+    public function getPengelolaBySatuanKerja($satuan_id, $tahun = null)
     {
-        return $this
-            ->where('wilayah_id', $wilayah_id)
-            ->where('is_pengelola', true)
-            ->where('aktif', true)
-            ->findAll();
-    }
-    public function getPengelolaBySatuanKerja($satuan_id)
-    {
-        return $this
-            ->where('id_satuan_kerja', $satuan_id)
-            ->where('aktif', true)
-            ->findAll();
+        $tahun = $tahun ?? (int) date('Y');
+
+        return $this->db->table('penugasan_pengelola pp')
+            ->select('pr.*')
+            ->join('pengelola_risiko pr', 'pr.id = pp.pengelola_id')
+            ->where('pp.satuan_kerja_id', $satuan_id)
+            ->where('pp.tahun', $tahun)
+            ->where('pr.aktif', true)
+            ->get()
+            ->getResultArray();
     }
 }

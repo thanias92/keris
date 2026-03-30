@@ -8,7 +8,6 @@
 
     <div class="offcanvas-body">
         <form id="pkFormKonteks">
-
             <input type="hidden" name="mode" id="pkMode" value="create">
             <input type="hidden" name="id_konteks" id="pkId">
 
@@ -28,18 +27,13 @@
 
                     <label class="form-check border rounded px-3 py-3 flex-fill struktur-card">
                         <input class="form-check-input me-2" type="radio" name="level_struktur" value="kabkota">
-
                         <div class="w-100">
                             <strong>BPS Kab/Kota</strong>
                             <div class="text-muted small">Tingkat kabupaten/kota</div>
-
                             <div id="pkKabKotaWrapper" class="mt-3" style="display:none;">
                                 <div class="pk-combobox" id="pkKabKotaBox">
-
                                     <input type="hidden" id="pkKabKotaValue" name="id_wilayah">
-
                                     <input type="text" class="pk-combobox-input" id="pkKabKotaInput" placeholder="Pilih Kab/Kota" autocomplete="off">
-
                                     <div class="pk-combobox-dropdown">
                                         <div class="pk-combobox-options">
                                             <?php foreach ($listWilayah as $w): ?>
@@ -49,12 +43,11 @@
                                             <?php endforeach; ?>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
                     </label>
+
                 </div>
             </div>
 
@@ -67,50 +60,42 @@
 
                     <div class="pk-structure-panel">
                         <div class="pk-structure-title">Pemilik Risiko</div>
-
                         <input type="hidden" name="pemilik_risiko_id" id="pkPemilikId">
-
                         <div class="pk-info-row">
                             <span class="pk-info-label">Nama</span>
                             <span id="pkPemilikNama" class="pk-info-value">-</span>
                         </div>
-
                         <div class="pk-info-row">
                             <span class="pk-info-label">NIP</span>
                             <span id="pkPemilikNip" class="pk-info-value">-</span>
                         </div>
-
                         <div class="pk-info-row">
                             <span class="pk-info-label">Jabatan</span>
                             <span id="pkPemilikJabatan" class="pk-info-value">-</span>
                         </div>
                     </div>
 
-
                     <div class="pk-structure-panel">
                         <div class="pk-structure-title">Pengelola Risiko</div>
-
                         <input type="hidden" name="pengelola_risiko_id" id="pkPengelolaValue">
-
                         <div class="pk-info-row">
                             <span class="pk-info-label">Nama</span>
                             <span id="pkPengelolaNama" class="pk-info-value">-</span>
                         </div>
-
                         <div class="pk-info-row">
                             <span class="pk-info-label">NIP</span>
                             <span id="pkPengelolaNip" class="pk-info-value">-</span>
                         </div>
-
                         <div class="pk-info-row">
                             <span class="pk-info-label">Jabatan</span>
                             <span id="pkPengelolaJabatan" class="pk-info-value">-</span>
                         </div>
+                        <!-- warning fallback tahun -->
+                        <small id="pkPengelolaWarning" class="text-warning mt-1" style="display:none;"></small>
                     </div>
 
                 </div>
             </div>
-
 
             <!-- INFORMASI KONTEKS -->
             <div class="pk-section">
@@ -118,16 +103,31 @@
 
                 <div class="pk-context-panel">
 
+                    <!-- TAHUN DULU ↑ -->
                     <div class="pk-field-row">
-                        <div class="pk-field-label">Satuan Kerja</div>
+                        <div class="pk-field-label">Tahun</div>
+                        <div class="pk-field-input">
+                            <div class="pk-combobox" id="pkTahunBox">
+                                <input type="hidden" name="tahun" id="pkTahun">
+                                <input type="text" class="pk-combobox-input" id="pkTahunInput" placeholder="2026" autocomplete="off">
+                                <div class="pk-combobox-dropdown">
+                                    <div class="pk-combobox-options">
+                                        <?php for ($i = 2020; $i <= 2035; $i++): ?>
+                                            <div class="pk-option" data-value="<?= $i ?>"><?= $i ?></div>
+                                        <?php endfor; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- SATUAN KERJA -->
+                    <div class="pk-field-row">
+                        <div class="pk-field-label">Tim Kerja</div>
                         <div class="pk-field-input">
                             <div class="pk-combobox" id="pkSatuanKerjaBox">
-
                                 <input type="hidden" name="id_satuan_kerja" id="pkSatuanKerjaValue">
-
                                 <input type="text" class="pk-combobox-input" id="pkSatuanKerjaInput" placeholder="Pilih Satuan Kerja" autocomplete="off">
-
                                 <div class="pk-combobox-dropdown">
                                     <div class="pk-combobox-options">
                                         <?php foreach ($listSatuanKerja as $sk): ?>
@@ -137,58 +137,28 @@
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
 
-
+                    <!-- KEGIATAN -->
                     <div class="pk-field-row">
                         <div class="pk-field-label">Kegiatan</div>
-
                         <div class="pk-field-input">
                             <div class="pk-combobox" id="pkKegiatanBox">
-
                                 <input type="hidden" name="id_kegiatan" id="pkKegiatanValue">
-
                                 <input type="text" class="pk-combobox-input" id="pkKegiatanInput" placeholder="Pilih Kegiatan" autocomplete="off">
-
                                 <div class="pk-combobox-dropdown">
                                     <div class="pk-combobox-options" id="pkKegiatanOptions">
                                         <div class="pk-option text-muted">Pilih satuan kerja terlebih dahulu</div>
                                     </div>
                                 </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="pk-field-row">
-                        <div class="pk-field-label">Tahun</div>
-
-                        <div class="pk-field-input">
-                            <div class="pk-combobox" id="pkTahunBox">
-
-                                <input type="hidden" name="tahun" id="pkTahun">
-
-                                <input type="text" class="pk-combobox-input" id="pkTahunInput" placeholder="2026" autocomplete="off">
-
-                                <div class="pk-combobox-dropdown">
-                                    <div class="pk-combobox-options">
-                                        <?php for ($i = 2020; $i <= 2035; $i++): ?>
-                                            <div class="pk-option" data-value="<?= $i ?>"><?= $i ?></div>
-                                        <?php endfor; ?>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                     </div>
 
                 </div>
             </div>
-
 
             <!-- KONTEKS STRATEGIS -->
             <div class="pk-section">
@@ -213,15 +183,8 @@
 
                     <div class="pk-field-vertical mt-3">
                         <div class="pk-field-label">Pemangku Kepentingan</div>
-
                         <div class="pk-combobox" id="pkPemangkuBox">
-
-                            <input type="text"
-                                class="pk-combobox-input"
-                                id="pkPemangkuInput"
-                                placeholder="Pilih Pemangku Kepentingan"
-                                autocomplete="off">
-
+                            <input type="text" class="pk-combobox-input" id="pkPemangkuInput" placeholder="Pilih Pemangku Kepentingan" autocomplete="off">
                             <div class="pk-combobox-dropdown">
                                 <div class="pk-combobox-options">
                                     <?php
@@ -231,16 +194,12 @@
                                     }
                                     ?>
                                     <?php foreach ($groupPemangku as $hubungan => $items): ?>
-                                        <div class="pk-option-group">
-                                            <?= esc($hubungan) ?>
-                                        </div>
+                                        <div class="pk-option-group"><?= esc($hubungan) ?></div>
                                         <?php foreach ($items as $p): ?>
                                             <div class="pk-option pk-option-entity"
                                                 data-value="<?= $p['id_pemangku'] ?>"
                                                 data-role="<?= esc($p['hubungan'] ?? '') ?>">
-                                                <div class="pk-option-title">
-                                                    <?= esc($p['nama_instansi']) ?>
-                                                </div>
+                                                <div class="pk-option-title"><?= esc($p['nama_instansi']) ?></div>
                                             </div>
                                         <?php endforeach; ?>
                                     <?php endforeach; ?>
@@ -253,20 +212,12 @@
                     <div class="pk-field-vertical mt-3">
                         <div class="pk-field-label">Peraturan Terkait</div>
                         <div class="pk-combobox" id="pkPeraturanBox">
-                            <input type="text"
-                                class="pk-combobox-input"
-                                id="pkPeraturanInput"
-                                placeholder="Tambahkan Peraturan"
-                                autocomplete="off">
-
+                            <input type="text" class="pk-combobox-input" id="pkPeraturanInput" placeholder="Tambahkan Peraturan" autocomplete="off">
                             <div class="pk-combobox-dropdown">
                                 <div class="pk-combobox-options">
-
                                     <?php foreach ($listPeraturan as $p): ?>
                                         <?php if ($p['is_default'] !== 't'): ?>
-                                            <div class="pk-option"
-                                                data-value="<?= $p['id_peraturan'] ?>"
-                                                data-default="<?= $p['is_default'] ?>">
+                                            <div class="pk-option" data-value="<?= $p['id_peraturan'] ?>" data-default="<?= $p['is_default'] ?>">
                                                 <?= esc($p['nama_peraturan']) ?>
                                             </div>
                                         <?php endif; ?>
@@ -274,7 +225,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div id="pkPeraturanTags" class="pk-law-list mt-2">
                             <?php $loopIndex = 0; ?>
                             <?php foreach ($listPeraturan as $p): ?>
@@ -294,12 +244,9 @@
                 <!-- SASARAN ORGANISASI -->
                 <div class="pk-section">
                     <div class="pk-section-title">Sasaran Organisasi</div>
-
                     <div class="pk-context-panel">
-
                         <div class="table-responsive">
                             <table class="table table-sm pk-table-sasaran">
-
                                 <thead>
                                     <tr>
                                         <th width="40">#</th>
@@ -308,51 +255,36 @@
                                         <th>Sasaran Kinerja</th>
                                     </tr>
                                 </thead>
-
                                 <tbody id="pkSasaranOrganisasiBody">
                                     <tr class="pk-empty-row">
-                                        <td colspan="4" class="text-center text-muted py-3">
-                                            Belum ada sasaran organisasi
-                                        </td>
+                                        <td colspan="4" class="text-center text-muted py-3">Belum ada sasaran organisasi</td>
                                     </tr>
                                 </tbody>
-
                             </table>
                         </div>
-
                     </div>
                 </div>
 
                 <!-- BUTTON -->
                 <div class="pk-action-wrapper">
-
-                    <!-- MODE: CREATE -->
                     <div class="pk-mode" id="pkBtnCreate">
                         <button type="button" class="btn btn-light" data-bs-dismiss="offcanvas">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
-
-                    <!-- MODE: VIEW -->
                     <div class="pk-mode" id="pkBtnView" style="display:none; justify-content:space-between;">
                         <button type="button" class="btn btn-danger" id="pkBtnDelete">
-                            <i class="ti ti-trash"></i> Hapus
+                            <i class="ti ti-trash"></i>
                         </button>
                         <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="offcanvas">Tutup</button>
-                            <button type="button" class="btn btn-primary" id="pkBtnSwitchEdit">
-                                <i class="ti ti-pencil"></i> Edit
-                            </button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="offcanvas">Batal</button>
+                            <button type="button" class="btn btn-warning text-white" id="pkBtnSwitchEdit">Edit</button>
                         </div>
                     </div>
-
-                    <!-- MODE: EDIT -->
                     <div class="pk-mode" id="pkBtnEdit" style="display:none;">
                         <button type="button" class="btn btn-light" id="pkBtnCancelEdit">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
-
                 </div>
-
         </form>
     </div>
 </div>

@@ -1,12 +1,28 @@
-<div id="analisisTableWrapper">
+<?php if (!$activeKonteks): ?>
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5 text-muted">
+            <i class="ti ti-map-pin fs-1 mb-2 d-block opacity-25"></i>
+            <p class="mb-0">Pilih konteks terlebih dahulu untuk melihat data identifikasi risiko.</p>
+        </div>
+    </div>
+
+<?php elseif (empty($data)): ?>
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5 text-muted">
+            <i class="ti ti-shield-off fs-1 mb-2 d-block opacity-25"></i>
+            <p class="mb-0">Belum ada identifikasi risiko untuk konteks ini.</p>
+            <p class="small mt-1">Klik tombol <strong>+ Risiko</strong> untuk menambahkan.</p>
+        </div>
+    </div>
+
+<?php else: ?>
     <div class="card border-0 shadow-sm">
         <div class="card-body">
 
-            <div class="d-flex justify-content-between mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
                 <small class="text-muted">
                     Menampilkan <?= count($data) ?> dari <?= $pager->getTotal('identifikasi') ?> data
                 </small>
-
                 <?= $pager->links('identifikasi', 'bootstrap_pagination') ?>
             </div>
 
@@ -14,96 +30,85 @@
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th style="width:60px">#</th>
-                            <th style="width:80px">Kode</th>
-                            <th style="width:200px">Proses</th>
-                            <th class="col-risiko">Risiko</th>
-                            <th style="width:160px">Kategori</th>
+                            <th style="width:50px">#</th>
+                            <th style="width:90px">Kode</th>
+                            <th style="width:200px">Proses Bisnis</th>
+                            <th>Pernyataan Risiko</th>
+                            <th style="width:150px">Kategori</th>
                             <th style="width:220px">Area Dampak</th>
-                            <th style="width:120px">Sumber</th>
+                            <th style="width:110px">Sumber</th>
                         </tr>
                     </thead>
-
                     <tbody>
-                        <?php if (empty($data)): ?>
-                            <tr>
-                                <td colspan="7" class="text-center py-5 text-muted">
-                                    Belum ada data.
+                        <?php $no = 1;
+                        foreach ($data as $row): ?>
+                            <tr class="ir-row" data-id="<?= $row['id_identifikasi'] ?>"
+                                style="cursor:pointer;">
+
+                                <td><?= $no++ ?></td>
+
+                                <td>
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary">
+                                        <?= esc($row['kode_proses']) ?>
+                                    </span>
                                 </td>
-                            </tr>
-                        <?php else: ?>
 
-                            <?php $no = 1;
-                            foreach ($data as $row): ?>
+                                <td class="text-truncate" style="max-width:200px"
+                                    title="<?= esc($row['uraian_proses']) ?>">
+                                    <?= esc($row['uraian_proses']) ?>
+                                </td>
 
-                                <tr class="cursor-pointer risiko-row"
-                                    data-id="<?= $row['id_identifikasi'] ?>">
-
-                                    <td><?= $no++ ?></td>
-                                    <td><?= esc($row['kode_proses']) ?></td>
-
-                                    <td class="text-truncate" style="max-width:200px">
-                                        <?= esc($row['uraian_proses']) ?>
-                                    </td>
-
-                                    <td class="col-risiko">
-                                        <div class="risiko-text"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-placement="top"
-                                            title="<?= esc($row['pernyataan_risiko']) ?>">
-                                            <?= esc($row['pernyataan_risiko']) ?>
+                                <td>
+                                    <div class="text-truncate" style="max-width:280px"
+                                        title="<?= esc($row['pernyataan_risiko']) ?>">
+                                        <?= esc($row['pernyataan_risiko']) ?>
+                                    </div>
+                                    <?php if (!empty($row['penyebab_risiko'])): ?>
+                                        <div class="text-muted small text-truncate" style="max-width:280px"
+                                            title="Penyebab: <?= esc($row['penyebab_risiko']) ?>">
+                                            <i class="ti ti-arrow-right me-1"></i><?= esc($row['penyebab_risiko']) ?>
                                         </div>
-                                    </td>
+                                    <?php endif; ?>
+                                </td>
 
-                                    <td>
-                                        <?php if (!empty($row['nama_kategori'])): ?>
-                                            <span class="badge bg-primary-subtle text-primary border border-primary">
-                                                <?= esc($row['nama_kategori']) ?>
-                                            </span>
-                                        <?php endif; ?>
-                                    </td>
+                                <td>
+                                    <?php if (!empty($row['nama_kategori'])): ?>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary">
+                                            <?= esc($row['nama_kategori']) ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="text-muted small">—</span>
+                                    <?php endif; ?>
+                                </td>
 
-                                    <td>
-                                        <?php if (!empty($row['area_dampak_list'])): ?>
-                                            <?php foreach (explode(', ', $row['area_dampak_list']) as $area): ?>
-                                                <span class="badge bg-success-subtle text-success border border-success me-1">
-                                                    <?= esc($area) ?>
-                                                </span>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </td>
+                                <td>
+                                    <?php if (!empty($row['area_dampak_list'])): ?>
+                                        <?php foreach (explode(', ', $row['area_dampak_list']) as $area): ?>
+                                            <span class="badge bg-success-subtle text-success border border-success me-1 mb-1">
+                                                <?= esc(trim($area)) ?>
+                                            </span>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <span class="text-muted small">—</span>
+                                    <?php endif; ?>
+                                </td>
 
-                                    <td>
-                                        <?php if ($row['sumber_risiko'] === 'Internal'): ?>
-                                            <span class="badge bg-info-subtle text-info border border-info">
-                                                Internal
-                                            </span>
-                                        <?php elseif ($row['sumber_risiko'] === 'Eksternal'): ?>
-                                            <span class="badge bg-warning-subtle text-warning border border-warning">
-                                                Eksternal
-                                            </span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                                <td>
+                                    <?php if ($row['sumber_risiko'] === 'Internal'): ?>
+                                        <span class="badge bg-info-subtle text-info border border-info">Internal</span>
+                                    <?php elseif ($row['sumber_risiko'] === 'Eksternal'): ?>
+                                        <span class="badge bg-warning-subtle text-warning border border-warning">Eksternal</span>
+                                    <?php else: ?>
+                                        <span class="text-muted small">—</span>
+                                    <?php endif; ?>
+                                </td>
+
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
+
         </div>
     </div>
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-
-        document.querySelectorAll('.risiko-row').forEach(row => {
-
-            row.addEventListener('click', function() {
-
-                const id = this.dataset.id;
-
-                loadDetail(id); // PANGGIL FUNCTION YANG SUDAH ADA DI FORM
-            });
-        });
-    });
-</script>
+<?php endif; ?>

@@ -93,11 +93,16 @@ class PengelolaRisikoSeeder extends Seeder
                 'jabatan' => 'Kepala Bagian Umum',
                 'wilayah_id' => 1,
             ],
+            [
+                'nama' => 'Meita Komalasari, SST, M.Si',
+                'nip' => '197905012000122000',
+                'jabatan' => 'Statistisi Ahli Madya BPS Provinsi',
+                'wilayah_id' => 1,
+            ],
         ];
 
         foreach ($data as &$row) {
             $row['is_pemilik'] = false;
-            $row['is_pengelola'] = true;
             $row['aktif'] = true;
             $row['created_at'] = date('Y-m-d H:i:s');
             $row['updated_at'] = date('Y-m-d H:i:s');

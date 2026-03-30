@@ -15,6 +15,7 @@ const KonteksModule = {
     this.initPeraturanCombobox();
     this.initPemangkuCombobox();
     this.initFormSubmit();
+    this.initPreventEnterSubmit();
   },
 
   // ======================================================
@@ -119,23 +120,50 @@ const KonteksModule = {
   loadPengelolaBySatuanKerja(id) {
     if (!id) return;
 
+    // ambil tahun dari form, fallback ke tahun sekarang
+    const tahun =
+      document.getElementById("pkTahun")?.value || new Date().getFullYear();
+
     $.get(
-      "/penetapan-konteks/konteks/get-pengelola-list?satuan=" + id,
+      "/penetapan-konteks/konteks/get-pengelola-list?satuan=" +
+        id +
+        "&tahun=" +
+        tahun,
       (res) => {
-        if (!res || res.length === 0) {
+        // response sekarang object tunggal, bukan array
+        if (!res || Object.keys(res).length === 0) {
           this.clearPengelola();
           return;
         }
 
-        const data = res[0];
+        this.setPengelolaRisiko(res);
 
-        document.getElementById("pkPengelolaValue").value = data.id;
-
-        document.getElementById("pkPengelolaNama").innerText = data.nama;
-        document.getElementById("pkPengelolaNip").innerText = data.nip;
-        document.getElementById("pkPengelolaJabatan").innerText = data.jabatan;
+        // tampilkan warning kalau data dari fallback tahun lain
+        if (res.is_fallback) {
+          console.warn(
+            "Data pengelola diambil dari tahun " + res.tahun + " (fallback)",
+          );
+          // opsional: tampilkan info kecil di UI
+          const warningEl = document.getElementById("pkPengelolaWarning");
+          if (warningEl) {
+            warningEl.innerText =
+              "⚠ Menampilkan data pengelola tahun " + res.tahun;
+            warningEl.style.display = "block";
+          }
+        } else {
+          const warningEl = document.getElementById("pkPengelolaWarning");
+          if (warningEl) warningEl.style.display = "none";
+        }
       },
     );
+  },
+
+  setPengelolaRisiko(data) {
+    document.getElementById("pkPengelolaValue").value = data.id || "";
+    document.getElementById("pkPengelolaNama").innerText = data.nama || "-";
+    document.getElementById("pkPengelolaNip").innerText = data.nip || "-";
+    document.getElementById("pkPengelolaJabatan").innerText =
+      data.jabatan || "-";
   },
 
   clearPengelola() {
@@ -184,7 +212,7 @@ const KonteksModule = {
     }
   },
 
-  loadKegiatanBySatuanKerja(id) {
+  loadKegiatanBySatuanKerja(id, afterLoad) {
     if (!id) return;
 
     const wrapper = document.getElementById("pkKegiatanOptions");
@@ -202,6 +230,7 @@ const KonteksModule = {
       if (!res || res.length === 0) {
         wrapper.innerHTML =
           '<div class="pk-option text-muted">Tidak ada kegiatan</div>';
+        if (afterLoad) afterLoad([]);
         return;
       }
 
@@ -241,6 +270,49 @@ const KonteksModule = {
         },
         { once: false },
       );
+      if (afterLoad) afterLoad(res);
+
+      input.onkeydown = function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const active = wrapper.querySelector(".pk-option.active");
+          const visible = [...wrapper.querySelectorAll(".pk-option")].filter(
+            (o) => o.style.display !== "none",
+          );
+
+          const target = active || (visible.length === 1 ? visible[0] : null);
+
+          if (target) {
+            input.value = target.innerText;
+            hidden.value = target.dataset.value;
+            dropdown.classList.remove("open");
+          }
+        }
+
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+          e.preventDefault();
+          const visible = [...wrapper.querySelectorAll(".pk-option")].filter(
+            (o) => o.style.display !== "none",
+          );
+
+          let currentIdx = visible.findIndex((o) =>
+            o.classList.contains("active"),
+          );
+          visible.forEach((o) => o.classList.remove("active"));
+
+          if (e.key === "ArrowDown")
+            currentIdx = (currentIdx + 1) % visible.length;
+          if (e.key === "ArrowUp")
+            currentIdx = (currentIdx - 1 + visible.length) % visible.length;
+
+          if (visible[currentIdx]) {
+            visible[currentIdx].classList.add("active");
+            visible[currentIdx].scrollIntoView({ block: "nearest" });
+          }
+        }
+      };
     });
   },
 
@@ -250,6 +322,14 @@ const KonteksModule = {
       inputId: "pkTahunInput",
       hiddenId: "pkTahun",
       optionsSelector: ".pk-option",
+
+      onSelect: (tahun) => {
+        // reload pengelola kalau satuan kerja sudah dipilih
+        const satuanId = document.getElementById("pkSatuanKerjaValue")?.value;
+        if (satuanId) {
+          KonteksModule.loadPengelolaBySatuanKerja(satuanId);
+        }
+      },
     });
   },
 
@@ -280,7 +360,6 @@ const KonteksModule = {
       optionsSelector: ".pk-option",
 
       onSelect: (value, text) => {
-        // cegah duplikat
         if (tags.querySelector(`[data-id="${value}"]`)) return;
 
         const index = tags.querySelectorAll(".pk-law-item").length + 1;
@@ -302,7 +381,6 @@ const KonteksModule = {
 
         tags.appendChild(tag);
 
-        // sembunyikan option yang sudah dipilih dari dropdown
         const option = document.querySelector(
           `#pkPeraturanBox .pk-option[data-value="${value}"]`,
         );
@@ -310,7 +388,6 @@ const KonteksModule = {
 
         tag.querySelector(".pk-tag-remove").onclick = () => {
           tag.remove();
-          // tampilkan kembali option di dropdown
           if (option) option.style.display = "";
           KonteksModule.reindexPeraturan();
         };
@@ -327,6 +404,48 @@ const KonteksModule = {
       const num = el.querySelector(".pk-law-number");
       if (num) num.innerText = i + 1 + ".";
     });
+  },
+
+  // ======================================================
+  // HELPER: SET READONLY STATE
+  // ======================================================
+
+  setReadonly(isReadonly) {
+    const fields = document.querySelectorAll(
+      "#pkFormKonteks input:not([type=hidden]), #pkFormKonteks select, #pkFormKonteks textarea",
+    );
+    fields.forEach((el) => {
+      if (isReadonly) {
+        el.setAttribute("readonly", true);
+        el.setAttribute("tabindex", "-1");
+        el.style.pointerEvents = "none";
+        el.classList.add("pk-field-readonly");
+      } else {
+        el.removeAttribute("readonly");
+        el.removeAttribute("tabindex");
+        el.style.pointerEvents = "";
+        el.classList.remove("pk-field-readonly");
+      }
+    });
+    document
+      .querySelectorAll("#pkFormKonteks .pk-combobox-input")
+      .forEach((el) => {
+        el.style.pointerEvents = isReadonly ? "none" : "";
+      });
+    const pemangkuBox = document.getElementById("pkPemangkuBox");
+    if (pemangkuBox) pemangkuBox.style.display = isReadonly ? "none" : "";
+    const peraturanBox = document.getElementById("pkPeraturanBox");
+    if (peraturanBox) peraturanBox.style.display = isReadonly ? "none" : "";
+
+    document
+      .querySelectorAll("#pkPemangkuTags .pk-pemangku-item")
+      .forEach((el) => {
+        if (isReadonly) {
+          el.classList.remove("pk-editable");
+        } else {
+          el.classList.add("pk-editable");
+        }
+      });
   },
 
   // ======================================================
@@ -367,7 +486,7 @@ const KonteksModule = {
         const list = group.querySelector(".pk-pemangku-items");
 
         const item = document.createElement("div");
-        item.className = "pk-pemangku-item";
+        item.className = "pk-pemangku-item pk-editable";
         item.dataset.id = value;
         item.innerHTML = `
           <span>${text}</span>
@@ -383,11 +502,14 @@ const KonteksModule = {
         list.appendChild(item);
 
         item.querySelector(".pk-tag-remove").onclick = function () {
+          if (option) option.style.display = "";
           item.remove();
           if (list.children.length === 0) {
             group.remove();
           }
         };
+
+        if (option) option.style.display = "none";
 
         document.getElementById("pkPemangkuInput").value = "";
       },
@@ -469,17 +591,29 @@ const KonteksModule = {
       $("#pkKonteksTableWrapper").html(html);
     });
   },
-};
 
+  initPreventEnterSubmit() {
+    const form = document.getElementById("pkFormKonteks");
+    if (!form) return;
+
+    form.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter") return;
+
+      const openDropdown = form.querySelector(".pk-combobox-dropdown.open");
+      if (!openDropdown) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+  },
+};
 
 // ======================================================
 // INIT
 // ======================================================
 
 $(document).ready(function () {
-
   KonteksModule.init();
-
 });
 
 // ======================================================
@@ -490,36 +624,41 @@ window.pkOpenViewMode = function (el) {
   const row = JSON.parse(el.dataset.row);
   const id = row.id_konteks;
 
-  // set mode & id
   document.getElementById("pkMode").value = "view";
   document.getElementById("pkId").value = id;
 
-  // set title
   document.getElementById("pkOffcanvasTitle").innerText = "Detail Konteks";
 
-  // tampilkan button mode view
   document.getElementById("pkBtnCreate").style.display = "none";
   document.getElementById("pkBtnView").style.display = "flex";
   document.getElementById("pkBtnEdit").style.display = "none";
 
-  // tombol hapus
+  KonteksModule.setReadonly(true);
+
   document.getElementById("pkBtnDelete").onclick = () => {
     KonteksModule.deleteKonteks(id);
   };
 
-  // tombol switch ke edit
   document.getElementById("pkBtnSwitchEdit").onclick = () => {
     document.getElementById("pkMode").value = "edit";
     document.getElementById("pkOffcanvasTitle").innerText = "Edit Konteks";
     document.getElementById("pkBtnView").style.display = "none";
     document.getElementById("pkBtnEdit").style.display = "flex";
+
+    KonteksModule.setReadonly(false);
   };
 
-  // load detail via AJAX lalu isi form
+  document.getElementById("pkBtnCancelEdit").onclick = () => {
+    document.getElementById("pkMode").value = "view";
+    document.getElementById("pkOffcanvasTitle").innerText = "Detail Konteks";
+    document.getElementById("pkBtnView").style.display = "flex";
+    document.getElementById("pkBtnEdit").style.display = "none";
+    KonteksModule.setReadonly(true);
+  };
+
   $.get(`/penetapan-konteks/konteks/detail/${id}`, (res) => {
     const k = res.konteks;
 
-    // isi hidden fields
     document.getElementById("pkSatuanKerjaValue").value = k.id_satuan_kerja;
     document.getElementById("pkSatuanKerjaInput").value =
       k.nama_satuan_kerja ?? "";
@@ -527,11 +666,104 @@ window.pkOpenViewMode = function (el) {
     document.getElementById("pkTahunInput").value = k.tahun;
     document.getElementById("pkSasaranValue").value = k.id_sasaran_strategis;
     document.getElementById("pkSasaranInput").value = k.uraian_sasaran ?? "";
-    document.getElementById("pkKegiatanValue").value = k.id_kegiatan;
-    document.getElementById("pkKegiatanInput").value = k.nama_kegiatan ?? "";
+
+    if (k.id_satuan_kerja) {
+      KonteksModule.loadKegiatanBySatuanKerja(k.id_satuan_kerja, function () {
+        document.getElementById("pkKegiatanValue").value = k.id_kegiatan ?? "";
+        document.getElementById("pkKegiatanInput").value =
+          k.nama_kegiatan ?? "";
+      });
+    }
+
+    // isi pengelola — response sekarang object tunggal, bukan array
+    if (k.pengelola_risiko_id) {
+      $.get(
+        "/penetapan-konteks/konteks/get-pengelola-list?satuan=" +
+        k.id_satuan_kerja +
+        "&tahun=" +
+        k.tahun,
+        (res) => {
+          if (res && Object.keys(res).length > 0) {
+            KonteksModule.setPengelolaRisiko(res);
+          }
+        },
+      );
+    }
+
+    // isi pemangku (view only)
+    const container = document.getElementById("pkPemangkuTags");
+    container.innerHTML = "";
+    if (res.pemangku && res.pemangku.length > 0) {
+      res.pemangku.forEach((idP) => {
+        const opt = document.querySelector(
+          `#pkPemangkuBox .pk-option[data-value="${idP}"]`,
+        );
+        if (!opt) return;
+        const role = opt.dataset.role || "";
+        let group = container.querySelector(
+          `.pk-pemangku-group[data-role="${CSS.escape(role)}"]`,
+        );
+        if (!group) {
+          group = document.createElement("div");
+          group.className = "pk-pemangku-group";
+          group.dataset.role = role;
+          group.innerHTML = `<div class="pk-pemangku-title">${role}</div><div class="pk-pemangku-items"></div>`;
+          container.appendChild(group);
+        }
+        const list = group.querySelector(".pk-pemangku-items");
+        const item = document.createElement("div");
+        item.className = "pk-pemangku-item";
+        item.dataset.id = idP;
+        item.innerHTML = `<span>${opt.innerText.trim()}</span><span class="pk-tag-remove">×</span>`;
+        opt.style.display = "none";
+
+        const hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = "pemangku[]";
+        hidden.value = idP;
+        item.appendChild(hidden);
+
+        item.querySelector(".pk-tag-remove").onclick = function () {
+          opt.style.display = "";
+          item.remove();
+          if (list.children.length === 0) group.remove();
+        };
+
+        list.appendChild(item);
+      });
+    }
+
+    // isi sasaran kinerja
+    const skBody = document.getElementById("pkSasaranOrganisasiBody");
+    if (skBody) {
+      skBody.innerHTML = "";
+      if (res.sasaranKinerja && res.sasaranKinerja.length > 0) {
+        res.sasaranKinerja.forEach((sk, i) => {
+          const badgeClass =
+            sk.jenis_proses === "Teknis"
+              ? "bg-primary-subtle text-primary"
+              : "bg-warning-subtle text-warning";
+          skBody.innerHTML += `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td><span class="badge ${badgeClass}">${sk.kode_proses}</span></td>
+                    <td>${sk.uraian_proses}</td>
+                    <td>${sk.uraian_sasaran}</td>
+                </tr>
+            `;
+        });
+      } else {
+        skBody.innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center text-muted py-3">
+                    Belum ada sasaran organisasi
+                </td>
+            </tr>
+        `;
+      }
+    }
   });
 
-  // buka offcanvas
   new bootstrap.Offcanvas(document.getElementById("offcanvasKonteks")).show();
 };
 
@@ -549,4 +781,15 @@ window.pkOpenCreateMode = function () {
 
   const form = document.getElementById("pkFormKonteks");
   if (form) form.reset();
+
+  KonteksModule.setReadonly(false);
+  KonteksModule.resetKegiatan();
+  KonteksModule.loadProvinsiPemilik();
+
+  const pemangkuTags = document.getElementById("pkPemangkuTags");
+  if (pemangkuTags) pemangkuTags.innerHTML = "";
+
+  document.querySelectorAll("#pkPemangkuBox .pk-option").forEach((el) => {
+    el.style.display = "";
+  });
 };

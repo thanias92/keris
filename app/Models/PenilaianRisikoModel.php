@@ -21,7 +21,8 @@ class PenilaianRisikoModel extends Model
         'id_selera',
         'nilai_risiko',
         'warna_risiko',
-        'efektivitas'
+        'efektivitas',
+        'uraian_pengendalian',
     ];
 
     protected $useTimestamps = true;

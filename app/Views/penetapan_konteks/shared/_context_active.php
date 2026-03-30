@@ -1,41 +1,24 @@
 <?php if (!empty($activeKonteks)): ?>
 
-    <div class="card mb-3 border-0 shadow-sm bg-light">
-        <div class="card-body py-3">
-            <div class="row small">
-
-                <div class="col-md-3">
-                    <strong>Satuan Kerja</strong><br>
-                    <?= esc($activeKonteks['nama_satuan_kerja']) ?>
-                </div>
-
-                <div class="col-md-3">
-                    <strong>Pengelola Risiko</strong><br>
-                    <?= esc($activeKonteks['pengelola_risiko']) ?>
-                </div>
-
-                <div class="col-md-2">
-                    <strong>Tahun</strong><br>
-                    <?= esc($activeKonteks['tahun']) ?>
-                </div>
-
-                <div class="col-md-2">
-                    <strong>Kegiatan</strong><br>
-                    <?= esc($activeKonteks['kegiatan']) ?>
-                </div>
-
-                <div class="col-md-2">
-                    <strong>Sasaran Strategis</strong><br>
-                    <?= esc($activeKonteks['uraian_sasaran']) ?>
-                </div>
-
+    <div class="card mb-2 border-0 bg-light" style="font-size: 0.78rem;">
+        <div class="card-body py-2 px-3">
+            <div class="row g-2">
+                <div class="col-auto text-muted">Tim Kerja: <strong class="text-dark"><?= esc($activeKonteks['nama_satuan_kerja']) ?></strong></div>
+                <div class="col-auto text-muted">·</div>
+                <div class="col-auto text-muted">Pengelola: <strong class="text-dark"><?= esc($activeKonteks['nama_pengelola']) ?></strong></div>
+                <div class="col-auto text-muted">·</div>
+                <div class="col-auto text-muted">Tahun: <strong class="text-dark"><?= esc($activeKonteks['tahun']) ?></strong></div>
+                <div class="col-auto text-muted">·</div>
+                <div class="col-auto text-muted">Kegiatan: <strong class="text-dark"><?= esc($activeKonteks['nama_kegiatan']) ?></strong></div>
+                <div class="col-auto text-muted">·</div>
+                <div class="col-auto text-muted">Sasaran: <strong class="text-dark"><?= esc($activeKonteks['uraian_sasaran']) ?></strong></div>
             </div>
         </div>
     </div>
 
 <?php else: ?>
-    <div class="alert alert-warning d-inline-flex align-items-center gap-2 py-2 px-3 mb-3"
-        style="font-size: 0.9rem;">
+    <div class="alert alert-warning d-inline-flex align-items-center gap-2 py-2 px-3 mb-2"
+        style="font-size: 0.82rem;">
         <i class="ti ti-alert-circle"></i>
         Konteks belum dipilih
     </div>

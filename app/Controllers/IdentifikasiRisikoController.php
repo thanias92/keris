@@ -3,248 +3,354 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\ProsesBisnisModel;
 use App\Models\KonteksModel;
+use App\Models\KonteksProsesModel;
 use App\Models\KategoriRisikoModel;
 use App\Models\AreaDampakModel;
 use App\Models\IdentifikasiAreaDampakModel;
 use App\Models\IdentifikasiRisikoModel;
+use App\Models\BankRisikoModel;
 
 class IdentifikasiRisikoController extends BaseController
 {
-    public function index()
-    {
-        $risikoModel  = new IdentifikasiRisikoModel();
-        $prosesModel  = new ProsesBisnisModel();
-        $konteksModel = new KonteksModel();
-        $kategoriModel = new KategoriRisikoModel();
-        $areaModel    = new AreaDampakModel();
-
-        /* ======================================================
-       1️⃣ AMBIL ID KONTEKS DARI QUERY STRING
+    /* ======================================================
+       HELPER — ambil konteks aktif dari session
     ====================================================== */
-        $idKonteks = $this->request->getGet('id_konteks');
+    private function getActiveKonteks(): ?array
+    {
+        $id = session('id_konteks_ir');
+        if (!$id) return null;
 
-        $activeKonteks   = null;
-        $selectedContext = null;
-
-        if ($idKonteks) {
-
-            $activeKonteks = $konteksModel
-                ->select('
+        $model = new KonteksModel();
+        $data  = $model
+            ->select('
                 konteks.*,
+                kegiatan.nama_kegiatan,
                 satuan_kerja.nama_satuan_kerja,
-                sasaran_strategis.uraian_sasaran
+                sasaran_strategis.uraian_sasaran,
+                p.nama as nama_pemilik,
+                g.nama as nama_pengelola
             ')
-                ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
-                ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
-                ->where('konteks.id_konteks', $idKonteks)
-                ->first();
+            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
+            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
+            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
+            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
+            ->where('konteks.id_konteks', $id)
+            ->first();
 
-            if ($activeKonteks) {
-                $selectedContext = [
-                    'nama_satuan_kerja' => $activeKonteks['nama_satuan_kerja'],
-                    'tahun'             => $activeKonteks['tahun'],
-                    'uraian_sasaran'    => $activeKonteks['uraian_sasaran'],
-                ];
-            } else {
-                $idKonteks = null;
-            }
+        if (!$data) {
+            session()->remove('id_konteks_ir');
+            return null;
         }
 
-        /* ======================================================
-       2️⃣ LIST KONTEKS UNTUK DROPDOWN
-    ====================================================== */
-        $konteksList = $konteksModel
+        return $data;
+    }
+
+    private function getListKonteks(): array
+    {
+        return (new KonteksModel())
             ->select('
             konteks.id_konteks,
             konteks.tahun,
+            konteks.id_satuan_kerja,
+            konteks.id_kegiatan,
+            konteks.pengelola_risiko_id,
             satuan_kerja.nama_satuan_kerja,
-            sasaran_strategis.uraian_sasaran
+            sasaran_strategis.uraian_sasaran,
+            kegiatan.nama_kegiatan,
+            p.nama as nama_pemilik,
+            g.nama as nama_pengelola
         ')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
-            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
+            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
+            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
+            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
             ->orderBy('konteks.created_at', 'DESC')
             ->findAll();
+    }
+
+    /* ======================================================
+       INDEX
+    ====================================================== */
+    public function index()
+    {
+        $risikoModel   = new IdentifikasiRisikoModel();
+        $kategoriModel = new KategoriRisikoModel();
+        $areaModel     = new AreaDampakModel();
+
+        $activeKonteks = $this->getActiveKonteks();
+        $idKonteks     = $activeKonteks ? $activeKonteks['id_konteks'] : null;
 
         /* ======================================================
-       3️⃣ QUERY DATA IDENTIFIKASI RISIKO
-    ====================================================== */
+           QUERY DATA IDENTIFIKASI RISIKO
+           JOIN: identifikasi_risiko → konteks_proses_bisnis → proses_bisnis
+        ====================================================== */
         $builder = $risikoModel
             ->select('
-        identifikasi_risiko.*,
-        proses_bisnis.kode_proses,
-        proses_bisnis.uraian_proses,
-        kategori_risiko.nama_kategori,
-        STRING_AGG(area_dampak.nama_area_dampak, \', \') as area_dampak_list
-    ')
-            ->join('proses_bisnis', 'proses_bisnis.id_proses = identifikasi_risiko.id_proses')
+                identifikasi_risiko.*,
+                konteks_proses_bisnis.id_konteks,
+                proses_bisnis.kode_proses,
+                proses_bisnis.uraian_proses,
+                proses_bisnis.jenis_proses,
+                kategori_risiko.nama_kategori,
+                STRING_AGG(area_dampak.nama_area_dampak, \', \') as area_dampak_list
+            ')
+            ->join('konteks_proses_bisnis', 'konteks_proses_bisnis.id_konteks_proses = identifikasi_risiko.id_konteks_proses')
+            ->join('proses_bisnis', 'proses_bisnis.id_proses = konteks_proses_bisnis.id_proses')
             ->join('kategori_risiko', 'kategori_risiko.id_kategori_risiko = identifikasi_risiko.id_kategori_risiko', 'left')
             ->join('identifikasi_area_dampak', 'identifikasi_area_dampak.id_identifikasi = identifikasi_risiko.id_identifikasi', 'left')
             ->join('area_dampak', 'area_dampak.id_area_dampak = identifikasi_area_dampak.id_area_dampak', 'left')
             ->groupBy('
-        identifikasi_risiko.id_identifikasi,
-        proses_bisnis.kode_proses,
-        proses_bisnis.uraian_proses,
-        kategori_risiko.nama_kategori
-    ');
+                identifikasi_risiko.id_identifikasi,
+                konteks_proses_bisnis.id_konteks,
+                proses_bisnis.kode_proses,
+                proses_bisnis.uraian_proses,
+                proses_bisnis.jenis_proses,
+                kategori_risiko.nama_kategori
+            ');
 
         if ($idKonteks) {
-            $builder->where('proses_bisnis.id_konteks', $idKonteks);
+            $builder->where('konteks_proses_bisnis.id_konteks', $idKonteks);
         }
 
         $idKategori = $this->request->getGet('filter_kategori');
-
         if ($idKategori) {
             $builder->where('identifikasi_risiko.id_kategori_risiko', $idKategori);
         }
 
         $data = $builder
-            ->orderBy('kode_proses', 'ASC')
+            ->orderBy('proses_bisnis.kode_proses', 'ASC')
             ->paginate(10, 'identifikasi');
 
-        $kategoriList = $kategoriModel
-            ->orderBy('nama_kategori', 'ASC')
-            ->findAll();
-
-        $areaDampakList = $areaModel
-            ->orderBy('nama_area_dampak', 'ASC')
-            ->findAll();
-
         /* ======================================================
-       4️⃣ LIST PROSES BISNIS (UNTUK FORM DROPDOWN)
-    ====================================================== */
-        $listProses = $idKonteks
-            ? $prosesModel
-            ->where('id_konteks', $idKonteks)
-            ->orderBy('kode_proses', 'ASC')
-            ->findAll()
-            : [];
+           LIST PROSES BISNIS UNTUK KONTEKS AKTIF
+           (untuk dropdown di form tambah risiko)
+        ====================================================== */
+        $listKonteksProses = [];
+        if ($idKonteks) {
+            $db = \Config\Database::connect();
+            $listKonteksProses = $db->table('konteks_proses_bisnis kpb')
+                ->select('kpb.id_konteks_proses, pb.kode_proses, pb.uraian_proses, pb.jenis_proses')
+                ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
+                ->where('kpb.id_konteks', $idKonteks)
+                ->orderBy('pb.kode_proses', 'ASC')
+                ->get()
+                ->getResultArray();
+        }
 
+        $kategoriList   = $kategoriModel->orderBy('nama_kategori', 'ASC')->findAll();
+        $areaDampakList = $areaModel->orderBy('nama_area_dampak', 'ASC')->findAll();
         $filterKategori = $this->request->getGet('filter_kategori');
 
-        /* ======================================================
-       RETURN VIEW
-    ====================================================== */
         return view('identifikasi_risiko/index', [
-            'data'             => $data,
-            'pager'            => $risikoModel->pager,
-            'konteksList'      => $konteksList,
-            'activeKonteks'    => $activeKonteks,
-            'selectedContext'  => $selectedContext,
-            'listProses'       => $listProses,
-            'kategoriList' => $kategoriList,
-            'areaDampakList' => $areaDampakList,
-            'filterKategori'  => $filterKategori,
+            'data'              => $data,
+            'pager'             => $risikoModel->pager,
+            'listKonteks'       => $this->getListKonteks(),
+            'activeKonteks'     => $activeKonteks,
+            'listKonteksProses' => $listKonteksProses,
+            'kategoriList'      => $kategoriList,
+            'areaDampakList'    => $areaDampakList,
+            'filterKategori'    => $filterKategori,
         ]);
     }
 
+    /* ======================================================
+       SET ACTIVE KONTEKS (dari _context_selector)
+    ====================================================== */
+    public function setActive()
+    {
+        $id = $this->request->getPost('id_konteks');
+        if (!$id) return redirect()->back();
+
+        session()->set('id_konteks_ir', $id);
+
+        return redirect()->to(site_url('identifikasi-risiko'));
+    }
+
+    public function resetActive()
+    {
+        session()->remove('id_konteks_ir');
+        return redirect()->to(site_url('identifikasi-risiko'));
+    }
+
+    /* ======================================================
+       STORE
+    ====================================================== */
     public function store()
     {
-        $risikoModel = new IdentifikasiRisikoModel();
-        $pivotModel  = new IdentifikasiAreaDampakModel();
+        $db = \Config\Database::connect();
 
-        $idIdentifikasi = $risikoModel->insert([
-            'id_proses'           => $this->request->getPost('id_proses'),
-            'kode_risiko'         => $this->request->getPost('kode_risiko'),
-            'pernyataan_risiko'   => $this->request->getPost('pernyataan_risiko'),
-            'penyebab_risiko'     => $this->request->getPost('penyebab_risiko'),
-            'dampak_risiko'       => $this->request->getPost('dampak_risiko'),
-            'id_kategori_risiko'  => $this->request->getPost('id_kategori_risiko'),
-            'sumber_risiko'       => $this->request->getPost('sumber_risiko'),
+        $result = $db->query("
+        INSERT INTO identifikasi_risiko 
+            (id_konteks_proses, pernyataan_risiko, penyebab_risiko, dampak_risiko, id_kategori_risiko, sumber_risiko)
+        VALUES (?, ?, ?, ?, ?, ?)
+        RETURNING id_identifikasi
+    ", [
+            $this->request->getPost('id_konteks_proses'),
+            $this->request->getPost('pernyataan_risiko'),
+            $this->request->getPost('penyebab_risiko'),
+            $this->request->getPost('dampak_risiko'),
+            $this->request->getPost('id_kategori_risiko') ?: null,
+            $this->request->getPost('sumber_risiko'),
         ]);
 
-        $area = $this->request->getPost('area_dampak');
+        $idIdentifikasi = $result->getRow()->id_identifikasi ?? null;
 
-        if (!empty($area)) {
+        $area = $this->request->getPost('area_dampak');
+        if (!empty($area) && $idIdentifikasi) {
             foreach ($area as $idArea) {
-                $pivotModel->insert([
+                $db->table('identifikasi_area_dampak')->insert([
                     'id_identifikasi' => $idIdentifikasi,
-                    'id_area_dampak'  => $idArea
+                    'id_area_dampak'  => $idArea,
                 ]);
             }
         }
 
         return $this->response->setJSON([
-            'status' => 'success'
+            'status'     => 'success',
+            'csrf_token' => csrf_hash(),
         ]);
     }
 
-    public function generateKodeRisiko()
-    {
-        $model = new IdentifikasiRisikoModel();
-
-        $last = $model
-            ->like('kode_risiko', 'R', 'after')
-            ->orderBy('kode_risiko', 'DESC')
-            ->first();
-
-        $next = $last
-            ? ((int) substr($last['kode_risiko'], 1)) + 1
-            : 1;
-
-        return $this->response->setJSON([
-            'kode' => 'R' . str_pad($next, 3, '0', STR_PAD_LEFT)
-        ]);
-    }
-
+    /* ======================================================
+       UPDATE
+    ====================================================== */
     public function update($id)
     {
-        $risikoModel = new IdentifikasiRisikoModel();
-        $pivotModel  = new IdentifikasiAreaDampakModel();
+        $db = \Config\Database::connect();
 
-        $risikoModel->update($id, [
-            'id_proses'          => $this->request->getPost('id_proses'),
-            'pernyataan_risiko'  => $this->request->getPost('pernyataan_risiko'),
-            'penyebab_risiko'    => $this->request->getPost('penyebab_risiko'),
-            'dampak_risiko'      => $this->request->getPost('dampak_risiko'),
-            'id_kategori_risiko' => $this->request->getPost('id_kategori_risiko'),
-            'sumber_risiko'      => $this->request->getPost('sumber_risiko'),
-        ]);
-
-        $pivotModel->where('id_identifikasi', $id)->delete();
-
-        $area = $this->request->getPost('area_dampak');
-
-        if (!empty($area)) {
-            foreach ($area as $idArea) {
-                $pivotModel->insert([
-                    'id_identifikasi' => $id,
-                    'id_area_dampak'  => $idArea
+        try {
+            $db->table('identifikasi_risiko')
+                ->where('id_identifikasi', $id)
+                ->update([
+                    'id_konteks_proses'  => $this->request->getPost('id_konteks_proses'),
+                    'pernyataan_risiko'  => $this->request->getPost('pernyataan_risiko'),
+                    'penyebab_risiko'    => $this->request->getPost('penyebab_risiko'),
+                    'dampak_risiko'      => $this->request->getPost('dampak_risiko'),
+                    'id_kategori_risiko' => $this->request->getPost('id_kategori_risiko') ?: null,
+                    'sumber_risiko'      => $this->request->getPost('sumber_risiko'),
                 ]);
-            }
-        }
 
-        return $this->response->setJSON([
-            'status' => 'success'
-        ]);
+            $db->table('identifikasi_area_dampak')
+                ->where('id_identifikasi', $id)
+                ->delete();
+
+            $area = $this->request->getPost('area_dampak');
+            if (!empty($area)) {
+                foreach ($area as $idArea) {
+                    $db->table('identifikasi_area_dampak')->insert([
+                        'id_identifikasi' => $id,
+                        'id_area_dampak'  => $idArea,
+                    ]);
+                }
+            }
+
+            return $this->response->setJSON([
+                'status'     => 'success',
+                'csrf_token' => csrf_hash(),
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'IR Update Error: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'status'  => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
+    /* ======================================================
+       DELETE
+    ====================================================== */
     public function delete($id)
     {
-        $risikoModel = new IdentifikasiRisikoModel();
-        $pivotModel  = new IdentifikasiAreaDampakModel();
+        $db = \Config\Database::connect();
 
-        $pivotModel->where('id_identifikasi', $id)->delete();
-        $risikoModel->delete($id);
+        try {
+            $db->transStart();
 
-        return $this->response->setJSON([
-            'status' => 'success'
-        ]);
+            // Ambil semua id_penilaian yang terkait identifikasi ini
+            $penilaianList = $db->table('penilaian_risiko')
+                ->select('id_penilaian')
+                ->where('id_identifikasi', $id)
+                ->get()->getResultArray();
+
+            $idPenilaianList = array_column($penilaianList, 'id_penilaian');
+
+            if (!empty($idPenilaianList)) {
+                // Ambil semua id_evaluasi yang terkait penilaian ini
+                $evaluasiList = $db->table('evaluasi_risiko')
+                    ->select('id_evaluasi')
+                    ->whereIn('id_penilaian', $idPenilaianList)
+                    ->get()->getResultArray();
+
+                $idEvaluasiList = array_column($evaluasiList, 'id_evaluasi');
+
+                if (!empty($idEvaluasiList)) {
+                    // Hapus RTP (child paling bawah)
+                    $db->table('rencana_penanganan_risiko')
+                        ->whereIn('id_penilaian_awal', $idEvaluasiList)
+                        ->delete();
+
+                    // Hapus Evaluasi
+                    $db->table('evaluasi_risiko')
+                        ->whereIn('id_evaluasi', $idEvaluasiList)
+                        ->delete();
+                }
+
+                // Hapus Penilaian
+                $db->table('penilaian_risiko')
+                    ->whereIn('id_penilaian', $idPenilaianList)
+                    ->delete();
+            }
+
+            // Hapus area dampak pivot
+            $db->table('identifikasi_area_dampak')
+                ->where('id_identifikasi', $id)
+                ->delete();
+
+            // Hapus Identifikasi Risiko
+            $db->table('identifikasi_risiko')
+                ->where('id_identifikasi', $id)
+                ->delete();
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \RuntimeException('Transaksi gagal.');
+            }
+
+            return $this->response->setJSON([
+                'status'     => 'success',
+                'csrf_token' => csrf_hash(),
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'IR Delete Error: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'status'  => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
+    /* ======================================================
+       DETAIL (untuk load form edit)
+    ====================================================== */
     public function detail($id)
     {
         $model = new IdentifikasiRisikoModel();
 
         $data = $model
             ->select('
-            identifikasi_risiko.*,
-            proses_bisnis.kode_proses,
-            proses_bisnis.uraian_proses,
-            kategori_risiko.nama_kategori
-        ')
-            ->join('proses_bisnis', 'proses_bisnis.id_proses = identifikasi_risiko.id_proses')
+                identifikasi_risiko.*,
+                konteks_proses_bisnis.id_konteks,
+                proses_bisnis.kode_proses,
+                proses_bisnis.uraian_proses,
+                kategori_risiko.nama_kategori
+            ')
+            ->join('konteks_proses_bisnis', 'konteks_proses_bisnis.id_konteks_proses = identifikasi_risiko.id_konteks_proses')
+            ->join('proses_bisnis', 'proses_bisnis.id_proses = konteks_proses_bisnis.id_proses')
             ->join('kategori_risiko', 'kategori_risiko.id_kategori_risiko = identifikasi_risiko.id_kategori_risiko', 'left')
             ->where('identifikasi_risiko.id_identifikasi', $id)
             ->first();
@@ -252,13 +358,78 @@ class IdentifikasiRisikoController extends BaseController
         return $this->response->setJSON($data);
     }
 
+    /* ======================================================
+       DETAIL AREA DAMPAK
+    ====================================================== */
     public function detailArea($id)
     {
         $pivot = new IdentifikasiAreaDampakModel();
-
-        $data = $pivot->where('id_identifikasi', $id)
-            ->findColumn('id_area_dampak');
-
+        $data  = $pivot->where('id_identifikasi', $id)->findColumn('id_area_dampak');
         return $this->response->setJSON($data ?? []);
+    }
+
+    /* ======================================================
+       AJAX TABLE — refresh tabel tanpa reload halaman penuh
+    ====================================================== */
+    public function ajaxTable()
+    {
+        if (!$this->request->isAJAX()) return redirect()->back();
+
+        $risikoModel   = new IdentifikasiRisikoModel();
+        $activeKonteks = $this->getActiveKonteks();
+        $idKonteks     = $activeKonteks ? $activeKonteks['id_konteks'] : null;
+
+        $builder = $risikoModel
+            ->select('
+                identifikasi_risiko.*,
+                konteks_proses_bisnis.id_konteks,
+                proses_bisnis.kode_proses,
+                proses_bisnis.uraian_proses,
+                proses_bisnis.jenis_proses,
+                kategori_risiko.nama_kategori,
+                STRING_AGG(area_dampak.nama_area_dampak, \', \') as area_dampak_list
+            ')
+            ->join('konteks_proses_bisnis', 'konteks_proses_bisnis.id_konteks_proses = identifikasi_risiko.id_konteks_proses')
+            ->join('proses_bisnis', 'proses_bisnis.id_proses = konteks_proses_bisnis.id_proses')
+            ->join('kategori_risiko', 'kategori_risiko.id_kategori_risiko = identifikasi_risiko.id_kategori_risiko', 'left')
+            ->join('identifikasi_area_dampak', 'identifikasi_area_dampak.id_identifikasi = identifikasi_risiko.id_identifikasi', 'left')
+            ->join('area_dampak', 'area_dampak.id_area_dampak = identifikasi_area_dampak.id_area_dampak', 'left')
+            ->groupBy('
+                identifikasi_risiko.id_identifikasi,
+                konteks_proses_bisnis.id_konteks,
+                proses_bisnis.kode_proses,
+                proses_bisnis.uraian_proses,
+                proses_bisnis.jenis_proses,
+                kategori_risiko.nama_kategori
+            ');
+
+        if ($idKonteks) {
+            $builder->where('konteks_proses_bisnis.id_konteks', $idKonteks);
+        }
+
+        $idKategori = $this->request->getGet('filter_kategori');
+        if ($idKategori) {
+            $builder->where('identifikasi_risiko.id_kategori_risiko', $idKategori);
+        }
+
+        $data = $builder
+            ->orderBy('proses_bisnis.kode_proses', 'ASC')
+            ->paginate(10, 'identifikasi');
+
+        return view('identifikasi_risiko/_table_section', [
+            'data'          => $data,
+            'pager'         => $risikoModel->pager,
+            'activeKonteks' => $activeKonteks,
+        ]);
+    }
+
+    /* ======================================================
+       GET BANK RISIKO — autocomplete pernyataan risiko
+    ====================================================== */
+    public function getBankRisiko()
+    {
+        $model = new BankRisikoModel();
+        $data  = $model->getForDropdown();
+        return $this->response->setJSON($data);
     }
 }

@@ -364,11 +364,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* Identifikasi Form */
-#offcanvasRisiko {
-    width: 540px !important;
-    max-width: 95vw;
-}
 .table td:nth-child(2),
 .table th:nth-child(2) {
     width: 80px;
@@ -379,24 +374,6 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.risiko-row {
-    cursor: pointer;
-}
-.risiko-row:hover {
-    background-color: #f8f9fa;
-}
-
-.col-risiko {
-    width: auto;
-}
-
-.risiko-text {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
 }
 
 /* Saat sidebar mini */
@@ -472,145 +449,6 @@ body:not(.sidebar-mini) .col-risiko {
     cursor: pointer;
 }
 
-/* ===================================================== */
-/* ANALISIS RISIKO – TABLE FIX (Scoped to .pk-page) */
-/* ===================================================== */
-.pk-page .analisis-table th,
-.pk-page .analisis-table td {
-    vertical-align: middle;
-}
-
-/* Kolom Risiko */
-.pk-page .analisis-table .col-risiko {
-    max-width: 280px;
-}
-
-/* Text truncate */
-.pk-page .analisis-table .risiko-text {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Hilangkan horizontal scroll */
-.pk-page .analisis-wrapper {
-    overflow-x: hidden;
-}
-
-/* Header P & D dua baris */
-.pk-page .analisis-table .th-small {
-    line-height: 1.2;
-}
-
-.pk-page .analisis-table .th-small small {
-    font-size: 11px;
-    color: #6c757d;
-}
-
-/* Status badge spacing */
-.pk-page .status-badge {
-    font-size: 11px;
-    padding: 4px 8px;
-}
-/* ===================================================== */
-/* ANALISIS RISIKO – FIX NO HORIZONTAL SCROLL */
-/* ===================================================== */
-
-/* Wrapper khusus */
-.pk-page #analisisTableWrapper {
-    width: 100%;
-}
-
-/* Jangan pakai fixed layout */
-.pk-page .analisis-table {
-    width: 100%;
-}
-
-/* Pastikan tabel tidak melebar */
-.pk-page .analisis-table th,
-.pk-page .analisis-table td {
-    white-space: nowrap;
-    vertical-align: middle;
-}
-
-/* Kolom Risiko fleksibel */
-.pk-page .analisis-table .col-risiko {
-    max-width: 300px;
-}
-
-/* Text tetap terpotong rapi */
-.pk-page .analisis-table .risiko-text {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* ===================================================== */
-/* ANALISIS RISIKO – SUMMARY CARDS (Scoped) */
-/* ===================================================== */
-
-.pk-page .summary-card {
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.pk-page .summary-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 18px rgba(0,0,0,0.08);
-}
-
-.pk-page .summary-card.active-total {
-    border: 2px solid var(--bs-primary);
-}
-
-.pk-page .summary-card.active-sudah {
-    border: 2px solid var(--bs-success);
-}
-
-.pk-page .summary-card.active-belum {
-    border: 2px solid var(--bs-warning);
-}
-
-/* ===================================================== */
-/* ANALISIS RISIKO – ROW VISUAL INDICATOR */
-/* ===================================================== */
-.pk-page .analisis-row {
-    transition: all 0.2s ease;
-}
-
-.pk-page .analisis-row:hover {
-    background-color: #f5f9ff;
-    cursor: pointer;
-}
-
-/* Sudah dianalisis */
-.pk-page .analisis-table tbody tr.row-sudah > td:first-child {
-    box-shadow: inset 4px 0 0 #198754;
-}
-
-.pk-page .analisis-table tbody tr.row-belum > td:first-child {
-    box-shadow: inset 4px 0 0 #ffc107;
-}
-
-/* ===================================================== */
-/* ANALISIS RISIKO – HIGHLIGHT RISIKO TINGGI */
-/* Scoped aman ke halaman analisis */
-/* ===================================================== */
-
-.pk-page .analisis-table .row-risiko-tinggi {
-    background-color: rgba(255, 193, 7, 0.08); /* kuning lembut */
-}
-
-.pk-page .analisis-table .row-risiko-ekstrem {
-    background-color: rgba(220, 53, 69, 0.08); /* merah lembut */
-}
-
-/* Hover tetap smooth */
-.pk-page .analisis-table .row-risiko-tinggi:hover,
-.pk-page .analisis-table .row-risiko-ekstrem:hover {
-    background-color: rgba(0, 0, 0, 0.03);
-}
-
 /* ===================================== */
 /* FIX HEADER STICKY TRANSPARENT ISSUE */
 /* ===================================== */
@@ -618,4 +456,143 @@ body:not(.sidebar-mini) .col-risiko {
     background-color: #ffffff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.04);
     z-index: 1025;
+}
+
+
+
+/* Header BPS Sidebar */
+.bps-header {
+    padding: 18px 16px;
+}
+
+.bps-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bps-logo {
+    height: 42px;
+    width: auto;
+}
+
+.bps-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.bps-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+}
+
+.bps-subtitle {
+    font-size: 11px;
+    color: #666;
+}
+
+/* Logo KERIS RAJA di navbar */
+
+.keris-raja-logo-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.keris-raja-logo {
+    height: 32px;
+    width: auto;
+    max-width: 200px;
+}   
+
+/* ===============================
+   Navbar BPS Logo
+================================ */
+
+.navbar-bps-logo {
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+}
+
+.navbar-bps-logo img {
+    height: 36px;
+    width: auto;
+    margin-right: 10px;
+}
+
+.navbar-bps-text {
+    line-height: 1.1;
+}
+
+.navbar-bps-main {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.navbar-bps-sub {
+    font-size: 12px;
+    color: #777;
+}
+
+/* align logo BPS dengan tombol hamburger */
+.me-auto.pc-mob-drp {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-bps-logo {
+    display: flex;
+    align-items: center;
+    margin-left: 12px;
+}
+
+/* padding atas sidebar */
+
+.pc-sidebar .m-header {
+    padding-top: 22px;
+    padding-bottom: 10px;
+}
+
+/* ===============================
+   SIDEBAR LOGO
+================================ */
+
+/* logo normal */
+
+.keris-logo-full {
+    height: 64px;
+    width: auto;
+    display: block;
+}
+
+/* logo mini */
+
+.keris-logo-mini {
+    height: 42px;
+    width: auto;
+    display: none;
+}
+
+/* saat sidebar mini aktif */
+
+.pc-sidebar.pc-sidebar-mini .keris-logo-full {
+    display: none;
+}
+
+.pc-sidebar.pc-sidebar-mini .keris-logo-mini {
+    display: block;
+}
+
+.keris-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pc-sidebar .m-header {
+    padding-top: 26px;
+    padding-bottom: 12px;
 }

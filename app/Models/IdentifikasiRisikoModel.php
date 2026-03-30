@@ -12,8 +12,7 @@ class IdentifikasiRisikoModel extends Model
     protected $returnType = 'array';
 
     protected $allowedFields = [
-        'id_proses',
-        'kode_risiko',
+        'id_konteks_proses',
         'pernyataan_risiko',
         'penyebab_risiko',
         'dampak_risiko',

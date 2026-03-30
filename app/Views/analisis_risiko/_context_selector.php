@@ -1,202 +1,128 @@
 <?php
+$konteksMap     = [];
+$satuanKerjaOpt = [];
+$tahunOpt       = [];
+$kegiatanOpt    = [];
+$pengelolaOpt   = [];
 
-$map = [];
-$selectedId = $_GET['id_konteks'] ?? null;
+foreach ($listKonteks as $k) {
+    $id = $k['id_konteks'];
 
-foreach ($konteksList as $k) {
+    $konteksMap[$id] = [
+        'id_satuan_kerja'     => $k['id_satuan_kerja']     ?? '',
+        'pengelola_risiko_id' => $k['pengelola_risiko_id'] ?? '',
+        'id_kegiatan'         => $k['id_kegiatan']         ?? '',
+        'tahun'               => $k['tahun'],
+    ];
 
-    if (
-        !isset(
-            $k['nama_satuan_kerja'],
-            $k['tahun'],
-            $k['kegiatan'],
-            $k['uraian_sasaran'],
-            $k['id_konteks']
-        )
-    ) continue;
-
-    $sk = $k['nama_satuan_kerja'];
-    $th = $k['tahun'];
-    $kg = $k['kegiatan'];
-    $ss = $k['uraian_sasaran'];
-
-    $map[$sk][$th][$kg][$ss] = $k['id_konteks'];
+    if (!empty($k['id_satuan_kerja']))
+        $satuanKerjaOpt[$k['id_satuan_kerja']] = $k['nama_satuan_kerja'];
+    if (!empty($k['tahun']))
+        $tahunOpt[$k['tahun']] = true;
+    if (!empty($k['id_kegiatan']))
+        $kegiatanOpt[$k['id_kegiatan']] = $k['nama_kegiatan'];
+    if (!empty($k['pengelola_risiko_id']))
+        $pengelolaOpt[$k['pengelola_risiko_id']] = $k['nama_pengelola'];
 }
 
+asort($satuanKerjaOpt);
+asort($kegiatanOpt);
+asort($pengelolaOpt);
+ksort($tahunOpt);
+
+$sel = $activeKonteks ?? [];
 ?>
 
-<div class="card mb-4 border-0 shadow-sm">
+<div class="card shadow-sm mb-3 pk-context-filter">
     <div class="card-body">
-        <form method="get" action="<?= site_url('analisis-risiko') ?>">
-            <input type="hidden" name="id_konteks" id="id_konteks_selected" value="<?= esc($selectedId) ?>">
+        <form id="arContextSelectorForm" method="post"
+            action="<?= site_url('analisis-risiko/set-active') ?>">
 
-            <div class="row g-3 align-items-end">
+            <?= csrf_field() ?>
+            <input type="hidden" name="id_konteks" id="arCsIdKonteks">
 
-                <!-- SATUAN KERJA -->
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">Satuan Kerja</label>
-                    <select class="form-select" id="skSelect">
-                        <option value="">— Pilih —</option>
-                        <?php foreach (array_keys($map) as $sk): ?>
-                            <option value="<?= esc($sk) ?>">
-                                <?= esc($sk) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+            <div class="row">
+                <!-- LEFT SIDE -->
+                <div class="col-7">
+                    <div class="pk-filter-row">
+                        <label>Tim Kerja</label>
+                        <select class="pk-select" id="arCsSatuanKerja">
+                            <option value="">– Pilih –</option>
+                            <?php foreach ($satuanKerjaOpt as $id => $nama): ?>
+                                <option value="<?= $id ?>"
+                                    <?= isset($sel['id_satuan_kerja']) && (string)$sel['id_satuan_kerja'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= esc($nama) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="pk-filter-row">
+                        <label>Pengelola Risiko</label>
+                        <select class="pk-select" id="arCsPengelola">
+                            <option value="">– Pilih –</option>
+                            <?php foreach ($pengelolaOpt as $id => $nama): ?>
+                                <option value="<?= $id ?>"
+                                    <?= isset($sel['pengelola_risiko_id']) && (string)$sel['pengelola_risiko_id'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= esc($nama) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="pk-filter-row">
+                        <label>Kegiatan</label>
+                        <select class="pk-select" id="arCsKegiatan">
+                            <option value="">– Pilih –</option>
+                            <?php foreach ($kegiatanOpt as $id => $nama): ?>
+                                <option value="<?= $id ?>"
+                                    <?= isset($sel['id_kegiatan']) && (string)$sel['id_kegiatan'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= esc($nama) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                 </div>
 
-                <!-- TAHUN -->
-                <div class="col-md-2">
-                    <label class="form-label small text-muted">Tahun</label>
-                    <select class="form-select" id="thSelect">
-                        <option value="">— Pilih —</option>
-                    </select>
-                </div>
+                <!-- RIGHT SIDE -->
+                <div class="col-4 pk-right-side">
+                    <div class="pk-filter-row">
+                        <label>Tahun</label>
+                        <select class="pk-select" id="arCsTahun" style="width:80px;">
+                            <option value="">– Pilih –</option>
+                            <?php foreach ($tahunOpt as $tahun => $_): ?>
+                                <option value="<?= $tahun ?>"
+                                    <?= isset($sel['tahun']) && (string)$sel['tahun'] === (string)$tahun ? 'selected' : '' ?>>
+                                    <?= esc($tahun) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
-                <!-- KEGIATAN -->
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">Kegiatan</label>
-                    <select class="form-select" id="kgSelect">
-                        <option value="">— Pilih —</option>
-                    </select>
-                </div>
-
-                <!-- SASARAN -->
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">Sasaran Strategis</label>
-                    <select class="form-select" id="ssSelect">
-                        <option value="">— Pilih —</option>
-                    </select>
-                </div>
-
-                <!-- BUTTON -->
-                <div class="col-md-auto d-flex gap-2">
-                    <button type="submit" class="btn btn-primary btn-sm px-3">
-                        Pilih
-                    </button>
-
-                    <a href="<?= site_url('analisis-risiko') ?>"
-                        class="btn btn-outline-secondary btn-sm px-3">
-                        Reset
-                    </a>
+                    <div class="pk-action-wrapper">
+                        <button type="submit" class="btn btn-primary btn-icon"
+                            id="arCsBtnApply" title="Terapkan" disabled>
+                            <i class="ti ti-search"></i>
+                        </button>
+                        <button type="button" class="btn btn-light btn-icon"
+                            id="arCsBtnReset" title="Reset Konteks"
+                            style="<?= $activeKonteks ? '' : 'display:none;' ?>">
+                            <i class="ti ti-refresh"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </form>
     </div>
 </div>
+
+<form id="arResetForm" method="post"
+    action="<?= site_url('analisis-risiko/reset-active') ?>"
+    style="display:none;">
+    <?= csrf_field() ?>
+</form>
+
 <script>
-    const contextMap = <?= json_encode($map) ?>;
-
-    const skSelect = document.getElementById('skSelect');
-    const thSelect = document.getElementById('thSelect');
-    const kgSelect = document.getElementById('kgSelect');
-    const ssSelect = document.getElementById('ssSelect');
-    const hiddenId = document.getElementById('id_konteks_selected');
-
-    function resetSelect(select) {
-        select.innerHTML = '<option value="">— Pilih —</option>';
-    }
-
-    function autoSelectFromId(id) {
-
-        if (!id) return;
-
-        for (const sk in contextMap) {
-            for (const th in contextMap[sk]) {
-                for (const kg in contextMap[sk][th]) {
-                    for (const ss in contextMap[sk][th][kg]) {
-
-                        if (contextMap[sk][th][kg][ss] == id) {
-
-                            skSelect.value = sk;
-                            skSelect.dispatchEvent(new Event('change'));
-
-                            setTimeout(() => {
-                                thSelect.value = th;
-                                thSelect.dispatchEvent(new Event('change'));
-                            }, 50);
-
-                            setTimeout(() => {
-                                kgSelect.value = kg;
-                                kgSelect.dispatchEvent(new Event('change'));
-                            }, 100);
-
-                            setTimeout(() => {
-                                ssSelect.value = ss;
-                            }, 150);
-
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    skSelect.addEventListener('change', function() {
-
-        resetSelect(thSelect);
-        resetSelect(kgSelect);
-        resetSelect(ssSelect);
-        hiddenId.value = '';
-
-        if (!this.value || !contextMap[this.value]) return;
-
-        Object.keys(contextMap[this.value]).forEach(th => {
-            thSelect.innerHTML += `<option value="${th}">${th}</option>`;
-        });
-    });
-
-    thSelect.addEventListener('change', function() {
-
-        resetSelect(kgSelect);
-        resetSelect(ssSelect);
-        hiddenId.value = '';
-
-        const sk = skSelect.value;
-        if (!sk || !this.value) return;
-
-        Object.keys(contextMap[sk][this.value]).forEach(kg => {
-            kgSelect.innerHTML += `<option value="${kg}">${kg}</option>`;
-        });
-    });
-
-    kgSelect.addEventListener('change', function() {
-
-        resetSelect(ssSelect);
-        hiddenId.value = '';
-
-        const sk = skSelect.value;
-        const th = thSelect.value;
-
-        if (!sk || !th || !this.value) return;
-
-        Object.keys(contextMap[sk][th][this.value]).forEach(ss => {
-            ssSelect.innerHTML += `<option value="${ss}">${ss}</option>`;
-        });
-    });
-
-    ssSelect.addEventListener('change', function() {
-
-        const sk = skSelect.value;
-        const th = thSelect.value;
-        const kg = kgSelect.value;
-        const ss = this.value;
-
-        if (!sk || !th || !kg || !ss) {
-            hiddenId.value = '';
-            return;
-        }
-
-        hiddenId.value = contextMap[sk][th][kg][ss];
-    });
-
-    /*
-    |--------------------------------------------------------------------------
-    | AUTO RESTORE SELECTED VALUE
-    |--------------------------------------------------------------------------
-    */
-    document.addEventListener('DOMContentLoaded', function() {
-        autoSelectFromId(hiddenId.value);
-    });
+    window.AR_CS_DATA = {
+        konteksMap: <?= json_encode($konteksMap) ?>,
+        hasActive: <?= $activeKonteks ? 'true' : 'false' ?>,
+    };
 </script>

@@ -1,287 +1,195 @@
-<!-- ================= OFFCANVAS ANALISIS ================= -->
+<!-- ================= OFFCANVAS ANALISIS RISIKO ================= -->
 <div class="offcanvas offcanvas-end shadow-lg"
     tabindex="-1"
-    id="offcanvasAnalisis"
-    style="width: 600px; max-width: 95vw;">
+    id="arOffcanvas">
 
-    <div class="offcanvas-header border-bottom bg-light">
+    <div class="offcanvas-header border-bottom">
         <div>
-            <h5 class="mb-0 fw-semibold">Detail & Evaluasi Risiko</h5>
-            <small class="text-muted">Analisis Risiko</small>
+            <h5 class="offcanvas-title mb-0 fw-semibold" id="arOffcanvasTitle">Analisis Risiko</h5>
+            <small>Manajemen Risiko</small>
         </div>
     </div>
 
     <div class="offcanvas-body">
+        <form id="arForm" novalidate>
+            <input type="hidden" id="arMode" value="create">
+            <input type="hidden" id="arId" value="">
+            <input type="hidden" id="arIdIdentifikasi" name="id_identifikasi" value="">
 
-        <form id="formAnalisis">
-            <?php if (!empty($activeKonteks)): ?>
-                <div class="card border-0 shadow-sm mb-3 bg-light">
-                    <div class="card-body py-2 small">
-                        <div><strong>Satuan Kerja:</strong> <?= esc($activeKonteks['nama_satuan_kerja']) ?></div>
-                        <div><strong>Tahun:</strong> <?= esc($activeKonteks['tahun']) ?></div>
-                        <div><strong>Kegiatan:</strong> <?= esc($activeKonteks['kegiatan']) ?></div>
-                        <div><strong>Sasaran:</strong> <?= esc($activeKonteks['uraian_sasaran']) ?></div>
-                    </div>
+            <!-- ===== PANEL: INFORMASI KONTEKS ===== -->
+            <div class="ar-info-panel">
+                <div class="ar-section-title">
+                    <i class="ti ti-building me-1"></i>Informasi Konteks
                 </div>
-            <?php endif; ?>
-
-            <input type="hidden" name="id_identifikasi" id="id_identifikasi">
-            <input type="hidden" name="id_penilaian" id="id_penilaian">
-
-            <div class="mb-3">
-                <label class="form-label">Kode Risiko</label>
-                <input type="text" id="form_kode" class="form-control" readonly>
-            </div>
-
-            <!-- INFO PROSES -->
-            <div class="card border-0 shadow-sm mb-4 bg-light">
-                <div class="card-body py-3">
-
-                    <div class="mb-2">
-                        <div class="text-muted small">Proses Bisnis</div>
-                        <div class="fw-semibold" id="infoProses">-</div>
-                    </div>
-
+                <div class="ar-grid-2">
                     <div>
-                        <div class="text-muted small">Sasaran Kinerja</div>
-                        <div class="fw-semibold" id="infoSasaran">-</div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Pernyataan Risiko</label>
-                <textarea id="form_risiko" class="form-control" rows="3" readonly></textarea>
-            </div>
-
-            <hr>
-
-            <div class="mb-3">
-                <label class="form-label">Kemungkinan (P)</label>
-                <select name="id_kemungkinan" class="form-select" required>
-                    <option value="">— Pilih —</option>
-                    <?php foreach ($kemungkinanList as $k): ?>
-                        <option value="<?= $k['id_kemungkinan'] ?>">
-                            Level <?= $k['level'] ?> (<?= esc($k['nama_level']) ?>)
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Dampak (D)</label>
-                <select name="id_dampak" class="form-select" required>
-                    <option value="">— Pilih —</option>
-                    <?php foreach ($dampakList as $d): ?>
-                        <option value="<?= $d['id_dampak'] ?>">
-                            Level <?= $d['level'] ?> (<?= esc($d['nama_level']) ?>)
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <hr>
-
-            <!-- PREVIEW -->
-            <div id="previewSection" class="d-none">
-
-                <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-
-                        <div>
-                            <div class="text-muted small">Nilai Risiko</div>
-                            <div class="fs-3 fw-bold" id="previewNilaiText">0</div>
+                        <div class="ar-info-row">
+                            <span class="ar-info-label">Tahun</span>
+                            <span class="ar-info-value" id="arInfoTahun">-</span>
                         </div>
+                        <div class="ar-info-row">
+                            <span class="ar-info-label">Tim Kerja</span>
+                            <span class="ar-info-value" id="arInfoSatker">-</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="ar-info-row">
+                            <span class="ar-info-label">Pengelola Risiko</span>
+                            <span class="ar-info-value" id="arInfoPengelola">-</span>
+                        </div>
+                        <div class="ar-info-row">
+                            <span class="ar-info-label">Sasaran Strategis</span>
+                            <span class="ar-info-value" id="arInfoSasaran">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                        <span id="previewLevel" class="badge fs-6 px-3 py-2"></span>
+            <!-- ===== PANEL: INFORMASI RISIKO ===== -->
+            <div class="ar-info-panel">
+                <div class="ar-section-title">
+                    <i class="ti ti-shield me-1"></i>Informasi Risiko
+                </div>
+                <div class="ar-info-row">
+                    <span class="ar-info-label">Proses Bisnis</span>
+                    <span class="ar-info-value" id="arInfoProses">-</span>
+                </div>
+                <div class="ar-info-row">
+                    <span class="ar-info-label">Sasaran Kinerja</span>
+                    <span class="ar-info-value" id="arInfoSasaranKinerja">-</span>
+                </div>
+                <div class="ar-info-row">
+                    <span class="ar-info-label">Pernyataan Risiko</span>
+                    <span class="ar-info-value fw-semibold" id="arInfoPernyataan">-</span>
+                </div>
+                <div class="ar-grid-2" style="margin-top:2px">
+                    <div class="ar-info-row">
+                        <span class="ar-info-label">Penyebab</span>
+                        <span class="ar-info-value" id="arInfoPenyebab">-</span>
+                    </div>
+                    <div class="ar-info-row">
+                        <span class="ar-info-label">Dampak</span>
+                        <span class="ar-info-value" id="arInfoDampakRisiko">-</span>
+                    </div>
+                </div>
+            </div>
 
+            <hr class="ar-divider">
+
+            <!-- ===== SECTION: RISIKO AKTUAL ===== -->
+            <div class="mb-3">
+                <div class="ar-section-title">
+                    <i class="ti ti-chart-bar me-1"></i>Risiko Aktual
+                </div>
+
+                <div class="ar-grid-2">
+                    <!-- Probability -->
+                    <div>
+                        <label class="ar-form-label">
+                            Probability (Kemungkinan) <span class="text-danger">*</span>
+                        </label>
+                        <select name="id_kemungkinan" id="arKemungkinan"
+                            class="form-select" required>
+                            <option value="">— Pilih Level —</option>
+                            <?php foreach ($kemungkinanList as $k): ?>
+                                <option value="<?= esc($k['id_kriteria']) ?>"
+                                    data-level="<?= esc($k['level']) ?>"
+                                    data-desc="<?= esc($k['deskripsi_frekuensi'] ?? '') ?>">
+                                    Level <?= esc($k['level']) ?> — <?= esc($k['nama_level']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="ar-desc-hint" id="arDescKemungkinan"></div>
+                    </div>
+
+                    <!-- Dampak -->
+                    <div>
+                        <label class="ar-form-label">
+                            Dampak <span class="text-danger">*</span>
+                        </label>
+                        <select name="id_dampak" id="arDampak"
+                            class="form-select" required>
+                            <option value="">— Pilih Level —</option>
+                            <?php foreach ($dampakList as $d): ?>
+                                <option value="<?= esc($d['id_kriteria']) ?>"
+                                    data-level="<?= esc($d['level']) ?>"
+                                    data-desc="<?= esc($d['deskripsi'] ?? '') ?>">
+                                    Level <?= esc($d['level']) ?> — <?= esc($d['nama_level']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="ar-desc-hint" id="arDescDampak"></div>
                     </div>
                 </div>
 
-                <div class="mb-2">
-                    <strong>Level Risiko:</strong>
-                    <span id="previewSeleraText" class="badge bg-secondary"></span>
+                <!-- Preview Skor -->
+                <div id="arPreview" class="ar-preview-card d-none">
+                    <div>
+                        <div class="ar-preview-label">Skor Risiko</div>
+                        <div class="ar-preview-nilai" id="arPreviewNilai">0</div>
+                    </div>
+                    <div class="text-end">
+                        <div id="arPreviewBadge" class="ar-preview-badge"></div>
+                        <div class="ar-preview-tindakan" id="arPreviewTindakan"></div>
+                    </div>
                 </div>
-
-                <div class="mb-2">
-                    <strong>Rekomendasi Tindakan:</strong>
-                    <div id="previewTindakan" class="small text-muted"></div>
-                </div>
-
             </div>
 
+            <hr class="ar-divider">
+
+            <!-- ===== SECTION: PENGENDALIAN ===== -->
             <div class="mb-3">
-                <label class="form-label">Catatan Analis</label>
-                <textarea name="catatan_analis" class="form-control" rows="3"></textarea>
+                <div class="ar-section-title">
+                    <i class="ti ti-shield-check me-1"></i>Pengendalian yang Telah Dilaksanakan
+                </div>
+
+                <div class="mb-3">
+                    <label class="ar-form-label">Uraian Pengendalian</label>
+                    <textarea name="uraian_pengendalian" id="arUraianPengendalian"
+                        class="form-control" rows="3"
+                        placeholder="Uraikan pengendalian yang sudah dilaksanakan..."></textarea>
+                </div>
+
+                <div style="max-width: 320px;">
+                    <label class="ar-form-label">
+                        Efektivitas <span class="text-danger">*</span>
+                    </label>
+                    <select name="efektivitas" id="arEfektivitas"
+                        class="form-select" required>
+                        <option value="">— Pilih —</option>
+                        <option value="Efektif">Efektif</option>
+                        <option value="Kurang Efektif">Kurang Efektif</option>
+                        <option value="Tidak Efektif">Tidak Efektif</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="d-flex justify-content-between mt-4">
+            <hr class="ar-divider">
 
-                <button type="button" id="btnEdit" class="btn btn-warning d-none">
-                    Edit
-                </button>
-
-                <div class="ms-auto">
-                    <button type="submit" id="btnSave" class="btn btn-primary d-none"></button>
-
-                    <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="offcanvas">
-                        Tutup
+            <!-- ===== BUTTONS ===== -->
+            <div class="d-flex align-items-center pt-3 border-top">
+                <div>
+                    <button type="button" id="arBtnDelete"
+                        class="btn btn-sm btn-danger d-none"
+                        onclick="arHapus()">
+                        <i class="ti ti-trash"></i>
                     </button>
                 </div>
+                <div class="ms-auto d-flex gap-2">
+                    <button type="button" id="arBtnEdit"
+                        class="btn btn-sm btn-warning text-white d-none"
+                        onclick="arSetMode('edit')">Edit</button>
+                    <button type="button" id="arBtnBatal"
+                        class="btn btn-sm btn-light d-none"
+                        onclick="arBatal()">Batal</button>
+                    <button type="submit" id="arBtnSimpan"
+                        class="btn btn-sm btn-primary px-4 d-none">
+                        <i class="ti ti-device-floppy me-1"></i>Simpan</button>
+                    <button type="button" id="arBtnTutup"
+                        class="btn btn-sm btn-light"
+                        data-bs-dismiss="offcanvas">Tutup</button>
+                </div>
             </div>
-
         </form>
-
     </div>
 </div>
-
-<script>
-    let analisisMode = 'create';
-
-    const kemungkinanSelect = document.querySelector('[name="id_kemungkinan"]');
-    const dampakSelect = document.querySelector('[name="id_dampak"]');
-
-    function setViewMode() {
-        kemungkinanSelect.disabled = true;
-        dampakSelect.disabled = true;
-        document.querySelector('[name="catatan_analis"]').disabled = true;
-
-        btnEdit.classList.remove('d-none');
-        btnSave.classList.add('d-none');
-    }
-
-    function setEditMode(isCreate = false) {
-        kemungkinanSelect.disabled = false;
-        dampakSelect.disabled = false;
-        document.querySelector('[name="catatan_analis"]').disabled = false;
-
-        btnEdit.classList.add('d-none');
-        btnSave.classList.remove('d-none');
-        btnSave.innerText = isCreate ? 'Simpan Analisis' : 'Simpan Perubahan';
-    }
-
-    function resetForm() {
-        formAnalisis.reset();
-        previewSection.classList.add('d-none');
-    }
-
-    function openAnalisisForm(idIdentifikasi, idPenilaian = null, kode = '', risiko = '', proses = '', sasaran = '') {
-
-        const offcanvas = bootstrap.Offcanvas.getOrCreateInstance('#offcanvasAnalisis');
-        offcanvas.show();
-
-        resetForm();
-
-        id_identifikasi.value = idIdentifikasi;
-        form_kode.value = kode;
-        form_risiko.value = risiko;
-        infoProses.innerText = proses || '-';
-        infoSasaran.innerText = sasaran || '-';
-
-        if (idPenilaian) {
-
-            fetch(`<?= site_url('analisis-risiko/detail') ?>/${idPenilaian}`)
-                .then(res => res.json())
-                .then(data => {
-
-                    id_penilaian.value = data.id_penilaian;
-                    kemungkinanSelect.value = data.id_kemungkinan;
-                    dampakSelect.value = data.id_dampak;
-                    document.querySelector('[name="catatan_analis"]').value = data.catatan_analis ?? '';
-
-                    loadPreview();
-                    setViewMode();
-                });
-
-        } else {
-
-            id_penilaian.value = '';
-            setEditMode(true);
-        }
-    }
-
-    function loadPreview() {
-
-        previewSection.classList.add('d-none');
-
-        const idKemungkinan = kemungkinanSelect.value;
-        const idDampak = dampakSelect.value;
-
-        if (!idKemungkinan || !idDampak) return;
-
-        fetch("<?= site_url('analisis-risiko/preview') ?>", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `id_kemungkinan=${idKemungkinan}&id_dampak=${idDampak}`
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                if (res.status !== 'success') return;
-
-                previewSection.classList.remove('d-none');
-
-                previewNilaiText.innerText = res.nilai_risiko;
-                previewNilaiText.style.color = res.warna;
-
-                previewLevel.innerText = res.nama_selera;
-                previewLevel.style.backgroundColor = res.warna;
-                previewLevel.style.color = '#fff';
-
-                previewSeleraText.innerText = res.nama_selera;
-                previewTindakan.innerText = res.tindakan;
-            });
-    }
-
-    kemungkinanSelect.addEventListener('change', loadPreview);
-    dampakSelect.addEventListener('change', loadPreview);
-
-    formAnalisis.addEventListener('submit', function(e) {
-
-        e.preventDefault();
-
-        const isEdit = id_penilaian.value !== '';
-
-        const url = isEdit ?
-            `<?= site_url('analisis-risiko/update') ?>/${id_penilaian.value}` :
-            `<?= site_url('analisis-risiko/store') ?>`;
-
-        Swal.fire({
-            title: isEdit ? 'Simpan Perubahan?' : 'Simpan Analisis?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Simpan',
-            cancelButtonText: 'Batal',
-            reverseButtons: true
-        }).then((result) => {
-
-            if (!result.isConfirmed) return;
-
-            fetch(url, {
-                    method: 'POST',
-                    body: new FormData(formAnalisis)
-                })
-                .then(res => res.json())
-                .then(() => {
-
-                    bootstrap.Offcanvas.getInstance(offcanvasAnalisis).hide();
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil disimpan',
-                        timer: 1200,
-                        showConfirmButton: false
-                    }).then(() => location.reload());
-                });
-
-        });
-
-    });
-
-    btnEdit.addEventListener('click', () => setEditMode(false));
-</script>

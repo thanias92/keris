@@ -19,11 +19,16 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/custom.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/context-selector.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/context-active.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/select2-custom.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/uikit.css') ?>">
 
     <!-- OFFCANVAS KONTEKS CUSTOM CSS -->
     <link rel="stylesheet" href="<?= base_url('assets/css/pk-offcanvas-konteks.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/identifikasi-risiko.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/analisis-risiko.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/evaluasi-risiko.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/rencana-penanganan.css') ?>">
 
     <!-- SELECT2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -46,8 +51,16 @@
 
     <!-- ================= JS AREA ================= -->
 
+    <!-- Global JS Variables -->
+    <script>
+        const baseUrl = "<?= base_url() ?>";
+        const csrfName = "<?= csrf_token() ?>";
+        const csrfToken = "<?= csrf_hash() ?>";
+    </script>
+
     <!-- Bootstrap Bundle (WAJIB & SATU-SATUNYA) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <!-- jQuery (WAJIB untuk Select2) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
