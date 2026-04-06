@@ -37,8 +37,8 @@
                 <td><?= esc($user['name']) ?></td>
                 <td><?= esc($user['email']) ?></td>
                 <td>
-                    <span class="badge bg-<?= $user['role'] === 'admin' ? 'danger' : 'secondary' ?>">
-                        <?= esc($user['role']) ?>
+                    <span class="badge bg-<?= ($user['role_name'] ?? '') === 'admin' ? 'danger' : 'secondary' ?>">
+                        <?= esc($user['role_name'] ?? '-') ?>
                     </span>
                 </td>
                 <td>
@@ -101,8 +101,8 @@
                         <div class="mb-3">
                             <label>Role</label>
                             <select name="role" class="form-select">
-                                <option value="admin" <?= $user['role'] == 'admin' ? 'selected' : '' ?>>Admin</option>
-                                <option value="operator" <?= $user['role'] == 'operator' ? 'selected' : '' ?>>Operator</option>
+                                <option value="admin" <?= $user['role_name'] == 'admin' ? 'selected' : '' ?>>Admin</option>
+                                <option value="operator" <?= $user['role_name'] == 'operator' ? 'selected' : '' ?>>Operator</option>
                             </select>
                         </div>
 

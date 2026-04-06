@@ -14,6 +14,9 @@ use CodeIgniter\Filters\PerformanceMetrics;
 use CodeIgniter\Filters\SecureHeaders;
 use App\Filters\AuthFilter;
 use App\Filters\AdminFilter;
+use App\Filters\RoleFilter;
+use App\Filters\PermissionFilter;
+use App\Filters\AutoPermissionFilter;
 
 class Filters extends BaseFilters
 {
@@ -38,6 +41,9 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         'auth'          => AuthFilter::class,
         'admin'         => AdminFilter::class,
+        'role'          => RoleFilter::class,
+        'permission'    => PermissionFilter::class,
+        'auto_permission' => AutoPermissionFilter::class,
     ];
 
     /**

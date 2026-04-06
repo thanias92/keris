@@ -29,6 +29,8 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/analisis-risiko.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/evaluasi-risiko.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/rencana-penanganan.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/pemantauan-risiko.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/pelaporan-risiko.css') ?>">
 
     <!-- SELECT2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />

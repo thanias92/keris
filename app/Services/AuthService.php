@@ -74,12 +74,30 @@ class AuthService
     */
     protected function setUserSession(array $user)
     {
+        $roleId = $user['role_id'] ?? null;
+
+        switch ($roleId) {
+            case 1: $finalRole = 'admin'; break;
+            case 2: $finalRole = 'operator'; break;
+            case 3: $finalRole = 'ketua'; break;
+            default: $finalRole = 'operator'; break;
+        }
+
         session()->set([
-            'user_id'   => $user['id'],
-            'user_name' => $user['name'],
-            'user_role' => $user['role'],
-            'isLoggedIn' => true,
+            'user_id'      => $user['id'],
+            'user_name'    => $user['name'],
+            'user_role'    => $finalRole,
+            'pengelola_id' => $user['pengelola_id'] ?? null,
+            'isLoggedIn'   => true,
+
+            // TAMBAHAN WAJIB UNTUK RBAC
+            'user' => [
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'role_id' => $user['role_id'] // INI KUNCI
+            ]
         ]);
+        log_message('error', 'ROLE FINAL: ' . $finalRole);
     }
 
     public function logout()

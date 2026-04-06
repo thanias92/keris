@@ -17,5 +17,6 @@ class UserModel extends Model
         'email',
         'password',
         'role',
+        'pengelola_id',
     ];
 }

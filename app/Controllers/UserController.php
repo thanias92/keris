@@ -15,8 +15,16 @@ class UserController extends BaseController
 
     public function index()
     {
+        $db = \Config\Database::connect();
+
+        $users = $db->table('users u')
+            ->select('u.*, r.name as role_name')
+            ->join('roles r', 'r.id = u.role_id', 'left')
+            ->get()
+            ->getResultArray();
+
         return view('user/index', [
-            'users' => $this->model->findAll()
+            'users' => $users
         ]);
     }
 

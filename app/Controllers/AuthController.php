@@ -27,7 +27,22 @@ class AuthController extends BaseController
             return redirect()->back()->with('error', 'Email atau password salah');
         }
 
-        return redirect()->to('/penetapan-konteks');
+        // REDIRECT SESUAI ROLE
+        $role = session('user_role');
+
+        if ($role === 'admin') {
+            return redirect()->to('/dashboard');
+        }
+
+        if ($role === 'operator') {
+            return redirect()->to('/dashboard');
+        }
+
+        if ($role === 'ketua') {
+            return redirect()->to('/dashboard');
+        }
+
+        return redirect()->to('/');
     }
 
     public function logout()

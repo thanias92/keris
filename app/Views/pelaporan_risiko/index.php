@@ -16,7 +16,9 @@
                     <h2 class="page-title mb-0">Pelaporan Risiko</h2>
                 </div>
                 <div class="col-12 col-lg-4 text-lg-end mt-2 mt-lg-0">
-                    <button onclick="window.print()" class="btn btn-primary">🖨️ Cetak Laporan</button>
+                    <button onclick="window.print()" class="btn btn-primary">
+                        🖨️ Cetak Laporan
+                    </button>
                 </div>
             </div>
         </div>
@@ -42,7 +44,6 @@
         'to'      => $to      ?? count($data),
     ]) ?>
 
-    <!-- Offcanvas Form — WAJIB ada agar JS bisa menemukan #plOffcanvas -->
     <?= view('pelaporan_risiko/_offcanvas_form') ?>
 
     <div class="card mt-3">
@@ -55,10 +56,8 @@
 
 </div>
 
-<!-- CSS — ganti ke pelaporan-risiko.css -->
 <link rel="stylesheet" href="<?= base_url('assets/css/pelaporan-risiko.css') ?>">
 
-<!-- JS -->
 <script src="<?= base_url('assets/js/modules/pelaporan_risiko/pelaporan.js') ?>"></script>
 
 <?= $this->endSection() ?>

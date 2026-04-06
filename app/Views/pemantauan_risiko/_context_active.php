@@ -1,0 +1,27 @@
+<?php if (!empty($activeKonteks)): ?>
+    <div class="card mb-2 border-0 bg-light" style="font-size: 0.78rem;">
+        <div class="card-body py-2 px-3">
+            <div class="row g-2 align-items-center">
+                <div class="col-auto text-muted">
+                    Tim Kerja: <strong class="text-dark"><?= esc($activeKonteks['nama_satuan_kerja'] ?? '-') ?></strong>
+                </div>
+                <div class="col-auto text-muted">·</div>
+                <div class="col-auto text-muted">
+                    Pengelola: <strong class="text-dark"><?= esc($activeKonteks['nama_pengelola'] ?? '-') ?></strong>
+                </div>
+                <div class="col-auto text-muted">·</div>
+                <div class="col-auto text-muted">
+                    Tahun: <strong class="text-dark"><?= esc($activeKonteks['tahun'] ?? '-') ?></strong>
+                </div>
+                <div class="col-auto text-muted">·</div>
+                <div class="col-auto text-muted">
+                    Kegiatan: <strong class="text-dark"><?= esc($activeKonteks['nama_kegiatan'] ?? '-') ?></strong>
+                </div>
+                <div class="col-auto text-muted">·</div>
+                <div class="col-auto text-muted">
+                    Sasaran: <strong class="text-dark"><?= esc($activeKonteks['uraian_sasaran'] ?? '-') ?></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
