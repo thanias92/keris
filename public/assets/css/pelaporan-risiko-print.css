@@ -1,0 +1,110 @@
+body {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #000;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    width: 70px;
+}
+
+.header-text {
+    text-align: center;
+    flex: 1;
+}
+
+.header-text h2 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.header-text h3 {
+    margin: 0;
+    font-size: 14px;
+}
+
+hr {
+    border: 1.5px solid black;
+    margin: 6px 0 12px;
+}
+
+/* TITLE */
+.title {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.title h3 {
+    margin: 0;
+}
+
+.info {
+    margin-bottom: 10px;
+    font-size: 11px;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 6px;
+    vertical-align: top;
+}
+
+th {
+    background-color: #f2f2f2;
+    text-align: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* STATUS */
+.status-selesai {
+    color: green;
+    font-weight: bold;
+}
+
+.status-belum {
+    color: red;
+}
+
+/* TTD */
+.ttd {
+    width: 250px;
+    margin-left: auto;
+    text-align: center;
+    margin-top: 60px;
+}
+
+/* PRINT FIX */
+thead {
+    display: table-header-group;
+}
+
+tr {
+    page-break-inside: avoid;
+}
+
+td {
+    line-height: 1.4;
+}
+
+th {
+    font-size: 12px;
+}
+
+table {
+    margin-top: 10px;
+}

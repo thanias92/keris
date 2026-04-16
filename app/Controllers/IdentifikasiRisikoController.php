@@ -432,4 +432,20 @@ class IdentifikasiRisikoController extends BaseController
         $data  = $model->getForDropdown();
         return $this->response->setJSON($data);
     }
+
+    public function requestBankRisiko()
+    {
+        $model = new \App\Models\BankRisikoModel();
+
+        $model->insert([
+            'pernyataan_risiko' => $this->request->getPost('pernyataan_risiko'),
+            'status' => 'pending',
+            'created_by' => session()->get('user_id'),
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+
+        return $this->response->setJSON([
+            'status' => 'success'
+        ]);
+    }
 }

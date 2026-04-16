@@ -5,10 +5,6 @@
   const modalEl = document.getElementById("modalBankRisiko");
   const modal = new bootstrap.Modal(modalEl);
 
-  // =========================================================
-  // HELPERS
-  // =========================================================
-
   const showMode = (mode) => {
     document
       .querySelectorAll(".br-mode")
@@ -29,8 +25,7 @@
     document.getElementById("bankRisikoPernyataan").removeAttribute("readonly");
   };
 
-  const getPerPage = () =>
-    document.getElementById("bankRisikoPerPage")?.value ?? 10;
+  const getPerPage = () => document.getElementById("brPerPage")?.value ?? 10;
 
   const reloadTable = (page = 1) => {
     const perPage = getPerPage();
@@ -43,12 +38,7 @@
     });
   };
 
-  // =========================================================
-  // BIND EVENTS DI DALAM TABLE
-  // =========================================================
-
   const bindTableEvents = () => {
-    // Klik row → buka modal mode view
     document.querySelectorAll(".br-row").forEach((row) => {
       row.addEventListener("click", () => {
         resetForm();
@@ -65,12 +55,10 @@
       });
     });
 
-    // Dropdown per page
     document
-      .getElementById("bankRisikoPerPage")
+      .getElementById("brPerPage")
       ?.addEventListener("change", () => reloadTable());
 
-    // Pagination links
     document
       .getElementById("bankRisikoTableWrapper")
       .addEventListener("click", (e) => {
@@ -83,10 +71,6 @@
 
   bindTableEvents();
 
-  // =========================================================
-  // TOMBOL TAMBAH
-  // =========================================================
-
   document
     .getElementById("btnTambahBankRisiko")
     ?.addEventListener("click", () => {
@@ -96,10 +80,6 @@
       showMode("edit");
       modal.show();
     });
-
-  // =========================================================
-  // SWITCH KE MODE EDIT
-  // =========================================================
 
   document
     .getElementById("bankRisikoBtnSwitchEdit")
@@ -111,10 +91,6 @@
         .removeAttribute("readonly");
       showMode("edit");
     });
-
-  // =========================================================
-  // BATAL (di mode edit → kembali ke view jika ada id, tutup jika create)
-  // =========================================================
 
   document
     .getElementById("bankRisikoBtnCancel")
@@ -131,10 +107,6 @@
         modal.hide();
       }
     });
-
-  // =========================================================
-  // SIMPAN (store / update)
-  // =========================================================
 
   document
     .getElementById("bankRisikoBtnSimpan")
@@ -179,10 +151,6 @@
       });
     });
 
-  // =========================================================
-  // DELETE
-  // =========================================================
-
   document
     .getElementById("bankRisikoBtnDelete")
     .addEventListener("click", () => {
@@ -208,10 +176,6 @@
         });
       });
     });
-
-  // =========================================================
-  // RESET saat modal ditutup
-  // =========================================================
 
   modalEl.addEventListener("hidden.bs.modal", () => resetForm());
 })();

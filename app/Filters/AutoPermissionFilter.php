@@ -12,28 +12,32 @@ class AutoPermissionFilter implements FilterInterface
     {
         helper('rbac');
 
+        $isAjax = $request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
+
         if (!session('isLoggedIn')) {
+
+            if ($isAjax) {
+                return service('response')
+                    ->setStatusCode(401)
+                    ->setJSON([
+                        'status' => 'error',
+                        'message' => 'Not logged in'
+                    ]);
+            }
+
             return redirect()->to('/login');
         }
 
-        // ambil segment pertama (LEBIH AMAN)
         $uri = $request->getUri();
-
-        $segment = $uri->getSegment(1);
         $segments = $uri->getSegments();
 
-        log_message('error', 'SEGMENT: ' . $segment);
+        $segment1 = $segments[0] ?? '';
+        $segment2 = $segments[1] ?? '';
 
-        if (!$segment) {
+        if (!$segment1) {
             return;
         }
 
-        // kalau root (dashboard) → skip
-        if (!$segment) {
-            return;
-        }
-
-        //  whitelist
         $whitelist = [
             'login',
             'logout',
@@ -41,23 +45,26 @@ class AutoPermissionFilter implements FilterInterface
             'dashboard'
         ];
 
-        if (in_array($segment, $whitelist)) {
+        if (in_array($segment1, $whitelist)) {
             return;
         }
 
-        $method = strtolower($request->getMethod());
+        $method = strtolower($request->getMethod(true));
+        if ($method === 'get') {
+            return;
+        }
 
-        $resource = str_replace('-', '_', $segment);
+        // FIX: gunakan segment ke-2 jika ada
+        $resource = str_replace('-', '_', $segment1);
 
-        // SPECIAL CASE
-        if ($segment === 'rbac') {
+        if ($segment1 === 'rbac') {
             $permission = 'manage_roles';
         } elseif (in_array('approve', $segments)) {
             $permission = 'approve_pelaporan';
         } elseif (in_array('validasi', $segments)) {
             $permission = 'approve_pelaporan';
         } elseif (in_array('set-active', $segments)) {
-            $permission = 'update_pelaporan';
+            $permission = 'update_' . $resource;
         } else {
             $actionMap = [
                 'get' => 'view',
@@ -71,6 +78,19 @@ class AutoPermissionFilter implements FilterInterface
         }
 
         if (!hasPermission($permission)) {
+
+            $isAjax = $request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
+
+            if ($isAjax) {
+                return service('response')
+                    ->setStatusCode(403)
+                    ->setJSON([
+                        'status' => 'error',
+                        'message' => 'Unauthorized',
+                        'permission' => $permission
+                    ]);
+            }
+
             return redirect()->to('/rbac/unauthorized');
         }
     }

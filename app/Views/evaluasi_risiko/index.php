@@ -1,8 +1,25 @@
 <?= $this->extend('layout/main') ?>
 <?= $this->section('content') ?>
 
+<script>
+    window.ER_CONFIG = {
+        csrf: {
+            name: '<?= csrf_token() ?>',
+            token: '<?= csrf_hash() ?>',
+        },
+        url: {
+            store: '<?= site_url('evaluasi-risiko/store') ?>',
+            update: (id) => `<?= site_url('evaluasi-risiko/update') ?>/${id}`,
+            delete: (id) => `<?= site_url('evaluasi-risiko/delete') ?>/${id}`,
+            detail: (id) => `<?= site_url('evaluasi-risiko/detail') ?>/${id}`,
+            detailAnalisis: (id) => `<?= site_url('evaluasi-risiko/detail-analisis') ?>/${id}`,
+        }
+    };
+</script>
+
 <div class="pk-page">
 
+    <!-- PAGE HEADER -->
     <div class="page-header pk-header mb-3">
         <div class="page-block">
             <div class="row align-items-center">
@@ -10,55 +27,86 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-1">
                             <li class="breadcrumb-item">Manajemen Risiko</li>
-                            <li class="breadcrumb-item active">Pelaporan Risiko</li>
+                            <li class="breadcrumb-item active">Evaluasi Risiko</li>
                         </ol>
                     </nav>
-                    <h2 class="page-title mb-0">Pelaporan Risiko</h2>
-                </div>
-                <div class="col-12 col-lg-4 text-lg-end mt-2 mt-lg-0">
-                    <button onclick="window.print()" class="btn btn-primary">🖨️ Cetak Laporan</button>
+                    <h2 class="page-title mb-0">Evaluasi Risiko</h2>
                 </div>
             </div>
         </div>
     </div>
 
-    <?= view('pelaporan_risiko/_context_selector', [
-        'listKonteks' => $listKonteks,
-        'periode'     => $periode,
-        'userRole'    => $userRole,
-        'ketuaInfo'   => $ketuaInfo ?? null,
+    <!-- Context Selector -->
+    <?= view('evaluasi_risiko/_context_selector', [
+        'listKonteks'   => $listKonteks,
+        'activeKonteks' => $activeKonteks,
     ]) ?>
 
-    <?= view('pelaporan_risiko/_summary_cards', [
-        'summary' => $summary,
+    <?php if ($activeKonteks): ?>
+
+        <!-- Konteks Aktif Info -->
+        <?= view('evaluasi_risiko/_context_active', [
+            'activeKonteks' => $activeKonteks,
+        ]) ?>
+
+        <!-- Summary Cards -->
+        <?= view('evaluasi_risiko/_summary_cards', [
+            'totalRisiko'   => $totalRisiko,
+            'totalSudah'    => $totalSudah,
+            'totalBelum'    => $totalBelum,
+            'levelRisiko'   => $levelRisiko,
+            'activeKonteks' => $activeKonteks,
+            'filter'        => $filter,
+        ]) ?>
+
+        <!-- Filter Badge -->
+        <?php if ($filter): ?>
+            <div class="mb-3 d-flex align-items-center gap-2">
+                <span class="text-muted small">Menampilkan:</span>
+
+                <?php if ($filter === 'sudah'): ?>
+                    <span class="badge bg-success-subtle text-success border border-success">
+                        Sudah Dievaluasi
+                    </span>
+                <?php elseif ($filter === 'belum'): ?>
+                    <span class="badge bg-warning-subtle text-warning border border-warning">
+                        Belum Dievaluasi
+                    </span>
+                <?php endif; ?>
+
+                <a href="<?= site_url('evaluasi-risiko') ?>"
+                    class="small text-decoration-none text-danger ms-2">
+                    ✕ Clear Filter
+                </a>
+            </div>
+        <?php endif; ?>
+
+    <?php endif; ?>
+
+    <!-- Table -->
+    <?= view('evaluasi_risiko/_table_section', [
+        'data'          => $data,
+        'activeKonteks' => $activeKonteks,
+        'total'         => $total   ?? 0,
+        'from'          => $from    ?? 1,
+        'to'            => $to      ?? count($data),
+        'perPage'       => $perPage ?? 10,
+        'filter'        => $filter  ?? '',
+        'pager'         => $pager   ?? null,
     ]) ?>
 
-    <?= view('pelaporan_risiko/_table_section', [
-        'data'    => $data,
-        'pager'   => $pager   ?? null,
-        'perPage' => $perPage ?? 10,
-        'total'   => $total   ?? count($data),
-        'from'    => $from    ?? 1,
-        'to'      => $to      ?? count($data),
+    <!-- Offcanvas Form -->
+    <?= view('evaluasi_risiko/_offcanvas_form', [
+        'activeKonteks' => $activeKonteks,
     ]) ?>
-
-    <!-- Offcanvas Form — WAJIB ada agar JS bisa menemukan #plOffcanvas -->
-    <?= view('pelaporan_risiko/_offcanvas_form') ?>
-
-    <div class="card mt-3">
-        <div class="card-body small text-muted">
-            <strong>Catatan:</strong><br>
-            Laporan ini dihasilkan otomatis dari data Pemantauan Risiko
-            dan digunakan sebagai bahan evaluasi manajemen risiko.
-        </div>
-    </div>
 
 </div>
 
-<!-- CSS — ganti ke pelaporan-risiko.css -->
-<link rel="stylesheet" href="<?= base_url('assets/css/pelaporan-risiko.css') ?>">
+<!-- CSS -->
+<link rel="stylesheet" href="<?= base_url('assets/css/evaluasi-risiko.css') ?>">
 
-<!-- JS -->
-<script src="<?= base_url('assets/js/modules/pelaporan_risiko/pelaporan.js') ?>"></script>
+<!-- JS Modules -->
+<script src="<?= base_url('assets/js/modules/evaluasi_risiko/context-selector.js') ?>"></script>
+<script src="<?= base_url('assets/js/modules/evaluasi_risiko/evaluasi.js') ?>"></script>
 
 <?= $this->endSection() ?>

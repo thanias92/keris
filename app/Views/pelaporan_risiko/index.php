@@ -16,9 +16,13 @@
                     <h2 class="page-title mb-0">Pelaporan Risiko</h2>
                 </div>
                 <div class="col-12 col-lg-4 text-lg-end mt-2 mt-lg-0">
-                    <button onclick="window.print()" class="btn btn-primary">
-                        🖨️ Cetak Laporan
-                    </button>
+                    <a href="<?= base_url('pelaporan-risiko/print') ?>" target="_blank" class="btn btn-outline-secondary me-2">
+                        🖨️ Print PDF
+                    </a>
+
+                    <a href="<?= base_url('pelaporan-risiko/export') ?>" class="btn btn-primary">
+                        ⬇️ Export Excel
+                    </a>
                 </div>
             </div>
         </div>
@@ -57,6 +61,9 @@
 </div>
 
 <link rel="stylesheet" href="<?= base_url('assets/css/pelaporan-risiko.css') ?>">
+<script>
+    window.USER_ROLE = "<?= session('user_role') ?>";
+</script>
 
 <script src="<?= base_url('assets/js/modules/pelaporan_risiko/pelaporan.js') ?>"></script>
 

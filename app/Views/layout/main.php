@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/uikit.css') ?>">
 
     <!-- OFFCANVAS KONTEKS CUSTOM CSS -->
+    <link rel="stylesheet" href="<?= base_url('assets/css/dashboard.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/pk-offcanvas-konteks.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/identifikasi-risiko.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/analisis-risiko.css') ?>">
@@ -31,6 +32,11 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/rencana-penanganan.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/pemantauan-risiko.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/pelaporan-risiko.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/satuan-kerja.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/kegiatan.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/sasaran-strategis.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/penugasan-tim.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/plugins/bank-risiko.css') ?>">
 
     <!-- SELECT2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />

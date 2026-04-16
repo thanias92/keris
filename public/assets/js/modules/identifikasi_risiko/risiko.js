@@ -424,3 +424,43 @@ document.addEventListener("click", function (e) {
     });
   });
 });
+
+document.addEventListener("click", function (e) {
+  if (e.target?.id !== "irBtnRequest") return;
+
+  const pernyataan = document.getElementById("irPernyataan").value.trim();
+
+  if (!pernyataan) {
+    PkAlert.toast({ text: "Pernyataan risiko wajib diisi.", icon: "warning" });
+    return;
+  }
+
+  PkAlert.confirm({
+    title: "Kirim ke Bank Risiko?",
+    text: "Data akan dikirim sebagai request (pending).",
+    icon: "question",
+    confirmText: "Kirim",
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    $.ajax({
+      url: baseUrl + "identifikasi-risiko/request-bank-risiko",
+      method: "POST",
+      data: {
+        pernyataan_risiko: pernyataan,
+        [csrfName]: csrfToken,
+      },
+      success(res) {
+        if (res.status === "success") {
+          PkAlert.toast({
+            text: "Berhasil dikirim ke Bank Risiko (pending approval).",
+            icon: "success",
+          });
+        }
+      },
+      error() {
+        PkAlert.error();
+      },
+    });
+  });
+});

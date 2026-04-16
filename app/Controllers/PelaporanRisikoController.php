@@ -296,4 +296,64 @@ class PelaporanRisikoController extends BaseController
 
         return $this->response->setJSON(['success' => true]);
     }
+
+    public function print()
+    {
+        $periode = session('pl_periode') ?? [
+            'bulan' => date('m'),
+            'tahun' => date('Y')
+        ];
+
+        $bulan = $periode['bulan'];
+        $tahun = $periode['tahun'];
+
+        $bulanNama = [
+            '01' => 'Januari',
+            '02' => 'Februari',
+            '03' => 'Maret',
+            '04' => 'April',
+            '05' => 'Mei',
+            '06' => 'Juni',
+            '07' => 'Juli',
+            '08' => 'Agustus',
+            '09' => 'September',
+            '10' => 'Oktober',
+            '11' => 'November',
+            '12' => 'Desember'
+        ];
+
+        // ambil data laporan
+        $data = $this->db->table('rencana_penanganan_risiko rtp')
+            ->select('
+            rtp.uraian_rtp,
+            ir.pernyataan_risiko,
+            pm.realisasi_output,
+            COALESCE(pm.status, \'Belum Dilaksanakan\') as status,
+            sk.nama_satuan_kerja
+        ')
+            ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
+            ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
+            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
+            ->join('satuan_kerja sk', 'sk.id_satuan_kerja = k.id_satuan_kerja', 'left')
+            ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left')
+            ->orderBy('rtp.id_rtp', 'ASC')
+            ->get()->getResultArray();
+
+        // ambil info ketua (kalau ada)
+        $ketua = $this->db->table('pengelola_risiko g')
+            ->select('g.nama')
+            ->join('penugasan_pengelola p', 'p.pengelola_id = g.id', 'left')
+            ->where('p.is_ketua_tim', true)
+            ->get()->getRowArray();
+
+        return view('pelaporan_risiko/print', [
+            'data'        => $data,
+            'bulan'       => $bulanNama[$bulan] ?? $bulan,
+            'tahun'       => $tahun,
+            'satker'      => $data[0]['nama_satuan_kerja'] ?? '-',
+            'nama_ketua'  => $ketua['nama'] ?? '(................................)'
+        ]);
+    }
+    
 }
