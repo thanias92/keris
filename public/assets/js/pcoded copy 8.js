@@ -196,10 +196,8 @@ document.addEventListener('DOMContentLoaded', function () {
     sidebar_hide.addEventListener("click", function () {
       const sidebar = document.querySelector(".pc-sidebar");
 
-      const isMini = sidebar.classList.toggle("pc-sidebar-mini");
-
-      // simpan state
-      localStorage.setItem("sidebar-mini", isMini ? "true" : "false");
+      // DISABLE MINI SIDEBAR
+      // sidebar.classList.toggle("pc-sidebar-mini");
 
       if (sidebar.classList.contains("pc-sidebar-mini")) {
         initSidebarTooltips();
@@ -248,28 +246,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
   menu_click();
 
+  // =====================================
 // FORCE SIDEBAR STABLE STATE
 // =====================================
 const sidebar = document.querySelector(".pc-sidebar");
+
+if (sidebar) {
+  sidebar.classList.remove("pc-sidebar-mini");
+}
 
 // buka semua submenu
 document.querySelectorAll(".pc-item.pc-hasmenu").forEach((item) => {
   item.classList.add("pc-trigger");
 });
 });
-
-// AUTO SCROLL KE MENU ACTIVE
-// =====================================
-setTimeout(() => {
-  const active = document.querySelector(".pc-sidebar .pc-item.active");
-
-  if (active) {
-    active.scrollIntoView({
-      behavior: "auto",   // jangan smooth biar ga aneh
-      block: "center"
-    });
-  }
-}, 100);
 
 function add_scroller() {
   if (document.querySelector(".navbar-content")) {
@@ -293,20 +283,6 @@ function menu_click() {
       });
     };
   });
-}
-
-// RESTORE SIDEBAR STATE
-// =====================================
-const sidebar = document.querySelector(".pc-sidebar");
-
-if (sidebar) {
-  const savedState = localStorage.getItem("sidebar-mini");
-
-  if (savedState === "true") {
-    sidebar.classList.add("pc-sidebar-mini");
-  } else {
-    sidebar.classList.remove("pc-sidebar-mini");
-  }
 }
 
 // hide menu in mobile menu

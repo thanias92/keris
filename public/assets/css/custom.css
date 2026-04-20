@@ -47,37 +47,6 @@ body {
 }
 
 
-/* =============================== */
-/* MINI SIDEBAR – FLATTEN SUBMENU */
-/* =============================== */
-
-/* Sembunyikan parent menu */
-.pc-sidebar.pc-sidebar-mini .pc-item.pc-hasmenu > .pc-link {
-  display: none !important;
-}
-
-/* Jadikan submenu sebagai menu utama */
-.pc-sidebar.pc-sidebar-mini .pc-item.pc-hasmenu > .pc-submenu {
-  position: static !important;
-  display: block !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-/* Submenu item tampil seperti menu utama */
-.pc-sidebar.pc-sidebar-mini .pc-submenu .pc-link {
-  display: flex;
-  justify-content: center;
-  padding: 12px 0 !important;
-}
-
-/* Sembunyikan teks */
-.pc-sidebar.pc-sidebar-mini .pc-submenu .pc-mtext {
-  display: none !important;
-}
-
 /* Center icon */
 .pc-sidebar.pc-sidebar-mini .pc-submenu .pc-micon {
   margin: 0 !important;
@@ -557,42 +526,81 @@ body:not(.sidebar-mini) .col-risiko {
 }
 
 /* ===============================
-   SIDEBAR LOGO
+   SIDEBAR LOGO BARU (KERIS)
 ================================ */
-
-/* logo normal */
-
-.keris-logo-full {
-    height: 64px;
-    width: auto;
-    display: block;
-}
-
-/* logo mini */
-
-.keris-logo-mini {
-    height: 42px;
-    width: auto;
-    display: none;
-}
-
-/* saat sidebar mini aktif */
-
-.pc-sidebar.pc-sidebar-mini .keris-logo-full {
-    display: none;
-}
-
-.pc-sidebar.pc-sidebar-mini .keris-logo-mini {
-    display: block;
-}
 
 .keris-brand {
     display: flex;
     align-items: center;
-    justify-content: center;
+    padding-left: 20px;   /* sejajar icon menu */
+    padding-top: 12px;    /* biar ga nempel atas */
+    padding-bottom: 6px;
+    gap: 8px;
 }
 
-.pc-sidebar .m-header {
-    padding-top: 26px;
-    padding-bottom: 12px;
+/* icon kiri */
+.keris-icon {
+    height: 42px;
+}
+
+/* tulisan KERIS */
+.keris-text-logo {
+    height: 24px;
+}
+
+/* saat sidebar MINI → sembunyikan tulisan */
+.pc-sidebar.pc-sidebar-mini .keris-text-logo {
+    display: none;
+}
+
+/* saat sidebar NORMAL → tampil */
+.pc-sidebar:not(.pc-sidebar-mini) .keris-text-logo {
+    display: block;
+}
+
+/* ===================================== */
+/* FORCE SIDEBAR ALWAYS OPEN */
+/* ===================================== */
+
+/* Matikan animasi sidebar */
+.pc-sidebar {
+    transition: none !important;
+}
+
+/* Jangan geser keluar layar */
+.pc-sidebar {
+    transform: translateX(0) !important;
+}
+
+/* Kembalikan layout submenu seperti normal */
+.pc-sidebar.pc-sidebar-mini .pc-item.pc-hasmenu > .pc-link {
+    display: flex !important;
+}
+
+/* Fix icon + text alignment */
+.pc-sidebar.pc-sidebar-mini .pc-link {
+    justify-content: flex-start !important;
+    padding-left: 20px !important;
+}
+
+/* FIX MINI SIDEBAR NORMAL */
+/* ===================================== */
+
+.pc-sidebar.pc-sidebar-mini {
+    width: 80px !important;
+}
+
+/* sembunyikan teks */
+.pc-sidebar.pc-sidebar-mini .pc-mtext {
+    display: none !important;
+}
+
+/* center icon */
+.pc-sidebar.pc-sidebar-mini .pc-link {
+    justify-content: center !important;
+}
+
+/* submenu tetap hidden */
+.pc-sidebar.pc-sidebar-mini .pc-submenu {
+    display: none !important;
 }

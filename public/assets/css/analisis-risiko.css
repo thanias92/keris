@@ -248,7 +248,7 @@
 .ar-stat-card {
     border: 1px solid #e9ecef;
     border-radius: 10px;
-    padding: 12px 20px;
+    padding: 10px 14px;
     background: #fff;
     min-width: 130px;
     transition: box-shadow 0.15s ease, transform 0.15s ease;
@@ -318,6 +318,52 @@
     border-radius: 20px;
     min-width: 24px;
     text-align: center;
+}
+
+.ar-stat-link{
+display:inline-block;
+text-decoration:none;
+}
+
+.ar-stat-dist{
+min-width:190px;
+max-width:210px;
+padding:10px 12px;
+}
+
+.ar-dist-bar-row{
+display:flex;
+align-items:center;
+gap:6px;
+margin:2px 0;
+font-size:11px;
+}
+
+.ar-dist-label{
+width:80px;
+font-size:11px;
+color:#374151;
+}
+
+.ar-dist-bar{
+flex:1;
+height:6px;
+background:#eef2f7;
+border-radius:4px;
+overflow:hidden;
+}
+
+.ar-dist-fill{
+height:100%;
+border-radius:4px;
+transition:width .25s ease;
+}
+
+.ar-dist-value{
+width:16px;
+text-align:right;
+font-weight:600;
+font-size:10px;
 }
 
 /* ================= BOTTOM SECTION ================= */

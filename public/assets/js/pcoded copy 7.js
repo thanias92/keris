@@ -196,10 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
     sidebar_hide.addEventListener("click", function () {
       const sidebar = document.querySelector(".pc-sidebar");
 
-      const isMini = sidebar.classList.toggle("pc-sidebar-mini");
-
-      // simpan state
-      localStorage.setItem("sidebar-mini", isMini ? "true" : "false");
+      sidebar.classList.toggle("pc-sidebar-mini");
 
       if (sidebar.classList.contains("pc-sidebar-mini")) {
         initSidebarTooltips();
@@ -247,29 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   menu_click();
-
-// FORCE SIDEBAR STABLE STATE
-// =====================================
-const sidebar = document.querySelector(".pc-sidebar");
-
-// buka semua submenu
-document.querySelectorAll(".pc-item.pc-hasmenu").forEach((item) => {
-  item.classList.add("pc-trigger");
 });
-});
-
-// AUTO SCROLL KE MENU ACTIVE
-// =====================================
-setTimeout(() => {
-  const active = document.querySelector(".pc-sidebar .pc-item.active");
-
-  if (active) {
-    active.scrollIntoView({
-      behavior: "auto",   // jangan smooth biar ga aneh
-      block: "center"
-    });
-  }
-}, 100);
 
 function add_scroller() {
   if (document.querySelector(".navbar-content")) {
@@ -279,34 +254,19 @@ function add_scroller() {
 
 function menu_click() {
   const sidebar = document.querySelector(".pc-sidebar");
-  if (!sidebar) return;
+  if (!sidebar || sidebar.classList.contains("pc-sidebar-mini")) return;
 
   const parents = sidebar.querySelectorAll(".pc-item.pc-hasmenu > .pc-link");
 
   parents.forEach((link) => {
-    link.onclick = function () {
-      const parent = link.parentElement;
+    link.onclick = function (e) {
+      e.preventDefault();
 
-      // buka semua submenu
       document.querySelectorAll(".pc-item.pc-hasmenu").forEach((item) => {
         item.classList.add("pc-trigger");
       });
     };
   });
-}
-
-// RESTORE SIDEBAR STATE
-// =====================================
-const sidebar = document.querySelector(".pc-sidebar");
-
-if (sidebar) {
-  const savedState = localStorage.getItem("sidebar-mini");
-
-  if (savedState === "true") {
-    sidebar.classList.add("pc-sidebar-mini");
-  } else {
-    sidebar.classList.remove("pc-sidebar-mini");
-  }
 }
 
 // hide menu in mobile menu

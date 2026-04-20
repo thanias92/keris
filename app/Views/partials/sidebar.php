@@ -1,10 +1,11 @@
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
-        <div class="m-header keris-header">
-            <a href="<?= base_url('/') ?>" class="b-brand keris-brand">
-                <img src="<?= base_url('assets/images/logo-keris-raja.png') ?>" class="keris-logo-full">
-                <img src="<?= base_url('assets/images/logo-keris.png') ?>" class="keris-logo-mini">
-            </a>
+        <div class="keris-brand">
+            <!-- ICON -->
+            <img src="<?= base_url('assets/images/logo-keris.jpeg') ?>" class="keris-icon" alt="KERIS">
+
+            <!-- TEXT KERIS -->
+            <img src="<?= base_url('assets/images/2.png') ?>" class="keris-text-logo" alt="KERIS TEXT">
         </div>
         <div class="navbar-content">
             <ul class="pc-navbar">
