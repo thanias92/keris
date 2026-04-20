@@ -14,12 +14,7 @@
                             <li class="breadcrumb-item active">MR Instansi</li>
                         </ol>
                     </nav>
-                    <h2 class="page-title mb-0">MR Instansi (SICAPKIN)</h2>
-                </div>
-                <div class="col-12 col-lg-4 text-lg-end mt-2 mt-lg-0">
-                    <button id="btnSync" class="btn btn-primary">
-                        Ambil Data SICAPKIN
-                    </button>
+                    <h2 class="page-title mb-0">MR Instansi</h2>
                 </div>
             </div>
         </div>

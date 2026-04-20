@@ -38,7 +38,7 @@
 
                             <li class="pc-item">
                                 <a href="<?= base_url('mr-instansi') ?>" class="pc-link">
-                                    <span class="pc-mtext">MR Instansi (SICAPKIN)</span>
+                                    <span class="pc-mtext">MR Instansi</span>
                                 </a>
                             </li>
 
