@@ -125,7 +125,11 @@ function erPopulateInfo(d) {
    LOAD DETAIL EVALUASI (view/edit mode)
 ====================================================== */
 function erLoadDetail(idEvaluasi) {
-  return fetch(ER_URL.detail(idEvaluasi))
+  return fetch(ER_URL.detail(idEvaluasi), {
+    headers: {
+      "X-Requested-With": "XMLHttpRequest",
+    },
+  })
     .then((r) => r.json())
     .then((d) => {
       document.getElementById("erId").value = d.id_evaluasi;
@@ -181,14 +185,20 @@ document.addEventListener("click", function (e) {
     document.getElementById("erIdIdentifikasi").value = idIdentifikasi;
     document.getElementById("erIdPenilaian").value = idPenilaian;
 
-    fetch(ER_URL.detailAnalisis(idIdentifikasi)) // [FIX] param: id_identifikasi
+    fetch(ER_URL.detailAnalisis(idIdentifikasi), {
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    })
       .then((r) => r.json())
       .then((d) => {
         erPopulateInfo(d);
+
         // Jika ada id_penilaian dari response, update hidden field
         if (d.id_penilaian) {
           document.getElementById("erIdPenilaian").value = d.id_penilaian;
         }
+
         erSetMode("create");
       });
   }
