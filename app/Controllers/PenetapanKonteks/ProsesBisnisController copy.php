@@ -18,7 +18,6 @@ class ProsesBisnisController extends BaseContextController
 
     public function index()
     {
-        dd(session()->get('user'));
         $activeKonteks = $this->getActiveKonteks();
 
         // Semua master proses bisnis
@@ -50,13 +49,8 @@ class ProsesBisnisController extends BaseContextController
     {
         if (!$this->request->isAJAX()) return redirect()->back();
 
-        $user = session()->get('user');
-
         $idKonteks   = $this->request->getPost('id_konteks');
         $idProsesList = $this->request->getPost('id_proses') ?? [];
-
-        log_message('error', 'USER: ' . json_encode($user));
-        log_message('error', 'ID KONTEKS: ' . $idKonteks);
 
         if (!$idKonteks) {
             return $this->response->setJSON([
@@ -65,29 +59,6 @@ class ProsesBisnisController extends BaseContextController
             ]);
         }
 
-        // TAMBAHAN CEK TIM
-        if ($user['role'] === 'operator') {
-
-            // ambil data konteks
-            $konteks = $this->getActiveKonteks();
-
-            if (!$konteks || $konteks['id_konteks'] != $idKonteks) {
-                return $this->response->setJSON([
-                    'status'  => 'error',
-                    'message' => 'Akses tidak valid.',
-                ]);
-            }
-
-            // CEK TIM
-            if ($konteks['id_satuan_kerja'] != $user['id_tim']) {
-                return $this->response->setJSON([
-                    'status'  => 'error',
-                    'message' => 'Kamu tidak boleh mengedit konteks tim lain.',
-                ]);
-            }
-        }
-
-        // lanjut normal
         $this->junctionModel->syncByKonteks($idKonteks, $idProsesList);
 
         return $this->response->setJSON([

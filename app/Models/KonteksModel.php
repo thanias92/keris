@@ -13,7 +13,7 @@ class KonteksModel extends Model
     protected $useTimestamps    = true;
 
     protected $allowedFields = [
-        'id_satuan_kerja',
+        'id_tim',
         'pemilik_risiko_id',
         'pengelola_risiko_id',
         'id_kegiatan',
@@ -29,15 +29,15 @@ class KonteksModel extends Model
         return $this
             ->select('
             konteks.*,
-            satuan_kerja.nama_satuan_kerja,
+            tim_kerja.nama_tim,
             p.nama as nama_pemilik,
             g.nama as nama_pengelola
         ')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
             ->orderBy('tahun', 'DESC')
-            ->orderBy('satuan_kerja.nama_satuan_kerja', 'ASC')
+            ->orderBy('tim_kerja.nama_tim', 'ASC')
             ->findAll();
     }
 

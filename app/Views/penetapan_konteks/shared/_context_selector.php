@@ -1,6 +1,6 @@
 <?php
 $konteksMap = [];
-$satuanKerjaOpt = [];
+$timKerjaOpt = [];
 $tahunOpt = [];
 $sasaranOpt = [];
 $pengelolaOpt = [];
@@ -10,15 +10,15 @@ foreach ($listKonteks as $k) {
     $id = $k['id_konteks'];
 
     $konteksMap[$id] = [
-        'id_satuan_kerja'      => $k['id_satuan_kerja'] ?? '',
+        'id_tim'               => $k['id_tim'] ?? '',
         'pengelola_risiko_id'  => $k['pengelola_risiko_id'] ?? '',
         'id_kegiatan'          => $k['id_kegiatan'] ?? '',
         'id_sasaran_strategis' => $k['id_sasaran_strategis'] ?? '',
         'tahun'                => $k['tahun'],
     ];
 
-    if (!empty($k['id_satuan_kerja']))
-        $satuanKerjaOpt[$k['id_satuan_kerja']] = $k['nama_satuan_kerja'];
+    if (!empty($k['id_tim']))
+        $timKerjaOpt[$k['id_tim']] = $k['nama_tim'];
 
     if (!empty($k['tahun']))
         $tahunOpt[$k['tahun']] = true;
@@ -33,7 +33,7 @@ foreach ($listKonteks as $k) {
         $kegiatanOpt[$k['id_kegiatan']] = $k['nama_kegiatan'];
 }
 
-asort($satuanKerjaOpt);
+asort($timKerjaOpt);
 asort($pengelolaOpt);
 asort($kegiatanOpt);
 asort($sasaranOpt);
@@ -43,7 +43,7 @@ $isFilterMode = ($activeTab ?? 'konteks') === 'konteks';
 
 if ($isFilterMode) {
     $sel = [
-        'id_satuan_kerja'      => $_GET['sk'] ?? '',
+        'id_tim'               => $_GET['sk'] ?? '',
         'pengelola_risiko_id'  => $_GET['pg'] ?? '',
         'id_kegiatan'          => $_GET['kg'] ?? '',
         'id_sasaran_strategis' => $_GET['ss'] ?? '',
@@ -73,11 +73,11 @@ if ($isFilterMode) {
 
                     <div class="pk-filter-row">
                         <label>Tim Kerja</label>
-                        <select class="pk-select" id="csSatuanKerja" name="sk">
+                        <select class="pk-select" id="csTimKerja" name="sk">
                             <option value="">– Pilih –</option>
-                            <?php foreach ($satuanKerjaOpt as $id => $nama): ?>
+                            <?php foreach ($timKerjaOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= isset($sel['id_satuan_kerja']) && (string)$sel['id_satuan_kerja'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= isset($sel['id_tim']) && (string)$sel['id_tim'] === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>

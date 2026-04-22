@@ -10,12 +10,12 @@ $routes->post('login', 'AuthController::attemptLogin');
 $routes->get('logout', 'AuthController::logout');
 
 // Dashboard
-$routes->get('/', 'DashboardController::index', ['filter' => 'auto_permission']);
-$routes->get('dashboard', 'DashboardController::index', ['filter' => 'auto_permission']);
+$routes->get('/', 'DashboardController::index');
+$routes->get('dashboard', 'DashboardController::index');
 $routes->get('dashboard/data', 'DashboardController::data');
 
 // Manajemen User (admin)
-$routes->group('manajemen-user', ['filter' => ['auth', 'auto_permission']], function ($routes) {
+$routes->group('manajemen-user', ['filter' => ['auth']], function ($routes) {
     $routes->get('/', 'UserController::index');
     $routes->post('store', 'UserController::store');
     $routes->post('update/(:num)', 'UserController::update/$1');
@@ -23,7 +23,7 @@ $routes->group('manajemen-user', ['filter' => ['auth', 'auto_permission']], func
 });
 
 // RBAC (Role & Permission)
-$routes->group('rbac', ['filter' => ['auth', 'auto_permission']], function ($routes) {
+$routes->group('rbac', ['filter' => ['auth']], function ($routes) {
     $routes->get('role', 'RBAC\RoleController::index');
     $routes->post('role/store', 'RBAC\RoleController::store');
     $routes->post('role/update/(:num)', 'RBAC\RoleController::update/$1');
@@ -43,7 +43,7 @@ $routes->group('bank-risiko', ['filter' => 'auth'], function ($routes) {
     $routes->get('table', 'BankRisikoController::ajaxTable');
     $routes->get('list', 'BankRisikoController::list');
 
-    $routes->group('', ['filter' => 'auto_permission'], function ($routes) {
+    $routes->group('', function ($routes) {
         $routes->post('store', 'BankRisikoController::store');
         $routes->post('update/(:num)', 'BankRisikoController::update/$1');
         $routes->post('delete/(:num)', 'BankRisikoController::delete/$1');
@@ -51,19 +51,19 @@ $routes->group('bank-risiko', ['filter' => 'auth'], function ($routes) {
 });
 
 // MR Instansi
-$routes->group('mr-instansi', ['filter' => ['auth', 'auto_permission']], function ($routes) {
+$routes->group('mr-instansi', ['filter' => ['auth']], function ($routes) {
     $routes->get('/', 'MrInstansiController::index');
     $routes->get('data', 'MrInstansiController::getData');
     $routes->post('sync', 'MrInstansiController::sync');
 });
 
 // Master Data
-$routes->group('master', ['filter' => ['auth', 'auto_permission']], function ($routes) {
-    $routes->get('satuan-kerja', 'Master\SatuanKerjaController::index');
-    $routes->get('satuan-kerja/table', 'Master\SatuanKerjaController::table');
-    $routes->post('satuan-kerja/store', 'Master\SatuanKerjaController::store');
-    $routes->post('satuan-kerja/update/(:num)', 'Master\SatuanKerjaController::update/$1');
-    $routes->post('satuan-kerja/delete/(:num)', 'Master\SatuanKerjaController::delete/$1');
+$routes->group('master', ['filter' => ['auth']], function ($routes) {
+    $routes->get('tim-kerja', 'Master\SatuanKerjaController::index');
+    $routes->get('tim-kerja/table', 'Master\SatuanKerjaController::table');
+    $routes->post('tim-kerja/store', 'Master\SatuanKerjaController::store');
+    $routes->post('tim-kerja/update/(:num)', 'Master\SatuanKerjaController::update/$1');
+    $routes->post('tim-kerja/delete/(:num)', 'Master\SatuanKerjaController::delete/$1');
 
     $routes->get('kegiatan', 'Master\KegiatanController::index');
     $routes->get('kegiatan/table', 'Master\KegiatanController::table');
@@ -93,7 +93,9 @@ $routes->group('master', ['filter' => ['auth', 'auto_permission']], function ($r
 });
 
 // Penetapan Konteks
-$routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKonteks','filter' => ['auth', 'auto_permission']
+$routes->group('penetapan-konteks', [
+    'namespace' => 'App\Controllers\PenetapanKonteks',
+    'filter' => ['auth']
 ], function ($routes) {
     $routes->get('/', 'KonteksController::index');
     $routes->get('konteks', 'KonteksController::index');
@@ -110,9 +112,15 @@ $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKo
     $routes->get('konteks/get-pengelola-list', 'KonteksController::getPengelolaList');
     $routes->get('konteks/get-kegiatan/(:num)', 'KonteksController::getKegiatanBySatuanKerja/$1');
 
-    $routes->get('proses-bisnis', 'ProsesBisnisController::index');
-    $routes->post('proses-bisnis/sync', 'ProsesBisnisController::sync');
-    $routes->get('proses-bisnis/table', 'ProsesBisnisController::ajaxTable');
+    $routes->get('proses-bisnis', 'ProsesBisnisController::index', [
+        'filter' => 'role:admin,operator,ketua'
+    ]);
+
+    $routes->post('proses-bisnis/sync', 'ProsesBisnisController::sync', [
+        'filter' => 'role:admin,operator'
+    ]);
+
+    $routes->get('proses-bisnis/ajax-table', 'ProsesBisnisController::ajaxTable');
 
     $routes->get('sasaran-kinerja', 'SasaranKinerjaController::index');
     $routes->post('sasaran-kinerja/store', 'SasaranKinerjaController::store');
@@ -149,7 +157,7 @@ $routes->group('identifikasi-risiko', ['filter' => 'auth'], function ($routes) {
     $routes->get('bank-risiko', 'IdentifikasiRisikoController::getBankRisiko');
     $routes->post('set-active', 'IdentifikasiRisikoController::setActive');
     $routes->post('reset-active', 'IdentifikasiRisikoController::resetActive');
-    $routes->group('', ['filter' => 'auto_permission'], function ($routes) {
+    $routes->group('', function ($routes) {
         $routes->post('store', 'IdentifikasiRisikoController::store');
         $routes->post('update/(:num)', 'IdentifikasiRisikoController::update/$1');
         $routes->post('delete/(:num)', 'IdentifikasiRisikoController::delete/$1');
@@ -164,7 +172,7 @@ $routes->group('analisis-risiko', ['filter' => 'auth'], function ($routes) {
     $routes->get('detail-identifikasi/(:num)', 'AnalisisRisikoController::detailIdentifikasi/$1');
     $routes->post('set-active', 'AnalisisRisikoController::setActive');
     $routes->post('reset-active', 'AnalisisRisikoController::resetActive');
-    $routes->group('', ['filter' => 'auto_permission'], function ($routes) {
+    $routes->group('', function ($routes) {
         $routes->post('store', 'AnalisisRisikoController::store');
         $routes->post('update/(:num)', 'AnalisisRisikoController::update/$1');
         $routes->post('delete/(:num)', 'AnalisisRisikoController::delete/$1');
@@ -181,14 +189,14 @@ $routes->group('evaluasi-risiko', ['filter' => 'auth'], function ($routes) {
     $routes->get('analisis-list', 'EvaluasiRisikoController::getAnalisisList');
     $routes->post('set-active', 'EvaluasiRisikoController::setActive');
     $routes->post('reset-active', 'EvaluasiRisikoController::resetActive');
-    $routes->group('', ['filter' => 'auto_permission'], function ($routes) {
+    $routes->group('', function ($routes) {
         $routes->post('store', 'EvaluasiRisikoController::store');
         $routes->post('update/(:num)', 'EvaluasiRisikoController::update/$1');
         $routes->post('delete/(:num)', 'EvaluasiRisikoController::delete/$1');
     });
 });
 // Rencana Penanganan
-$routes->group('rencana-penanganan', ['filter' => ['auth', 'auto_permission']], function ($routes) {
+$routes->group('rencana-penanganan', ['filter' => ['auth']], function ($routes) {
     $routes->get('/', 'RencanaPenangananController::index');
     $routes->post('set-active', 'RencanaPenangananController::setActive');
     $routes->post('reset-active', 'RencanaPenangananController::resetActive');
@@ -215,7 +223,7 @@ $routes->group('pemantauan-risiko', ['filter' => 'auth'], function ($routes) {
 });
 
 // Pelaporan (semua role)
-$routes->group('pelaporan-risiko', ['filter' => ['auth', 'auto_permission']], function ($routes) {
+$routes->group('pelaporan-risiko', ['filter' => ['auth']], function ($routes) {
     $routes->get('/', 'PelaporanRisikoController::index');
     $routes->post('set-active', 'PelaporanRisikoController::setActive');
     $routes->post('set-periode', 'PelaporanRisikoController::setPeriode');

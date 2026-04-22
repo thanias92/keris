@@ -43,8 +43,9 @@ class Filters extends BaseFilters
         'admin'         => AdminFilter::class,
         'role'          => RoleFilter::class,
         'permission'    => PermissionFilter::class,
-        'auto_permission' => AutoPermissionFilter::class,
     ];
+
+    public array $filters = [];
 
     /**
      * List of special required filters.
@@ -116,5 +117,4 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [];
 }

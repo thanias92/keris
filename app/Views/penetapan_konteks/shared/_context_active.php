@@ -3,7 +3,7 @@
     <div class="card mb-2 border-0 bg-light" style="font-size: 0.78rem;">
         <div class="card-body py-2 px-3">
             <div class="row g-2">
-                <div class="col-auto text-muted">Tim Kerja: <strong class="text-dark"><?= esc($activeKonteks['nama_satuan_kerja']) ?></strong></div>
+                <div class="col-auto text-muted">Tim Kerja: <strong class="text-dark"><?= esc($activeKonteks['nama_tim']) ?></strong></div>
                 <div class="col-auto text-muted">·</div>
                 <div class="col-auto text-muted">Pengelola: <strong class="text-dark"><?= esc($activeKonteks['nama_pengelola']) ?></strong></div>
                 <div class="col-auto text-muted">·</div>

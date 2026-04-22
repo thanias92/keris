@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\KonteksModel;
-use App\Models\SatuanKerjaModel;
+use App\Models\TimKerjaModel;
 use App\Models\ProsesBisnisModel;
 use App\Models\SasaranKinerjaModel;
 use App\Models\PemangkuKepentinganModel;

@@ -10,7 +10,7 @@
                 <tr>
                     <th width="30">#</th>
                     <th width="60">Tahun</th>
-                    <th width="180">Satuan Kerja</th>
+                    <th width="180">Tim Kerja</th>
                     <th width="180">Pengelola Risiko</th>
                     <th>Kegiatan</th>
                 </tr>
@@ -26,7 +26,7 @@
 
                             <td><?= $no++ ?></td>
                             <td><?= esc($row['tahun']) ?></td>
-                            <td class="pk-truncate" style="max-width:180px"><?= esc($row['nama_satuan_kerja'] ?? '-') ?></td>
+                            <td class="pk-truncate" style="max-width:180px"><?= esc($row['nama_tim'] ?? '-') ?></td>
                             <td class="pk-truncate" style="max-width:180px"><?= esc($row['nama_pengelola'] ?? '-') ?></td>
                             <td class="pk-truncate"><?= esc($row['nama_kegiatan'] ?? '-') ?></td>
                         </tr>

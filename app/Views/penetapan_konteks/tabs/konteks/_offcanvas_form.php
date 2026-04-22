@@ -125,14 +125,14 @@
                     <div class="pk-field-row">
                         <div class="pk-field-label">Tim Kerja</div>
                         <div class="pk-field-input">
-                            <div class="pk-combobox" id="pkSatuanKerjaBox">
-                                <input type="hidden" name="id_satuan_kerja" id="pkSatuanKerjaValue">
-                                <input type="text" class="pk-combobox-input" id="pkSatuanKerjaInput" placeholder="Pilih Satuan Kerja" autocomplete="off">
+                            <div class="pk-combobox" id="pkTimBox">
+                                <input type="hidden" name="id_tim" id="pkTimValue">
+                                <input type="text" class="pk-combobox-input" id="pkTimInput" placeholder="Pilih Tim Kerja" autocomplete="off">
                                 <div class="pk-combobox-dropdown">
                                     <div class="pk-combobox-options">
-                                        <?php foreach ($listSatuanKerja as $sk): ?>
-                                            <div class="pk-option" data-value="<?= $sk['id_satuan_kerja'] ?>">
-                                                <?= esc($sk['nama_satuan_kerja']) ?>
+                                        <?php foreach ($listTimKerja as $sk): ?>
+                                            <div class="pk-option" data-value="<?= $sk['id_tim'] ?>">
+                                                <?= esc($sk['nama_tim']) ?>
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
@@ -150,7 +150,7 @@
                                 <input type="text" class="pk-combobox-input" id="pkKegiatanInput" placeholder="Pilih Kegiatan" autocomplete="off">
                                 <div class="pk-combobox-dropdown">
                                     <div class="pk-combobox-options" id="pkKegiatanOptions">
-                                        <div class="pk-option text-muted">Pilih satuan kerja terlebih dahulu</div>
+                                        <div class="pk-option text-muted">Pilih tim kerja terlebih dahulu</div>
                                     </div>
                                 </div>
                             </div>

@@ -23,11 +23,11 @@
             </select>
         </div>
         <div class="filter-group">
-            <label>Satuan Kerja</label>
-            <select id="fSatuan">
-                <option value="">Semua Satuan Kerja</option>
-                <?php foreach ($satuanKerjaList as $sk): ?>
-                    <option value="<?= esc($sk['id_satuan_kerja']) ?>"><?= esc($sk['nama_satuan_kerja']) ?></option>
+            <label>Tim Kerja</label>
+            <select id="fTim">
+                <option value="">Semua Tim Kerja</option>
+                <?php foreach ($timKerjaList as $sk): ?>
+                    <option value="<?= esc($sk['id_tim']) ?>"><?= esc($sk['nama_tim']) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -360,7 +360,7 @@
             const pct = ((+p.f1 > 0 ? 33 : 0) + (+p.f2 > 0 ? 33 : 0) + (+p.f3 > 0 ? 34 : 0));
             const color = pct >= 100 ? '#22c55e' : pct >= 66 ? '#3b82f6' : pct >= 33 ? '#f59e0b' : '#ef4444';
             return `<tr>
-            <td class="sk-name">${p.nama_satuan_kerja}</td>
+            <td class="sk-name">${p.nama_tim}</td>
             <td><span class="count-badge blue">${p.f1}</span></td>
             <td><span class="count-badge purple">${p.f2}</span></td>
             <td><span class="count-badge teal">${p.f3}</span></td>
@@ -393,7 +393,7 @@
         clearTimeout(fetchTimer);
         fetchTimer = setTimeout(async () => {
             const tahun = document.getElementById('fTahun').value;
-            const satuan = document.getElementById('fSatuan').value;
+            const tim = document.getElementById('fTim').value;
             const kategori = document.getElementById('fKategori').value;
             const overlay = document.getElementById('loadingOverlay');
 
@@ -402,7 +402,7 @@
 
             const params = new URLSearchParams();
             if (tahun) params.set('tahun', tahun);
-            if (satuan) params.set('satuan_kerja', satuan);
+            if (tim) params.set('tim_kerja', tim);
             if (kategori) params.set('kategori', kategori);
 
             try {
@@ -453,11 +453,11 @@
     }
 
     document.getElementById('fTahun').addEventListener('change', fetchData);
-    document.getElementById('fSatuan').addEventListener('change', fetchData);
+    document.getElementById('fTim').addEventListener('change', fetchData);
     document.getElementById('fKategori').addEventListener('change', fetchData);
     document.getElementById('btnReset').addEventListener('click', () => {
         document.getElementById('fTahun').value = '';
-        document.getElementById('fSatuan').value = '';
+        document.getElementById('fTim').value = '';
         document.getElementById('fKategori').value = '';
         fetchData();
     });

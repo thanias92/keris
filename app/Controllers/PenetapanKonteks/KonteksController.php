@@ -7,7 +7,7 @@ use App\Models\KonteksPemangkuModel;
 use App\Models\KonteksPeraturanModel;
 use App\Models\PemangkuKepentinganModel;
 use App\Models\PeraturanTerkaitModel;
-use App\Models\SatuanKerjaModel;
+use App\Models\TimKerjaModel;
 use App\Models\SasaranStrategisModel;
 use App\Models\PengelolaRisikoModel;
 use App\Models\PenugasanPengelolaModel;
@@ -23,26 +23,24 @@ class KonteksController extends BaseContextController
         $this->model = new KonteksModel();
     }
 
-    /* =====================================================
-       INDEX (LOAD FULL PAGE)
-    ===================================================== */
+    /* INDEX (LOAD FULL PAGE) */
     public function index()
     {
         $listPemangku = (new PemangkuKepentinganModel())->findAll();
         $listPeraturan = (new PeraturanTerkaitModel())->findAll();
-        $listSatuanKerja = (new SatuanKerjaModel())->findAll();
+        $listTimKerja = (new TimKerjaModel())->findAll();
         $listSasaran = (new SasaranStrategisModel())->findAll();
 
         $builder = $this->model
             ->select('
                 konteks.*,
-                satuan_kerja.nama_satuan_kerja,
+                tim_kerja.nama_tim,
                 sasaran_strategis.uraian_sasaran,
                 kegiatan.nama_kegiatan,
                 p.nama as nama_pemilik,
                 g.nama as nama_pengelola
             ')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
@@ -55,7 +53,7 @@ class KonteksController extends BaseContextController
         $kg = $this->request->getGet('kg');
         $ss = $this->request->getGet('ss');
 
-        if ($sk) $builder->where('konteks.id_satuan_kerja', $sk);
+        if ($sk) $builder->where('konteks.id_tim', $sk);
         if ($pg) $builder->where('konteks.pengelola_risiko_id', $pg);
         if ($th) $builder->where('konteks.tahun', $th);
         if ($kg) $builder->where('konteks.id_kegiatan', $kg);
@@ -94,7 +92,7 @@ class KonteksController extends BaseContextController
                     'perPage'         => $perPage,
                     'listPemangku'    => $listPemangku,
                     'listPeraturan'   => $listPeraturan,
-                    'listSatuanKerja' => $listSatuanKerja,
+                    'listTimKerja' => $listTimKerja,
                     'listSasaran'     => $listSasaran,
                     'listWilayah'     => $listWilayah,
                     'filters'         => compact('sk', 'pg', 'th', 'kg', 'ss'),
@@ -103,9 +101,7 @@ class KonteksController extends BaseContextController
         );
     }
 
-    /* =====================================================
-       STORE (AJAX CREATE)
-    ===================================================== */
+    /* STORE (AJAX CREATE) */
     public function store()
     {
         if (!$this->request->isAJAX()) {
@@ -119,7 +115,7 @@ class KonteksController extends BaseContextController
             'pemilik_risiko_id'    => $toInt($this->request->getPost('pemilik_risiko_id')),
             'pengelola_risiko_id'  => $toInt($this->request->getPost('pengelola_risiko_id')),
             'id_kegiatan'          => $toInt($this->request->getPost('id_kegiatan')),
-            'id_satuan_kerja'      => $toInt($this->request->getPost('id_satuan_kerja')),
+            'id_tim'               => $toInt($this->request->getPost('id_tim')),
             'id_sasaran_strategis' => $toInt($this->request->getPost('id_sasaran_strategis')),
         ];
 
@@ -127,13 +123,13 @@ class KonteksController extends BaseContextController
         $db->table('konteks')->insert($data);
         $idKonteks = $db->insertID();
 
-        // === SIMPAN PEMANGKU ===
+        // SIMPAN PEMANGKU
         $pemangkuModel = new KonteksPemangkuModel();
         foreach ($this->request->getPost('pemangku') ?? [] as $idPemangku) {
             $pemangkuModel->insert(['id_konteks' => $idKonteks, 'id_pemangku' => $idPemangku]);
         }
 
-        // === SIMPAN PERATURAN ===
+        // SIMPAN PERATURAN
         $peraturanModel = new KonteksPeraturanModel();
         foreach ($this->request->getPost('peraturan') ?? [] as $idPeraturan) {
             $peraturanModel->insert(['id_konteks' => $idKonteks, 'id_peraturan' => $idPeraturan]);
@@ -142,9 +138,7 @@ class KonteksController extends BaseContextController
         return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil disimpan']);
     }
 
-    /* =====================================================
-       UPDATE (AJAX EDIT)
-    ===================================================== */
+    /* UPDATE (AJAX EDIT) */
     public function update()
     {
         if (!$this->request->isAJAX()) {
@@ -159,21 +153,21 @@ class KonteksController extends BaseContextController
             'pengelola_risiko_id'  => $toInt($this->request->getPost('pengelola_risiko_id')),
             'pemilik_risiko_id'    => $toInt($this->request->getPost('pemilik_risiko_id')),
             'id_kegiatan'          => $toInt($this->request->getPost('id_kegiatan')),
-            'id_satuan_kerja'      => $toInt($this->request->getPost('id_satuan_kerja')),
+            'id_tim'               => $toInt($this->request->getPost('id_tim')),
             'id_sasaran_strategis' => $toInt($this->request->getPost('id_sasaran_strategis')),
         ];
 
         $db = \Config\Database::connect();
         $db->table('konteks')->where('id_konteks', (int) $id)->update($data);
 
-        // === UPDATE PEMANGKU ===
+        // UPDATE PEMANGKU
         $pemangkuModel = new KonteksPemangkuModel();
         $pemangkuModel->where('id_konteks', $id)->delete();
         foreach ($this->request->getPost('pemangku') ?? [] as $idPemangku) {
             $pemangkuModel->insert(['id_konteks' => $id, 'id_pemangku' => $idPemangku]);
         }
 
-        // === UPDATE PERATURAN ===
+        // UPDATE PERATURAN
         $peraturanModel = new KonteksPeraturanModel();
         $peraturanModel->where('id_konteks', $id)->delete();
         foreach ($this->request->getPost('peraturan') ?? [] as $idPeraturan) {
@@ -183,9 +177,7 @@ class KonteksController extends BaseContextController
         return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil diubah']);
     }
 
-    /* =====================================================
-       DELETE (AJAX)
-    ===================================================== */
+    /* DELETE (AJAX) */
     public function delete()
     {
         if (!$this->request->isAJAX()) {
@@ -197,22 +189,20 @@ class KonteksController extends BaseContextController
         return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil dihapus']);
     }
 
-    /* =====================================================
-       AJAX TABLE REFRESH
-    ===================================================== */
+    /* AJAX TABLE REFRESH */
     public function ajaxTable()
     {
         $data = $this->model
             ->select('
                 konteks.*,
                 kegiatan.nama_kegiatan,
-                satuan_kerja.nama_satuan_kerja,
+                tim_kerja.nama_tim,
                 sasaran_strategis.uraian_sasaran,
                 p.nama as nama_pemilik,
                 g.nama as nama_pengelola
             ')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
@@ -229,9 +219,7 @@ class KonteksController extends BaseContextController
         ]);
     }
 
-    /* =====================================================
-       SET ACTIVE
-    ===================================================== */
+    /* SET ACTIVE */
     public function setActive()
     {
         $id = $this->request->getPost('id_konteks');
@@ -246,9 +234,9 @@ class KonteksController extends BaseContextController
         if (!$this->request->isAJAX()) return redirect()->back();
 
         $konteks = $this->model
-            ->select('konteks.*, kegiatan.nama_kegiatan, satuan_kerja.nama_satuan_kerja, sasaran_strategis.uraian_sasaran')
+            ->select('konteks.*, kegiatan.nama_kegiatan, tim_kerja.nama_tim,, sasaran_strategis.uraian_sasaran')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->where('konteks.id_konteks', $id)
             ->first();
@@ -275,9 +263,7 @@ class KonteksController extends BaseContextController
         ]);
     }
 
-    /* =====================================================
-       GET PEMILIK PROVINSI (AJAX)
-    ===================================================== */
+    /* GET PEMILIK PROVINSI (AJAX) */
     public function getPemilikProvinsi()
     {
         $data = (new PengelolaRisikoModel())
@@ -286,33 +272,29 @@ class KonteksController extends BaseContextController
 
         return $this->response->setJSON($data);
     }
-    /* =====================================================
-       GET PENGELOLA LIST BY SATUAN KERJA & TAHUN (AJAX)
-       → sekarang pakai penugasan_pengelola
-    ===================================================== */
+    /* GET PENGELOLA LIST BY SATUAN KERJA & TAHUN (AJAX)
+       → sekarang pakai penugasan_pengelola */
     public function getPengelolaList()
     {
-        $id_satuan = $this->request->getGet('satuan');
+        $id_tim = $this->request->getGet('tim');
         $tahun     = (int) ($this->request->getGet('tahun') ?? date('Y'));
 
-        if (!$id_satuan) {
+        if (!$id_tim) {
             return $this->response->setJSON([]);
         }
 
         $penugasanModel = new PenugasanPengelolaModel();
-        $data           = $penugasanModel->getKetuaTimWithFallback((int) $id_satuan, $tahun);
+        $data           = $penugasanModel->getKetuaTimWithFallback((int) $id_tim, $tahun);
 
         return $this->response->setJSON($data ?? []);
     }
-    /* =====================================================
-       GET KEGIATAN BY SATUAN KERJA (AJAX)
-    ===================================================== */
-    public function getKegiatanBySatuanKerja($id)
+    /* GET KEGIATAN BY TIM KERJA (AJAX) */
+    public function getKegiatanByTim($id)
     {
         if (!$this->request->isAJAX()) return redirect()->back();
 
         $data = (new KegiatanModel())
-            ->where('id_satuan_kerja', $id)
+            ->where('id_tim', $id)
             ->orderBy('nama_kegiatan', 'ASC')
             ->findAll();
 

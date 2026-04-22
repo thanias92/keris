@@ -10,7 +10,7 @@ class KegiatanModel extends Model
     protected $primaryKey = 'id_kegiatan';
 
     protected $allowedFields = [
-        'id_satuan_kerja',
+        'id_tim',
         'nama_kegiatan',
         'created_at',
         'updated_at'

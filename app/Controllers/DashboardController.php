@@ -12,9 +12,9 @@ class DashboardController extends BaseController
             SELECT DISTINCT tahun FROM konteks WHERE tahun IS NOT NULL ORDER BY tahun DESC
         ")->getResultArray();
 
-        $satuanKerjaList = $db->table('satuan_kerja')
-            ->select('id_satuan_kerja, nama_satuan_kerja')
-            ->orderBy('nama_satuan_kerja')
+        $timKerjaList = $db->table('tim_kerja')
+            ->select('id_tim, nama_tim')
+            ->orderBy('nama_tim')
             ->get()->getResultArray();
 
         $kategoriList = $db->table('kategori_risiko')
@@ -24,7 +24,7 @@ class DashboardController extends BaseController
 
         return view('dashboard/index', [
             'tahunList'       => $tahunList,
-            'satuanKerjaList' => $satuanKerjaList,
+            'timKerjaList' => $timKerjaList,
             'kategoriList'    => $kategoriList,
         ]);
     }
@@ -33,14 +33,14 @@ class DashboardController extends BaseController
     {
         $db     = \Config\Database::connect();
         $tahun  = $this->request->getGet('tahun');
-        $skId   = $this->request->getGet('satuan_kerja');
+        $timId  = $this->request->getGet('tim');
         $katId  = $this->request->getGet('kategori');
 
         $baseIr = $db->table('identifikasi_risiko ir')
             ->join('konteks k', 'k.id_konteks = ir.id_konteks_proses', 'left');
 
         if ($tahun)  $baseIr->where('k.tahun', $tahun);
-        if ($skId)   $baseIr->where('k.id_satuan_kerja', $skId);
+        if ($timId)   $baseIr->where('k.id_tim', $timId);
         if ($katId)  $baseIr->where('ir.id_kategori_risiko', $katId);
 
         $totalRisiko = (clone $baseIr)->countAllResults(false);
@@ -106,7 +106,7 @@ class DashboardController extends BaseController
             ->groupBy('mr.level_kemungkinan, mr.level_dampak');
 
         if ($tahun) $hmQuery->where('k.tahun', $tahun);
-        if ($skId)  $hmQuery->where('k.id_satuan_kerja', $skId);
+        if ($timId)  $hmQuery->where('k.id_tim', $timId);
         if ($katId) $hmQuery->where('ir.id_kategori_risiko', $katId);
 
         $rawHm = $hmQuery->get()->getResultArray();
@@ -125,7 +125,7 @@ class DashboardController extends BaseController
             ->orderBy('tahun');
 
         if ($tahun) $trendQuery->where('k.tahun', $tahun);
-        if ($skId)  $trendQuery->where('k.id_satuan_kerja', $skId);
+        if ($timId)  $trendQuery->where('k.id_tim', $timId);
         if ($katId) $trendQuery->where('ir.id_kategori_risiko', $katId);
 
         $trend       = $trendQuery->get()->getResultArray();
@@ -142,7 +142,7 @@ class DashboardController extends BaseController
             ->limit(6);
 
         if ($tahun) $katQuery->where('k.tahun', $tahun);
-        if ($skId)  $katQuery->where('k.id_satuan_kerja', $skId);
+        if ($timId)  $katQuery->where('k.id_tim', $timId);
         if ($katId) $katQuery->where('ir.id_kategori_risiko', $katId);
 
         $byKategori    = $katQuery->get()->getResultArray();
@@ -167,9 +167,9 @@ class DashboardController extends BaseController
             $statusQuery .= " AND k.tahun = ?";
             $statusParams[] = $tahun;
         }
-        if ($skId) {
-            $statusQuery .= " AND k.id_satuan_kerja = ?";
-            $statusParams[] = $skId;
+        if ($timId) {
+            $statusQuery .= " AND k.id_tim = ?";
+            $statusParams[] = $timId;
         }
         if ($katId) {
             $statusQuery .= " AND ir.id_kategori_risiko = ?";
@@ -181,12 +181,12 @@ class DashboardController extends BaseController
         // PROGRESS
         $progressQuery = "
             SELECT
-                sk.nama_satuan_kerja,
+                sk.nama_tim,
                 COUNT(DISTINCT k.id_konteks)   AS f1,
                 COUNT(DISTINCT pr.id_penilaian) AS f2,
                 COUNT(DISTINCT rp.id_rtp)       AS f3
-            FROM satuan_kerja sk
-            LEFT JOIN konteks k ON k.id_satuan_kerja = sk.id_satuan_kerja
+            FROM tim_kerja sk
+            LEFT JOIN konteks k ON k.id_tim = sk.id_tim
             LEFT JOIN identifikasi_risiko ir ON ir.id_konteks_proses = k.id_konteks
             LEFT JOIN penilaian_risiko pr ON pr.id_identifikasi = ir.id_identifikasi
             LEFT JOIN rencana_penanganan_risiko rp ON rp.id_penilaian_awal = pr.id_penilaian
@@ -197,15 +197,15 @@ class DashboardController extends BaseController
             $progressQuery .= " AND k.tahun = ?";
             $progressParams[] = $tahun;
         }
-        if ($skId) {
-            $progressQuery .= " AND k.id_satuan_kerja = ?";
-            $progressParams[] = $skId;
+        if ($timId) {
+            $progressQuery .= " AND k.id_tim = ?";
+            $progressParams[] = $timId;
         }
         if ($katId) {
             $progressQuery .= " AND ir.id_kategori_risiko = ?";
             $progressParams[] = $katId;
         }
-        $progressQuery .= " GROUP BY sk.nama_satuan_kerja ORDER BY (COUNT(DISTINCT k.id_konteks) + COUNT(DISTINCT pr.id_penilaian) + COUNT(DISTINCT rp.id_rtp)) DESC LIMIT 8";
+        $progressQuery .= " GROUP BY sk.nama_tim ORDER BY (COUNT(DISTINCT k.id_konteks) + COUNT(DISTINCT pr.id_penilaian) + COUNT(DISTINCT rp.id_rtp)) DESC LIMIT 8";
 
         $progress = $db->query($progressQuery, $progressParams)->getResultArray();
 
@@ -218,7 +218,7 @@ class DashboardController extends BaseController
             ->limit(5);
 
         if ($tahun) $terbaruQuery->where('k.tahun', $tahun);
-        if ($skId)  $terbaruQuery->where('k.id_satuan_kerja', $skId);
+        if ($timId)  $terbaruQuery->where('k.id_tim', $timId);
         if ($katId) $terbaruQuery->where('ir.id_kategori_risiko', $katId);
 
         $risikoTerbaru = $terbaruQuery->get()->getResultArray();

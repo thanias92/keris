@@ -5,10 +5,10 @@ namespace App\Controllers\Master;
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 
-class SatuanKerjaController extends BaseController
+class TimKerjaController extends BaseController
 {
     protected $db;
-    protected $table = 'satuan_kerja';
+    protected $table = 'tim_kerja';
 
     public function __construct()
     {
@@ -17,16 +17,16 @@ class SatuanKerjaController extends BaseController
 
     public function index()
     {
-        return view('master/satuan_kerja/index', [
-            'title' => 'Satuan Kerja'
+        return view('master/tim_kerja/index', [
+            'title' => 'Tim Kerja'
         ]);
     }
 
     public function table()
     {
         $data = $this->db->table($this->table)
-            ->select('id_satuan_kerja as id, nama_satuan_kerja')
-            ->orderBy('id_satuan_kerja', 'DESC')
+            ->select('id_tim as id, nama_tim')
+            ->orderBy('id_tim', 'DESC')
             ->get()
             ->getResultArray();
 
@@ -36,7 +36,7 @@ class SatuanKerjaController extends BaseController
     public function store()
     {
         $this->db->table($this->table)->insert([
-            'nama_satuan_kerja' => $this->request->getPost('nama'),
+            'nama_tim' => $this->request->getPost('nama'),
             'created_at' => date('Y-m-d H:i:s')
         ]);
 
@@ -46,9 +46,9 @@ class SatuanKerjaController extends BaseController
     public function update($id)
     {
         $this->db->table($this->table)
-            ->where('id', $id)
+            ->where('id_tim', $id)
             ->update([
-                'nama_satuan_kerja' => $this->request->getPost('nama'),
+                'nama_tim' => $this->request->getPost('nama'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
 
@@ -57,7 +57,7 @@ class SatuanKerjaController extends BaseController
 
     public function delete($id)
     {
-        $this->db->table($this->table)->delete(['id_satuan_kerja' => $id]);
+        $this->db->table($this->table)->delete(['id_tim' => $id]);
         return $this->response->setJSON(['status' => true]);
     }
 }

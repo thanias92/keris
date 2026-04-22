@@ -9,7 +9,7 @@ const KonteksModule = {
     this.initSelect2();
     this.initStrukturOrganisasi();
     this.initKabKotaCombobox();
-    this.initSatuanKerjaCombobox();
+    this.initTimCombobox();
     this.initTahunCombobox();
     this.initSasaranCombobox();
     this.initPeraturanCombobox();
@@ -18,10 +18,7 @@ const KonteksModule = {
     this.initPreventEnterSubmit();
   },
 
-  // ======================================================
   // SELECT2
-  // ======================================================
-
   initSelect2() {
     const offcanvas = document.getElementById("offcanvasKonteks");
     if (!offcanvas) return;
@@ -40,10 +37,7 @@ const KonteksModule = {
     });
   },
 
-  // ======================================================
   // STRUKTUR ORGANISASI
-  // ======================================================
-
   initStrukturOrganisasi() {
     const radios = document.querySelectorAll('input[name="level_struktur"]');
     const kabWrapper = document.getElementById("pkKabKotaWrapper");
@@ -72,10 +66,7 @@ const KonteksModule = {
     this.loadProvinsiPemilik();
   },
 
-  // ======================================================
   // KAB/KOTA COMBOBOX
-  // ======================================================
-
   initKabKotaCombobox() {
     Combobox.init({
       boxId: "pkKabKotaBox",
@@ -85,10 +76,7 @@ const KonteksModule = {
     });
   },
 
-  // ======================================================
   // PEMILIK RISIKO
-  // ======================================================
-
   loadProvinsiPemilik() {
     $.get("/penetapan-konteks/konteks/get-pemilik-provinsi", (res) => {
       if (!res) return;
@@ -113,11 +101,8 @@ const KonteksModule = {
     document.getElementById("pkPemilikJabatan").innerText = "-";
   },
 
-  // ======================================================
   // PENGELOLA RISIKO
-  // ======================================================
-
-  loadPengelolaBySatuanKerja(id) {
+  loadPengelolaByTim(id) {
     if (!id) return;
 
     // ambil tahun dari form, fallback ke tahun sekarang
@@ -125,7 +110,7 @@ const KonteksModule = {
       document.getElementById("pkTahun")?.value || new Date().getFullYear();
 
     $.get(
-      "/penetapan-konteks/konteks/get-pengelola-list?satuan=" +
+      "/penetapan-konteks/konteks/get-pengelola-list?tim=" +
         id +
         "&tahun=" +
         tahun,
@@ -174,30 +159,24 @@ const KonteksModule = {
     document.getElementById("pkPengelolaJabatan").innerText = "-";
   },
 
-  // ======================================================
-  // SATUAN KERJA COMBOBOX
-  // ======================================================
-
-  initSatuanKerjaCombobox() {
+  // TIM KERJA COMBOBOX
+  initTimCombobox() {
     Combobox.init({
-      boxId: "pkSatuanKerjaBox",
-      inputId: "pkSatuanKerjaInput",
-      hiddenId: "pkSatuanKerjaValue",
+      boxId: "pkTimBox",
+      inputId: "pkTimInput",
+      hiddenId: "pkTimValue",
       optionsSelector: ".pk-option",
 
       onSelect: (value) => {
         KonteksModule.resetKegiatan();
 
-        KonteksModule.loadPengelolaBySatuanKerja(value);
-        KonteksModule.loadKegiatanBySatuanKerja(value);
+        KonteksModule.loadPengelolaByTim(value);
+        KonteksModule.loadKegiatanByTim(value);
       },
     });
   },
 
-  // ======================================================
   // KEGIATAN
-  // ======================================================
-
   resetKegiatan() {
     const input = document.getElementById("pkKegiatanInput");
     const hidden = document.getElementById("pkKegiatanValue");
@@ -208,11 +187,11 @@ const KonteksModule = {
 
     if (wrapper) {
       wrapper.innerHTML =
-        '<div class="pk-option text-muted">Pilih satuan kerja terlebih dahulu</div>';
+        '<div class="pk-option text-muted">Pilih tim kerja terlebih dahulu</div>';
     }
   },
 
-  loadKegiatanBySatuanKerja(id, afterLoad) {
+  loadKegiatanByTim(id, afterLoad) {
     if (!id) return;
 
     const wrapper = document.getElementById("pkKegiatanOptions");
@@ -324,19 +303,16 @@ const KonteksModule = {
       optionsSelector: ".pk-option",
 
       onSelect: (tahun) => {
-        // reload pengelola kalau satuan kerja sudah dipilih
-        const satuanId = document.getElementById("pkSatuanKerjaValue")?.value;
-        if (satuanId) {
-          KonteksModule.loadPengelolaBySatuanKerja(satuanId);
+        // reload pengelola kalau tim kerja sudah dipilih
+        const timId = document.getElementById("pkTimValue")?.value;
+        if (timId) {
+          KonteksModule.loadPengelolaByTim(timId);
         }
       },
     });
   },
 
-  // ======================================================
   // SASARAN STRATEGIS
-  // ======================================================
-
   initSasaranCombobox() {
     Combobox.init({
       boxId: "pkSasaranBox",
@@ -346,10 +322,7 @@ const KonteksModule = {
     });
   },
 
-  // ======================================================
   // PERATURAN MULTI SELECT
-  // ======================================================
-
   initPeraturanCombobox() {
     const tags = document.getElementById("pkPeraturanTags");
 
@@ -406,10 +379,7 @@ const KonteksModule = {
     });
   },
 
-  // ======================================================
   // HELPER: SET READONLY STATE
-  // ======================================================
-
   setReadonly(isReadonly) {
     const fields = document.querySelectorAll(
       "#pkFormKonteks input:not([type=hidden]), #pkFormKonteks select, #pkFormKonteks textarea",
@@ -448,9 +418,7 @@ const KonteksModule = {
       });
   },
 
-  // ======================================================
   // PEMANGKU TAG INPUT
-  // ======================================================
   initPemangkuCombobox() {
     const container = document.getElementById("pkPemangkuTags");
 
@@ -516,10 +484,7 @@ const KonteksModule = {
     });
   },
 
-  // ======================================================
   // FORM SUBMIT (CREATE / UPDATE)
-  // ======================================================
-
   initFormSubmit() {
     const form = document.getElementById("pkFormKonteks");
     if (!form) return;
@@ -555,10 +520,7 @@ const KonteksModule = {
     });
   },
 
-  // ======================================================
   // DELETE
-  // ======================================================
-
   deleteKonteks(id) {
     PkAlert.warning({
       title: "Hapus data ini?",
@@ -582,10 +544,7 @@ const KonteksModule = {
     });
   },
 
-  // ======================================================
   // REFRESH TABLE (AJAX)
-  // ======================================================
-
   refreshTable() {
     $.get("/penetapan-konteks/konteks/table", function (html) {
       $("#pkKonteksTableWrapper").html(html);
@@ -608,18 +567,12 @@ const KonteksModule = {
   },
 };
 
-// ======================================================
 // INIT
-// ======================================================
-
 $(document).ready(function () {
   KonteksModule.init();
 });
 
-// ======================================================
 // GLOBAL FUNCTION
-// ======================================================
-
 window.pkOpenViewMode = function (el) {
   const row = JSON.parse(el.dataset.row);
   const id = row.id_konteks;
@@ -659,16 +612,15 @@ window.pkOpenViewMode = function (el) {
   $.get(`/penetapan-konteks/konteks/detail/${id}`, (res) => {
     const k = res.konteks;
 
-    document.getElementById("pkSatuanKerjaValue").value = k.id_satuan_kerja;
-    document.getElementById("pkSatuanKerjaInput").value =
-      k.nama_satuan_kerja ?? "";
+    document.getElementById("pkTimValue").value = k.id_tim;
+    document.getElementById("pkTimInput").value = k.nama_tim ?? "";
     document.getElementById("pkTahun").value = k.tahun;
     document.getElementById("pkTahunInput").value = k.tahun;
     document.getElementById("pkSasaranValue").value = k.id_sasaran_strategis;
     document.getElementById("pkSasaranInput").value = k.uraian_sasaran ?? "";
 
-    if (k.id_satuan_kerja) {
-      KonteksModule.loadKegiatanBySatuanKerja(k.id_satuan_kerja, function () {
+    if (k.id_tim) {
+      KonteksModule.loadKegiatanByTim(k.id_tim, function () {
         document.getElementById("pkKegiatanValue").value = k.id_kegiatan ?? "";
         document.getElementById("pkKegiatanInput").value =
           k.nama_kegiatan ?? "";
@@ -678,10 +630,10 @@ window.pkOpenViewMode = function (el) {
     // isi pengelola — response sekarang object tunggal, bukan array
     if (k.pengelola_risiko_id) {
       $.get(
-        "/penetapan-konteks/konteks/get-pengelola-list?satuan=" +
-        k.id_satuan_kerja +
-        "&tahun=" +
-        k.tahun,
+        "/penetapan-konteks/konteks/get-pengelola-list?tim=" +
+          k.id_tim +
+          "&tahun=" +
+          k.tahun,
         (res) => {
           if (res && Object.keys(res).length > 0) {
             KonteksModule.setPengelolaRisiko(res);

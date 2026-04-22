@@ -4,16 +4,16 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class SatuanKerjaModel extends Model
+class TimKerjaModel extends Model
 {
-    protected $table            = 'satuan_kerja';
-    protected $primaryKey       = 'id_satuan_kerja';
+    protected $table            = 'tim_kerja';
+    protected $primaryKey       = 'id_tim';
     protected $useAutoIncrement = true;
 
     protected $returnType       = 'array';
 
     protected $allowedFields    = [
-        'nama_satuan_kerja',
+        'nama_tim',
     ];
 
     protected $useTimestamps    = true;
@@ -26,7 +26,7 @@ class SatuanKerjaModel extends Model
      */
     public function getDropdown()
     {
-        return $this->orderBy('nama_satuan_kerja', 'ASC')
+        return $this->orderBy('nama_tim', 'ASC')
             ->findAll();
     }
 }

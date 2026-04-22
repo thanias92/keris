@@ -18,13 +18,13 @@ class BaseContextController extends BaseController
             ->select('
                 konteks.*,
                 kegiatan.nama_kegiatan,
-                satuan_kerja.nama_satuan_kerja,
+                tim_kerja.nama_tim,
                 sasaran_strategis.uraian_sasaran,
                 p.nama as nama_pemilik,
                 g.nama as nama_pengelola
             ')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
+            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
@@ -45,17 +45,17 @@ class BaseContextController extends BaseController
             ->select('
             konteks.id_konteks,
             konteks.tahun,
-            konteks.id_satuan_kerja,
+            konteks.id_tim,
             konteks.pengelola_risiko_id,
             konteks.id_kegiatan,
             konteks.id_sasaran_strategis,
             kegiatan.nama_kegiatan,
-            satuan_kerja.nama_satuan_kerja,
+            tim_kerja.nama_tim,
             sasaran_strategis.uraian_sasaran,
             p.nama as nama_pemilik,
             g.nama as nama_pengelola
         ')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja')
+            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
