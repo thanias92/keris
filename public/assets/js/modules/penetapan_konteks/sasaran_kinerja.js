@@ -2,11 +2,27 @@ document.addEventListener("DOMContentLoaded", function () {
   const offcanvasEl = document.getElementById("offcanvasSasaranKinerja");
   if (!offcanvasEl) return;
 
+  // RBAC CONTEXT
+const currentUser = window.APP_USER || {};
+const activeKonteks = window.APP_KONTEKS || {};
+
+const isKetua = currentUser.role === "ketua";
+const isOperator = currentUser.role === "operator";
+const bedaTim = String(currentUser.id_tim) !== String(activeKonteks.id_tim);
+
+// hide tombol tambah untuk ketua
+if (isKetua) {
+  const btnAdd = document.querySelector(
+    '[data-bs-target="#offcanvasSasaranKinerja"]'
+  );
+  if (btnAdd) btnAdd.style.display = "none";
+}
+
   let currentMode = null;
   let currentId = null;
   let originalData = null;
 
-  // ── MODE HELPERS ──────────────────────────────────────────
+  // MODE HELPERS
   function setCreateMode() {
     currentMode = "create";
     currentId = null;
@@ -55,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("skUraianSasaran").value = data.uraian_sasaran;
   }
 
-  // ── OFFCANVAS EVENTS ──────────────────────────────────────
+  // OFFCANVAS EVENTS
   offcanvasEl.addEventListener("show.bs.offcanvas", () => {
     if (currentMode === null) setCreateMode();
     originalData = {
@@ -68,13 +84,55 @@ document.addEventListener("DOMContentLoaded", function () {
     currentMode = null;
   });
 
-  // ── ROW CLICK → VIEW MODE ─────────────────────────────────
+  // ROW CLICK → VIEW MODE
   function bindRowClick() {
     document
       .querySelectorAll("#pkSasaranKinerjaTableWrapper .sk-row")
       .forEach((row) => {
+        // KETUA → boleh lihat (view only)
+        if (isKetua) {
+          row.style.cursor = "pointer";
+
+          row.addEventListener("click", function () {
+            const id = this.dataset.id;
+
+            PkAjax.get({
+              url: `/penetapan-konteks/sasaran-kinerja/detail/${id}`,
+              onSuccess(data) {
+                setViewMode(data);
+
+                // paksa tetap view mode (no edit)
+                setFieldsDisabled(true);
+                document.getElementById("skBtnView").style.display = "none";
+                document.getElementById("skBtnEdit").style.display = "none";
+
+                new bootstrap.Offcanvas(offcanvasEl).show();
+              },
+            });
+          });
+
+          return;
+        }
+
+        // OPERATOR beda tim → not allowed
+        if (isOperator && bedaTim) {
+          row.style.cursor = "not-allowed";
+
+          row.addEventListener("click", () => {
+            PkAlert.notAllowed({
+              text: "Kamu hanya bisa melihat sasaran kinerja tim lain.",
+            });
+          });
+
+          return;
+        }
+
+        // NORMAL (admin / operator tim sendiri)
+        row.style.cursor = "pointer";
+
         row.addEventListener("click", function () {
           const id = this.dataset.id;
+
           PkAjax.get({
             url: `/penetapan-konteks/sasaran-kinerja/detail/${id}`,
             onSuccess(data) {
@@ -88,12 +146,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   bindRowClick();
 
-  // ── TOMBOL EDIT ───────────────────────────────────────────
-  document
-    .getElementById("skBtnSwitchEdit")
-    ?.addEventListener("click", () => setEditMode());
+  // TOMBOL EDIT
+  document.getElementById("skBtnSwitchEdit")?.addEventListener("click", () => {
+    if (isKetua || (isOperator && bedaTim)) {
+      PkAlert.notAllowed({
+        text: "Kamu tidak memiliki izin untuk mengubah data ini.",
+      });
+      return;
+    }
 
-  // ── TOMBOL BATAL ──────────────────────────────────────────
+    setEditMode();
+  });
+
+  // TOMBOL BATAL
   document.getElementById("skBtnCancel")?.addEventListener("click", () => {
     if (currentMode === "edit" && originalData) {
       document.getElementById("skIdKonteksProses").value =
@@ -111,10 +176,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // ── TOMBOL SIMPAN ─────────────────────────────────────────
+  // TOMBOL SIMPAN
   document
     .getElementById("skBtnSimpan")
     ?.addEventListener("click", function () {
+      if (isKetua || (isOperator && bedaTim)) {
+        PkAlert.notAllowed({
+          text: "Kamu tidak memiliki izin untuk menyimpan perubahan.",
+        });
+        return;
+      }
       const idKonteksProses =
         document.getElementById("skIdKonteksProses").value;
       const uraian = document.getElementById("skUraianSasaran").value.trim();
@@ -153,10 +224,16 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
 
-  // ── TOMBOL DELETE ─────────────────────────────────────────
+  // TOMBOL DELETE
   document
     .getElementById("skBtnDelete")
     ?.addEventListener("click", function () {
+      if (isKetua || (isOperator && bedaTim)) {
+        PkAlert.notAllowed({
+          text: "Kamu tidak memiliki izin untuk menghapus data.",
+        });
+        return;
+      }
       PkAlert.warning({
         title: "Hapus sasaran kinerja ini?",
         text: "Data yang dihapus tidak dapat dikembalikan.",
@@ -175,7 +252,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
 
-  // ── REFRESH TABLE ─────────────────────────────────────────
+  // REFRESH TABLE
   function refreshTable() {
     PkAjax.get({
       url: "/penetapan-konteks/sasaran-kinerja/table",

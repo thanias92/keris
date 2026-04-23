@@ -84,6 +84,11 @@
 
 <?= $this->section('scripts') ?>
 
+<script>
+    window.APP_USER = <?= json_encode(session('user')) ?>;
+    window.APP_KONTEKS = <?= json_encode($activeKonteks ?? null) ?>;
+</script>
+
 <?php if (in_array($activeTab, $tabsWithContextSelector)): ?>
     <script src="<?= base_url('assets/js/modules/penetapan_konteks/context-selector.js') ?>"></script>
 <?php endif; ?>

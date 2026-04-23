@@ -18,5 +18,6 @@ class UserModel extends Model
         'password',
         'role',
         'pengelola_id',
+        'id_tim'
     ];
 }

@@ -18,7 +18,6 @@ class ProsesBisnisController extends BaseContextController
 
     public function index()
     {
-        dd(session()->get('user'));
         $activeKonteks = $this->getActiveKonteks();
 
         // Semua master proses bisnis
@@ -55,8 +54,9 @@ class ProsesBisnisController extends BaseContextController
         $idKonteks   = $this->request->getPost('id_konteks');
         $idProsesList = $this->request->getPost('id_proses') ?? [];
 
-        log_message('error', 'USER: ' . json_encode($user));
-        log_message('error', 'ID KONTEKS: ' . $idKonteks);
+        log_message('error', 'SYNC KONTEKS: ' . $idKonteks);
+        log_message('error', 'SYNC PROSES: ' . json_encode($idProsesList));
+
 
         if (!$idKonteks) {
             return $this->response->setJSON([
@@ -79,7 +79,7 @@ class ProsesBisnisController extends BaseContextController
             }
 
             // CEK TIM
-            if ($konteks['id_satuan_kerja'] != $user['id_tim']) {
+            if ($konteks['id_tim'] != $user['id_tim']) {
                 return $this->response->setJSON([
                     'status'  => 'error',
                     'message' => 'Kamu tidak boleh mengedit konteks tim lain.',

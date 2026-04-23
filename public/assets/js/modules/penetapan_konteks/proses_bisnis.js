@@ -3,8 +3,11 @@ document.addEventListener("DOMContentLoaded", function () {
   if (!offcanvasEl) return;
 
   // Reset tombol saat load
-  document.getElementById("pbBtnView").style.display = "none";
-  document.getElementById("pbBtnEdit").style.display = "none";
+  const btnView = document.getElementById("pbBtnView");
+  const btnEdit = document.getElementById("pbBtnEdit");
+
+  if (btnView) btnView.style.display = "none";
+  if (btnEdit) btnEdit.style.display = "none";
 
   // Hide tombol + Proses kalau sudah ada data
   const hasExistingData =
@@ -64,15 +67,48 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Row click → buka offcanvas view mode
-  document
-    .querySelectorAll("#pkProsesBisnisTableWrapper tbody tr")
-    .forEach((row) => {
-      row.style.cursor = "pointer";
+// ambil data user & konteks dari global (inject dari blade nanti)
+const currentUser = window.APP_USER || {};
+const activeKonteks = window.APP_KONTEKS || {};
+
+const isKetua = currentUser.role === "ketua";
+const isOperator = currentUser.role === "operator";
+const bedaTim = String(currentUser.id_tim) !== String(activeKonteks.id_tim);
+
+// hide tombol tambah untuk ketua
+if (isKetua) {
+  const btnAdd = document.querySelector(
+    '[data-bs-target="#offcanvasProsesBisnis"]',
+  );
+  if (btnAdd) btnAdd.style.display = "none";
+}
+
+// Row click → RBAC check
+document
+  .querySelectorAll("#pkProsesBisnisTableWrapper tbody tr")
+  .forEach((row) => {
+    if (isKetua) {
+      row.style.cursor = "default";
+      return;
+    }
+
+    if (isOperator && bedaTim) {
+      row.style.cursor = "not-allowed";
+
       row.addEventListener("click", () => {
-        new bootstrap.Offcanvas(offcanvasEl).show();
+        PkAlert.notAllowed({
+          text: "Kamu hanya bisa melihat proses bisnis tim lain.",
+        });
       });
+
+      return;
+    }
+
+    row.style.cursor = "pointer";
+    row.addEventListener("click", () => {
+      new bootstrap.Offcanvas(offcanvasEl).show();
     });
+  });
 
   document
     .getElementById("pbBtnSwitchEdit")
@@ -153,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function refreshTable() {
     PkAjax.get({
-      url: "/penetapan-konteks/proses-bisnis/table",
+      url: "/penetapan-konteks/proses-bisnis/ajax-table",
       onSuccess(html) {
         $("#pkProsesBisnisTableWrapper").html(html);
 
@@ -161,6 +197,31 @@ document.addEventListener("DOMContentLoaded", function () {
         document
           .querySelectorAll("#pkProsesBisnisTableWrapper tbody tr")
           .forEach((row) => {
+            const isKetua = currentUser.role === "ketua";
+            const isOperator = currentUser.role === "operator";
+            const bedaTim =
+              String(currentUser.id_tim) !== String(activeKonteks.id_tim);
+
+            // 🔒 KETUA → full read-only (no click sama sekali)
+            if (isKetua) {
+              row.style.cursor = "default";
+              return;
+            }
+
+            // ❌ OPERATOR beda tim → pakai alert
+            if (isOperator && bedaTim) {
+              row.style.cursor = "not-allowed";
+
+              row.addEventListener("click", () => {
+                PkAlert.notAllowed({
+                  text: "Kamu hanya bisa melihat proses bisnis tim lain.",
+                });
+              });
+
+              return;
+            }
+
+            // ✅ normal
             row.style.cursor = "pointer";
             row.addEventListener("click", () => {
               new bootstrap.Offcanvas(offcanvasEl).show();

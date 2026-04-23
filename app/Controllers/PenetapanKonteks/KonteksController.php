@@ -234,10 +234,13 @@ class KonteksController extends BaseContextController
         if (!$this->request->isAJAX()) return redirect()->back();
 
         $konteks = $this->model
-            ->select('konteks.*, kegiatan.nama_kegiatan, tim_kerja.nama_tim,, sasaran_strategis.uraian_sasaran')
+            ->select('konteks.*, kegiatan.nama_kegiatan, tim_kerja.nama_tim, sasaran_strategis.uraian_sasaran, wilayah.nama_wilayah, wilayah.tipe')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
             ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
+            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
+            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
+            ->join('wilayah', 'wilayah.id = p.wilayah_id', 'left')
             ->where('konteks.id_konteks', $id)
             ->first();
 

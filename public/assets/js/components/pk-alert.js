@@ -65,6 +65,22 @@ const PkAlert = {
     });
   },
 
+  notAllowed({
+    title = "Akses Ditolak",
+    text = "Kamu tidak memiliki akses untuk aksi ini.",
+    confirmText = "Mengerti",
+  } = {}) {
+    return Swal.fire({
+      icon: "error",
+      title,
+      text,
+      confirmButtonText: confirmText,
+      confirmButtonColor: "#e53e3e",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    });
+  },
+
   toast({ text, icon = "success", duration = 3000 } = {}) {
     const existing = document.getElementById("pkToastEl");
     if (existing) existing.remove();
@@ -123,3 +139,4 @@ const PkAlert = {
     setTimeout(remove, duration);
   },
 };
+

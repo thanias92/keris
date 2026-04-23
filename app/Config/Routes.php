@@ -93,16 +93,14 @@ $routes->group('master', ['filter' => ['auth']], function ($routes) {
 });
 
 // Penetapan Konteks
-$routes->group('penetapan-konteks', [
-    'namespace' => 'App\Controllers\PenetapanKonteks',
-    'filter' => ['auth']
+$routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKonteks', 'filter' => ['auth']
 ], function ($routes) {
     $routes->get('/', 'KonteksController::index');
     $routes->get('konteks', 'KonteksController::index');
 
-    $routes->post('konteks/store', 'KonteksController::store');
-    $routes->post('konteks/update', 'KonteksController::update');
-    $routes->post('konteks/delete', 'KonteksController::delete');
+    $routes->post('konteks/store', 'KonteksController::store', ['filter' => 'role:admin,operator']);
+    $routes->post('konteks/update', 'KonteksController::update', ['filter' => 'role:admin,operator']);
+    $routes->post('konteks/delete', 'KonteksController::delete', ['filter' => 'role:admin,operator']);
     $routes->post('konteks/set-active', 'KonteksController::setActive');
     $routes->post('konteks/reset-active', 'KonteksController::resetActive');
     $routes->get('konteks/detail/(:num)', 'KonteksController::detail/$1');
@@ -110,22 +108,18 @@ $routes->group('penetapan-konteks', [
     $routes->get('konteks/table', 'KonteksController::ajaxTable');
     $routes->get('konteks/get-pemilik-provinsi', 'KonteksController::getPemilikProvinsi');
     $routes->get('konteks/get-pengelola-list', 'KonteksController::getPengelolaList');
-    $routes->get('konteks/get-kegiatan/(:num)', 'KonteksController::getKegiatanBySatuanKerja/$1');
+    $routes->get('konteks/get-kegiatan/(:num)', 'KonteksController::getKegiatanByTim/$1');
 
-    $routes->get('proses-bisnis', 'ProsesBisnisController::index', [
-        'filter' => 'role:admin,operator,ketua'
-    ]);
-
-    $routes->post('proses-bisnis/sync', 'ProsesBisnisController::sync', [
-        'filter' => 'role:admin,operator'
-    ]);
-
+    // Proses Bisnis
+    $routes->get('proses-bisnis', 'ProsesBisnisController::index', ['filter' => 'role:admin,operator,ketua']);
+    $routes->post('proses-bisnis/sync', 'ProsesBisnisController::sync', ['filter' => 'role:admin,operator']);
     $routes->get('proses-bisnis/ajax-table', 'ProsesBisnisController::ajaxTable');
 
-    $routes->get('sasaran-kinerja', 'SasaranKinerjaController::index');
-    $routes->post('sasaran-kinerja/store', 'SasaranKinerjaController::store');
-    $routes->post('sasaran-kinerja/update/(:num)', 'SasaranKinerjaController::update/$1');
-    $routes->post('sasaran-kinerja/delete/(:num)', 'SasaranKinerjaController::delete/$1');
+    // Sasaran Kinerja
+    $routes->get('sasaran-kinerja', 'SasaranKinerjaController::index', ['filter' => 'role:admin,operator,ketua']);
+    $routes->post('sasaran-kinerja/store', 'SasaranKinerjaController::store', ['filter' => 'role:admin,operator']);
+    $routes->post('sasaran-kinerja/update/(:num)', 'SasaranKinerjaController::update/$1', ['filter' => 'role:admin,operator']);
+    $routes->post('sasaran-kinerja/delete/(:num)', 'SasaranKinerjaController::delete/$1', ['filter' => 'role:admin,operator']);
     $routes->get('sasaran-kinerja/detail/(:num)', 'SasaranKinerjaController::detail/$1');
     $routes->get('sasaran-kinerja/table', 'SasaranKinerjaController::ajaxTable');
 

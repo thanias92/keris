@@ -12,8 +12,14 @@ foreach ($listKonteks as $k) {
     $konteksMap[$id] = [
         'id_tim'               => $k['id_tim'] ?? '',
         'pengelola_risiko_id'  => $k['pengelola_risiko_id'] ?? '',
+        'nama_pengelola'       => $k['nama_pengelola'] ?? '',
+
         'id_kegiatan'          => $k['id_kegiatan'] ?? '',
+        'nama_kegiatan'        => $k['nama_kegiatan'] ?? '',
+
         'id_sasaran_strategis' => $k['id_sasaran_strategis'] ?? '',
+        'uraian_sasaran'       => $k['uraian_sasaran'] ?? '',
+
         'tahun'                => $k['tahun'],
     ];
 
@@ -73,7 +79,7 @@ if ($isFilterMode) {
 
                     <div class="pk-filter-row">
                         <label>Tim Kerja</label>
-                        <select class="pk-select" id="csTimKerja" name="sk">
+                        <select class="pk-select" id="csTimKerja" name="sk" data-placeholder="– Pilih –">
                             <option value="">– Pilih –</option>
                             <?php foreach ($timKerjaOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
@@ -86,7 +92,7 @@ if ($isFilterMode) {
 
                     <div class="pk-filter-row">
                         <label>Pengelola Risiko</label>
-                        <select class="pk-select" id="csPengelola" name="pg">
+                        <select class="pk-select" id="csPengelola" name="pg" data-placeholder="– Pilih –">
                             <option value="">– Pilih –</option>
                             <?php foreach ($pengelolaOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
@@ -99,7 +105,7 @@ if ($isFilterMode) {
 
                     <div class="pk-filter-row">
                         <label>Kegiatan</label>
-                        <select class="pk-select" id="csKegiatan" name="kg">
+                        <select class="pk-select" id="csKegiatan" name="kg" data-placeholder="– Pilih –">
                             <option value="">– Pilih –</option>
                             <?php foreach ($kegiatanOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
@@ -112,7 +118,7 @@ if ($isFilterMode) {
 
                     <div class="pk-filter-row">
                         <label>Sasaran Strategis</label>
-                        <select class="pk-select" id="csSasaran" name="ss">
+                        <select class="pk-select" id="csSasaran" name="ss" data-placeholder="– Pilih –">
                             <option value="">– Pilih –</option>
                             <?php foreach ($sasaranOpt as $id => $uraian): ?>
                                 <option value="<?= $id ?>"
@@ -130,7 +136,7 @@ if ($isFilterMode) {
 
                     <div class="pk-filter-row">
                         <label>Tahun</label>
-                        <select class="pk-select" id="csTahun" name="th" style="width: 80px;">
+                        <select class="pk-select" id="csTahun" name="th" style="width: 80px;" data-placeholder="– Pilih –">
                             <option value="">– Pilih –</option>
                             <?php foreach ($tahunOpt as $tahun => $_): ?>
                                 <option value="<?= $tahun ?>"

@@ -37,15 +37,33 @@ class KonteksProsesBisnisModel extends Model
 
     public function syncByKonteks($idKonteks, array $idProsesList)
     {
-        // hapus yang lama
-        $this->where('id_konteks', $idKonteks)->delete();
+        $db = \Config\Database::connect();
 
-        // insert yang baru
-        foreach ($idProsesList as $idProses) {
-            $this->insert([
-                'id_konteks' => $idKonteks,
-                'id_proses'  => $idProses,
-            ]);
+        // ambil existing
+        $existing = $this->where('id_konteks', $idKonteks)
+            ->findAll();
+
+        $existingIds = array_column($existing, 'id_proses');
+
+        $idProsesList = array_map('intval', $idProsesList);
+
+        // DELETE YANG TIDAK DIPILIH
+        $toDelete = array_diff($existingIds, $idProsesList);
+
+        if (!empty($toDelete)) {
+            $this->where('id_konteks', $idKonteks)
+                ->whereIn('id_proses', $toDelete)
+                ->delete();
+        }
+
+        // INSERT YANG BARU
+        $toInsert = array_diff($idProsesList, $existingIds);
+
+        foreach ($toInsert as $idProses) {
+            $db->query(
+                "INSERT INTO konteks_proses_bisnis (id_konteks, id_proses) VALUES (?, ?)",
+                [$idKonteks, $idProses]
+            );
         }
     }
 }

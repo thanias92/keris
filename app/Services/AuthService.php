@@ -21,7 +21,6 @@ class AuthService
     public function loginWithPassword(string $email, string $password): bool
     {
         $user = $this->userModel->where('email', $email)->first();
-
         if (!$user) {
             return false;
         }
@@ -56,7 +55,7 @@ class AuthService
                 'name'     => $ssoData['name'],
                 'email'    => $ssoData['email'],
                 'password' => null,
-                'role'     => 'operator', // default role
+                'role'     => 'operator',
             ]);
 
             $user = $this->userModel->find($userId);
@@ -96,13 +95,14 @@ class AuthService
             'user_name'    => $user['name'],
             'user_role'    => $finalRole,
             'pengelola_id' => $user['pengelola_id'] ?? null,
+            'id_tim'       => $user['id_tim'] ?? null,
             'isLoggedIn'   => true,
 
             'user' => [
-                'id' => $user['id'],
-                'name' => $user['name'],
-                'role' => $finalRole,
-                'id_tim' => $user['pengelola_id']
+                'id'       => $user['id'],
+                'name'     => $user['name'],
+                'role'     => $finalRole,
+                'id_tim'   => $user['id_tim'] ?? null,
             ]
         ]);
     }

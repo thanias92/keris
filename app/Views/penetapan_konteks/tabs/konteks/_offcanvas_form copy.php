@@ -18,7 +18,7 @@
                 <div class="d-flex gap-3 mt-2">
 
                     <label class="form-check border rounded px-3 py-3 flex-fill struktur-card">
-                        <input type="radio" name="level_struktur" value="provinsi" hidden>
+                        <input class="form-check-input me-2" type="radio" name="level_struktur" value="provinsi" checked>
                         <div>
                             <strong>BPS Provinsi Riau</strong>
                             <div class="text-muted small">Tingkat provinsi</div>
@@ -26,7 +26,7 @@
                     </label>
 
                     <label class="form-check border rounded px-3 py-3 flex-fill struktur-card">
-                        <input type="radio" name="level_struktur" value="kabkota" hidden>
+                        <input class="form-check-input me-2" type="radio" name="level_struktur" value="kabkota">
                         <div class="w-100">
                             <strong>BPS Kab/Kota</strong>
                             <div class="text-muted small">Tingkat kabupaten/kota</div>
@@ -37,11 +37,9 @@
                                     <div class="pk-combobox-dropdown">
                                         <div class="pk-combobox-options">
                                             <?php foreach ($listWilayah as $w): ?>
-                                                <?php if ($w['tipe'] !== 'provinsi'): ?>
-                                                    <div class="pk-option" data-value="<?= $w['id'] ?>">
-                                                        <?= esc($w['nama_wilayah']) ?>
-                                                    </div>
-                                                <?php endif; ?>
+                                                <div class="pk-option" data-value="<?= $w['id'] ?>">
+                                                    <?= esc($w['nama_wilayah']) ?>
+                                                </div>
                                             <?php endforeach; ?>
                                         </div>
                                     </div>
@@ -242,51 +240,51 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- SASARAN ORGANISASI -->
-            <div class="pk-section">
-                <div class="pk-section-title">Sasaran Organisasi</div>
-                <div class="pk-context-panel">
-                    <div class="table-responsive">
-                        <table class="table table-sm pk-table-sasaran">
-                            <thead>
-                                <tr>
-                                    <th width="40">#</th>
-                                    <th width="120">Kode Proses</th>
-                                    <th width="180">Proses Bisnis</th>
-                                    <th>Sasaran Kinerja</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pkSasaranOrganisasiBody">
-                                <tr class="pk-empty-row">
-                                    <td colspan="4" class="text-center text-muted py-3">Belum ada sasaran organisasi</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pk-action-wrapper">
-                <div id="pkBtnCreate" class="justify-content-end gap-2" style="display:flex;">
-                    <button type="button" class="btn btn-light" id="pkBtnCloseCreate" data-bs-dismiss="offcanvas">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-
-                <div id="pkBtnView" class="justify-content-between align-items-center" style="display:none;">
-                    <button type="button" class="btn btn-danger" id="pkBtnDelete"><i class="ti ti-trash"></i></button>
-                    <div class="d-flex gap-2 ms-auto">
-                        <button type="button" class="btn btn-light" id="pkBtnCloseView" data-bs-dismiss="offcanvas">Tutup</button>
-                        <button type="button" class="btn btn-warning text-white" id="pkBtnSwitchEdit">Edit</button>
+                <!-- SASARAN ORGANISASI -->
+                <div class="pk-section">
+                    <div class="pk-section-title">Sasaran Organisasi</div>
+                    <div class="pk-context-panel">
+                        <div class="table-responsive">
+                            <table class="table table-sm pk-table-sasaran">
+                                <thead>
+                                    <tr>
+                                        <th width="40">#</th>
+                                        <th width="120">Kode Proses</th>
+                                        <th width="180">Proses Bisnis</th>
+                                        <th>Sasaran Kinerja</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pkSasaranOrganisasiBody">
+                                    <tr class="pk-empty-row">
+                                        <td colspan="4" class="text-center text-muted py-3">Belum ada sasaran organisasi</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
-                <div id="pkBtnEdit" class="justify-content-end gap-2" style="display:none;">
-                    <button type="button" class="btn btn-light" id="pkBtnCancelEdit">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                <!-- BUTTON -->
+                <div class="pk-action-wrapper">
+                    <div class="pk-mode" id="pkBtnCreate">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="offcanvas">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                    <div class="pk-mode" id="pkBtnView" style="display:none; justify-content:space-between;">
+                        <button type="button" class="btn btn-danger" id="pkBtnDelete">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="offcanvas">Batal</button>
+                            <button type="button" class="btn btn-warning text-white" id="pkBtnSwitchEdit">Edit</button>
+                        </div>
+                    </div>
+                    <div class="pk-mode" id="pkBtnEdit" style="display:none;">
+                        <button type="button" class="btn btn-light" id="pkBtnCancelEdit">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
                 </div>
-            </div>
         </form>
     </div>
 </div>
