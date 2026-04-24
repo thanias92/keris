@@ -17,7 +17,7 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 });
 
 // Manajemen User (admin)
-$routes->group('manajemen-user', ['filter' => ['auth']], function ($routes) {
+$routes->group('manajemen-user', ['filter' => ['auth', 'role:admin']], function ($routes) {
     $routes->get('/', 'UserController::index');
     $routes->post('store', 'UserController::store');
     $routes->post('update/(:num)', 'UserController::update/$1');

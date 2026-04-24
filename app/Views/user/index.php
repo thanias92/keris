@@ -28,6 +28,7 @@
             <th>Nama</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Tim</th>
             <th width="150">Aksi</th>
         </tr>
     </thead>
@@ -41,6 +42,7 @@
                         <?= esc($user['role_name'] ?? '-') ?>
                     </span>
                 </td>
+                <td><?= esc($user['tim_name'] ?? '-') ?></td>
                 <td>
                     <button class="btn btn-sm btn-warning"
                         data-bs-toggle="modal"
@@ -100,9 +102,25 @@
 
                         <div class="mb-3">
                             <label>Role</label>
-                            <select name="role" class="form-select">
-                                <option value="admin" <?= $user['role_name'] == 'admin' ? 'selected' : '' ?>>Admin</option>
-                                <option value="operator" <?= $user['role_name'] == 'operator' ? 'selected' : '' ?>>Operator</option>
+                            <select name="role_id" class="form-select">
+                                <?php foreach ($roles as $role): ?>
+                                    <option value="<?= $role['id'] ?>"
+                                        <?= $user['role_id'] == $role['id'] ? 'selected' : '' ?>>
+                                        <?= esc($role['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Tim Kerja</label>
+                            <select name="id_tim" class="form-select">
+                                <option value="">-- Pilih Tim --</option>
+                                <?php foreach ($timKerja as $tim): ?>
+                                    <option value="<?= $tim['id_tim'] ?>"
+                                        <?= $user['id_tim'] == $tim['id_tim'] ? 'selected' : '' ?>>
+                                        <?= esc($tim['nama_tim'] ?? $tim['name'] ?? 'Tim ' . $tim['id_tim']) ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
 
@@ -152,9 +170,23 @@
 
                     <div class="mb-3">
                         <label>Role</label>
-                        <select name="role" class="form-select">
-                            <option value="operator">Operator</option>
-                            <option value="admin">Admin</option>
+                        <select name="role_id" class="form-select">
+                            <?php foreach ($roles as $role): ?>
+                                <option value="<?= $role['id'] ?>">
+                                    <?= esc($role['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Tim Kerja</label>
+                        <select name="id_tim" class="form-select" required>
+                            <option value="">-- Pilih Tim --</option>
+                            <?php foreach ($timKerja as $tim): ?>
+                                <option value="<?= $tim['id_tim'] ?>">
+                                    <?= esc($tim['nama_tim'] ?? $tim['name'] ?? 'Tim ' . $tim['id_tim']) ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 

@@ -16,7 +16,7 @@ class UserModel extends Model
         'name',
         'email',
         'password',
-        'role',
+        'role_id',
         'pengelola_id',
         'id_tim'
     ];
