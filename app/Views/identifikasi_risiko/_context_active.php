@@ -25,13 +25,4 @@
             </div>
         </div>
     </div>
-
-<?php else: ?>
-
-    <div class="alert alert-warning d-inline-flex align-items-center gap-2 py-2 px-3 mb-2"
-        style="font-size: 0.82rem;">
-        <i class="ti ti-alert-circle"></i>
-        Konteks belum dipilih — pilih konteks di atas untuk melihat data identifikasi risiko.
-    </div>
-
 <?php endif; ?>

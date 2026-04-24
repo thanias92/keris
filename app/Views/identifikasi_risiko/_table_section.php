@@ -1,17 +1,8 @@
-<?php if (!$activeKonteks): ?>
+<?php if (!$activeKonteks && empty($data)): ?>
     <div class="card border-0 shadow-sm">
         <div class="card-body text-center py-5 text-muted">
-            <i class="ti ti-map-pin fs-1 mb-2 d-block opacity-25"></i>
-            <p class="mb-0">Pilih konteks terlebih dahulu untuk melihat data identifikasi risiko.</p>
-        </div>
-    </div>
-
-<?php elseif (empty($data)): ?>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5 text-muted">
-            <i class="ti ti-shield-off fs-1 mb-2 d-block opacity-25"></i>
-            <p class="mb-0">Belum ada identifikasi risiko untuk konteks ini.</p>
-            <p class="small mt-1">Klik tombol <strong>+ Risiko</strong> untuk menambahkan.</p>
+            <i class="ti ti-database fs-1 mb-2 d-block opacity-25"></i>
+            <p class="mb-0">Belum ada data identifikasi risiko.</p>
         </div>
     </div>
 

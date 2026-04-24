@@ -151,31 +151,27 @@
             </div>
 
             <!-- ACTION BUTTONS -->
-            <div class="ir-action-wrapper">
-
-                <!-- CREATE -->
-                <div id="irBtnCreate" class="d-flex justify-content-end gap-2">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="offcanvas">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-
-                <!-- VIEW -->
-                <div id="irBtnView" class="d-flex justify-content-between align-items-center d-none">
-                    <button type="button" class="btn btn-danger" id="irBtnDelete">
+            <div class="d-flex align-items-center pt-3 border-top">
+                <div>
+                    <button type="button" id="irBtnDelete" class="btn btn-sm btn-danger d-none">
                         <i class="ti ti-trash"></i>
                     </button>
-                    <div class="d-flex gap-2 ms-auto">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="offcanvas">Tutup</button>
-                        <button type="button" class="btn btn-warning text-white" id="irBtnSwitchEdit">Edit</button>
-                    </div>
                 </div>
-
-                <!-- EDIT -->
-                <div id="irBtnEdit" class="d-flex justify-content-end gap-2 d-none">
-                    <button type="button" class="btn btn-light" id="irBtnCancelEdit">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                <div class="ms-auto d-flex gap-2">
+                    <!-- View mode: tombol Edit -->
+                    <button type="button" id="irBtnSwitchEdit"
+                        class="btn btn-sm btn-warning text-white d-none">Edit</button>
+                    <!-- Create/Edit mode: tombol Simpan -->
+                    <button type="submit" id="irBtnSimpan"
+                        class="btn btn-sm btn-primary px-4">Simpan</button>
+                    <!-- Edit mode: tombol Batal — kembali ke view -->
+                    <button type="button" id="irBtnCancelEdit"
+                        class="btn btn-sm btn-light d-none">Batal</button>
+                    <!-- Create & View mode: tombol Tutup -->
+                    <button type="button" id="irBtnTutup"
+                        class="btn btn-sm btn-light"
+                        data-bs-dismiss="offcanvas">Tutup</button>
                 </div>
-
             </div>
         </form>
     </div>

@@ -1,4 +1,3 @@
-const USER = window.APP_USER || {};
 let IR_URL = {};
 let irBankCache = [];
 let irSuggestIndex = -1;
@@ -19,16 +18,15 @@ document.addEventListener("DOMContentLoaded", function () {
   irInitAutocomplete();
 
   document
-    .getElementById("offcanvasRisiko")
-    ?.addEventListener("hidden.bs.offcanvas", irResetForm);
-  document.addEventListener("change", function (e) {
-    if (!e.target.classList.contains("ir-area-dampak")) return;
-    if (e.target.checked) {
-      document.querySelectorAll(".ir-area-dampak").forEach((cb) => {
-        if (cb !== e.target) cb.checked = false;
-      });
-    }
-  });
+    .getElementById("offcanvasRisiko")?.addEventListener("hidden.bs.offcanvas", irResetForm);    
+    document.addEventListener("change", function (e) {
+      if (!e.target.classList.contains("ir-area-dampak")) return;
+      if (e.target.checked) {
+        document.querySelectorAll(".ir-area-dampak").forEach((cb) => {
+          if (cb !== e.target) cb.checked = false;
+        });
+      }
+    });
 });
 
 /* LOAD BANK RISIKO */
@@ -143,36 +141,31 @@ function irHideSuggest() {
 
 /* SET MODE: create | view | edit */
 function irSetMode(mode) {
-  const modeCreate = document.getElementById("irBtnCreate");
-  const modeView = document.getElementById("irBtnView");
-  const modeEdit = document.getElementById("irBtnEdit");
+  const btnDelete = document.getElementById("irBtnDelete");
+  const btnSwitchEdit = document.getElementById("irBtnSwitchEdit");
+  const btnSimpan = document.getElementById("irBtnSimpan");
+  const btnCancelEdit = document.getElementById("irBtnCancelEdit");
+  const btnTutup = document.getElementById("irBtnTutup");
 
-  const role = USER.role || "guest";
+  [btnDelete, btnSwitchEdit, btnSimpan, btnCancelEdit].forEach((el) => {
+    el?.classList.add("d-none");
+  });
 
-  // 1. RESET SEMUA
-  [modeCreate, modeView, modeEdit].forEach((el) => el?.classList.add("d-none"));
+  // Tutup selalu tampil kecuali mode edit
+  btnTutup?.classList.toggle("d-none", mode === "edit");
 
-  // 2. SHOW SESUAI MODE
   if (mode === "create") {
-    modeCreate?.classList.remove("d-none");
+    btnSimpan?.classList.remove("d-none");
   } else if (mode === "view") {
-    modeView?.classList.remove("d-none");
-
-    // ROLE: ketua tidak boleh edit/delete
-    if (role === "ketua") {
-      document.getElementById("irBtnSwitchEdit")?.classList.add("d-none");
-      document.getElementById("irBtnDelete")?.classList.add("d-none");
-    } else {
-      document.getElementById("irBtnSwitchEdit")?.classList.remove("d-none");
-      document.getElementById("irBtnDelete")?.classList.remove("d-none");
-    }
+    btnDelete?.classList.remove("d-none");
+    btnSwitchEdit?.classList.remove("d-none");
   } else if (mode === "edit") {
-    modeEdit?.classList.remove("d-none");
+    btnDelete?.classList.remove("d-none");
+    btnSimpan?.classList.remove("d-none");
+    btnCancelEdit?.classList.remove("d-none");
   }
 
-  // 3. DISABLE FORM SAAT VIEW
   const isView = mode === "view";
-
   [
     "irKonteksProses",
     "irPernyataan",
@@ -183,13 +176,9 @@ function irSetMode(mode) {
     const el = document.getElementById(id);
     if (el) el.disabled = isView;
   });
-
-  document
-    .querySelectorAll('input[name="sumber_risiko"]')
+  document.querySelectorAll('input[name="sumber_risiko"]')
     .forEach((r) => (r.disabled = isView));
-
-  document
-    .querySelectorAll(".ir-area-dampak")
+  document.querySelectorAll(".ir-area-dampak")
     .forEach((cb) => (cb.disabled = isView));
 }
 
@@ -202,9 +191,7 @@ function irResetForm() {
   document.getElementById("irMode").value = "create";
   document.getElementById("irId").value = "";
   document.getElementById("irOffcanvasTitle").textContent = "Tambah Risiko";
-  document
-    .querySelectorAll(".ir-area-dampak")
-    .forEach((cb) => (cb.checked = false));
+  document.querySelectorAll(".ir-area-dampak").forEach((cb) => (cb.checked = false));
   irHideSuggest();
   irSetMode("create");
 }
@@ -233,14 +220,11 @@ function irLoadDetail(id) {
       document.getElementById("irMode").value = "view";
       document.getElementById("irOffcanvasTitle").textContent = "Detail Risiko";
 
-      document.getElementById("irKonteksProses").value =
-        data.id_konteks_proses ?? "";
-      document.getElementById("irPernyataan").value =
-        data.pernyataan_risiko ?? "";
+      document.getElementById("irKonteksProses").value = data.id_konteks_proses ?? "";
+      document.getElementById("irPernyataan").value = data.pernyataan_risiko ?? "";
       document.getElementById("irDampak").value = data.dampak_risiko ?? "";
       document.getElementById("irPenyebab").value = data.penyebab_risiko ?? "";
-      document.getElementById("irKategori").value =
-        data.id_kategori_risiko ?? "";
+      document.getElementById("irKategori").value = data.id_kategori_risiko ?? "";
 
       document.querySelectorAll('input[name="sumber_risiko"]').forEach((r) => {
         r.checked = r.value === data.sumber_risiko;
@@ -251,8 +235,7 @@ function irLoadDetail(id) {
 
       irHideSuggest();
       irSetMode("view");
-      bootstrap.Offcanvas.getOrCreateInstance(
-        document.getElementById("offcanvasRisiko"),
+      bootstrap.Offcanvas.getOrCreateInstance(document.getElementById("offcanvasRisiko"),
       ).show();
     })
     .catch(() => PkAlert.error({ text: "Gagal memuat detail risiko." }));
@@ -291,9 +274,9 @@ function irRefreshTable() {
 
 /* REFRESH CSRF TOKEN */
 function irRefreshCsrf(res) {
-  if (res && res.csrf_token) {
-    window.csrfToken = res.csrf_token;
-  }
+    if (res && res.csrf_token) {
+        window.csrfToken = res.csrf_token;
+    }
 }
 
 /* SUBMIT FORM */
@@ -308,15 +291,13 @@ document.addEventListener("submit", function (e) {
   const mode = document.getElementById("irMode").value;
   const id = document.getElementById("irId").value;
   const isEdit = mode === "edit";
-
+  
   // Validasi area dampak wajib dipilih 1
-  const areaChecked = document.querySelectorAll(
-    ".ir-area-dampak:checked",
-  ).length;
+  const areaChecked = document.querySelectorAll(".ir-area-dampak:checked").length;
   if (areaChecked === 0) {
     PkAlert.toast({ text: "Area dampak wajib dipilih.", icon: "warning" });
-    return;
-  }
+   return;
+    }
 
   if (!form.checkValidity()) {
     form.classList.add("was-validated");

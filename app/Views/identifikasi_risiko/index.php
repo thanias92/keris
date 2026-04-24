@@ -65,5 +65,8 @@
 <!-- JS Modules -->
 <script src="<?= base_url('assets/js/modules/identifikasi_risiko/context-selector.js') ?>"></script>
 <script src="<?= base_url('assets/js/modules/identifikasi_risiko/risiko.js') ?>"></script>
-
+<script>
+    window.APP_USER = <?= json_encode(session('user')) ?>;
+    window.APP_KONTEKS = <?= json_encode($activeKonteks ?? null) ?>;
+</script>
 <?= $this->endSection() ?>

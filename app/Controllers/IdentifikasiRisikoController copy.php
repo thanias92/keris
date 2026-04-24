@@ -47,7 +47,7 @@ class IdentifikasiRisikoController extends BaseController
 
     private function getListKonteks(): array
     {
-        $builder = (new KonteksModel())
+        return (new KonteksModel())
             ->select('
             konteks.id_konteks,
             konteks.tahun,
@@ -65,9 +65,8 @@ class IdentifikasiRisikoController extends BaseController
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
-            ->orderBy('konteks.created_at', 'DESC');
-
-        return $builder->findAll();
+            ->orderBy('konteks.created_at', 'DESC')
+            ->findAll();
     }
 
     public function index()
@@ -122,13 +121,10 @@ class IdentifikasiRisikoController extends BaseController
         $listKonteksProses = [];
         if ($idKonteks) {
             $db = \Config\Database::connect();
-            $query = $db->table('konteks_proses_bisnis kpb')
+            $listKonteksProses = $db->table('konteks_proses_bisnis kpb')
                 ->select('kpb.id_konteks_proses, pb.kode_proses, pb.uraian_proses, pb.jenis_proses')
                 ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
-                ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-                ->where('kpb.id_konteks', $idKonteks);
-
-            $listKonteksProses = $query
+                ->where('kpb.id_konteks', $idKonteks)
                 ->orderBy('pb.kode_proses', 'ASC')
                 ->get()
                 ->getResultArray();
@@ -156,12 +152,6 @@ class IdentifikasiRisikoController extends BaseController
         $id = $this->request->getPost('id_konteks');
         if (!$id) return redirect()->back();
 
-        // VALIDASI TIM
-        if (!$this->validateKonteksAccess($id)) {
-            session()->remove('id_konteks_ir');
-            return redirect()->back();
-        }
-
         session()->set('id_konteks_ir', $id);
 
         return redirect()->to(site_url('identifikasi-risiko'));
@@ -173,53 +163,11 @@ class IdentifikasiRisikoController extends BaseController
         return redirect()->to(site_url('identifikasi-risiko'));
     }
 
-    /* VALIDASI AKSES TIM */
-    private function validateTimAccess($idKonteksProses): bool
-    {
-        $db = \Config\Database::connect();
-        $row = $db->table('konteks_proses_bisnis kpb')
-            ->select('k.id_tim')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->where('kpb.id_konteks_proses', $idKonteksProses)
-            ->get()
-            ->getRow();
-
-        if (!$row) return false;
-        $role = session('role');
-        $idTimUser = session('id_tim');
-        if ($role === 'admin') return true;
-
-        return (string)$idTimUser === (string)$row->id_tim;
-    }
-    private function validateKonteksAccess($idKonteks): bool
-    {
-        $db = \Config\Database::connect();
-
-        $row = $db->table('konteks')
-            ->select('id_tim')
-            ->where('id_konteks', $idKonteks)
-            ->get()
-            ->getRow();
-
-        if (!$row) return false;
-
-        if (session('role') === 'admin') return true;
-
-        return (string)session('id_tim') === (string)$row->id_tim;
-    }
-
     /* STORE */
     public function store()
     {
         $db = \Config\Database::connect();
-        $idKonteksProses = $this->request->getPost('id_konteks_proses');
 
-        if (!$this->validateTimAccess($idKonteksProses)) {
-            return $this->response->setStatusCode(403)->setJSON([
-                'status' => 'error',
-                'message' => 'Tidak punya akses ke data ini'
-            ]);
-        }
         $result = $db->query("
         INSERT INTO identifikasi_risiko 
             (id_konteks_proses, pernyataan_risiko, penyebab_risiko, dampak_risiko, id_kategori_risiko, sumber_risiko)
@@ -232,10 +180,9 @@ class IdentifikasiRisikoController extends BaseController
             $this->request->getPost('dampak_risiko'),
             $this->request->getPost('id_kategori_risiko') ?: null,
             $this->request->getPost('sumber_risiko'),
-        ]);        
+        ]);
 
         $idIdentifikasi = $result->getRow()->id_identifikasi ?? null;
-        
 
         $area = $this->request->getPost('area_dampak');
         if (!empty($area) && $idIdentifikasi) {
@@ -257,27 +204,6 @@ class IdentifikasiRisikoController extends BaseController
     public function update($id)
     {
         $db = \Config\Database::connect();
-        $data = $db->table('identifikasi_risiko')
-            ->select('id_konteks_proses')
-            ->where('id_identifikasi', $id)
-            ->get()
-            ->getRow();
-
-        if (!$data || !$this->validateTimAccess($data->id_konteks_proses)) {
-            return $this->response->setStatusCode(403)->setJSON([
-                'status' => 'error',
-                'message' => 'Tidak punya akses'
-            ]);
-        }
-
-        $newIdKonteksProses = $this->request->getPost('id_konteks_proses');
-
-        if (!$this->validateTimAccess($newIdKonteksProses)) {
-            return $this->response->setStatusCode(403)->setJSON([
-                'status' => 'error',
-                'message' => 'Tidak punya akses ke target data'
-            ]);
-        }
 
         try {
             $db->table('identifikasi_risiko')
@@ -322,18 +248,6 @@ class IdentifikasiRisikoController extends BaseController
     public function delete($id)
     {
         $db = \Config\Database::connect();
-        $data = $db->table('identifikasi_risiko')
-            ->select('id_konteks_proses')
-            ->where('id_identifikasi', $id)
-            ->get()
-            ->getRow();
-
-        if (!$data || !$this->validateTimAccess($data->id_konteks_proses)) {
-            return $this->response->setStatusCode(403)->setJSON([
-                'status' => 'error',
-                'message' => 'Tidak punya akses'
-            ]);
-        }
 
         try {
             $db->transStart();
@@ -406,6 +320,7 @@ class IdentifikasiRisikoController extends BaseController
     public function detail($id)
     {
         $model = new IdentifikasiRisikoModel();
+
         $data = $model
             ->select('
                 identifikasi_risiko.*,
@@ -419,12 +334,7 @@ class IdentifikasiRisikoController extends BaseController
             ->join('kategori_risiko', 'kategori_risiko.id_kategori_risiko = identifikasi_risiko.id_kategori_risiko', 'left')
             ->where('identifikasi_risiko.id_identifikasi', $id)
             ->first();
-        if (!$data || !$this->validateTimAccess($data['id_konteks_proses'])) {
-            return $this->response->setStatusCode(403)->setJSON([
-                'status' => 'error',
-                'message' => 'Unauthorized'
-            ]);
-        }
+
         return $this->response->setJSON($data);
     }
 

@@ -146,14 +146,14 @@ $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKo
 
 // Identifikasi
 $routes->group('identifikasi-risiko', ['namespace' => 'App\Controllers','filter' => ['auth']], function ($routes) {
-    $routes->get('/', 'IdentifikasiRisikoController::index', ['filter' => 'role:admin,operator,ketua']);
-    $routes->get('detail/(:num)', 'IdentifikasiRisikoController::detail/$1', ['filter' => 'role:admin,operator,ketua']);
-    $routes->get('detail-area/(:num)', 'IdentifikasiRisikoController::detailArea/$1', ['filter' => 'role:admin,operator,ketua']);
+    $routes->get('/', 'IdentifikasiRisikoController::index');
+    $routes->get('detail/(:num)', 'IdentifikasiRisikoController::detail/$1');
+    $routes->get('detail-area/(:num)', 'IdentifikasiRisikoController::detailArea/$1');
     $routes->get('table', 'IdentifikasiRisikoController::ajaxTable');
     $routes->get('bank-risiko', 'IdentifikasiRisikoController::getBankRisiko');
-    $routes->post('set-active', 'IdentifikasiRisikoController::setActive', ['filter' => 'role:admin,operator']);
-    $routes->post('reset-active', 'IdentifikasiRisikoController::resetActive', ['filter' => 'role:admin,operator']);
-    $routes->group('', ['filter' => 'role:admin,operator'], function ($routes) {
+    $routes->post('set-active', 'IdentifikasiRisikoController::setActive');
+    $routes->post('reset-active', 'IdentifikasiRisikoController::resetActive');
+    $routes->group('', function ($routes) {
         $routes->post('store', 'IdentifikasiRisikoController::store');
         $routes->post('update/(:num)', 'IdentifikasiRisikoController::update/$1');
         $routes->post('delete/(:num)', 'IdentifikasiRisikoController::delete/$1');
