@@ -1,7 +1,3 @@
-// ======================================================
-// IDENTIFIKASI RISIKO — CONTEXT SELECTOR MODULE
-// ======================================================
-
 const IrContextSelector = {
   elements: {},
   map: {},
@@ -14,7 +10,7 @@ const IrContextSelector = {
 
     this.elements = {
       form,
-      sk: document.getElementById("irCsSatuanKerja"),
+      sk: document.getElementById("irCsTimKerja"),
       pg: document.getElementById("irCsPengelola"),
       kg: document.getElementById("irCsKegiatan"),
       th: document.getElementById("irCsTahun"),
@@ -63,7 +59,7 @@ const IrContextSelector = {
     if (!hasAnyFilter) return;
 
     for (const [id, k] of Object.entries(this.map)) {
-      const matchSk = !vSk || String(k.id_satuan_kerja) === vSk;
+      const matchSk = !vSk || String(k.id_tim) === vSk;
       const matchPg = !vPg || String(k.pengelola_risiko_id) === vPg;
       const matchKg = !vKg || String(k.id_kegiatan) === vKg;
       const matchTh = !vTh || String(k.tahun) === vTh;

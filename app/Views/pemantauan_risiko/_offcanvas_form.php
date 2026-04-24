@@ -19,7 +19,7 @@
                 <div class="rtp-grid-2">
                     <div>
                         <div class="rtp-info-row"><span class="rtp-info-label">Tahun</span><span class="rtp-info-value" id="prInfoTahun">-</span></div>
-                        <div class="rtp-info-row"><span class="rtp-info-label">Tim Kerja</span><span class="rtp-info-value" id="prInfoSatker">-</span></div>
+                        <div class="rtp-info-row"><span class="rtp-info-label">Tim Kerja</span><span class="rtp-info-value" id="prInfoTimKerja">-</span></div>
                     </div>
 
                     <div>

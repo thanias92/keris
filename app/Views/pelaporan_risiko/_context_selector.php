@@ -1,21 +1,21 @@
 <?php
 $konteksMap = [];
-$satuanKerjaOpt = [];
+$timKerjaOpt = [];
 $tahunOpt = [];
 $pengelolaOpt = [];
 foreach ($listKonteks as $k) {
     $id = $k['id_konteks'];
     $konteksMap[$id] = [
-        'id_satuan_kerja' => $k['id_satuan_kerja'] ?? '',
+        'id_tim' => $k['id_tim'] ?? '',
         'pengelola_risiko_id' => $k['pengelola_risiko_id'] ?? '',
         'id_kegiatan' => $k['id_kegiatan'] ?? '',
         'tahun' => $k['tahun'],
     ];
-    if (!empty($k['id_satuan_kerja'])) $satuanKerjaOpt[$k['id_satuan_kerja']] = $k['nama_satuan_kerja'];
+    if (!empty($k['id_tim'])) $timKerjaOpt[$k['id_tim']] = $k['nama_tim'];
     if (!empty($k['tahun'])) $tahunOpt[$k['tahun']] = true;
     if (!empty($k['pengelola_risiko_id'])) $pengelolaOpt[$k['pengelola_risiko_id']] = $k['nama_pengelola'];
 }
-asort($satuanKerjaOpt);
+asort($timKerjaOpt);
 asort($pengelolaOpt);
 ksort($tahunOpt);
 $sel = $activeKonteks ?? [];
@@ -39,16 +39,16 @@ $currentPeriode = $currentYear . '-' . $currentMonth;
                         <label>Tim Kerja</label>
                         <div class="pl-filter-field">
                             <?php if ($userRole === 'admin' || $userRole === 'operator'): ?>
-                                <select class="pl-select" id="plCsSatuanKerja">
+                                <select class="pl-select" id="plCsTimKerja">
                                     <option value="">– Pilih –</option>
-                                    <?php foreach ($satuanKerjaOpt as $id => $nama): ?>
-                                        <option value="<?= $id ?>" <?= ($sel['id_satuan_kerja'] ?? '') == $id ? 'selected' : '' ?>>
+                                    <?php foreach ($timKerjaOpt as $id => $nama): ?>
+                                        <option value="<?= $id ?>" <?= ($sel['id_tim'] ?? '') == $id ? 'selected' : '' ?>>
                                             <?= esc($nama) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
                             <?php else: ?>
-                                <div class="pl-readonly"><?= esc($ketuaInfo['nama_satuan_kerja'] ?? '-') ?></div>
+                                <div class="pl-readonly"><?= esc($ketuaInfo['nama_tim'] ?? '-') ?></div>
                             <?php endif; ?>
                         </div>
                     </div>

@@ -32,11 +32,11 @@
         </div>
     </div>
 
-    <?= view('master/satuan_kerja/_table_section') ?>
-    <?= view('master/satuan_kerja/_offcanvas_form') ?>
+    <?= view('master/tim_kerja/_table_section') ?>
+    <?= view('master/tim_kerja/_offcanvas_form') ?>
 
 </div>
 
-<script src="<?= base_url('assets/js/modules/master/satuanKerja.js') ?>"></script>
+<script src="<?= base_url('assets/js/modules/master/tim_kerja.js') ?>"></script>
 
 <?= $this->endSection() ?>

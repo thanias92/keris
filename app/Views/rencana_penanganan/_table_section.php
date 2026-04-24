@@ -116,7 +116,7 @@
                                 </td>
 
                                 <td class="rtp-td rtp-td-pj text-muted small">
-                                    Ketua <?= esc($item['nama_satuan_kerja']) ?>
+                                    Ketua <?= esc($item['nama_tim']) ?>
                                 </td>
 
                                 <td class="rtp-td text-center text-muted">—</td>
@@ -207,7 +207,7 @@
                                         <!-- Penanggung Jawab — rowspan -->
                                         <td class="rtp-td rtp-td-pj rtp-td-group small"
                                             rowspan="<?= $rowspanCount ?>">
-                                            Ketua <?= esc($item['nama_satuan_kerja']) ?>
+                                            Ketua <?= esc($item['nama_tim']) ?>
                                         </td>
 
                                         <!-- P, D, SR — rowspan karena 1 risiko = 1 nilai residu -->

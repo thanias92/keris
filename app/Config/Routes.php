@@ -10,9 +10,11 @@ $routes->post('login', 'AuthController::attemptLogin');
 $routes->get('logout', 'AuthController::logout');
 
 // Dashboard
-$routes->get('/', 'DashboardController::index');
-$routes->get('dashboard', 'DashboardController::index');
-$routes->get('dashboard/data', 'DashboardController::data');
+$routes->group('', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'DashboardController::index');
+    $routes->get('dashboard', 'DashboardController::index');
+    $routes->get('dashboard/data', 'DashboardController::data');
+});
 
 // Manajemen User (admin)
 $routes->group('manajemen-user', ['filter' => ['auth']], function ($routes) {
@@ -59,11 +61,11 @@ $routes->group('mr-instansi', ['filter' => ['auth']], function ($routes) {
 
 // Master Data
 $routes->group('master', ['filter' => ['auth']], function ($routes) {
-    $routes->get('tim-kerja', 'Master\SatuanKerjaController::index');
-    $routes->get('tim-kerja/table', 'Master\SatuanKerjaController::table');
-    $routes->post('tim-kerja/store', 'Master\SatuanKerjaController::store');
-    $routes->post('tim-kerja/update/(:num)', 'Master\SatuanKerjaController::update/$1');
-    $routes->post('tim-kerja/delete/(:num)', 'Master\SatuanKerjaController::delete/$1');
+    $routes->get('tim-kerja', 'Master\TimKerjaController::index');
+    $routes->get('tim-kerja/table', 'Master\TimKerjaController::table');
+    $routes->post('tim-kerja/store', 'Master\TimKerjaController::store');
+    $routes->post('tim-kerja/update/(:num)', 'Master\TimKerjaController::update/$1');
+    $routes->post('tim-kerja/delete/(:num)', 'Master\TimKerjaController::delete/$1');
 
     $routes->get('kegiatan', 'Master\KegiatanController::index');
     $routes->get('kegiatan/table', 'Master\KegiatanController::table');

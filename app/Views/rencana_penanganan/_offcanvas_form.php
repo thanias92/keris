@@ -28,7 +28,7 @@
                         </div>
                         <div class="rtp-info-row">
                             <span class="rtp-info-label">Tim Kerja</span>
-                            <span class="rtp-info-value" id="rtpInfoSatker">-</span>
+                            <span class="rtp-info-value" id="rtpInfoTimKerja">-</span>
                         </div>
                     </div>
 

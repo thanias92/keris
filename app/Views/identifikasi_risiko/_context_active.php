@@ -4,7 +4,7 @@
         <div class="card-body py-2 px-3">
             <div class="row g-2 align-items-center">
                 <div class="col-auto text-muted">
-                    Tim Kerja: <strong class="text-dark"><?= esc($activeKonteks['nama_satuan_kerja'] ?? '-') ?></strong>
+                    Tim Kerja: <strong class="text-dark"><?= esc($activeKonteks['nama_tim'] ?? '-') ?></strong>
                 </div>
                 <div class="col-auto text-muted">·</div>
                 <div class="col-auto text-muted">

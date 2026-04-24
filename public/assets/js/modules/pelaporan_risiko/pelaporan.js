@@ -1,7 +1,3 @@
-/**
- * pelaporan.js (FIXED)
- */
-
 function setText(id, value) {
   const el = document.getElementById(id);
   if (el) el.textContent = value ?? "-";
@@ -45,7 +41,7 @@ function openPelaporanDetail(id) {
     .then((res) => res.json())
     .then((data) => {
       setText("plInfoTahun", data.tahun);
-      setText("plInfoSatker", data.nama_satuan_kerja);
+      setText("plInfoTimKerja", data.nama_tim);
       setText("plInfoPengelola", data.nama_pengelola);
       setText("plInfoSasaran", data.sasaran_strategis);
 

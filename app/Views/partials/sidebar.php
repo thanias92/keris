@@ -94,7 +94,7 @@
                             <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
                         </a>
                         <ul class="pc-submenu">
-                            <li class="pc-item"><a href="<?= base_url('master/satuan-kerja') ?>" class="pc-link"><span class="pc-mtext">Tim Kerja</span></a></li>
+                            <li class="pc-item"><a href="<?= base_url('master/tim-kerja') ?>" class="pc-link"><span class="pc-mtext">Tim Kerja</span></a></li>
                             <li class="pc-item"><a href="<?= base_url('master/kegiatan') ?>" class="pc-link"><span class="pc-mtext">Kegiatan</span></a></li>
                             <li class="pc-item"><a href="<?= base_url('master/penugasan-tim') ?>" class="pc-link"><span class="pc-mtext">Penugasan Tim</span></a></li>
                             <li class="pc-item"><a href="<?= base_url('master/sasaran-strategis') ?>" class="pc-link"><span class="pc-mtext">Sasaran Strategis</span></a></li>

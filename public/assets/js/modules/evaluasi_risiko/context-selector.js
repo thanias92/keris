@@ -1,7 +1,3 @@
-// ======================================================
-// EVALUASI RISIKO — CONTEXT SELECTOR MODULE
-// ======================================================
-
 const ErContextSelector = {
   elements: {},
   map: {},
@@ -14,7 +10,7 @@ const ErContextSelector = {
 
     this.elements = {
       form,
-      sk: document.getElementById("erCsSatuanKerja"),
+      sk: document.getElementById("erCsTimKerja"),
       pg: document.getElementById("erCsPengelola"),
       kg: document.getElementById("erCsKegiatan"),
       th: document.getElementById("erCsTahun"),
@@ -63,7 +59,7 @@ const ErContextSelector = {
     if (!hasAnyFilter) return;
 
     for (const [id, k] of Object.entries(this.map)) {
-      const matchSk = !vSk || String(k.id_satuan_kerja) === vSk;
+      const matchSk = !vSk || String(k.id_tim) === vSk;
       const matchPg = !vPg || String(k.pengelola_risiko_id) === vPg;
       const matchKg = !vKg || String(k.id_kegiatan) === vKg;
       const matchTh = !vTh || String(k.tahun) === vTh;

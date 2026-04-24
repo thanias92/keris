@@ -1,7 +1,3 @@
-// ======================================================
-// PENANGANAN RISIKO — CONTEXT SELECTOR MODULE
-// ======================================================
-
 const RtpContextSelector = {
   elements: {},
   map: {},
@@ -14,7 +10,7 @@ const RtpContextSelector = {
 
     this.elements = {
       form,
-      sk: document.getElementById("rtpCsSatuanKerja"),
+      sk: document.getElementById("rtpCsTimKerja"),
       pg: document.getElementById("rtpCsPengelola"),
       kg: document.getElementById("rtpCsKegiatan"),
       th: document.getElementById("rtpCsTahun"),
@@ -63,7 +59,7 @@ const RtpContextSelector = {
     if (!hasAnyFilter) return;
 
     for (const [id, k] of Object.entries(this.map)) {
-      const matchSk = !vSk || String(k.id_satuan_kerja) === vSk;
+      const matchSk = !vSk || String(k.id_tim) === vSk;
       const matchPg = !vPg || String(k.pengelola_risiko_id) === vPg;
       const matchKg = !vKg || String(k.id_kegiatan) === vKg;
       const matchTh = !vTh || String(k.tahun) === vTh;

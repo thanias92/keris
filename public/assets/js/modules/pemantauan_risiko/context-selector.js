@@ -1,7 +1,3 @@
-// ======================================================
-// PEMANTAUAN RISIKO — CONTEXT SELECTOR MODULE
-// ======================================================
-
 const PmContextSelector = {
   elements: {},
   map: {},
@@ -14,7 +10,7 @@ const PmContextSelector = {
 
     this.elements = {
       form,
-      sk: document.getElementById("pmCsSatuanKerja"),
+      sk: document.getElementById("pmCsTimKerja"),
       pg: document.getElementById("pmCsPengelola"),
       kg: document.getElementById("pmCsKegiatan"),
       th: document.getElementById("pmCsTahun"),
@@ -65,7 +61,7 @@ const PmContextSelector = {
 
     // cari konteks yang cocok
     for (const [id, k] of Object.entries(this.map)) {
-      const matchSk = !vSk || String(k.id_satuan_kerja) === vSk;
+      const matchSk = !vSk || String(k.id_tim) === vSk;
       const matchPg = !vPg || String(k.pengelola_risiko_id) === vPg;
       const matchKg = !vKg || String(k.id_kegiatan) === vKg;
       const matchTh = !vTh || String(k.tahun) === vTh;

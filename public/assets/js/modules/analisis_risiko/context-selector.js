@@ -1,7 +1,3 @@
-// ======================================================
-// ANALISIS RISIKO — CONTEXT SELECTOR MODULE
-// ======================================================
-
 const ArContextSelector = {
   elements: {},
   map: {},
@@ -14,7 +10,7 @@ const ArContextSelector = {
 
     this.elements = {
       form,
-      sk: document.getElementById("arCsSatuanKerja"),
+      sk: document.getElementById("arCsTimKerja"),
       pg: document.getElementById("arCsPengelola"),
       kg: document.getElementById("arCsKegiatan"),
       th: document.getElementById("arCsTahun"),
@@ -62,7 +58,7 @@ const ArContextSelector = {
     if (!hasAnyFilter) return;
 
     for (const [id, k] of Object.entries(this.map)) {
-      const matchSk = !vSk || String(k.id_satuan_kerja) === vSk;
+      const matchSk = !vSk || String(k.id_tim) === vSk;
       const matchPg = !vPg || String(k.pengelola_risiko_id) === vPg;
       const matchKg = !vKg || String(k.id_kegiatan) === vKg;
       const matchTh = !vTh || String(k.tahun) === vTh;

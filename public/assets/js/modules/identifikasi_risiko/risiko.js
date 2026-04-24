@@ -1,9 +1,3 @@
-// ======================================================
-// IDENTIFIKASI RISIKO — RISIKO MODULE
-// Prefix: ir
-// Pakai: PkAlert, PkAjax
-// ======================================================
-
 let IR_URL = {};
 let irBankCache = [];
 let irSuggestIndex = -1;
@@ -24,9 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
   irInitAutocomplete();
 
   document
-    .getElementById("offcanvasRisiko")
-        ?.addEventListener("hidden.bs.offcanvas", irResetForm);
-    
+    .getElementById("offcanvasRisiko")?.addEventListener("hidden.bs.offcanvas", irResetForm);    
     document.addEventListener("change", function (e) {
       if (!e.target.classList.contains("ir-area-dampak")) return;
       if (e.target.checked) {
@@ -37,9 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-/* ======================================================
-   LOAD BANK RISIKO
-====================================================== */
+/* LOAD BANK RISIKO */
 function irLoadBankRisiko() {
   PkAjax.get({
     url: IR_URL.bankRisiko,
@@ -49,9 +39,7 @@ function irLoadBankRisiko() {
   });
 }
 
-/* ======================================================
-   AUTOCOMPLETE
-====================================================== */
+/* AUTOCOMPLETE */
 function irInitAutocomplete() {
   const textarea = document.getElementById("irPernyataan");
   const dropdown = document.getElementById("irBankSuggest");
@@ -151,9 +139,7 @@ function irHideSuggest() {
   if (el) el.style.display = "none";
 }
 
-/* ======================================================
-   SET MODE: create | view | edit
-====================================================== */
+/* SET MODE: create | view | edit */
 function irSetMode(mode) {
   const btnDelete = document.getElementById("irBtnDelete");
   const btnSwitchEdit = document.getElementById("irBtnSwitchEdit");
@@ -190,17 +176,13 @@ function irSetMode(mode) {
     const el = document.getElementById(id);
     if (el) el.disabled = isView;
   });
-  document
-    .querySelectorAll('input[name="sumber_risiko"]')
+  document.querySelectorAll('input[name="sumber_risiko"]')
     .forEach((r) => (r.disabled = isView));
-  document
-    .querySelectorAll(".ir-area-dampak")
+  document.querySelectorAll(".ir-area-dampak")
     .forEach((cb) => (cb.disabled = isView));
 }
 
-/* ======================================================
-   RESET FORM
-====================================================== */
+/* RESET FORM */
 function irResetForm() {
   const form = document.getElementById("irForm");
   if (!form) return;
@@ -209,16 +191,12 @@ function irResetForm() {
   document.getElementById("irMode").value = "create";
   document.getElementById("irId").value = "";
   document.getElementById("irOffcanvasTitle").textContent = "Tambah Risiko";
-  document
-    .querySelectorAll(".ir-area-dampak")
-    .forEach((cb) => (cb.checked = false));
+  document.querySelectorAll(".ir-area-dampak").forEach((cb) => (cb.checked = false));
   irHideSuggest();
   irSetMode("create");
 }
 
-/* ======================================================
-   BIND ROW CLICK
-====================================================== */
+/* BIND ROW CLICK */
 function irBindRowClick() {
   document.querySelectorAll(".ir-row").forEach((row) => {
     row.addEventListener("click", function () {
@@ -227,9 +205,7 @@ function irBindRowClick() {
   });
 }
 
-/* ======================================================
-   LOAD DETAIL
-====================================================== */
+/* LOAD DETAIL */
 function irLoadDetail(id) {
   Promise.all([
     fetch(IR_URL.detail(id), {
@@ -244,14 +220,11 @@ function irLoadDetail(id) {
       document.getElementById("irMode").value = "view";
       document.getElementById("irOffcanvasTitle").textContent = "Detail Risiko";
 
-      document.getElementById("irKonteksProses").value =
-        data.id_konteks_proses ?? "";
-      document.getElementById("irPernyataan").value =
-        data.pernyataan_risiko ?? "";
+      document.getElementById("irKonteksProses").value = data.id_konteks_proses ?? "";
+      document.getElementById("irPernyataan").value = data.pernyataan_risiko ?? "";
       document.getElementById("irDampak").value = data.dampak_risiko ?? "";
       document.getElementById("irPenyebab").value = data.penyebab_risiko ?? "";
-      document.getElementById("irKategori").value =
-        data.id_kategori_risiko ?? "";
+      document.getElementById("irKategori").value = data.id_kategori_risiko ?? "";
 
       document.querySelectorAll('input[name="sumber_risiko"]').forEach((r) => {
         r.checked = r.value === data.sumber_risiko;
@@ -262,16 +235,13 @@ function irLoadDetail(id) {
 
       irHideSuggest();
       irSetMode("view");
-      bootstrap.Offcanvas.getOrCreateInstance(
-        document.getElementById("offcanvasRisiko"),
+      bootstrap.Offcanvas.getOrCreateInstance(document.getElementById("offcanvasRisiko"),
       ).show();
     })
     .catch(() => PkAlert.error({ text: "Gagal memuat detail risiko." }));
 }
 
-/* ======================================================
-   SWITCH TO EDIT
-====================================================== */
+/* SWITCH TO EDIT */
 document.addEventListener("click", function (e) {
   if (e.target?.id === "irBtnSwitchEdit") {
     document.getElementById("irMode").value = "edit";
@@ -280,9 +250,7 @@ document.addEventListener("click", function (e) {
   }
 });
 
-/* ======================================================
-   CANCEL EDIT
-====================================================== */
+/* CANCEL EDIT */
 document.addEventListener("click", function (e) {
   if (e.target?.id === "irBtnCancelEdit") {
     const id = document.getElementById("irId").value;
@@ -290,9 +258,7 @@ document.addEventListener("click", function (e) {
   }
 });
 
-/* ======================================================
-   REFRESH TABLE
-====================================================== */
+/* REFRESH TABLE */
 function irRefreshTable() {
   PkAjax.get({
     url: IR_URL.ajaxTable,
@@ -306,18 +272,14 @@ function irRefreshTable() {
   });
 }
 
-/* ======================================================
-   REFRESH CSRF TOKEN
-====================================================== */
+/* REFRESH CSRF TOKEN */
 function irRefreshCsrf(res) {
     if (res && res.csrf_token) {
         window.csrfToken = res.csrf_token;
     }
 }
 
-/* ======================================================
-   SUBMIT FORM
-====================================================== */
+/* SUBMIT FORM */
 document.addEventListener("submit", function (e) {
   if (e.target?.id !== "irForm") return;
   e.preventDefault();
@@ -383,9 +345,7 @@ document.addEventListener("submit", function (e) {
   });
 });
 
-/* ======================================================
-   DELETE
-====================================================== */
+/* DELETE */
 document.addEventListener("click", function (e) {
   if (!e.target?.closest("#irBtnDelete")) return;
 

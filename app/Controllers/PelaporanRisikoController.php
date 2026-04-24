@@ -21,8 +21,8 @@ class PelaporanRisikoController extends BaseController
     private function getListKonteks()
     {
         return $this->db->table('konteks k')
-            ->select('k.id_konteks,k.tahun,k.id_satuan_kerja,k.id_kegiatan,k.pengelola_risiko_id,g.nama as nama_pengelola,sk.nama_satuan_kerja,kegiatan.nama_kegiatan')
-            ->join('satuan_kerja sk', 'sk.id_satuan_kerja=k.id_satuan_kerja', 'left')
+            ->select('k.id_konteks,k.tahun,k.id_tim,k.id_kegiatan,k.pengelola_risiko_id,g.nama as nama_pengelola,sk.nama_tim,kegiatan.nama_kegiatan')
+            ->join('tim_kerja sk', 'sk.id_tim=k.id_tim', 'left')
             ->join('kegiatan', 'kegiatan.id_kegiatan=k.id_kegiatan', 'left')
             ->join('pengelola_risiko g', 'g.id=k.pengelola_risiko_id', 'left')
             ->orderBy('k.created_at', 'DESC')
@@ -76,7 +76,7 @@ class PelaporanRisikoController extends BaseController
             rtp.target_output,
             rtp.target_waktu,
             ir.pernyataan_risiko,
-            sk.nama_satuan_kerja,
+            sk.nama_tim,
             pm.realisasi_output,
             pm.realisasi_waktu,
             COALESCE(pm.status, \'Belum Dilaksanakan\') as status
@@ -85,7 +85,7 @@ class PelaporanRisikoController extends BaseController
             ->join('identifikasi_risiko ir',     'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb',  'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('konteks k',                  'k.id_konteks = kpb.id_konteks')
-            ->join('satuan_kerja sk',            'sk.id_satuan_kerja = k.id_satuan_kerja', 'left')
+            ->join('tim_kerja sk',            'sk.id_tim = k.id_tim', 'left')
             ->join('pemantauan_risiko pm',       'pm.id_rtp = rtp.id_rtp', 'left');
 
         // Filter konteks
@@ -102,7 +102,7 @@ class PelaporanRisikoController extends BaseController
                 ->get()->getRow();
 
             if ($penugasan) {
-                $builder->where('k.id_satuan_kerja', $penugasan->satuan_kerja_id);
+                $builder->where('k.id_tim', $penugasan->tim_kerja_id);
             }
         }
 
@@ -182,9 +182,9 @@ class PelaporanRisikoController extends BaseController
         if ($userRole === 'ketua') {
             $pengelola_id = session('pengelola_id');
             $ketuaInfo = $this->db->table('pengelola_risiko g')
-                ->select('g.nama, sk.nama_satuan_kerja')
+                ->select('g.nama, sk.nama_tim')
                 ->join('penugasan_pengelola p', 'p.pengelola_id = g.id', 'left')
-                ->join('satuan_kerja sk',       'sk.id_satuan_kerja = p.satuan_kerja_id', 'left')
+                ->join('tim_kerja sk',       'sk.id_tim = p.tim_kerja_id', 'left')
                 ->where('g.id', $pengelola_id)
                 ->get()->getRowArray();
         }
@@ -218,7 +218,7 @@ class PelaporanRisikoController extends BaseController
             ir.penyebab_risiko,
             ir.dampak_risiko,
 
-            sk.nama_satuan_kerja,
+            sk.nama_tim,
             g.nama as nama_pengelola,
             k.tahun,
             ss.uraian_sasaran as sasaran_strategis,
@@ -248,7 +248,7 @@ class PelaporanRisikoController extends BaseController
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->join('satuan_kerja sk', 'sk.id_satuan_kerja = k.id_satuan_kerja', 'left')
+            ->join('tim_kerja sk', 'sk.id_tim = k.id_tim', 'left')
             ->join('sasaran_strategis ss', 'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko g', 'g.id = k.pengelola_risiko_id', 'left')
             ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
@@ -329,13 +329,13 @@ class PelaporanRisikoController extends BaseController
             ir.pernyataan_risiko,
             pm.realisasi_output,
             COALESCE(pm.status, \'Belum Dilaksanakan\') as status,
-            sk.nama_satuan_kerja
+            sk.nama_tim
         ')
             ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->join('satuan_kerja sk', 'sk.id_satuan_kerja = k.id_satuan_kerja', 'left')
+            ->join('tim_kerja sk', 'sk.id_tim = k.id_tim', 'left')
             ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left')
             ->orderBy('rtp.id_rtp', 'ASC')
             ->get()->getResultArray();
@@ -351,7 +351,7 @@ class PelaporanRisikoController extends BaseController
             'data'        => $data,
             'bulan'       => $bulanNama[$bulan] ?? $bulan,
             'tahun'       => $tahun,
-            'satker'      => $data[0]['nama_satuan_kerja'] ?? '-',
+            'satker'      => $data[0]['nama_tim'] ?? '-',
             'nama_ketua'  => $ketua['nama'] ?? '(................................)'
         ]);
     }

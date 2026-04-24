@@ -32,7 +32,7 @@
 
     <!-- INFO -->
     <div class="info">
-        <p><strong>Satuan Kerja:</strong> <?= $satker ?></p>
+        <p><strong>Tim Kerja:</strong> <?= $timkerja ?></p>
         <p><strong>Tanggal Cetak:</strong> <?= date('d-m-Y') ?></p>
     </div>
 

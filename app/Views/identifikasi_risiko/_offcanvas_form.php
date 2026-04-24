@@ -23,9 +23,9 @@
                             <span class="text-dark fw-500"><?= esc($activeKonteks['tahun'] ?? '-') ?></span>
                         </div>
                         <div class="d-flex">
-                            <span style="width:130px; flex-shrink:0;">Satuan Kerja</span>
+                            <span style="width:130px; flex-shrink:0;">Tim Kerja</span>
                             <span style="margin-right:8px;">:</span>
-                            <span class="text-dark fw-500"><?= esc($activeKonteks['nama_satuan_kerja'] ?? '-') ?></span>
+                            <span class="text-dark fw-500"><?= esc($activeKonteks['nama_tim'] ?? '-') ?></span>
                         </div>
                         <div class="d-flex">
                             <span style="width:130px; flex-shrink:0;">Pengelola Risiko</span>

@@ -25,7 +25,10 @@
 
     <!-- OFFCANVAS KONTEKS CUSTOM CSS -->
     <link rel="stylesheet" href="<?= base_url('assets/css/dashboard.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/pk-offcanvas-konteks.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/tabs.css') ?>">
+    <link rel=" stylesheet" href="<?= base_url('assets/css/combobox.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/penetapan-konteks.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/konteks.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/identifikasi-risiko.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/analisis-risiko.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/evaluasi-risiko.css') ?>">

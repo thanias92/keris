@@ -1,18 +1,9 @@
-/**
- * evaluasi.js
- * Evaluasi Risiko — Offcanvas form, mode management, CRUD
- */
-
-/* ======================================================
-   URL & CSRF
-====================================================== */
+/* URL & CSRF */
 const ER_URL = window.ER_CONFIG?.url || {};
 let erCsrfToken = window.ER_CONFIG?.csrf?.token || "";
 const erCsrfName = window.ER_CONFIG?.csrf?.name || "";
 
-/* ======================================================
-   MODE MANAGEMENT
-====================================================== */
+/* MODE MANAGEMENT */
 function erSetMode(mode) {
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -39,9 +30,6 @@ function erSetMode(mode) {
       : "Detail Evaluasi Risiko";
 }
 
-/* ======================================================
-   RESET FORM
-====================================================== */
 function erResetForm() {
   document.getElementById("erForm").reset();
   document.getElementById("erForm").classList.remove("was-validated");
@@ -52,7 +40,7 @@ function erResetForm() {
 
   [
     "erInfoTahun",
-    "erInfoSatker",
+    "erInfoTimKerja",
     "erInfoPengelola",
     "erInfoSasaran",
     "erInfoProses",
@@ -82,9 +70,7 @@ function erResetForm() {
   }
 }
 
-/* ======================================================
-   POPULATE INFO
-====================================================== */
+/* POPULATE INFO */
 function erPopulateInfo(d) {
   const set = (id, val) => {
     const el = document.getElementById(id);
@@ -92,7 +78,7 @@ function erPopulateInfo(d) {
   };
 
   set("erInfoTahun", d.tahun);
-  set("erInfoSatker", d.nama_satuan_kerja);
+  set("erInfoTimKerja", d.nama_tim);
   set("erInfoPengelola", d.nama_pengelola);
   set("erInfoSasaran", d.sasaran_strategis);
   set(
@@ -121,9 +107,7 @@ function erPopulateInfo(d) {
   }
 }
 
-/* ======================================================
-   LOAD DETAIL EVALUASI (view/edit mode)
-====================================================== */
+/* LOAD DETAIL EVALUASI (view/edit mode) */
 function erLoadDetail(idEvaluasi) {
   return fetch(ER_URL.detail(idEvaluasi), {
     headers: {
@@ -146,9 +130,7 @@ function erLoadDetail(idEvaluasi) {
     });
 }
 
-/* ======================================================
-   BATAL
-====================================================== */
+/* BATAL */
 function erBatal() {
   const id = document.getElementById("erId").value;
   if (id) {
@@ -160,9 +142,7 @@ function erBatal() {
   }
 }
 
-/* ======================================================
-   OPEN ROW
-====================================================== */
+/* OPEN ROW */
 document.addEventListener("click", function (e) {
   const row = e.target.closest(".er-row");
   if (!row) return;
@@ -204,9 +184,7 @@ document.addEventListener("click", function (e) {
   }
 });
 
-/* ======================================================
-   SUBMIT (STORE / UPDATE)
-====================================================== */
+/* SUBMIT (STORE / UPDATE) */
 document.getElementById("erForm")?.addEventListener("submit", function (e) {
   e.preventDefault();
 

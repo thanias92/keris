@@ -1,18 +1,10 @@
-/**
- * analisis.js
- * Analisis Risiko — Offcanvas form, mode management, CRUD
- */
 
-/* ======================================================
-   URL & CSRF (di-inject dari view lewat window.AR_CONFIG)
-====================================================== */
+/* URL & CSRF (di-inject dari view lewat window.AR_CONFIG) */
 const AR_URL = window.AR_CONFIG?.url || {};
 let arCsrfToken = window.AR_CONFIG?.csrf?.token || "";
 const arCsrfName = window.AR_CONFIG?.csrf?.name || "";
 
-/* ======================================================
-   MODE MANAGEMENT
-====================================================== */
+/* MODE MANAGEMENT */
 function arSetMode(mode) {
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -44,9 +36,7 @@ function arSetMode(mode) {
       : "Detail Analisis Risiko";
 }
 
-/* ======================================================
-   RESET FORM
-====================================================== */
+/* RESET FORM */
 function arResetForm() {
   document.getElementById("arForm").reset();
   document.getElementById("arForm").classList.remove("was-validated");
@@ -56,7 +46,7 @@ function arResetForm() {
 
   [
     "arInfoTahun",
-    "arInfoSatker",
+    "arInfoTimKerja",
     "arInfoPengelola",
     "arInfoSasaran",
     "arInfoProses",
@@ -72,16 +62,14 @@ function arResetForm() {
   });
 }
 
-/* ======================================================
-   POPULATE INFO KONTEKS & RISIKO
-====================================================== */
+/* POPULATE INFO KONTEKS & RISIKO */
 function arPopulateInfo(d) {
   const set = (id, val) => {
     const el = document.getElementById(id);
     if (el) el.textContent = val || "-";
   };
   set("arInfoTahun", d.tahun);
-  set("arInfoSatker", d.nama_satuan_kerja);
+  set("arInfoTimKerja", d.nama_tim);
   set("arInfoPengelola", d.nama_pengelola);
   set("arInfoSasaran", d.sasaran_strategis);
   set(
@@ -94,9 +82,7 @@ function arPopulateInfo(d) {
   set("arInfoDampak", d.dampak_risiko);
 }
 
-/* ======================================================
-   LOAD DETAIL PENILAIAN (view/edit mode)
-====================================================== */
+/* LOAD DETAIL PENILAIAN (view/edit mode) */
 function arLoadDetail(idPenilaian) {
   return fetch(AR_URL.detail(idPenilaian))
     .then((r) => r.json())
@@ -105,8 +91,7 @@ function arLoadDetail(idPenilaian) {
       document.getElementById("arIdIdentifikasi").value = d.id_identifikasi;
       document.getElementById("arKemungkinan").value = d.id_kemungkinan ?? "";
       document.getElementById("arDampak").value = d.id_dampak ?? "";
-      document.getElementById("arUraianPengendalian").value =
-        d.uraian_pengendalian ?? "";
+      document.getElementById("arUraianPengendalian").value = d.uraian_pengendalian ?? "";
       document.getElementById("arEfektivitas").value = d.efektivitas ?? "";
       arPopulateInfo(d);
       arLoadPreview();
@@ -114,9 +99,7 @@ function arLoadDetail(idPenilaian) {
     });
 }
 
-/* ======================================================
-   BATAL — kembali ke view
-====================================================== */
+/* BATAL — kembali ke view */
 function arBatal() {
   const id = document.getElementById("arId").value;
   if (id) {
@@ -128,9 +111,7 @@ function arBatal() {
   }
 }
 
-/* ======================================================
-   OPEN ROW — klik baris tabel
-====================================================== */
+/* OPEN ROW — klik baris tabel */
 document.addEventListener("click", function (e) {
   const row = e.target.closest(".ar-row");
   if (!row) return;
@@ -139,9 +120,7 @@ document.addEventListener("click", function (e) {
   const idPenilaian = row.dataset.penilaian;
 
   arResetForm();
-  bootstrap.Offcanvas.getOrCreateInstance(
-    document.getElementById("arOffcanvas"),
-  ).show();
+  bootstrap.Offcanvas.getOrCreateInstance(document.getElementById("arOffcanvas"),).show();
 
   if (idPenilaian) {
     arLoadDetail(idPenilaian).then(() => arSetMode("view"));
@@ -156,9 +135,7 @@ document.addEventListener("click", function (e) {
   }
 });
 
-/* ======================================================
-   PREVIEW SKOR RISIKO
-====================================================== */
+/* PREVIEW SKOR RISIKO */
 function arLoadPreview() {
   const idK = document.getElementById("arKemungkinan").value;
   const idD = document.getElementById("arDampak").value;
@@ -171,10 +148,8 @@ function arLoadPreview() {
 
   const selK = document.getElementById("arKemungkinan");
   const selD = document.getElementById("arDampak");
-  document.getElementById("arDescKemungkinan").textContent =
-    selK.options[selK.selectedIndex]?.dataset.desc ?? "";
-  document.getElementById("arDescDampak").textContent =
-    selD.options[selD.selectedIndex]?.dataset.desc ?? "";
+  document.getElementById("arDescKemungkinan").textContent = selK.options[selK.selectedIndex]?.dataset.desc ?? "";
+  document.getElementById("arDescDampak").textContent = selD.options[selD.selectedIndex]?.dataset.desc ?? "";
 
   fetch(AR_URL.preview, {
     method: "POST",
@@ -197,14 +172,10 @@ function arLoadPreview() {
     });
 }
 
-document
-  .getElementById("arKemungkinan")
-  ?.addEventListener("change", arLoadPreview);
+document.getElementById("arKemungkinan")?.addEventListener("change", arLoadPreview);
 document.getElementById("arDampak")?.addEventListener("change", arLoadPreview);
 
-/* ======================================================
-   HAPUS
-====================================================== */
+/* HAPUS */
 function arHapus() {
   const id = document.getElementById("arId").value;
   if (!id) return;
@@ -247,9 +218,7 @@ function arHapus() {
   });
 }
 
-/* ======================================================
-   SUBMIT — STORE / UPDATE
-====================================================== */
+/* SUBMIT — STORE / UPDATE */
 document.getElementById("arForm")?.addEventListener("submit", function (e) {
   e.preventDefault();
   const form = e.target;

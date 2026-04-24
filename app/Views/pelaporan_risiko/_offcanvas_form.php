@@ -23,7 +23,7 @@
                     </div>
                     <div class="ar-info-row">
                         <span class="ar-info-label">Tim Kerja</span>
-                        <span class="ar-info-value" id="plInfoSatker">-</span>
+                        <span class="ar-info-value" id="plInfoTimKerja">-</span>
                     </div>
                 </div>
                 <div>

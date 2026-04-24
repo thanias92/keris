@@ -17,9 +17,6 @@ class RencanaPenangananController extends BaseController
         $this->db       = \Config\Database::connect();
     }
 
-    /* ======================================================
-       ACTIVE KONTEKS
-    ====================================================== */
     private function getActiveKonteks(): ?array
     {
         $id = session('id_konteks_rtp');
@@ -29,13 +26,13 @@ class RencanaPenangananController extends BaseController
             ->select('
                 konteks.*,
                 kegiatan.nama_kegiatan,
-                satuan_kerja.nama_satuan_kerja,
+                tim_kerja.nama_tim,
                 sasaran_strategis.uraian_sasaran,
                 p.nama as nama_pemilik,
                 g.nama as nama_pengelola
             ')
             ->join('kegiatan',           'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('satuan_kerja',       'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('tim_kerja',       'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('sasaran_strategis',  'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
@@ -56,16 +53,16 @@ class RencanaPenangananController extends BaseController
             ->select('
                 konteks.id_konteks,
                 konteks.tahun,
-                konteks.id_satuan_kerja,
+                konteks.id_tim,
                 konteks.id_kegiatan,
                 konteks.pengelola_risiko_id,
-                satuan_kerja.nama_satuan_kerja,
+                tim_kerja.nama_tim,
                 sasaran_strategis.uraian_sasaran,
                 kegiatan.nama_kegiatan,
                 p.nama as nama_pemilik,
                 g.nama as nama_pengelola
             ')
-            ->join('satuan_kerja',       'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('tim_kerja',       'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('sasaran_strategis',  'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('kegiatan',           'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
@@ -74,9 +71,7 @@ class RencanaPenangananController extends BaseController
             ->findAll();
     }
 
-    /* ======================================================
-       KRITERIA (dipakai index() dan offcanvas)
-    ====================================================== */
+    /* KRITERIA (dipakai index() dan offcanvas) */
     private function getKriteriaList(): array
     {
         return [
@@ -92,9 +87,7 @@ class RencanaPenangananController extends BaseController
         ];
     }
 
-    /* ======================================================
-       SUMMARY STATS
-    ====================================================== */
+    /* SUMMARY STATS */
     private function getSummary(?int $idKonteks): array
     {
         /* TOTAL risiko ber-opsi Mengurangi */
@@ -141,9 +134,6 @@ class RencanaPenangananController extends BaseController
         return compact('totalRisiko', 'totalSudah', 'totalBelum', 'levelRisiko');
     }
 
-    /* ======================================================
-       INDEX
-    ====================================================== */
     public function index()
     {
         $activeKonteks = $this->getActiveKonteks();
@@ -168,7 +158,7 @@ class RencanaPenangananController extends BaseController
                 kpb.id_konteks,
                 pb.kode_proses,
                 pb.uraian_proses,
-                sk.nama_satuan_kerja,
+                sk.nama_tim,
                 pr.id_penilaian,
                 pr.nilai_risiko,
                 pr.warna_risiko,
@@ -191,7 +181,7 @@ class RencanaPenangananController extends BaseController
             ->join('konteks_proses_bisnis kpb',    'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb',             'pb.id_proses = kpb.id_proses')
             ->join('konteks k',                    'k.id_konteks = kpb.id_konteks')
-            ->join('satuan_kerja sk',              'sk.id_satuan_kerja = k.id_satuan_kerja', 'left')
+            ->join('tim_kerja sk',              'sk.id_tim = k.id_tim', 'left')
             ->join('penilaian_risiko pr',          'pr.id_penilaian = er.id_penilaian', 'left')
             ->join('kriteria_kemungkinan km',      'km.id_kriteria = pr.id_kemungkinan', 'left')
             ->join('kriteria_dampak kd',           'kd.id_kriteria = pr.id_dampak', 'left')
@@ -244,7 +234,7 @@ class RencanaPenangananController extends BaseController
                     'dampak_risiko'     => $row['dampak_risiko'],
                     'kode_proses'       => $row['kode_proses'],
                     'uraian_proses'     => $row['uraian_proses'],
-                    'nama_satuan_kerja' => $row['nama_satuan_kerja'],
+                    'nama_tim' => $row['nama_tim'],
                     'id_penilaian'      => $row['id_penilaian'],
                     'nilai_risiko'      => $row['nilai_risiko'],
                     'warna_risiko'      => $row['warna_risiko'],
@@ -335,9 +325,6 @@ class RencanaPenangananController extends BaseController
         ]);
     }
 
-    /* ======================================================
-       SET / RESET ACTIVE KONTEKS
-    ====================================================== */
     public function setActive()
     {
         $id = $this->request->getPost('id_konteks');
@@ -352,9 +339,7 @@ class RencanaPenangananController extends BaseController
         return redirect()->to(site_url('rencana-penanganan'));
     }
 
-    /* ======================================================
-       DETAIL RTP (AJAX — view/edit mode)
-    ====================================================== */
+    /* DETAIL RTP (AJAX — view/edit mode) */
     public function detail($id)
     {
         $data = $this->rtpModel->getRtpLengkap((int) $id);
@@ -374,9 +359,7 @@ class RencanaPenangananController extends BaseController
         return $this->response->setJSON($data);
     }
 
-    /* ======================================================
-       DETAIL EVALUASI (AJAX — create mode)
-    ====================================================== */
+    /* DETAIL EVALUASI (AJAX — create mode) */
     public function detailEvaluasi($id)
     {
         $data = $this->db->table('evaluasi_risiko er')
@@ -392,7 +375,7 @@ class RencanaPenangananController extends BaseController
                 pb.kode_proses,
                 pb.uraian_proses,
                 k.tahun,
-                sk.nama_satuan_kerja,
+                sk.nama_tim,
                 ss.uraian_sasaran as sasaran_strategis,
                 g.nama as nama_pengelola,
                 pr.nilai_risiko,
@@ -408,7 +391,7 @@ class RencanaPenangananController extends BaseController
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb',          'pb.id_proses = kpb.id_proses')
             ->join('konteks k',                 'k.id_konteks = kpb.id_konteks')
-            ->join('satuan_kerja sk',           'sk.id_satuan_kerja = k.id_satuan_kerja', 'left')
+            ->join('tim_kerja sk',           'sk.id_tim = k.id_tim', 'left')
             ->join('sasaran_strategis ss',      'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko g',        'g.id = k.pengelola_risiko_id', 'left')
             ->join('penilaian_risiko pr',       'pr.id_penilaian = er.id_penilaian', 'left')
@@ -420,10 +403,7 @@ class RencanaPenangananController extends BaseController
 
         return $this->response->setJSON($data);
     }
-
-    /* ======================================================
-       STORE
-    ====================================================== */
+    
     public function store()
     {
         try {
@@ -481,9 +461,6 @@ class RencanaPenangananController extends BaseController
         }
     }
 
-    /* ======================================================
-       UPDATE
-    ====================================================== */
     public function update($id)
     {
         try {
@@ -558,10 +535,7 @@ class RencanaPenangananController extends BaseController
             ]);
         }
     }
-
-    /* ======================================================
-       DELETE
-    ====================================================== */
+    
     public function delete($id)
     {
         try {
@@ -581,9 +555,7 @@ class RencanaPenangananController extends BaseController
         }
     }
 
-    /* ======================================================
-       GET KRITERIA (AJAX — endpoint publik jika diperlukan)
-    ====================================================== */
+    /* GET KRITERIA (AJAX — endpoint publik jika diperlukan) */
     public function getKriteriaKemungkinan()
     {
         return $this->response->setJSON(

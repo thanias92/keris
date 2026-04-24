@@ -1,6 +1,6 @@
 <?php
 $konteksMap     = [];
-$satuanKerjaOpt = [];
+$timKerjaOpt = [];
 $tahunOpt       = [];
 $kegiatanOpt    = [];
 $pengelolaOpt   = [];
@@ -9,14 +9,14 @@ foreach ($listKonteks as $k) {
     $id = $k['id_konteks'];
 
     $konteksMap[$id] = [
-        'id_satuan_kerja'     => $k['id_satuan_kerja']     ?? '',
+        'id_tim'     => $k['id_tim']     ?? '',
         'pengelola_risiko_id' => $k['pengelola_risiko_id'] ?? '',
         'id_kegiatan'         => $k['id_kegiatan']         ?? '',
         'tahun'               => $k['tahun'],
     ];
 
-    if (!empty($k['id_satuan_kerja']))
-        $satuanKerjaOpt[$k['id_satuan_kerja']] = $k['nama_satuan_kerja'];
+    if (!empty($k['id_tim']))
+        $timKerjaOpt[$k['id_tim']] = $k['nama_tim'];
     if (!empty($k['tahun']))
         $tahunOpt[$k['tahun']] = true;
     if (!empty($k['id_kegiatan']))
@@ -25,7 +25,7 @@ foreach ($listKonteks as $k) {
         $pengelolaOpt[$k['pengelola_risiko_id']] = $k['nama_pengelola'];
 }
 
-asort($satuanKerjaOpt);
+asort($timKerjaOpt);
 asort($kegiatanOpt);
 asort($pengelolaOpt);
 ksort($tahunOpt);
@@ -46,11 +46,11 @@ $sel = $activeKonteks ?? [];
                 <div class="col-7">
                     <div class="pk-filter-row">
                         <label>Tim Kerja</label>
-                        <select class="pk-select" id="pmCsSatuanKerja">
+                        <select class="pk-select" id="pmCsTimKerja">
                             <option value="">– Pilih –</option>
-                            <?php foreach ($satuanKerjaOpt as $id => $nama): ?>
+                            <?php foreach ($timKerjaOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= isset($sel['id_satuan_kerja']) && (string)$sel['id_satuan_kerja'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= isset($sel['id_tim']) && (string)$sel['id_tim'] === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>

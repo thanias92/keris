@@ -24,7 +24,7 @@ const PlContextSelector = {
 
     this.elements = {
       form,
-      sk: document.getElementById("plCsSatuanKerja"),
+      sk: document.getElementById("plCsTimKerja"),
       pg: document.getElementById("plCsPengelola"),
       bulan: document.getElementById("plCsBulan"),
       tahun: document.getElementById("plCsTahun"),
@@ -97,7 +97,7 @@ const PlContextSelector = {
     idEl.value = "";
 
     for (const [id, k] of Object.entries(this.map)) {
-      const matchSk = !vSk || String(k.id_satuan_kerja) === vSk;
+      const matchSk = !vSk || String(k.id_tim) === vSk;
       const matchPg = !vPg || String(k.pengelola_risiko_id) === vPg;
       const matchTh = !vTh || String(k.tahun) === vTh;
 

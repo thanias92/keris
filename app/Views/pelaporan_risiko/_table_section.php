@@ -55,11 +55,11 @@
                                         title="<?= esc($row['pernyataan_risiko']) ?>">
                                         <?= esc($row['pernyataan_risiko']) ?>
                                     </div>
-                                    <?php if (!empty($row['nama_satuan_kerja'])): ?>
+                                    <?php if (!empty($row['nama_tim'])): ?>
                                         <div class="text-muted text-truncate ar-risiko-text"
                                             style="font-size:0.78rem"
-                                            title="<?= esc($row['nama_satuan_kerja']) ?>">
-                                            <i class="ti ti-building me-1"></i><?= esc($row['nama_satuan_kerja']) ?>
+                                            title="<?= esc($row['nama_tim']) ?>">
+                                            <i class="ti ti-building me-1"></i><?= esc($row['nama_tim']) ?>
                                         </div>
                                     <?php endif; ?>
                                 </td>

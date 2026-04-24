@@ -26,13 +26,13 @@ class EvaluasiRisikoController extends BaseController
             ->select('
                 konteks.*,
                 kegiatan.nama_kegiatan,
-                satuan_kerja.nama_satuan_kerja,
+                tim_kerja.nama_tim,
                 sasaran_strategis.uraian_sasaran,
                 p.nama as nama_pemilik,
                 g.nama as nama_pengelola
             ')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
@@ -53,16 +53,16 @@ class EvaluasiRisikoController extends BaseController
             ->select('
                 konteks.id_konteks,
                 konteks.tahun,
-                konteks.id_satuan_kerja,
+                konteks.id_tim,
                 konteks.id_kegiatan,
                 konteks.pengelola_risiko_id,
-                satuan_kerja.nama_satuan_kerja,
+                tim_kerja.nama_tim,
                 sasaran_strategis.uraian_sasaran,
                 kegiatan.nama_kegiatan,
                 p.nama as nama_pemilik,
                 g.nama as nama_pengelola
             ')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
@@ -71,9 +71,6 @@ class EvaluasiRisikoController extends BaseController
             ->findAll();
     }
 
-    /* ======================================================
-       INDEX
-    ====================================================== */
     public function index()
     {
         $activeKonteks = $this->getActiveKonteks();
@@ -225,9 +222,6 @@ class EvaluasiRisikoController extends BaseController
         ]);
     }
 
-    /* ======================================================
-       SET / RESET ACTIVE KONTEKS
-    ====================================================== */
     public function setActive()
     {
         $id = $this->request->getPost('id_konteks');
@@ -242,9 +236,7 @@ class EvaluasiRisikoController extends BaseController
         return redirect()->to(site_url('evaluasi-risiko'));
     }
 
-    /* ======================================================
-       DETAIL EVALUASI (AJAX — view/edit mode)
-    ====================================================== */
+    /* DETAIL EVALUASI (AJAX — view/edit mode) */
     public function detail($id)
     {
         $data = $this->db->table('evaluasi_risiko er')
@@ -259,7 +251,7 @@ class EvaluasiRisikoController extends BaseController
                 pb.uraian_proses,
                 sk_kinerja.uraian_sasaran as sasaran_kinerja,
                 k.tahun,
-                satuan_kerja.nama_satuan_kerja,
+                tim_kerja.nama_tim,
                 ss.uraian_sasaran as sasaran_strategis,
                 g.nama as nama_pengelola,
                 pr.nilai_risiko,
@@ -279,7 +271,7 @@ class EvaluasiRisikoController extends BaseController
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = k.id_satuan_kerja', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim = k.id_tim', 'left')
             ->join('sasaran_strategis ss', 'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko g', 'g.id = k.pengelola_risiko_id', 'left')
             ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
@@ -289,9 +281,7 @@ class EvaluasiRisikoController extends BaseController
         return $this->response->setJSON($data);
     }
 
-    /* ======================================================
-       DETAIL IDENTIFIKASI (AJAX — create mode)
-    ====================================================== */
+    /* DETAIL IDENTIFIKASI (AJAX — create mode) */
     public function detailAnalisis($id)
     {
         $data = $this->db->table('identifikasi_risiko ir')
@@ -302,7 +292,7 @@ class EvaluasiRisikoController extends BaseController
                 pb.uraian_proses,
                 sk_kinerja.uraian_sasaran as sasaran_kinerja,
                 k.tahun,
-                satuan_kerja.nama_satuan_kerja,
+                tim_kerja.nama_tim,
                 ss.uraian_sasaran as sasaran_strategis,
                 g.nama as nama_pengelola,
                 pr.id_penilaian,
@@ -321,7 +311,7 @@ class EvaluasiRisikoController extends BaseController
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = k.id_satuan_kerja', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim = k.id_tim', 'left')
             ->join('sasaran_strategis ss', 'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko g', 'g.id = k.pengelola_risiko_id', 'left')
             ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
@@ -335,9 +325,7 @@ class EvaluasiRisikoController extends BaseController
         return $this->response->setJSON($data);
     }
 
-    /* ======================================================
-       AJAX TABLE
-    ====================================================== */
+    /* AJAX TABLE */
     public function ajaxTable()
     {
         $idKonteks = session('id_konteks_er');
@@ -373,9 +361,6 @@ class EvaluasiRisikoController extends BaseController
         return $this->response->setJSON($data);
     }
 
-    /* ======================================================
-       STORE
-    ====================================================== */
     public function store()
     {
         try {
@@ -406,9 +391,6 @@ class EvaluasiRisikoController extends BaseController
         }
     }
 
-    /* ======================================================
-       UPDATE
-    ====================================================== */
     public function update($id)
     {
         try {
@@ -438,9 +420,6 @@ class EvaluasiRisikoController extends BaseController
         }
     }
 
-    /* ======================================================
-       DELETE
-    ====================================================== */
     public function delete($id)
     {
         try {
@@ -473,9 +452,7 @@ class EvaluasiRisikoController extends BaseController
         }
     }
 
-    /* ======================================================
-       GET ANALISIS LIST (dropdown referensi)
-    ====================================================== */
+    /* GET ANALISIS LIST (dropdown referensi) */
     public function getAnalisisList()
     {
         $idKonteks = session('id_konteks_er');

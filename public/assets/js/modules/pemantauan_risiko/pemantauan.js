@@ -1,19 +1,9 @@
-/**
- * pemantauan.js
- * Pemantauan Risiko — Offcanvas form, mode management, CRUD
- */
-
-/* ======================================================
-   URL & CSRF
-====================================================== */
 const PR_URL = window.PR_CONFIG?.url || {};
 let prCsrfToken = window.PR_CONFIG?.csrf?.token || "";
 const prCsrfName = window.PR_CONFIG?.csrf?.name || "csrf_token";
 
-/* ======================================================
-   HELPER — format "YYYY-MM" / "YYYY-MM-DD" → "Bulan Tahun"
-   [FIX #1] Gunakan locale id-ID agar nama bulan bahasa Indonesia
-====================================================== */
+/* HELPER — format "YYYY-MM" / "YYYY-MM-DD" → "Bulan Tahun"
+   [FIX #1] Gunakan locale id-ID agar nama bulan bahasa Indonesia */
 function prFormatBulanTahun(val) {
   if (!val) return "-";
   // Ambil hanya YYYY-MM (abaikan hari jika ada)
@@ -32,14 +22,10 @@ function prFormatBulanTahun(val) {
   });
 }
 
-/* ======================================================
-   STATE — mode saat ini, untuk kontrol render bukti
-====================================================== */
+/* STATE — mode saat ini, untuk kontrol render bukti */
 let prCurrentMode = "create";
 
-/* ======================================================
-   MODE MANAGEMENT
-====================================================== */
+/* MODE MANAGEMENT */
 function prSetMode(mode) {
   prCurrentMode = mode;
   const isView = mode === "view";
@@ -88,11 +74,9 @@ function prSetMode(mode) {
   prReRenderBuktiMode(isView);
 }
 
-/* ======================================================
-   RENDER BUKTI PREVIEW
+/* RENDER BUKTI PREVIEW
    [FIX #2] showDelete dikontrol dari mode (false = view)
-   [FIX #4] Tombol Lihat & Unduh dibuat lebih kecil/simple
-====================================================== */
+   [FIX #4] Tombol Lihat & Unduh dibuat lebih kecil/simple */
 function prRenderBuktiPreview(buktiList, showDelete = true) {
   const container = document.getElementById("prBuktiPreview");
   if (!container) return;
@@ -284,7 +268,7 @@ function prResetForm() {
 
   [
     "prInfoTahun",
-    "prInfoSatker",
+    "prInfoTimKerja",
     "prInfoPengelola",
     "prInfoSasaran",
     "prInfoSasaranKinerja",
@@ -315,9 +299,7 @@ function prResetForm() {
   }
 }
 
-/* ======================================================
-   POPULATE INFO
-====================================================== */
+/* POPULATE INFO */
 function prPopulateInfo(d) {
   const set = (id, val) => {
     const el = document.getElementById(id);
@@ -325,7 +307,7 @@ function prPopulateInfo(d) {
   };
 
   set("prInfoTahun", d.tahun);
-  set("prInfoSatker", d.nama_satuan_kerja);
+  set("prInfoTimKerja", d.nama_tim);
   set("prInfoPengelola", d.nama_pengelola);
   set("prInfoSasaran", d.uraian_sasaran);
 
@@ -337,7 +319,7 @@ function prPopulateInfo(d) {
   set("prInfoPernyataan", d.pernyataan_risiko);
   set("prInfoPenyebab", d.penyebab_risiko);
   set("prInfoDampak", d.dampak_risiko);
-  set("prInfoPenanggungJawab", "Ketua " + (d.nama_satuan_kerja ?? "-"));
+  set("prInfoPenanggungJawab", "Ketua " + (d.nama_tim ?? "-"));
   set("prInfoRtp", d.uraian_rtp);
   set("prInfoTargetOutput", d.target_output);
 

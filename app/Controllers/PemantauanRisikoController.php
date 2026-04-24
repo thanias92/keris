@@ -20,9 +20,6 @@ class PemantauanRisikoController extends BaseController
         $this->db              = \Config\Database::connect();
     }
 
-    /* ======================================================
-       ACTIVE KONTEKS
-    ====================================================== */
     private function getActiveKonteks(): ?array
     {
         $id = session('id_konteks_pemantauan');
@@ -32,13 +29,13 @@ class PemantauanRisikoController extends BaseController
             ->select('
                 konteks.*,
                 kegiatan.nama_kegiatan,
-                satuan_kerja.nama_satuan_kerja,
+                tim_kerja.nama_tim,
                 sasaran_strategis.uraian_sasaran,
                 p.nama as nama_pemilik,
                 g.nama as nama_pengelola
             ')
             ->join('kegiatan',           'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('satuan_kerja',       'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('tim_kerja',       'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('sasaran_strategis',  'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
@@ -59,16 +56,16 @@ class PemantauanRisikoController extends BaseController
             ->select('
                 konteks.id_konteks,
                 konteks.tahun,
-                konteks.id_satuan_kerja,
+                konteks.id_tim,
                 konteks.id_kegiatan,
                 konteks.pengelola_risiko_id,
-                satuan_kerja.nama_satuan_kerja,
+                tim_kerja.nama_tim,
                 sasaran_strategis.uraian_sasaran,
                 kegiatan.nama_kegiatan,
                 p.nama as nama_pemilik,
                 g.nama as nama_pengelola
             ')
-            ->join('satuan_kerja',       'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('tim_kerja',       'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('sasaran_strategis',  'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('kegiatan',           'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
@@ -77,9 +74,6 @@ class PemantauanRisikoController extends BaseController
             ->findAll();
     }
 
-    /* ======================================================
-       SUMMARY STATS
-    ====================================================== */
     private function getSummary(?int $idKonteks): array
     {
         $qTotal = $this->db->table('rencana_penanganan_risiko rtp')
@@ -95,9 +89,6 @@ class PemantauanRisikoController extends BaseController
         return compact('totalRtp', 'totalSudahDipantau', 'distribusi');
     }
 
-    /* ======================================================
-       INDEX
-    ====================================================== */
     public function index()
     {
         $activeKonteks = $this->getActiveKonteks();
@@ -121,7 +112,7 @@ class PemantauanRisikoController extends BaseController
                 ir.dampak_risiko,
                 pb.kode_proses,
                 pb.uraian_proses,
-                sk.nama_satuan_kerja,
+                sk.nama_tim,
                 pr.nilai_risiko,
                 pr.warna_risiko,
                 km.level      as level_kemungkinan,
@@ -140,7 +131,7 @@ class PemantauanRisikoController extends BaseController
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb',          'pb.id_proses = kpb.id_proses')
             ->join('konteks k',                 'k.id_konteks = kpb.id_konteks')
-            ->join('satuan_kerja sk',           'sk.id_satuan_kerja = k.id_satuan_kerja', 'left')
+            ->join('tim_kerja sk',           'sk.id_tim = k.id_tim', 'left')
             ->join('penilaian_risiko pr',       'pr.id_penilaian = er.id_penilaian', 'left')
             ->join('kriteria_kemungkinan km',   'km.id_kriteria = pr.id_kemungkinan', 'left')
             ->join('kriteria_dampak kd',        'kd.id_kriteria = pr.id_dampak', 'left')
@@ -239,9 +230,6 @@ class PemantauanRisikoController extends BaseController
         ]);
     }
 
-    /* ======================================================
-       SET / RESET ACTIVE KONTEKS
-    ====================================================== */
     public function setActive()
     {
         $id = $this->request->getPost('id_konteks');
@@ -256,11 +244,7 @@ class PemantauanRisikoController extends BaseController
         return redirect()->to(site_url('pemantauan-risiko'));
     }
 
-    /* ======================================================
-       DETAIL (AJAX)
-       [FIX] Join sasaran_kinerja pakai id_konteks_proses,
-             sama persis dengan EvaluasiRisikoController
-    ====================================================== */
+    /* DETAIL (AJAX) [FIX] Join sasaran_kinerja pakai id_konteks_proses, sama persis dengan EvaluasiRisikoController */
     public function detail($idRtp)
     {
         // Coba ambil via model jika pemantauan sudah ada
@@ -280,7 +264,7 @@ class PemantauanRisikoController extends BaseController
                     ir.dampak_risiko,
                     pb.kode_proses,
                     pb.uraian_proses,
-                    sk.nama_satuan_kerja,
+                    sk.nama_tim,
                     k.tahun,
                     ss.uraian_sasaran,
                     sk_kinerja.uraian_sasaran as uraian_sasaran_kinerja,
@@ -291,7 +275,7 @@ class PemantauanRisikoController extends BaseController
                 ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
                 ->join('proses_bisnis pb',          'pb.id_proses = kpb.id_proses')
                 ->join('konteks k',                 'k.id_konteks = kpb.id_konteks')
-                ->join('satuan_kerja sk',           'sk.id_satuan_kerja = k.id_satuan_kerja',           'left')
+                ->join('tim_kerja sk',           'sk.id_tim = k.id_tim',           'left')
                 ->join('sasaran_strategis ss',      'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
                 // [FIX] Sama dengan EvaluasiRisikoController: join via id_konteks_proses
                 ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
@@ -321,9 +305,6 @@ class PemantauanRisikoController extends BaseController
         return $this->response->setJSON($data);
     }
 
-    /* ======================================================
-       STORE
-    ====================================================== */
     public function store()
     {
         try {
@@ -400,9 +381,7 @@ class PemantauanRisikoController extends BaseController
         }
     }
 
-    /* ======================================================
-       DELETE BUKTI
-    ====================================================== */
+    /* DELETE BUKTI */
     public function deleteBukti($idBukti)
     {
         try {
@@ -429,9 +408,7 @@ class PemantauanRisikoController extends BaseController
         }
     }
 
-    /* ======================================================
-       DELETE PEMANTAUAN
-    ====================================================== */
+    /* DELETE PEMANTAUAN */
     public function delete($idRtp)
     {
         try {
@@ -463,9 +440,7 @@ class PemantauanRisikoController extends BaseController
         }
     }
 
-    /* ======================================================
-       VIEW BUKTI — full screen di tab baru
-    ====================================================== */
+    /* VIEW BUKTI — full screen di tab baru */
     public function viewBukti($idBukti)
     {
         $bukti = $this->buktiModel->find((int) $idBukti);
@@ -531,9 +506,7 @@ class PemantauanRisikoController extends BaseController
             ->setBody($html);
     }
 
-    /* ======================================================
-       DOWNLOAD BUKTI
-    ====================================================== */
+    /* DOWNLOAD BUKTI */
     public function downloadBukti($idBukti)
     {
         $bukti = $this->buktiModel->find((int) $idBukti);

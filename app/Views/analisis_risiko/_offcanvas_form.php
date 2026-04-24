@@ -29,7 +29,7 @@
                         </div>
                         <div class="ar-info-row">
                             <span class="ar-info-label">Tim Kerja</span>
-                            <span class="ar-info-value" id="arInfoSatker">-</span>
+                            <span class="ar-info-value" id="arInfoTimKerja">-</span>
                         </div>
                     </div>
                     <div>
@@ -69,7 +69,7 @@
                     </div>
                     <div class="ar-info-row">
                         <span class="ar-info-label">Dampak</span>
-                        <span class="ar-info-value" id="arInfoDampakRisiko">-</span>
+                        <span class="ar-info-value" id="arInfoDampak">-</span>
                     </div>
                 </div>
             </div>

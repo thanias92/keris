@@ -13,9 +13,7 @@ use App\Models\BankRisikoModel;
 
 class IdentifikasiRisikoController extends BaseController
 {
-    /* ======================================================
-       HELPER — ambil konteks aktif dari session
-    ====================================================== */
+    /* HELPER — ambil konteks aktif dari session */
     private function getActiveKonteks(): ?array
     {
         $id = session('id_konteks_ir');
@@ -26,13 +24,13 @@ class IdentifikasiRisikoController extends BaseController
             ->select('
                 konteks.*,
                 kegiatan.nama_kegiatan,
-                satuan_kerja.nama_satuan_kerja,
+                tim_kerja.nama_tim,
                 sasaran_strategis.uraian_sasaran,
                 p.nama as nama_pemilik,
                 g.nama as nama_pengelola
             ')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
@@ -53,16 +51,16 @@ class IdentifikasiRisikoController extends BaseController
             ->select('
             konteks.id_konteks,
             konteks.tahun,
-            konteks.id_satuan_kerja,
+            konteks.id_tim,
             konteks.id_kegiatan,
             konteks.pengelola_risiko_id,
-            satuan_kerja.nama_satuan_kerja,
+            tim_kerja.nama_tim,
             sasaran_strategis.uraian_sasaran,
             kegiatan.nama_kegiatan,
             p.nama as nama_pemilik,
             g.nama as nama_pengelola
         ')
-            ->join('satuan_kerja', 'satuan_kerja.id_satuan_kerja = konteks.id_satuan_kerja', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
@@ -71,9 +69,6 @@ class IdentifikasiRisikoController extends BaseController
             ->findAll();
     }
 
-    /* ======================================================
-       INDEX
-    ====================================================== */
     public function index()
     {
         $risikoModel   = new IdentifikasiRisikoModel();
@@ -83,10 +78,8 @@ class IdentifikasiRisikoController extends BaseController
         $activeKonteks = $this->getActiveKonteks();
         $idKonteks     = $activeKonteks ? $activeKonteks['id_konteks'] : null;
 
-        /* ======================================================
-           QUERY DATA IDENTIFIKASI RISIKO
-           JOIN: identifikasi_risiko → konteks_proses_bisnis → proses_bisnis
-        ====================================================== */
+        /* QUERY DATA IDENTIFIKASI RISIKO
+           JOIN: identifikasi_risiko → konteks_proses_bisnis → proses_bisnis */
         $builder = $risikoModel
             ->select('
                 identifikasi_risiko.*,
@@ -124,10 +117,7 @@ class IdentifikasiRisikoController extends BaseController
             ->orderBy('proses_bisnis.kode_proses', 'ASC')
             ->paginate(10, 'identifikasi');
 
-        /* ======================================================
-           LIST PROSES BISNIS UNTUK KONTEKS AKTIF
-           (untuk dropdown di form tambah risiko)
-        ====================================================== */
+        /* LIST PROSES BISNIS UNTUK KONTEKS AKTIF (untuk dropdown di form tambah risiko) */
         $listKonteksProses = [];
         if ($idKonteks) {
             $db = \Config\Database::connect();
@@ -156,9 +146,7 @@ class IdentifikasiRisikoController extends BaseController
         ]);
     }
 
-    /* ======================================================
-       SET ACTIVE KONTEKS (dari _context_selector)
-    ====================================================== */
+    /* SET ACTIVE KONTEKS (dari _context_selector) */
     public function setActive()
     {
         $id = $this->request->getPost('id_konteks');
@@ -175,9 +163,7 @@ class IdentifikasiRisikoController extends BaseController
         return redirect()->to(site_url('identifikasi-risiko'));
     }
 
-    /* ======================================================
-       STORE
-    ====================================================== */
+    /* STORE */
     public function store()
     {
         $db = \Config\Database::connect();
@@ -214,9 +200,7 @@ class IdentifikasiRisikoController extends BaseController
         ]);
     }
 
-    /* ======================================================
-       UPDATE
-    ====================================================== */
+    /* UPDATE */
     public function update($id)
     {
         $db = \Config\Database::connect();
@@ -260,9 +244,7 @@ class IdentifikasiRisikoController extends BaseController
         }
     }
 
-    /* ======================================================
-       DELETE
-    ====================================================== */
+    /* DELETE */
     public function delete($id)
     {
         $db = \Config\Database::connect();
@@ -334,9 +316,7 @@ class IdentifikasiRisikoController extends BaseController
         }
     }
 
-    /* ======================================================
-       DETAIL (untuk load form edit)
-    ====================================================== */
+    /* DETAIL (untuk load form edit) */
     public function detail($id)
     {
         $model = new IdentifikasiRisikoModel();
@@ -358,9 +338,7 @@ class IdentifikasiRisikoController extends BaseController
         return $this->response->setJSON($data);
     }
 
-    /* ======================================================
-       DETAIL AREA DAMPAK
-    ====================================================== */
+    /* DETAIL AREA DAMPAK */
     public function detailArea($id)
     {
         $pivot = new IdentifikasiAreaDampakModel();
@@ -368,9 +346,7 @@ class IdentifikasiRisikoController extends BaseController
         return $this->response->setJSON($data ?? []);
     }
 
-    /* ======================================================
-       AJAX TABLE — refresh tabel tanpa reload halaman penuh
-    ====================================================== */
+    /* AJAX TABLE — refresh tabel tanpa reload halaman penuh */
     public function ajaxTable()
     {
         if (!$this->request->isAJAX()) return redirect()->back();
@@ -423,9 +399,7 @@ class IdentifikasiRisikoController extends BaseController
         ]);
     }
 
-    /* ======================================================
-       GET BANK RISIKO — autocomplete pernyataan risiko
-    ====================================================== */
+    /* GET BANK RISIKO — autocomplete pernyataan risiko */
     public function getBankRisiko()
     {
         $model = new BankRisikoModel();

@@ -37,7 +37,7 @@
 
                         <div class="ar-info-row">
                             <span class="ar-info-label">Tim Kerja</span>
-                            <span class="ar-info-value" id="erInfoSatker">-</span>
+                            <span class="ar-info-value" id="erInfoTimKerja">-</span>
                         </div>
                     </div>
 

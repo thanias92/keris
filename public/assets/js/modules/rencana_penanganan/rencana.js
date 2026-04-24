@@ -1,19 +1,9 @@
-/**
- * penanganan.js
- * Rencana Penanganan Risiko — Offcanvas form, mode management, CRUD
- */
-
-/* ======================================================
-   URL & CSRF
-====================================================== */
-// ✅ SESUDAH — hardcode base URL agar tidak bergantung RTP_CONFIG
+/* URL & CSRF */
 const RTP_URL = window.RTP_CONFIG?.url || {};
 let rtpCsrfToken = window.RTP_CONFIG?.csrf?.token || "";
 const rtpCsrfName = window.RTP_CONFIG?.csrf?.name || "csrf_token";
 
-/* ======================================================
-   MODE MANAGEMENT
-====================================================== */
+/* MODE MANAGEMENT */
 function rtpSetMode(mode) {
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -45,13 +35,9 @@ function rtpSetMode(mode) {
 
   document.getElementById("rtpBtnEdit").classList.toggle("d-none", !isView);
   document.getElementById("rtpBtnHapus").classList.toggle("d-none", !isView);
-  document
-    .getElementById("rtpBtnBatal")
-    .classList.toggle("d-none", !isEdit && !isCreate);
+  document.getElementById("rtpBtnBatal").classList.toggle("d-none", !isEdit && !isCreate);
   document.getElementById("rtpBtnSimpan").classList.toggle("d-none", isView);
-  document
-    .getElementById("rtpBtnTutup")
-    .classList.toggle("d-none", isEdit || isCreate);
+  document.getElementById("rtpBtnTutup").classList.toggle("d-none", isEdit || isCreate);
   
   const addWrapper = document.getElementById("rtpAddWrapper");
   if (addWrapper) addWrapper.classList.toggle("d-none", isView);
@@ -63,9 +49,7 @@ function rtpSetMode(mode) {
       : "Detail RTP";
 }
 
-/* ======================================================
-   RESET FORM
-====================================================== */
+/* RESET FORM */
 function rtpResetForm() {
   document.getElementById("rtpForm").reset();
   document.getElementById("rtpForm").classList.remove("was-validated");
@@ -78,7 +62,7 @@ function rtpResetForm() {
 
   [
     "rtpInfoTahun",
-    "rtpInfoSatker",
+    "rtpInfoTimKerja",
     "rtpInfoPengelola",
     "rtpInfoSasaran",
     "rtpInfoProses",
@@ -109,9 +93,7 @@ function rtpResetForm() {
   rtpResetResidu();
 }
 
-/* ======================================================
-   RTP CARD MANAGER
-====================================================== */
+/* RTP CARD MANAGER */
 
 document.getElementById("rtpAddBtn")?.addEventListener("click", function () {
   rtpAddCard();
@@ -138,9 +120,7 @@ function rtpAddCard(data = {}) {
   container.appendChild(node);
 }
 
-/* ======================================================
-   RESET RESIDU PREVIEW
-====================================================== */
+/* RESET RESIDU PREVIEW */
 function rtpResetResidu() {
   const nilaiEl = document.getElementById("rtpResiduNilai");
   const badgeEl = document.getElementById("rtpResiduBadge");
@@ -154,9 +134,7 @@ function rtpResetResidu() {
   }
 }
 
-/* ======================================================
-   POPULATE INFO KONTEKS & RISIKO
-====================================================== */
+/* POPULATE INFO KONTEKS & RISIKO */
 function rtpPopulateInfo(d) {
   const set = (id, val) => {
     const el = document.getElementById(id);
@@ -164,13 +142,10 @@ function rtpPopulateInfo(d) {
   };
 
   set("rtpInfoTahun", d.tahun);
-  set("rtpInfoSatker", d.nama_satuan_kerja);
+  set("rtpInfoTimKerja", d.nama_tim);
   set("rtpInfoPengelola", d.nama_pengelola);
   set("rtpInfoSasaran", d.sasaran_strategis);
-  set(
-    "rtpInfoProses",
-    (d.kode_proses ? d.kode_proses + " — " : "") + (d.uraian_proses ?? ""),
-  );
+  set("rtpInfoProses",(d.kode_proses ? d.kode_proses + " — " : "") + (d.uraian_proses ?? ""),);
   set("rtpInfoPernyataan", d.pernyataan_risiko);
   set("rtpInfoPenyebab", d.penyebab_risiko);
   set("rtpInfoDampakRisiko", d.dampak_risiko);
@@ -178,10 +153,7 @@ function rtpPopulateInfo(d) {
   set("rtpInfoImpact", d.level_dampak);
 
   // Penanggung jawab — derive dari satuan kerja
-  set(
-    "rtpInfoPenanggungjawab",
-    d.nama_satuan_kerja ? "Ketua " + d.nama_satuan_kerja : "-",
-  );
+  set("rtpInfoPenanggungjawab",d.nama_tim ? "Ketua " + d.nama_tim : "-",);
 
   // Preview skor risiko aktual
   const nilaiEl = document.getElementById("rtpPreviewNilai");
@@ -196,9 +168,7 @@ function rtpPopulateInfo(d) {
   }
 }
 
-/* ======================================================
-   HITUNG SKOR RESIDU (live preview)
-====================================================== */
+/* HITUNG SKOR RESIDU (live preview) */
 function rtpHitungResidu() {
   const selK = document.getElementById("rtpKemungkinanResidu");
   const selD = document.getElementById("rtpDampakResidu");
@@ -235,16 +205,10 @@ function rtpHitungResidu() {
       }
     });
 }
-document
-  .getElementById("rtpKemungkinanResidu")
-  ?.addEventListener("change", rtpHitungResidu);
-document
-  .getElementById("rtpDampakResidu")
-  ?.addEventListener("change", rtpHitungResidu);
+document.getElementById("rtpKemungkinanResidu")?.addEventListener("change", rtpHitungResidu);
+document.getElementById("rtpDampakResidu")?.addEventListener("change", rtpHitungResidu);
 
-/* ======================================================
-   LOAD DETAIL RTP (view/edit mode)
-====================================================== */
+/* LOAD DETAIL RTP (view/edit mode) */
 function rtpLoadDetail(idRtp) {
   return fetch(RTP_URL.detail(idRtp))
     .then((r) => r.json())
@@ -279,9 +243,7 @@ function rtpLoadDetail(idRtp) {
     });
 }
 
-/* ======================================================
-   BATAL
-====================================================== */
+/* BATAL */
 function rtpBatal() {
   const id = document.getElementById("rtpId").value;
   if (id) {
@@ -293,9 +255,7 @@ function rtpBatal() {
   }
 }
 
-/* ======================================================
-   OPEN ROW — klik baris tabel (RTP sudah ada)
-====================================================== */
+/* OPEN ROW — klik baris tabel (RTP sudah ada) */
 document.addEventListener("click", function (e) {
   // Klik baris RTP yang sudah ada
   const rtpRow = e.target.closest("tr[data-rtp]");
@@ -358,9 +318,6 @@ function rtpRenderTimeline(list = []) {
   container.appendChild(wrapper);
 }
 
-/* ======================================================
-   HAPUS
-====================================================== */
 function rtpHapus() {
   const id = document.getElementById("rtpId").value;
   if (!id) return;
@@ -403,9 +360,7 @@ function rtpHapus() {
   });
 }
 
-/* ======================================================
-   SUBMIT (STORE / UPDATE)
-====================================================== */
+/* SUBMIT (STORE / UPDATE) */
 document.getElementById("rtpForm")?.addEventListener("submit", function (e) {
   e.preventDefault();
 
