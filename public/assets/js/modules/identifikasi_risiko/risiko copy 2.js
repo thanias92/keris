@@ -157,6 +157,15 @@ function irSetMode(mode) {
     modeCreate?.classList.remove("d-none");
   } else if (mode === "view") {
     modeView?.classList.remove("d-none");
+
+    // ROLE: ketua tidak boleh edit/delete
+    if (role === "ketua") {
+      document.getElementById("irBtnSwitchEdit")?.classList.add("d-none");
+      document.getElementById("irBtnDelete")?.classList.add("d-none");
+    } else {
+      document.getElementById("irBtnSwitchEdit")?.classList.remove("d-none");
+      document.getElementById("irBtnDelete")?.classList.remove("d-none");
+    }
   } else if (mode === "edit") {
     modeEdit?.classList.remove("d-none");
   }
@@ -204,14 +213,13 @@ function irResetForm() {
 function irBindRowClick() {
   document.querySelectorAll(".ir-row").forEach((row) => {
     row.addEventListener("click", function () {
-      const data = JSON.parse(this.dataset.row);
-      irLoadDetail(this.dataset.id, data);
+      irLoadDetail(this.dataset.id);
     });
   });
 }
 
 /* LOAD DETAIL */
-function irLoadDetail(id, row) {
+function irLoadDetail(id) {
   Promise.all([
     fetch(IR_URL.detail(id), {
       headers: { "X-Requested-With": "XMLHttpRequest" },
@@ -225,20 +233,14 @@ function irLoadDetail(id, row) {
       document.getElementById("irMode").value = "view";
       document.getElementById("irOffcanvasTitle").textContent = "Detail Risiko";
 
-      const select = document.getElementById("irKonteksProses");
-
-      if (!select.querySelector(`option[value="${data.id_konteks_proses}"]`)) {
-        const opt = document.createElement("option");
-        opt.value = data.id_konteks_proses;
-        opt.text = `${data.kode_proses} — ${data.uraian_proses}`;
-        select.appendChild(opt);
-      }
-
-      select.value = data.id_konteks_proses ?? "";
-      document.getElementById("irPernyataan").value =data.pernyataan_risiko ?? "";
+      document.getElementById("irKonteksProses").value =
+        data.id_konteks_proses ?? "";
+      document.getElementById("irPernyataan").value =
+        data.pernyataan_risiko ?? "";
       document.getElementById("irDampak").value = data.dampak_risiko ?? "";
       document.getElementById("irPenyebab").value = data.penyebab_risiko ?? "";
-      document.getElementById("irKategori").value = data.id_kategori_risiko ?? "";
+      document.getElementById("irKategori").value =
+        data.id_kategori_risiko ?? "";
 
       document.querySelectorAll('input[name="sumber_risiko"]').forEach((r) => {
         r.checked = r.value === data.sumber_risiko;
@@ -248,37 +250,7 @@ function irLoadDetail(id, row) {
       });
 
       irHideSuggest();
-      const currentUser = window.APP_USER || {};
-
-      const isOperator = currentUser.role === "operator";
-      const bedaTim = String(currentUser.id_tim) !== String(row.id_tim);
-      const isReadonlyMode = isOperator && bedaTim;
-
       irSetMode("view");
-
-      // APPLY READONLY MODE (COPY DARI KONTEKS)
-      const btnDelete = document.getElementById("irBtnDelete");
-      const btnEdit = document.getElementById("irBtnSwitchEdit");
-      const btnClose = document.querySelector("#irBtnView button[data-bs-dismiss='offcanvas']");
-
-      // DEFAULT
-      if (btnDelete) btnDelete.style.display = "";
-      if (btnEdit) btnEdit.style.display = "";
-      if (btnClose) {
-        btnClose.classList.remove("btn-secondary");
-        btnClose.classList.add("btn-light");
-      }
-
-      // READONLY MODE
-      if (isReadonlyMode) {
-        if (btnDelete) btnDelete.style.display = "none";
-        if (btnEdit) btnEdit.style.display = "none";
-
-        if (btnClose) {
-          btnClose.classList.remove("btn-light");
-          btnClose.classList.add("btn-secondary");
-        }
-      }
       bootstrap.Offcanvas.getOrCreateInstance(
         document.getElementById("offcanvasRisiko"),
       ).show();
@@ -299,11 +271,7 @@ document.addEventListener("click", function (e) {
 document.addEventListener("click", function (e) {
   if (e.target?.id === "irBtnCancelEdit") {
     const id = document.getElementById("irId").value;
-    if (id) {
-      const rowEl = document.querySelector(`.ir-row[data-id="${id}"]`);
-      const row = rowEl ? JSON.parse(rowEl.dataset.row) : null;
-      if (row) irLoadDetail(id, row);
-    }
+    if (id) irLoadDetail(id);
   }
 });
 

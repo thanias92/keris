@@ -85,6 +85,7 @@ class IdentifikasiRisikoController extends BaseController
             ->select('
                 identifikasi_risiko.*,
                 konteks_proses_bisnis.id_konteks,
+                k.id_tim,
                 proses_bisnis.kode_proses,
                 proses_bisnis.uraian_proses,
                 proses_bisnis.jenis_proses,
@@ -92,6 +93,7 @@ class IdentifikasiRisikoController extends BaseController
                 STRING_AGG(area_dampak.nama_area_dampak, \', \') as area_dampak_list
             ')
             ->join('konteks_proses_bisnis', 'konteks_proses_bisnis.id_konteks_proses = identifikasi_risiko.id_konteks_proses')
+            ->join('konteks k', 'k.id_konteks = konteks_proses_bisnis.id_konteks')
             ->join('proses_bisnis', 'proses_bisnis.id_proses = konteks_proses_bisnis.id_proses')
             ->join('kategori_risiko', 'kategori_risiko.id_kategori_risiko = identifikasi_risiko.id_kategori_risiko', 'left')
             ->join('identifikasi_area_dampak', 'identifikasi_area_dampak.id_identifikasi = identifikasi_risiko.id_identifikasi', 'left')
@@ -99,6 +101,7 @@ class IdentifikasiRisikoController extends BaseController
             ->groupBy('
                 identifikasi_risiko.id_identifikasi,
                 konteks_proses_bisnis.id_konteks,
+                k.id_tim,
                 proses_bisnis.kode_proses,
                 proses_bisnis.uraian_proses,
                 proses_bisnis.jenis_proses,
@@ -408,23 +411,25 @@ class IdentifikasiRisikoController extends BaseController
         $model = new IdentifikasiRisikoModel();
         $data = $model
             ->select('
-                identifikasi_risiko.*,
-                konteks_proses_bisnis.id_konteks,
-                proses_bisnis.kode_proses,
-                proses_bisnis.uraian_proses,
-                kategori_risiko.nama_kategori
-            ')
+            identifikasi_risiko.*,
+            konteks_proses_bisnis.id_konteks,
+            proses_bisnis.kode_proses,
+            proses_bisnis.uraian_proses,
+            kategori_risiko.nama_kategori
+        ')
             ->join('konteks_proses_bisnis', 'konteks_proses_bisnis.id_konteks_proses = identifikasi_risiko.id_konteks_proses')
             ->join('proses_bisnis', 'proses_bisnis.id_proses = konteks_proses_bisnis.id_proses')
             ->join('kategori_risiko', 'kategori_risiko.id_kategori_risiko = identifikasi_risiko.id_kategori_risiko', 'left')
             ->where('identifikasi_risiko.id_identifikasi', $id)
             ->first();
-        if (!$data || !$this->validateTimAccess($data['id_konteks_proses'])) {
-            return $this->response->setStatusCode(403)->setJSON([
+
+        if (!$data) {
+            return $this->response->setStatusCode(404)->setJSON([
                 'status' => 'error',
-                'message' => 'Unauthorized'
+                'message' => 'Data tidak ditemukan'
             ]);
         }
+
         return $this->response->setJSON($data);
     }
 
@@ -449,6 +454,7 @@ class IdentifikasiRisikoController extends BaseController
             ->select('
                 identifikasi_risiko.*,
                 konteks_proses_bisnis.id_konteks,
+                k.id_tim,
                 proses_bisnis.kode_proses,
                 proses_bisnis.uraian_proses,
                 proses_bisnis.jenis_proses,
@@ -456,6 +462,7 @@ class IdentifikasiRisikoController extends BaseController
                 STRING_AGG(area_dampak.nama_area_dampak, \', \') as area_dampak_list
             ')
             ->join('konteks_proses_bisnis', 'konteks_proses_bisnis.id_konteks_proses = identifikasi_risiko.id_konteks_proses')
+            ->join('konteks k', 'k.id_konteks = konteks_proses_bisnis.id_konteks')
             ->join('proses_bisnis', 'proses_bisnis.id_proses = konteks_proses_bisnis.id_proses')
             ->join('kategori_risiko', 'kategori_risiko.id_kategori_risiko = identifikasi_risiko.id_kategori_risiko', 'left')
             ->join('identifikasi_area_dampak', 'identifikasi_area_dampak.id_identifikasi = identifikasi_risiko.id_identifikasi', 'left')
@@ -463,6 +470,7 @@ class IdentifikasiRisikoController extends BaseController
             ->groupBy('
                 identifikasi_risiko.id_identifikasi,
                 konteks_proses_bisnis.id_konteks,
+                k.id_tim,
                 proses_bisnis.kode_proses,
                 proses_bisnis.uraian_proses,
                 proses_bisnis.jenis_proses,

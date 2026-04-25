@@ -36,9 +36,7 @@
                     <tbody>
                         <?php $no = 1;
                         foreach ($data as $row): ?>
-                            <tr class="ir-row"
-                                data-id="<?= $row['id_identifikasi'] ?>"
-                                data-row='<?= json_encode($row) ?>'
+                            <tr class="ir-row" data-id="<?= $row['id_identifikasi'] ?>"
                                 style="cursor:pointer;">
 
                                 <td><?= $no++ ?></td>
