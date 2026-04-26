@@ -43,8 +43,8 @@ $th = $get['th'] ?? '';
 
 <div class="card shadow-sm mb-3 pk-context-filter">
     <div class="card-body">
-        <form id="erContextSelectorForm" method="get"
-            action="<?= site_url('evaluasi-risiko') ?>">
+        <form id="erContextSelectorForm" method="post"
+            action="<?= site_url('evaluasi-risiko/set-active') ?>">
 
             <?= csrf_field() ?>
             <input type="hidden" name="id_konteks" id="erCsIdKonteks">
@@ -54,11 +54,11 @@ $th = $get['th'] ?? '';
                 <div class="col-7">
                     <div class="pk-filter-row">
                         <label>Tim Kerja</label>
-                        <select name="sk" class="pk-select" id="erCsTimKerja">
+                        <select class="pk-select" id="erCsTimKerja">
                             <option value="">– Pilih –</option>
                             <?php foreach ($timKerjaOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= (string)$sk === (string)$id ? 'selected' : '' ?>>
+                                    <?= isset($sel['id_tim']) && (string)$sel['id_tim'] === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -67,11 +67,11 @@ $th = $get['th'] ?? '';
 
                     <div class="pk-filter-row">
                         <label>Pengelola Risiko</label>
-                        <select name="pg" class="pk-select" id="erCsPengelola">
+                        <select class="pk-select" id="erCsPengelola">
                             <option value="">– Pilih –</option>
                             <?php foreach ($pengelolaOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= (string)$pg === (string)$id ? 'selected' : '' ?>>
+                                    <?= isset($sel['pengelola_risiko_id']) && (string)$sel['pengelola_risiko_id'] === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -80,11 +80,11 @@ $th = $get['th'] ?? '';
 
                     <div class="pk-filter-row">
                         <label>Kegiatan</label>
-                        <select name="kg" class="pk-select" id="erCsKegiatan">
+                        <select class="pk-select" id="erCsKegiatan">
                             <option value="">– Pilih –</option>
                             <?php foreach ($kegiatanOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= (string)$kg === (string)$id ? 'selected' : '' ?>>
+                                    <?= isset($sel['id_kegiatan']) && (string)$sel['id_kegiatan'] === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -96,11 +96,11 @@ $th = $get['th'] ?? '';
                 <div class="col-4 pk-right-side">
                     <div class="pk-filter-row">
                         <label>Tahun</label>
-                        <select name="th" class="pk-select" id="erCsTahun" style="width:80px;">
+                        <select class="pk-select" id="erCsTahun" style="width:80px;">
                             <option value="">– Pilih –</option>
                             <?php foreach ($tahunOpt as $tahun => $_): ?>
                                 <option value="<?= $tahun ?>"
-                                    <?= (string)$th === (string)$tahun ? 'selected' : '' ?>>
+                                    <?= isset($sel['tahun']) && (string)$sel['tahun'] === (string)$tahun ? 'selected' : '' ?>>
                                     <?= esc($tahun) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -114,7 +114,8 @@ $th = $get['th'] ?? '';
                         </button>
 
                         <button type="button" class="btn btn-light btn-icon"
-                            onclick="window.location.href='<?= site_url('evaluasi-risiko') ?>'">
+                            id="erCsBtnReset" title="Reset Konteks"
+                            style="<?= $activeKonteks ? '' : 'display:none;' ?>">
                             <i class="ti ti-refresh"></i>
                         </button>
                     </div>

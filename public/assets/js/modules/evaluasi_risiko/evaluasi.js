@@ -1,4 +1,6 @@
 /* URL & CSRF */
+let ER_CAN_EDIT = false;
+const USER = window.APP_USER || {};
 const ER_URL = window.ER_CONFIG?.url || {};
 let erCsrfToken = window.ER_CONFIG?.csrf?.token || "";
 const erCsrfName = window.ER_CONFIG?.csrf?.name || "";
@@ -17,11 +19,32 @@ function erSetMode(mode) {
     if (el) el.disabled = isView;
   });
 
-  document.getElementById("erBtnEdit").classList.toggle("d-none", !isView);
-  document.getElementById("erBtnBatal").classList.toggle("d-none", !isEdit);
-  document.getElementById("erBtnSimpan").classList.toggle("d-none", isView);
+  // EDIT
+  document
+    .getElementById("erBtnEdit")
+    .classList.toggle("d-none", !isView || !ER_CAN_EDIT);
+
+  // DELETE
+  document
+    .getElementById("erBtnDelete")
+    .classList.toggle("d-none", !isView || !ER_CAN_EDIT);
+
+  // BATAL
+  document
+    .getElementById("erBtnBatal")
+    .classList.toggle("d-none", !isEdit || !ER_CAN_EDIT);
+
+  // SIMPAN
+  document
+    .getElementById("erBtnSimpan")
+    .classList.toggle("d-none", isView || !ER_CAN_EDIT);
+
+  // TUTUP
   document.getElementById("erBtnTutup").classList.toggle("d-none", isEdit);
-  document.getElementById("erBtnDelete").classList.toggle("d-none", !isView);
+
+  document
+    .getElementById("erBtnDelete")
+    .classList.toggle("d-none", !isView || !ER_CAN_EDIT);
 
   document.getElementById("erOffcanvasTitle").textContent = isCreate
     ? "Tambah Evaluasi Risiko"
@@ -70,6 +93,32 @@ function erResetForm() {
   }
 }
 
+function erFormatNumberedText(text) {
+  if (!text) return "-";
+
+  const lines = text.split(/\n|\r/).filter((l) => l.trim() !== "");
+
+  return lines.map((line) => `<div>${line}</div>`).join("");
+}
+
+function erCanEdit(data) {
+  const user = window.APP_USER;
+  if (!user) return false;
+
+  // Admin bebas
+  if (user.role === "admin") return true;
+
+  // Ketua TIDAK BOLEH edit
+  if (user.role === "ketua") return false;
+
+  // Operator → hanya tim sendiri
+  if (user.role === "operator") {
+    return String(user.id_tim) === String(data.id_tim);
+  }
+
+  return false;
+}
+
 /* POPULATE INFO */
 function erPopulateInfo(d) {
   const set = (id, val) => {
@@ -87,11 +136,15 @@ function erPopulateInfo(d) {
   );
   set("erInfoSasaranKinerja", d.sasaran_kinerja);
   set("erInfoPernyataan", d.pernyataan_risiko);
-  set("erInfoPenyebab", d.penyebab_risiko);
-  set("erInfoDampakRisiko", d.dampak_risiko);
+  document.getElementById("erInfoPenyebab").innerHTML = erFormatNumberedText(
+    d.penyebab_risiko,
+  );
+  document.getElementById("erInfoDampakRisiko").innerHTML =
+    erFormatNumberedText(d.dampak_risiko);
   set("erInfoProb", d.level_kemungkinan);
   set("erInfoImpact", d.level_dampak);
-  set("erInfoPengendalian", d.uraian_pengendalian);
+  document.getElementById("erInfoPengendalian").innerHTML =
+    erFormatNumberedText(d.uraian_pengendalian);
   set("erInfoEfektivitas", d.efektivitas);
 
   // Preview skor risiko
@@ -105,6 +158,9 @@ function erPopulateInfo(d) {
     badgeEl.textContent = d.nama_selera || "";
     badgeEl.style.backgroundColor = d.warna_risiko || "";
   }
+
+  // === RBAC CONTROL ===
+  ER_CAN_EDIT = erCanEdit(d);
 }
 
 /* LOAD DETAIL EVALUASI (view/edit mode) */
@@ -280,3 +336,34 @@ function erHapus() {
     });
   });
 }
+
+function enableAutoNumbering(textareaId) {
+  const el = document.getElementById(textareaId);
+  if (!el) return;
+
+  el.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter") return;
+
+    e.preventDefault();
+
+    let value = el.value.trim();
+    let lines = value ? value.split("\n") : [];
+
+    if (lines.length === 1 && !lines[0].match(/^\d+\./)) {
+      el.value = `1. ${lines[0]}\n2. `;
+    } else {
+      const lastLine = lines[lines.length - 1];
+      const match = lastLine.match(/^(\d+)\./);
+      const nextNumber = match ? parseInt(match[1]) + 1 : lines.length + 1;
+      el.value += `\n${nextNumber}. `;
+    }
+
+    setTimeout(() => {
+      el.selectionStart = el.selectionEnd = el.value.length;
+    }, 0);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  enableAutoNumbering("erKeterangan"); // nanti kalau ada textarea lain tinggal tambah
+});

@@ -18,25 +18,14 @@
                 </thead>
 
                 <tbody>
-
-                    <?php if (!$activeKonteks): ?>
-                        <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">
-                                <i class="ti ti-map-pin fs-3 d-block mb-2 opacity-25"></i>
-                                Pilih konteks terlebih dahulu untuk melihat data evaluasi risiko.
-                            </td>
-                        </tr>
-
-                    <?php elseif (empty($data)): ?>
+                    <?php if (empty($data)): ?>
                         <tr>
                             <td colspan="8" class="text-center py-5 text-muted">
                                 <i class="ti ti-inbox fs-3 d-block mb-2 opacity-25"></i>
                                 Belum ada data.
                             </td>
                         </tr>
-
                     <?php else: ?>
-
                         <?php
                         /* -------------------------------------------------------
                         * PRE-PASS: hitung prioritas otomatis
@@ -167,7 +156,7 @@
                                         };
                                         ?>
                                         <span class="badge <?= $prClass ?>">
-<?= $noPrioritas ?>
+                                            <?= $noPrioritas ?>
                                         </span>
                                     <?php else: ?>
                                         <span class="text-muted">—</span>

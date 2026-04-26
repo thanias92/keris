@@ -94,30 +94,12 @@ class EvaluasiRisikoController extends BaseController
 
     public function index()
     {
-        $idKonteks = $this->request->getGet('id_konteks');
-
-        if ($idKonteks) {
-            session()->set('id_konteks_er', $idKonteks);
-        } else {
-            $idKonteks = session('id_konteks_er');
-        }
-
         $idTim        = $this->request->getGet('sk');
         $idPengelola  = $this->request->getGet('pg');
         $idKegiatan   = $this->request->getGet('kg');
         $tahun        = $this->request->getGet('th');
-
         $activeKonteks = $this->getActiveKonteks();
-
-        if ($idKonteks) {
-            $activeKonteks = (new KonteksModel())->find($idKonteks);
-        }
-
-        if (!$activeKonteks && $idTim) {
-            $activeKonteks = [
-                'id_tim' => $idTim
-            ];
-        }
+        $idKonteks     = $activeKonteks ? $activeKonteks['id_konteks'] : null;
         $db            = \Config\Database::connect();
 
         /* PAGINATION CONFIG */
@@ -166,10 +148,6 @@ class EvaluasiRisikoController extends BaseController
             ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
             ->join('evaluasi_risiko er', 'er.id_penilaian = pr.id_penilaian', 'left');
 
-        if ($idKonteks) {
-            $builder->where('kpb.id_konteks', $idKonteks);
-        }
-
         if ($idTim) {
             $builder->where('k.id_tim', $idTim);
         }
@@ -213,64 +191,51 @@ class EvaluasiRisikoController extends BaseController
         ];
 
         /* SUMMARY */
-        $summaryBuilder = $db->table('identifikasi_risiko ir')
-            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks');
-
-        if ($idTim) $summaryBuilder->where('k.id_tim', $idTim);
-        if ($idPengelola) $summaryBuilder->where('k.pengelola_risiko_id', $idPengelola);
-        if ($idKegiatan) $summaryBuilder->where('k.id_kegiatan', $idKegiatan);
-        if ($tahun) $summaryBuilder->where('k.tahun', $tahun);
         if ($idKonteks) {
-            $summaryBuilder->where('kpb.id_konteks', $idKonteks);
+            $totalRisiko = $db->table('identifikasi_risiko ir')
+                ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+                ->where('kpb.id_konteks', $idKonteks)
+                ->countAllResults();
+
+            $totalSudah = $db->table('identifikasi_risiko ir')
+                ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+                ->join('penilaian_risiko pr', 'pr.id_identifikasi = ir.id_identifikasi')
+                ->join('evaluasi_risiko er', 'er.id_penilaian = pr.id_penilaian')
+                ->where('kpb.id_konteks', $idKonteks)
+                ->countAllResults();
+        } else {
+            $totalRisiko = $db->table('identifikasi_risiko')->countAllResults();
+            $totalSudah  = $db->table('evaluasi_risiko')->countAllResults();
         }
-
-        $totalRisiko = $summaryBuilder->countAllResults();
-
-        // rebuild ulang
-        $summaryBuilder = $db->table('identifikasi_risiko ir')
-            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks');
-
-        if ($idTim) $summaryBuilder->where('k.id_tim', $idTim);
-        if ($idPengelola) $summaryBuilder->where('k.pengelola_risiko_id', $idPengelola);
-        if ($idKegiatan) $summaryBuilder->where('k.id_kegiatan', $idKegiatan);
-        if ($tahun) $summaryBuilder->where('k.tahun', $tahun);
-        if ($idKonteks) {
-            $summaryBuilder->where('kpb.id_konteks', $idKonteks);
-        }
-
-        $totalSudah = $summaryBuilder
-            ->join('penilaian_risiko pr', 'pr.id_identifikasi = ir.id_identifikasi')
-            ->join('evaluasi_risiko er', 'er.id_penilaian = pr.id_penilaian')
-            ->countAllResults();
 
         $totalBelum = $totalRisiko - $totalSudah;
 
         /* DISTRIBUSI LEVEL */
-        $levelRisiko = [
-            'Sangat Rendah' => ['jumlah' => 0],
-            'Rendah'        => ['jumlah' => 0],
-            'Sedang'        => ['jumlah' => 0],
-            'Tinggi'        => ['jumlah' => 0],
-            'Sangat Tinggi' => ['jumlah' => 0],
-        ];
+        $levelRisiko = [];
+
+        $seleraList = $db->table('selera_risiko')
+            ->select('nama_level, warna')
+            ->orderBy('nilai_min', 'ASC')
+            ->get()
+            ->getResultArray();
+
+        foreach ($seleraList as $s) {
+            $levelRisiko[$s['nama_level']] = [
+                'jumlah' => 0,
+                'warna'  => $s['warna']
+            ];
+        }
+
         $distribusiBuilder = $db->table('identifikasi_risiko ir')
-            ->select('sl.nama_level, COUNT(*) as total')
+            ->select('sl.nama_level, sl.warna, COUNT(*) as total')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->join('penilaian_risiko pr', 'pr.id_identifikasi = ir.id_identifikasi', 'left')
-            ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
-            ->where('sl.nama_level IS NOT NULL', null, false)
-            ->groupBy('sl.nama_level');
+            ->join('penilaian_risiko pr', 'pr.id_identifikasi = ir.id_identifikasi')
+            ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera')
+            ->groupBy('sl.nama_level, sl.warna');
 
         if ($idKonteks) {
             $distribusiBuilder->where('kpb.id_konteks', $idKonteks);
         }
-        if ($idTim) $distribusiBuilder->where('k.id_tim', $idTim);
-        if ($idPengelola) $distribusiBuilder->where('k.pengelola_risiko_id', $idPengelola);
-        if ($idKegiatan) $distribusiBuilder->where('k.id_kegiatan', $idKegiatan);
-        if ($tahun) $distribusiBuilder->where('k.tahun', $tahun);
 
         foreach ($distribusiBuilder->get()->getResultArray() as $row) {
             if (isset($levelRisiko[$row['nama_level']])) {
@@ -351,12 +316,6 @@ class EvaluasiRisikoController extends BaseController
             ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
             ->where('er.id_evaluasi', $id)
             ->get()->getRowArray();
-        if (!$data) {
-            return $this->response->setStatusCode(404)->setJSON([
-                'status' => 'error',
-                'message' => 'Data tidak ditemukan'
-            ]);
-        }
 
         return $this->response->setJSON($data);
     }
@@ -402,12 +361,6 @@ class EvaluasiRisikoController extends BaseController
             ->join('kriteria_dampak kd', 'kd.id_kriteria = pr.id_dampak', 'left')
             ->where('ir.id_identifikasi', $id)
             ->get()->getRowArray();
-        if (!$data) {
-            return $this->response->setStatusCode(404)->setJSON([
-                'status' => 'error',
-                'message' => 'Data tidak ditemukan'
-            ]);
-        }
 
         return $this->response->setJSON($data);
     }
@@ -415,152 +368,37 @@ class EvaluasiRisikoController extends BaseController
     /* AJAX TABLE */
     public function ajaxTable()
     {
-        if (!$this->request->isAJAX()) return redirect()->back();
+        $idKonteks = session('id_konteks_er');
 
-        $db = \Config\Database::connect();
-
-        $idKonteks = $this->request->getGet('id_konteks');
-
-        if ($idKonteks) {
-            session()->set('id_konteks_er', $idKonteks);
-        } else {
-            $idKonteks = session('id_konteks_er');
-        }
-
-        $idTim        = $this->request->getGet('sk');
-        $idPengelola  = $this->request->getGet('pg');
-        $idKegiatan   = $this->request->getGet('kg');
-        $tahun        = $this->request->getGet('th');
-
-        /* =======================
-       QUERY TABLE
-    ======================= */
-        $builder = $db->table('identifikasi_risiko ir')
+        $builder = $this->db->table('identifikasi_risiko ir')
             ->select('
-            ir.id_identifikasi,
-            ir.pernyataan_risiko,
-            pb.kode_proses,
-            pb.uraian_proses,
-            pr.id_penilaian,
-            pr.nilai_risiko,
-            pr.warna_risiko,
-            sl.nama_level as nama_selera,
-            er.id_evaluasi,
-            er.opsi_tindakan,
-            er.prioritas,
-            er.status_evaluasi
-        ')
+                ir.id_identifikasi,
+                ir.pernyataan_risiko,
+                pb.kode_proses,
+                pb.uraian_proses,
+                pr.id_penilaian,
+                pr.nilai_risiko,
+                pr.warna_risiko,
+                sl.nama_level as nama_selera,
+                er.id_evaluasi,
+                er.opsi_tindakan,
+                er.prioritas,
+                er.status_evaluasi
+            ')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
             ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->join('penilaian_risiko pr', 'pr.id_identifikasi = ir.id_identifikasi', 'left')
             ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
             ->join('evaluasi_risiko er', 'er.id_penilaian = pr.id_penilaian', 'left')
             ->orderBy('pb.kode_proses', 'ASC');
 
-        if ($idKonteks) $builder->where('kpb.id_konteks', $idKonteks);
-        if ($idTim) $builder->where('k.id_tim', $idTim);
-        if ($idPengelola) $builder->where('k.pengelola_risiko_id', $idPengelola);
-        if ($idKegiatan) $builder->where('k.id_kegiatan', $idKegiatan);
-        if ($tahun) $builder->where('k.tahun', $tahun);
-
-        $filter = $this->request->getGet('filter');
-        if ($filter === 'sudah') {
-            $builder->where('er.id_evaluasi IS NOT NULL', null, false);
-        } elseif ($filter === 'belum') {
-            $builder->where('er.id_evaluasi IS NULL', null, false);
+        if ($idKonteks) {
+            $builder->where('kpb.id_konteks', $idKonteks);
         }
 
-        /* PAGINATION */
-        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
-        $page    = (int) ($this->request->getGet('page') ?? 1);
-        $offset  = ($page - 1) * $perPage;
+        $data = $builder->get()->getResultArray();
 
-        $total = $builder->countAllResults(false);
-        $data  = $builder->limit($perPage, $offset)->get()->getResultArray();
-
-        $from = $total > 0 ? $offset + 1 : 0;
-        $to   = min($offset + $perPage, $total);
-
-        /* =======================
-       SUMMARY
-    ======================= */
-        $summaryBuilder = $db->table('identifikasi_risiko ir')
-            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks');
-
-        if ($idKonteks) $summaryBuilder->where('kpb.id_konteks', $idKonteks);
-        if ($idTim) $summaryBuilder->where('k.id_tim', $idTim);
-        if ($idPengelola) $summaryBuilder->where('k.pengelola_risiko_id', $idPengelola);
-        if ($idKegiatan) $summaryBuilder->where('k.id_kegiatan', $idKegiatan);
-        if ($tahun) $summaryBuilder->where('k.tahun', $tahun);
-
-        $totalRisiko = $summaryBuilder->countAllResults();
-
-        // rebuild
-        $summaryBuilder = $db->table('identifikasi_risiko ir')
-            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks');
-
-        if ($idKonteks) $summaryBuilder->where('kpb.id_konteks', $idKonteks);
-        if ($idTim) $summaryBuilder->where('k.id_tim', $idTim);
-        if ($idPengelola) $summaryBuilder->where('k.pengelola_risiko_id', $idPengelola);
-        if ($idKegiatan) $summaryBuilder->where('k.id_kegiatan', $idKegiatan);
-        if ($tahun) $summaryBuilder->where('k.tahun', $tahun);
-
-        $totalSudah = $summaryBuilder
-            ->join('penilaian_risiko pr', 'pr.id_identifikasi = ir.id_identifikasi')
-            ->join('evaluasi_risiko er', 'er.id_penilaian = pr.id_penilaian')
-            ->countAllResults();
-
-        $totalBelum = $totalRisiko - $totalSudah;
-
-        /* =======================
-       DISTRIBUSI LEVEL (SAMA SEPERTI ANALISIS)
-    ======================= */
-        $levelRisiko = [
-            'Sangat Rendah' => ['jumlah' => 0],
-            'Rendah'        => ['jumlah' => 0],
-            'Sedang'        => ['jumlah' => 0],
-            'Tinggi'        => ['jumlah' => 0],
-            'Sangat Tinggi' => ['jumlah' => 0],
-        ];
-
-        $distribusiBuilder = $db->table('identifikasi_risiko ir')
-            ->select('sl.nama_level, COUNT(*) as total')
-            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->join('penilaian_risiko pr', 'pr.id_identifikasi = ir.id_identifikasi', 'left')
-            ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
-            ->where('sl.nama_level IS NOT NULL', null, false)
-            ->groupBy('sl.nama_level');
-
-        if ($idKonteks) $distribusiBuilder->where('kpb.id_konteks', $idKonteks);
-        if ($idTim) $distribusiBuilder->where('k.id_tim', $idTim);
-        if ($idPengelola) $distribusiBuilder->where('k.pengelola_risiko_id', $idPengelola);
-        if ($idKegiatan) $distribusiBuilder->where('k.id_kegiatan', $idKegiatan);
-        if ($tahun) $distribusiBuilder->where('k.tahun', $tahun);
-
-        foreach ($distribusiBuilder->get()->getResultArray() as $row) {
-            if (isset($levelRisiko[$row['nama_level']])) {
-                $levelRisiko[$row['nama_level']] = (int)$row['total'];
-            }
-        }
-
-        return view('evaluasi_risiko/_table_section', [
-            'data'          => $data,
-            'total'         => $total,
-            'from'          => $from,
-            'to'            => $to,
-            'perPage'       => $perPage,
-
-            // summary (WAJIB supaya sync dengan Analisis)
-            'totalRisiko'   => $totalRisiko,
-            'totalSudah'    => $totalSudah,
-            'totalBelum'    => $totalBelum,
-            'levelRisiko'   => $levelRisiko,
-            'filter'        => $filter,
-        ]);
+        return $this->response->setJSON($data);
     }
 
     public function store()

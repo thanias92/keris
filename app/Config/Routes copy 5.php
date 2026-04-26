@@ -183,19 +183,15 @@ $routes->group('analisis-risiko', ['namespace' => 'App\Controllers', 'filter' =>
 });
 
 // Evaluasi
-$routes->group('evaluasi-risiko', ['namespace' => 'App\Controllers', 'filter' => ['auth']], function ($routes) {
-
-    $routes->get('/', 'EvaluasiRisikoController::index', ['filter' => 'role:admin,operator,ketua']);
-
-    $routes->get('detail/(:num)', 'EvaluasiRisikoController::detail/$1', ['filter' => 'role:admin,operator,ketua']);
-    $routes->get('detail-analisis/(:num)', 'EvaluasiRisikoController::detailAnalisis/$1', ['filter' => 'role:admin,operator,ketua']);
-
+$routes->group('evaluasi-risiko', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'EvaluasiRisikoController::index');
+    $routes->get('detail/(:num)', 'EvaluasiRisikoController::detail/$1');
+    $routes->get('detail-analisis/(:num)', 'EvaluasiRisikoController::detailAnalisis/$1');
     $routes->get('table', 'EvaluasiRisikoController::ajaxTable');
-
-    $routes->post('set-active', 'EvaluasiRisikoController::setActive', ['filter' => 'role:admin,operator,ketua']);
-    $routes->post('reset-active', 'EvaluasiRisikoController::resetActive', ['filter' => 'role:admin,operator,ketua']);
-
-    $routes->group('', ['filter' => 'role:admin,operator'], function ($routes) {
+    $routes->get('analisis-list', 'EvaluasiRisikoController::getAnalisisList');
+    $routes->post('set-active', 'EvaluasiRisikoController::setActive');
+    $routes->post('reset-active', 'EvaluasiRisikoController::resetActive');
+    $routes->group('', function ($routes) {
         $routes->post('store', 'EvaluasiRisikoController::store');
         $routes->post('update/(:num)', 'EvaluasiRisikoController::update/$1');
         $routes->post('delete/(:num)', 'EvaluasiRisikoController::delete/$1');

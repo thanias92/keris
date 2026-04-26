@@ -48,20 +48,22 @@
         'activeKonteks' => $activeKonteks,
     ]) ?>
 
-    <!-- Summary Cards -->
-    <?= view('evaluasi_risiko/_summary_cards', [
-        'totalRisiko'   => $totalRisiko ?? 0,
-        'totalSudah'    => $totalSudah ?? 0,
-        'totalBelum'    => $totalBelum ?? 0,
-        'levelRisiko'   => $levelRisiko ?? [],
-        'filter'        => $filter ?? '',
-        'activeKonteks' => $activeKonteks ?? null,
-    ]) ?>
-
     <?php if ($activeKonteks): ?>
 
         <!-- Konteks Aktif Info -->
-        <?= view('evaluasi_risiko/_context_active', ['activeKonteks' => $activeKonteks,]) ?>
+        <?= view('evaluasi_risiko/_context_active', [
+            'activeKonteks' => $activeKonteks,
+        ]) ?>
+
+        <!-- Summary Cards -->
+        <?= view('evaluasi_risiko/_summary_cards', [
+            'totalRisiko'   => $totalRisiko,
+            'totalSudah'    => $totalSudah,
+            'totalBelum'    => $totalBelum,
+            'levelRisiko'   => $levelRisiko,
+            'activeKonteks' => $activeKonteks,
+            'filter'        => $filter,
+        ]) ?>
 
         <!-- Filter Badge -->
         <?php if ($filter): ?>
@@ -85,10 +87,6 @@
             </div>
         <?php endif; ?>
 
-    <?php else: ?>
-        <div class="alert alert-warning">
-            Silakan pilih konteks terlebih dahulu.
-        </div>
     <?php endif; ?>
 
     <!-- Table -->

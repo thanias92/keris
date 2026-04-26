@@ -174,8 +174,6 @@ class AnalisisRisikoController extends BaseController
             $builder->where('k.tahun', $tahun);
         }
 
-        
-
         $filter = $this->request->getGet('filter');
         if ($filter === 'sudah') {
             $builder->where('pr.id_penilaian IS NOT NULL', null, false);
