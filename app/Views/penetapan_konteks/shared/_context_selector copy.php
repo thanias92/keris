@@ -163,11 +163,13 @@ if ($isFilterMode) {
     </div>
 </div>
 
-<script>
-    window.CS_DATA = {
-        konteksMap: <?= json_encode($konteksMap) ?>,
-        resetUrl: "<?= site_url('penetapan-konteks/konteks/reset-active') ?>",
-        csrfToken: "<?= csrf_hash() ?>",
-        currentUrl: "<?= current_url() ?>",
-    };
-</script>
+<?php if (!$isFilterMode): ?>
+    <script>
+        window.CS_DATA = {
+            konteksMap: <?= json_encode($konteksMap) ?>,
+            resetUrl: "<?= site_url('penetapan-konteks/konteks/reset-active') ?>",
+            csrfToken: "<?= csrf_hash() ?>",
+            currentUrl: "<?= current_url() ?>",
+        };
+    </script>
+<?php endif; ?>

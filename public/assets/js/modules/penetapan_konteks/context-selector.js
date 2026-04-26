@@ -30,28 +30,32 @@ const ContextSelector = {
   bindEvents() {
     const { sk, pg, kg, ss, th, form, btnReset } = this.elements;
 
-    // FIX: jangan crash kalau null
-    if (!this.isFilterMode) {
-      // khusus Tim Kerja
-      if (sk) {
-        sk.addEventListener("change", () => {
-          if (pg) pg.value = "";
-          if (kg) kg.value = "";
-          if (ss) ss.value = "";
-          if (th) th.value = "";
+    // Tim kerja → trigger filter dropdown
+    if (sk) {
+      sk.addEventListener("change", () => {
+        if (pg) pg.value = "";
+        if (kg) kg.value = "";
+        if (ss) ss.value = "";
+        if (th) th.value = "";
 
-          this.filterDropdownOptions();
+        this.filterDropdownOptions();
+
+        if (!this.isFilterMode) {
           this.resolveId();
-        });
-      }
-
-      // dropdown lain
-      [pg, kg, ss, th].forEach((el) => {
-        if (el) {
-          el.addEventListener("change", () => this.resolveId());
         }
       });
     }
+
+    // dropdown lain
+    [pg, kg, ss, th].forEach((el) => {
+      if (el) {
+        el.addEventListener("change", () => {
+          if (!this.isFilterMode) {
+            this.resolveId();
+          }
+        });
+      }
+    });
 
     if (form) {
       form.addEventListener("submit", (e) => this.onSubmit(e));

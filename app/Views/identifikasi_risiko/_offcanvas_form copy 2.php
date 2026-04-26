@@ -116,14 +116,21 @@
             <!-- AREA DAMPAK -->
             <div class="mb-3">
                 <label class="form-label ir-form-label">Area Dampak</label>
-                <select class="form-select form-select-sm" name="area_dampak" id="irAreaDampak" required>
-                    <option value="">-- Pilih Area Dampak --</option>
+                <div class="border rounded p-2" style="max-height:160px; overflow-y:auto;">
                     <?php foreach ($areaDampakList as $ad): ?>
-                        <option value="<?= $ad['id_area_dampak'] ?>">
-                            <?= esc($ad['nama_area_dampak']) ?>
-                        </option>
+                        <div class="form-check">
+                            <input class="form-check-input ir-area-dampak"
+                                type="checkbox"
+                                name="area_dampak[]"
+                                value="<?= $ad['id_area_dampak'] ?>"
+                                id="irAd_<?= $ad['id_area_dampak'] ?>">
+                            <label class="form-check-label ir-check-label" for="irAd_<?= $ad['id_area_dampak'] ?>">
+                                <?= esc($ad['nama_area_dampak']) ?>
+                            </label>
+                        </div>
                     <?php endforeach; ?>
-                </select>
+                </div>
+                <small class="text-muted">Pilih maksimal 1 area dampak.</small>
             </div>
 
             <!-- SUMBER RISIKO -->

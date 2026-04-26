@@ -84,6 +84,11 @@ class IdentifikasiRisikoController extends BaseController
             $idKonteks = session('id_konteks_ir');
         }
 
+        $activeKonteks = null;
+        if ($idKonteks) {
+            $activeKonteks = (new KonteksModel())->find($idKonteks);
+        }
+
         /* QUERY DATA IDENTIFIKASI RISIKO
            JOIN: identifikasi_risiko → konteks_proses_bisnis → proses_bisnis */
         $builder = $risikoModel
@@ -117,16 +122,6 @@ class IdentifikasiRisikoController extends BaseController
         $idPengelola = $this->request->getGet('pg');
         $idKegiatan = $this->request->getGet('kg');
         $tahun = $this->request->getGet('th');
-
-        $activeKonteks = $this->getActiveKonteks();
-        if ($idKonteks) {
-            $activeKonteks = (new KonteksModel())->find($idKonteks);
-        }
-        if (!$activeKonteks && $idTim) {
-            $activeKonteks = [
-                'id_tim' => $idTim
-            ];
-        }
 
         // PRIORITAS: kalau ada filter → pakai filter
         if ($idTim) {
@@ -178,38 +173,19 @@ class IdentifikasiRisikoController extends BaseController
 
         /* LIST PROSES BISNIS UNTUK KONTEKS AKTIF (untuk dropdown di form tambah risiko) */
         $listKonteksProses = [];
-
-        $db = \Config\Database::connect();
-        $query = $db->table('konteks_proses_bisnis kpb')
-            ->select('kpb.id_konteks_proses, pb.kode_proses, pb.uraian_proses, pb.jenis_proses')
-            ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks');
-
-        // PRIORITAS 1 → kalau pakai id_konteks
         if ($idKonteks) {
-            $query->where('kpb.id_konteks', $idKonteks);
-        }
+            $db = \Config\Database::connect();
+            $query = $db->table('konteks_proses_bisnis kpb')
+                ->select('kpb.id_konteks_proses, pb.kode_proses, pb.uraian_proses, pb.jenis_proses')
+                ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
+                ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
+                ->where('kpb.id_konteks', $idKonteks);
 
-        // PRIORITAS 2 → kalau pakai filter
-        else {
-            if ($idTim) {
-                $query->where('k.id_tim', $idTim);
-            }
-            if ($idPengelola) {
-                $query->where('k.pengelola_risiko_id', $idPengelola);
-            }
-            if ($idKegiatan) {
-                $query->where('k.id_kegiatan', $idKegiatan);
-            }
-            if ($tahun) {
-                $query->where('k.tahun', $tahun);
-            }
+            $listKonteksProses = $query
+                ->orderBy('pb.kode_proses', 'ASC')
+                ->get()
+                ->getResultArray();
         }
-
-        $listKonteksProses = $query
-            ->orderBy('pb.kode_proses', 'ASC')
-            ->get()
-            ->getResultArray();
 
         $kategoriList   = $kategoriModel->orderBy('nama_kategori', 'ASC')->findAll();
         $areaDampakList = $areaModel->orderBy('nama_area_dampak', 'ASC')->findAll();
@@ -319,15 +295,16 @@ class IdentifikasiRisikoController extends BaseController
         ]);        
 
         $idIdentifikasi = $result->getRow()->id_identifikasi ?? null;
-
+        
 
         $area = $this->request->getPost('area_dampak');
-
-        if ($area && $idIdentifikasi) {
-            $db->table('identifikasi_area_dampak')->insert([
-                'id_identifikasi' => $idIdentifikasi,
-                'id_area_dampak'  => $area,
-            ]);
+        if (!empty($area) && $idIdentifikasi) {
+            foreach ($area as $idArea) {
+                $db->table('identifikasi_area_dampak')->insert([
+                    'id_identifikasi' => $idIdentifikasi,
+                    'id_area_dampak'  => $idArea,
+                ]);
+            }
         }
 
         return $this->response->setJSON([
@@ -379,12 +356,13 @@ class IdentifikasiRisikoController extends BaseController
                 ->delete();
 
             $area = $this->request->getPost('area_dampak');
-
-            if ($area) {
-                $db->table('identifikasi_area_dampak')->insert([
-                    'id_identifikasi' => $id,
-                    'id_area_dampak'  => $area,
-                ]);
+            if (!empty($area)) {
+                foreach ($area as $idArea) {
+                    $db->table('identifikasi_area_dampak')->insert([
+                        'id_identifikasi' => $id,
+                        'id_area_dampak'  => $idArea,
+                    ]);
+                }
             }
 
             return $this->response->setJSON([
@@ -608,9 +586,6 @@ class IdentifikasiRisikoController extends BaseController
             'total'   => $total,
             'perPage' => $perPage,
             'pager'   => $pager,
-            'activeKonteks' => [
-                'id_tim' => $idTim
-            ],
         ]);
     }
 

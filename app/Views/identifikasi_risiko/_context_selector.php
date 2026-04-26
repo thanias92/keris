@@ -9,9 +9,11 @@ foreach ($listKonteks as $k) {
     $id = $k['id_konteks'];
 
     $konteksMap[$id] = [
-        'id_tim'              => $k['id_tim']     ?? '',
+        'id_tim'              => $k['id_tim'] ?? '',
         'pengelola_risiko_id' => $k['pengelola_risiko_id'] ?? '',
-        'id_kegiatan'         => $k['id_kegiatan']         ?? '',
+        'nama_pengelola'      => $k['nama_pengelola'] ?? '',
+        'id_kegiatan'         => $k['id_kegiatan'] ?? '',
+        'nama_kegiatan'       => $k['nama_kegiatan'] ?? '',
         'tahun'               => $k['tahun'],
     ];
 
@@ -31,6 +33,12 @@ asort($pengelolaOpt);
 ksort($tahunOpt);
 
 $sel = $activeKonteks ?? [];
+$get = request()->getGet();
+
+$sk = $get['sk'] ?? '';
+$pg = $get['pg'] ?? '';
+$kg = $get['kg'] ?? '';
+$th = $get['th'] ?? '';
 ?>
 
 <div class="card shadow-sm mb-3 pk-context-filter">
@@ -50,7 +58,7 @@ $sel = $activeKonteks ?? [];
                             <option value="">– Pilih –</option>
                             <?php foreach ($timKerjaOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= isset($sel['id_tim']) && (string)$sel['id_tim'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= (string)$sk === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -62,7 +70,7 @@ $sel = $activeKonteks ?? [];
                             <option value="">– Pilih –</option>
                             <?php foreach ($pengelolaOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= isset($sel['pengelola_risiko_id']) && (string)$sel['pengelola_risiko_id'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= (string)$pg === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -74,7 +82,7 @@ $sel = $activeKonteks ?? [];
                             <option value="">– Pilih –</option>
                             <?php foreach ($kegiatanOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= isset($sel['id_kegiatan']) && (string)$sel['id_kegiatan'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= (string)$kg === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -90,7 +98,7 @@ $sel = $activeKonteks ?? [];
                             <option value="">– Pilih –</option>
                             <?php foreach ($tahunOpt as $tahun => $_): ?>
                                 <option value="<?= $tahun ?>"
-                                    <?= isset($sel['tahun']) && (string)$sel['tahun'] === (string)$tahun ? 'selected' : '' ?>>
+                                    <?= (string)$th === (string)$tahun ? 'selected' : '' ?>>
                                     <?= esc($tahun) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -101,12 +109,11 @@ $sel = $activeKonteks ?? [];
                         <!-- Tombol Apply -->
                         <button type="submit" class="btn btn-primary btn-icon"
                             id="irCsBtnApply" title="Terapkan" disabled>
-                            <i class="ti ti-check"></i>
+                            <i class="ti ti-search"></i>
                         </button>
                         <!-- Tombol Reset — selalu ada, JS yang hide/show -->
                         <button type="button" class="btn btn-light btn-icon"
-                            id="irCsBtnReset" title="Reset Konteks"
-                            style="<?= $activeKonteks ? '' : 'display:none;' ?>">
+                            id="irCsBtnReset" title="Reset Konteks">
                             <i class="ti ti-refresh"></i>
                         </button>
                     </div>

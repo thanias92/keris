@@ -18,17 +18,44 @@ document.addEventListener("DOMContentLoaded", function () {
   irBindRowClick();
   irInitAutocomplete();
 
-  document
-    .getElementById("offcanvasRisiko")
-    ?.addEventListener("hidden.bs.offcanvas", irResetForm);
-  document.addEventListener("change", function (e) {
-    if (!e.target.classList.contains("ir-area-dampak")) return;
-    if (e.target.checked) {
-      document.querySelectorAll(".ir-area-dampak").forEach((cb) => {
-        if (cb !== e.target) cb.checked = false;
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest("#irBtnAdd")) return;
+
+    const user = window.APP_USER || {};
+    const konteks = window.APP_KONTEKS || null;
+
+    // 🔍 DEBUG TARUH DI SINI
+    console.log("USER:", user);
+    console.log("KONTEKS:", konteks);
+
+    const isOperator = user.role === "operator";
+
+    if (!konteks) {
+      PkAlert.notAllowed({
+        text: "Untuk menambah risiko, silakan pilih konteks terlebih dahulu melalui filter (Tim, Pengelola, Kegiatan, dan Tahun).",
       });
+      return;
     }
+
+    const bedaTim = String(user.id_tim) !== String(konteks.id_tim);
+
+    if (isOperator && bedaTim) {
+      PkAlert.notAllowed({
+        text: "Tidak dapat menambahkan risiko milik tim lain.",
+      });
+      return;
+    }
+
+    irResetForm();
+    bootstrap.Offcanvas.getOrCreateInstance(
+      document.getElementById("offcanvasRisiko"),
+    ).show();
   });
+
+  document.getElementById("offcanvasRisiko")?.addEventListener("hidden.bs.offcanvas", irResetForm);
+  enableAutoNumbering("irPenyebab");
+  enableAutoNumbering("irDampak");
+  
 });
 
 /* LOAD BANK RISIKO */
@@ -179,9 +206,8 @@ function irSetMode(mode) {
     .querySelectorAll('input[name="sumber_risiko"]')
     .forEach((r) => (r.disabled = isView));
 
-  document
-    .querySelectorAll(".ir-area-dampak")
-    .forEach((cb) => (cb.disabled = isView));
+  const areaSelect = document.getElementById("irAreaDampak");
+  if (areaSelect) areaSelect.disabled = isView;
 }
 
 /* RESET FORM */
@@ -193,9 +219,10 @@ function irResetForm() {
   document.getElementById("irMode").value = "create";
   document.getElementById("irId").value = "";
   document.getElementById("irOffcanvasTitle").textContent = "Tambah Risiko";
-  document
-    .querySelectorAll(".ir-area-dampak")
-    .forEach((cb) => (cb.checked = false));
+  document.getElementById("irPenyebab").value = "";
+  document.getElementById("irDampak").value = "";
+  const area = document.getElementById("irAreaDampak");
+  if (area) area.value = "";
   irHideSuggest();
   irSetMode("create");
 }
@@ -243,16 +270,19 @@ function irLoadDetail(id, row) {
       document.querySelectorAll('input[name="sumber_risiko"]').forEach((r) => {
         r.checked = r.value === data.sumber_risiko;
       });
-      document.querySelectorAll(".ir-area-dampak").forEach((cb) => {
-        cb.checked = areas.map(String).includes(String(cb.value));
-      });
+      const areaSelect = document.getElementById("irAreaDampak");
+      if (areaSelect) {
+        areaSelect.value = areas[0] || "";
+      }
 
       irHideSuggest();
       const currentUser = window.APP_USER || {};
 
       const isOperator = currentUser.role === "operator";
       const bedaTim = String(currentUser.id_tim) !== String(row.id_tim);
-      const isReadonlyMode = isOperator && bedaTim;
+      const isKetua = currentUser.role === "ketua";
+
+      const isReadonlyMode = isKetua || (isOperator && bedaTim);
 
       irSetMode("view");
 
@@ -310,7 +340,7 @@ document.addEventListener("click", function (e) {
 /* REFRESH TABLE */
 function irRefreshTable() {
   PkAjax.get({
-    url: IR_URL.ajaxTable,
+    url: IR_URL.ajaxTable + window.location.search,
     onSuccess(html) {
       const wrapper = document.getElementById("irTableWrapper");
       if (wrapper) {
@@ -342,10 +372,9 @@ document.addEventListener("submit", function (e) {
   const isEdit = mode === "edit";
 
   // Validasi area dampak wajib dipilih 1
-  const areaChecked = document.querySelectorAll(
-    ".ir-area-dampak:checked",
-  ).length;
-  if (areaChecked === 0) {
+  const area = document.getElementById("irAreaDampak")?.value;
+
+  if (!area) {
     PkAlert.toast({ text: "Area dampak wajib dipilih.", icon: "warning" });
     return;
   }
@@ -475,3 +504,35 @@ document.addEventListener("click", function (e) {
     });
   });
 });
+
+function enableAutoNumbering(textareaId) {
+  const el = document.getElementById(textareaId);
+  if (!el) return;
+
+  el.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter") return;
+
+    e.preventDefault();
+
+    let value = el.value.trim();
+    let lines = value ? value.split("\n") : [];
+
+    // 🔥 CASE 1: belum ada numbering sama sekali
+    if (lines.length === 1 && !lines[0].match(/^\d+\./)) {
+      el.value = `1. ${lines[0]}\n2. `;
+    }
+    // 🔥 CASE 2: sudah ada numbering
+    else {
+      const lastLine = lines[lines.length - 1];
+      const match = lastLine.match(/^(\d+)\./);
+
+      const nextNumber = match ? parseInt(match[1]) + 1 : lines.length + 1;
+
+      el.value += `\n${nextNumber}. `;
+    }
+
+    setTimeout(() => {
+      el.selectionStart = el.selectionEnd = el.value.length;
+    }, 0);
+  });
+}

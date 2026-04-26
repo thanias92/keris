@@ -12,6 +12,14 @@
 <?php else: ?>
     <div class="card border-0 shadow-sm">
         <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <small class="text-muted">
+                    Menampilkan <?= count($data) ?> dari <?= $pager->getTotal('identifikasi') ?> data
+                </small>
+                <?= $pager->links('identifikasi', 'bootstrap_pagination') ?>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
@@ -26,7 +34,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $no = $from ?? 1;
+                        <?php $no = 1;
                         foreach ($data as $row): ?>
                             <tr class="ir-row"
                                 data-id="<?= $row['id_identifikasi'] ?>"
@@ -98,96 +106,5 @@
             </div>
 
         </div>
-        <?php if (!empty($data)): ?>
-            <div class="ir-table-bottom">
-
-                <div class="ir-table-info">
-                    <form method="get" class="ir-perpage-form" id="irPerPageForm">
-
-                        <!-- BAWA FILTER BIAR GA HILANG -->
-                        <input type="hidden" name="sk" value="<?= esc($_GET['sk'] ?? '') ?>">
-                        <input type="hidden" name="pg" value="<?= esc($_GET['pg'] ?? '') ?>">
-                        <input type="hidden" name="kg" value="<?= esc($_GET['kg'] ?? '') ?>">
-                        <input type="hidden" name="th" value="<?= esc($_GET['th'] ?? '') ?>">
-                        <input type="hidden" name="filter_kategori" value="<?= esc($_GET['filter_kategori'] ?? '') ?>">
-
-                        <select name="perPage" class="ir-perpage"
-                            onchange="document.getElementById('irPerPageForm').submit()">
-                            <?php foreach ([5, 10, 25, 50] as $size): ?>
-                                <option value="<?= $size ?>"
-                                    <?= ($perPage ?? 10) == $size ? 'selected' : '' ?>>
-                                    <?= $size ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </form>
-
-                    <div class="ir-info-text">
-                        Menampilkan <?= $from ?? 1 ?>–<?= $to ?? count($data) ?> dari <?= $total ?? count($data) ?> data
-                    </div>
-                </div>
-
-                <?php if (isset($pager) && $pager['totalPages'] > 1): ?>
-                    <div class="ir-pagination">
-                        <ul class="pagination mb-0">
-
-                            <li class="page-item <?= $pager['currentPage'] <= 1 ? 'disabled' : '' ?>">
-                                <a class="page-link" href="#"
-                                    onclick="irGoToPage(<?= $pager['currentPage'] - 1 ?>); return false;">
-                                    &laquo;
-                                </a>
-                            </li>
-
-                            <?php
-                            $cur = $pager['currentPage'];
-                            $total_pages = $pager['totalPages'];
-
-                            for ($i = 1; $i <= $total_pages; $i++): ?>
-                                <li class="page-item <?= $i === $cur ? 'active' : '' ?>">
-                                    <a class="page-link" href="#"
-                                        onclick="irGoToPage(<?= $i ?>); return false;">
-                                        <?= $i ?>
-                                    </a>
-                                </li>
-                            <?php endfor; ?>
-
-                            <li class="page-item <?= $cur >= $total_pages ? 'disabled' : '' ?>">
-                                <a class="page-link" href="#"
-                                    onclick="irGoToPage(<?= $cur + 1 ?>); return false;">
-                                    &raquo;
-                                </a>
-                            </li>
-
-                        </ul>
-                    </div>
-                <?php endif; ?>
-
-            </div>
-        <?php endif; ?>
     </div>
 <?php endif; ?>
-<script>
-    function irGoToPage(page) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('page', page);
-        url.searchParams.set('perPage', <?= $perPage ?? 5 ?>);
-
-        const wrapper = document.getElementById('irTableWrapper');
-        const scrollY = window.scrollY;
-
-        fetch(url.toString())
-            .then(r => r.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newCard = doc.querySelector('.card');
-                if (newCard && wrapper) {
-                    wrapper.innerHTML = newCard.outerHTML;
-                    window.history.pushState({}, '', url.toString());
-                    window.scrollTo({
-                        top: scrollY
-                    });
-                }
-            });
-    }
-</script>

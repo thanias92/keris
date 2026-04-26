@@ -151,8 +151,8 @@ $routes->group('identifikasi-risiko', ['namespace' => 'App\Controllers','filter'
     $routes->get('detail-area/(:num)', 'IdentifikasiRisikoController::detailArea/$1', ['filter' => 'role:admin,operator,ketua']);
     $routes->get('table', 'IdentifikasiRisikoController::ajaxTable');
     $routes->get('bank-risiko', 'IdentifikasiRisikoController::getBankRisiko');
-    $routes->post('set-active', 'IdentifikasiRisikoController::setActive', ['filter' => 'role:admin,operator']);
-    $routes->post('reset-active', 'IdentifikasiRisikoController::resetActive', ['filter' => 'role:admin,operator']);
+    $routes->post('set-active', 'IdentifikasiRisikoController::setActive', ['filter' => 'role:admin,operator,ketua']);
+    $routes->post('reset-active', 'IdentifikasiRisikoController::resetActive', ['filter' => 'role:admin,operator,ketua']);
     $routes->group('', ['filter' => 'role:admin,operator'], function ($routes) {
         $routes->post('store', 'IdentifikasiRisikoController::store');
         $routes->post('update/(:num)', 'IdentifikasiRisikoController::update/$1');

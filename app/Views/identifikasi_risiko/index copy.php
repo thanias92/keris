@@ -27,8 +27,11 @@
                     ?>
 
                     <?php if ($role !== 'ketua'): ?>
-                        <button id="irBtnAdd" class="btn btn-primary"
-                            <?= !$hasFilter ? 'disabled' : '' ?>>
+                        <button class="btn btn-primary"
+                            <?= !$hasFilter ? 'disabled' : '' ?>
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasRisiko"
+                            onclick="irResetForm()">
                             <i class="ti ti-plus"></i> Risiko
                         </button>
                     <?php endif; ?>

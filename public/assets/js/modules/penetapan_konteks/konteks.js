@@ -612,7 +612,9 @@ window.pkOpenViewMode = function (el) {
   const isOperator = currentUser.role === "operator";
   const bedaTim = String(currentUser.id_tim) !== String(row.id_tim);
 
-  const isReadonlyMode = isOperator && bedaTim;
+  const isKetua = currentUser.role === "ketua";
+
+  const isReadonlyMode = isKetua || (isOperator && bedaTim);
 
   document.getElementById("pkMode").value = "view";
   document.getElementById("pkId").value = id;

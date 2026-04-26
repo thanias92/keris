@@ -20,13 +20,25 @@ const IrContextSelector = {
     };
 
     this.bindEvents();
-    this.resolveId(); // set state awal tombol apply
+    this.filterDropdownOptions();
+    this.resolveId();
   },
 
   bindEvents() {
     const { sk, pg, kg, th, form, btnReset } = this.elements;
 
-    [sk, pg, kg, th].forEach((el) => {
+    if (sk) {
+      sk.addEventListener("change", () => {
+        if (pg) pg.value = "";
+        if (kg) kg.value = "";
+        if (th) th.value = "";
+
+        this.filterDropdownOptions();
+        this.resolveId();
+      });
+    }
+
+    [pg, kg, th].forEach((el) => {
       if (el) el.addEventListener("change", () => this.resolveId());
     });
 
@@ -45,15 +57,14 @@ const IrContextSelector = {
     const vKg = kg?.value ?? "";
     const vTh = th?.value ?? "";
 
+    const hasAnyFilter = vSk || vPg || vKg || vTh; // ✅ WAJIB ADA
+
     idEl.value = "";
     btnApply.disabled = true;
     btnApply.title = "Pilih filter terlebih dahulu";
 
-    // Tampilkan tombol reset kalau ada filter dipilih ATAU ada konteks aktif
-    const hasAnyFilter = vSk || vPg || vKg || vTh;
-    const hasActive = window.IR_CS_DATA?.hasActive ?? false;
     if (btnReset) {
-      btnReset.style.display = hasActive || hasAnyFilter ? "" : "none";
+      btnReset.style.display = "";
     }
 
     if (!hasAnyFilter) return;
@@ -75,13 +86,85 @@ const IrContextSelector = {
     btnApply.title = "Tidak ada konteks yang cocok";
   },
 
-  onSubmit(e) {
-    const { idEl } = this.elements;
+  filterDropdownOptions() {
+    const { sk, pg, kg, th } = this.elements;
+    const map = this.map;
 
-    if (!idEl.value) {
-      e.preventDefault();
-      PkAlert.toast({ text: "Tidak ada konteks yang cocok.", icon: "error" });
-    }
+    const selectedTim = sk?.value;
+
+    const reset = (el) => {
+      if (!el) return;
+      const placeholder = "– Pilih –";
+      el.innerHTML = `<option value="">${placeholder}</option>`;
+    };
+
+    // reset semua dropdown selain tim
+    reset(pg);
+    reset(kg);
+    reset(th);
+
+    if (!selectedTim) return;
+
+    const pgSet = new Map();
+    const kgSet = new Map();
+    const thSet = new Set();
+
+    Object.values(map).forEach((k) => {
+      if (String(k.id_tim) !== String(selectedTim)) return;
+
+      if (k.pengelola_risiko_id) {
+        pgSet.set(k.pengelola_risiko_id, k.nama_pengelola);
+      }
+
+      if (k.id_kegiatan) {
+        kgSet.set(k.id_kegiatan, k.nama_kegiatan);
+      }
+
+      if (k.tahun) {
+        thSet.add(k.tahun);
+      }
+    });
+
+    const append = (el, mapData) => {
+      mapData.forEach((val, key) => {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = val;
+        el.appendChild(opt);
+      });
+    };
+
+    append(pg, pgSet);
+    append(kg, kgSet);
+
+    thSet.forEach((tahun) => {
+      const opt = document.createElement("option");
+      opt.value = tahun;
+      opt.textContent = tahun;
+      th.appendChild(opt);
+    });
+
+    // restore selected value dari URL
+    const params = new URLSearchParams(window.location.search);
+
+    if (pg && params.get("pg")) pg.value = params.get("pg");
+    if (kg && params.get("kg")) kg.value = params.get("kg");
+    if (th && params.get("th")) th.value = params.get("th");
+  },
+
+  onSubmit(e) {
+    e.preventDefault();
+
+    const { sk, pg, kg, th } = this.elements;
+
+    const params = new URLSearchParams();
+
+    if (sk?.value) params.append("sk", sk.value);
+    if (pg?.value) params.append("pg", pg.value);
+    if (kg?.value) params.append("kg", kg.value);
+    if (th?.value) params.append("th", th.value);
+
+    window.location.href = baseUrl + "identifikasi-risiko?" + params.toString();
   },
 };
 
