@@ -145,13 +145,9 @@
 
                 <div class="mb-3">
                     <label class="ar-form-label">Uraian Pengendalian</label>
-                    <!-- VIEW MODE -->
-                    <div id="arInfoPengendalian" class="ar-info-value mb-2"></div>
-
-                    <!-- EDIT MODE -->
                     <textarea name="uraian_pengendalian" id="arUraianPengendalian"
-                        class="form-control d-none" rows="3"
-                        placeholder="Masukkan pengendalian yang telah dilaksanakan"></textarea>
+                        class="form-control" rows="3"
+                        placeholder="Uraikan pengendalian yang sudah dilaksanakan..."></textarea>
                 </div>
 
                 <div style="max-width: 320px;">
@@ -172,42 +168,26 @@
 
             <!-- ===== BUTTONS ===== -->
             <div class="d-flex align-items-center pt-3 border-top">
-
-                <!-- DELETE (admin only nanti) -->
                 <div>
                     <button type="button" id="arBtnDelete"
-                        class="btn btn-sm btn-danger d-none">
+                        class="btn btn-sm btn-danger d-none"
+                        onclick="arHapus()">
                         <i class="ti ti-trash"></i>
                     </button>
                 </div>
-
-                <!-- RIGHT SIDE -->
                 <div class="ms-auto d-flex gap-2">
-
-                    <!-- EDIT -->
                     <button type="button" id="arBtnEdit"
-                        class="btn btn-sm btn-warning text-white d-none">
-                        Edit
-                    </button>
-
-                    <!-- CANCEL -->
+                        class="btn btn-sm btn-warning text-white d-none"
+                        onclick="arSetMode('edit')">Edit</button>
                     <button type="button" id="arBtnBatal"
-                        class="btn btn-sm btn-light d-none">
-                        Batal
-                    </button>
-
-                    <!-- SAVE -->
+                        class="btn btn-sm btn-light d-none"
+                        onclick="arBatal()">Batal</button>
                     <button type="submit" id="arBtnSimpan"
                         class="btn btn-sm btn-primary px-4 d-none">
-                        <i class="ti ti-device-floppy me-1"></i>Simpan
-                    </button>
-
+                        <i class="ti ti-device-floppy me-1"></i>Simpan</button>
                     <button type="button" id="arBtnTutup"
-                        class="btn btn-sm btn-light d-none"
-                        data-bs-dismiss="offcanvas">
-                        Tutup
-                    </button>
-
+                        class="btn btn-sm btn-light"
+                        data-bs-dismiss="offcanvas">Tutup</button>
                 </div>
             </div>
         </form>

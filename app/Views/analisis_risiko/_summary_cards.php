@@ -1,9 +1,12 @@
 <?php
-$qCtx = $activeKonteks ? '?id_konteks=' . $activeKonteks['id_konteks'] : '';
+$qCtx = (!empty($activeKonteks['id_konteks']))
+    ? '?id_konteks=' . $activeKonteks['id_konteks']
+    : '';
 ?>
 
 <div class="d-flex flex-wrap gap-2 mb-3 ar-summary-row">
 
+    <!-- ✅ SELALU TAMPIL -->
     <?php if (!empty($levelRisiko)): ?>
 
         <?php
@@ -33,36 +36,42 @@ $qCtx = $activeKonteks ? '?id_konteks=' . $activeKonteks['id_konteks'] : '';
                     <span class="ar-dist-label"><?= esc($lvl) ?></span>
 
                     <div class="ar-dist-bar">
-                        <div class="ar-dist-fill" style="width:<?= $percent ?>%;background:<?= $warna ?>"></div>
+                        <div class="ar-dist-fill"
+                            style="width:<?= $percent ?>%;background:<?= $warna ?>"></div>
                     </div>
 
                     <span class="ar-dist-value"><?= $jumlah ?></span>
                 </div>
 
             <?php endforeach; ?>
-
         </div>
     <?php endif; ?>
 
-    <a href="<?= site_url('analisis-risiko') . $qCtx ?>" class="ar-stat-link">
-        <div class="ar-stat-card <?= !$filter ? 'ar-stat-active' : '' ?>">
-            <div class="ar-stat-label">Total Risiko</div>
-            <div class="ar-stat-value"><?= $totalRisiko ?></div>
-        </div>
-    </a>
 
-    <a href="<?= site_url('analisis-risiko') ?>?filter=sudah<?= $activeKonteks ? '&id_konteks=' . $activeKonteks['id_konteks'] : '' ?>" class="ar-stat-link">
-        <div class="ar-stat-card <?= $filter === 'sudah' ? 'ar-stat-active-sudah' : '' ?>">
-            <div class="ar-stat-label">Sudah Dianalisis</div>
-            <div class="ar-stat-value text-success"><?= $totalSudah ?></div>
-        </div>
-    </a>
+    <!-- ❌ HANYA JIKA ADA KONTEKS -->
+    <?php if (!empty($activeKonteks)): ?>
 
-    <a href="<?= site_url('analisis-risiko') ?>?filter=belum<?= $activeKonteks ? '&id_konteks=' . $activeKonteks['id_konteks'] : '' ?>" class="ar-stat-link">
-        <div class="ar-stat-card <?= $filter === 'belum' ? 'ar-stat-active-belum' : '' ?>">
-            <div class="ar-stat-label">Belum Dianalisis</div>
-            <div class="ar-stat-value text-warning"><?= $totalBelum ?></div>
-        </div>
-    </a>
+        <a href="<?= site_url('analisis-risiko') . $qCtx ?>" class="ar-stat-link">
+            <div class="ar-stat-card <?= !$filter ? 'ar-stat-active' : '' ?>">
+                <div class="ar-stat-label">Total Risiko</div>
+                <div class="ar-stat-value"><?= $totalRisiko ?></div>
+            </div>
+        </a>
+
+        <a href="<?= site_url('analisis-risiko') ?>?filter=sudah<?= $qCtx ?>" class="ar-stat-link">
+            <div class="ar-stat-card <?= $filter === 'sudah' ? 'ar-stat-active-sudah' : '' ?>">
+                <div class="ar-stat-label">Sudah Dianalisis</div>
+                <div class="ar-stat-value text-success"><?= $totalSudah ?></div>
+            </div>
+        </a>
+
+        <a href="<?= site_url('analisis-risiko') ?>?filter=belum<?= $qCtx ?>" class="ar-stat-link">
+            <div class="ar-stat-card <?= $filter === 'belum' ? 'ar-stat-active-belum' : '' ?>">
+                <div class="ar-stat-label">Belum Dianalisis</div>
+                <div class="ar-stat-value text-warning"><?= $totalBelum ?></div>
+            </div>
+        </a>
+
+    <?php endif; ?>
 
 </div>

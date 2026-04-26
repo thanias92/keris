@@ -17,12 +17,6 @@
         }
     };
 </script>
-<script>
-    window.APP_USER = {
-        role: '<?= session()->get('user_role') ?>',
-        id_tim: '<?= session()->get('id_tim') ?>'
-    };
-</script>
 
 <div class="pk-page">
 
@@ -50,19 +44,18 @@
     ]) ?>
 
     <!-- Konteks Aktif Info -->
-    <!-- Summary Cards (SELALU MUNCUL) -->
-    <?= view('analisis_risiko/_summary_cards', [
-        'totalRisiko'   => $totalRisiko,
-        'totalSudah'    => $totalSudah,
-        'totalBelum'    => $totalBelum,
-        'levelRisiko'   => $levelRisiko,
-        'activeKonteks' => $activeKonteks,
-        'filter'        => $filter,
-    ]) ?>
-
     <?php if ($activeKonteks): ?>
-
         <?= view('analisis_risiko/_context_active', ['activeKonteks' => $activeKonteks]) ?>
+
+        <!-- Summary Cards -->
+        <?= view('analisis_risiko/_summary_cards', [
+            'totalRisiko'   => $totalRisiko,
+            'totalSudah'    => $totalSudah,
+            'totalBelum'    => $totalBelum,
+            'levelRisiko'   => $levelRisiko,
+            'activeKonteks' => $activeKonteks,
+            'filter'        => $filter,
+        ]) ?>
 
         <!-- Filter Active Badge -->
         <?php if ($filter): ?>
@@ -78,8 +71,9 @@
                 </a>
             </div>
         <?php endif; ?>
+    <?php endif; ?>
 
-    <?php else: ?>
+    <?php if (!$activeKonteks): ?>
         <div class="alert alert-warning">
             Silakan pilih konteks terlebih dahulu.
         </div>

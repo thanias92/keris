@@ -20,22 +20,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (!$activeKonteks): ?>
-                        <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">
-                                <i class="ti ti-map-pin fs-3 d-block mb-2 opacity-25"></i>
-                                Pilih konteks terlebih dahulu untuk melihat data analisis risiko.
-                            </td>
-                        </tr>
-
-                    <?php elseif (empty($data)): ?>
+                    <?php if (empty($data)): ?>
                         <tr>
                             <td colspan="8" class="text-center py-5 text-muted">
                                 <i class="ti ti-inbox fs-3 d-block mb-2 opacity-25"></i>
                                 Belum ada data.
                             </td>
                         </tr>
-
                     <?php else: ?>
                         <?php
                         $no = $from ?? 1;
@@ -153,11 +144,10 @@
                 </tbody>
             </table>
         </div>
-
-    </div><!-- /.card-body -->
+    </div>
 
     <!-- BOTTOM: per-page + info + pagination -->
-    <?php if ($activeKonteks && !empty($data)): ?>
+    <?php if (!empty($data)): ?>
         <div class="ar-table-bottom">
 
             <div class="ar-table-info">

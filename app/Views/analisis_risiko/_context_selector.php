@@ -9,9 +9,11 @@ foreach ($listKonteks as $k) {
     $id = $k['id_konteks'];
 
     $konteksMap[$id] = [
-        'id_tim'     => $k['id_tim']     ?? '',
+        'id_tim'              => $k['id_tim'] ?? '',
         'pengelola_risiko_id' => $k['pengelola_risiko_id'] ?? '',
-        'id_kegiatan'         => $k['id_kegiatan']         ?? '',
+        'nama_pengelola'      => $k['nama_pengelola'] ?? '',
+        'id_kegiatan'         => $k['id_kegiatan'] ?? '',
+        'nama_kegiatan'       => $k['nama_kegiatan'] ?? '',
         'tahun'               => $k['tahun'],
     ];
 
@@ -31,12 +33,18 @@ asort($pengelolaOpt);
 ksort($tahunOpt);
 
 $sel = $activeKonteks ?? [];
+$get = request()->getGet();
+
+$sk = $get['sk'] ?? '';
+$pg = $get['pg'] ?? '';
+$kg = $get['kg'] ?? '';
+$th = $get['th'] ?? '';
 ?>
 
 <div class="card shadow-sm mb-3 pk-context-filter">
     <div class="card-body">
-        <form id="arContextSelectorForm" method="post"
-            action="<?= site_url('analisis-risiko/set-active') ?>">
+        <form id="arContextSelectorForm" method="get"
+            action="<?= site_url('analisis-risiko') ?>">
 
             <?= csrf_field() ?>
             <input type="hidden" name="id_konteks" id="arCsIdKonteks">
@@ -46,11 +54,11 @@ $sel = $activeKonteks ?? [];
                 <div class="col-7">
                     <div class="pk-filter-row">
                         <label>Tim Kerja</label>
-                        <select class="pk-select" id="arCsTimKerja">
+                        <select name="sk" class="pk-select" id="arCsTimKerja">
                             <option value="">– Pilih –</option>
                             <?php foreach ($timKerjaOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= isset($sel['id_tim']) && (string)$sel['id_tim'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= (string)$sk === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -58,11 +66,11 @@ $sel = $activeKonteks ?? [];
                     </div>
                     <div class="pk-filter-row">
                         <label>Pengelola Risiko</label>
-                        <select class="pk-select" id="arCsPengelola">
+                        <select name="pg" class="pk-select" id="arCsPengelola">
                             <option value="">– Pilih –</option>
                             <?php foreach ($pengelolaOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= isset($sel['pengelola_risiko_id']) && (string)$sel['pengelola_risiko_id'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= (string)$pg === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -70,11 +78,11 @@ $sel = $activeKonteks ?? [];
                     </div>
                     <div class="pk-filter-row">
                         <label>Kegiatan</label>
-                        <select class="pk-select" id="arCsKegiatan">
+                        <select name="kg" class="pk-select" id="arCsKegiatan">
                             <option value="">– Pilih –</option>
                             <?php foreach ($kegiatanOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= isset($sel['id_kegiatan']) && (string)$sel['id_kegiatan'] === (string)$id ? 'selected' : '' ?>>
+                                    <?= (string)$kg === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -86,11 +94,11 @@ $sel = $activeKonteks ?? [];
                 <div class="col-4 pk-right-side">
                     <div class="pk-filter-row">
                         <label>Tahun</label>
-                        <select class="pk-select" id="arCsTahun" style="width:80px;">
+                        <select name="th" class="pk-select" id="arCsTahun" style="width:80px;">
                             <option value="">– Pilih –</option>
                             <?php foreach ($tahunOpt as $tahun => $_): ?>
                                 <option value="<?= $tahun ?>"
-                                    <?= isset($sel['tahun']) && (string)$sel['tahun'] === (string)$tahun ? 'selected' : '' ?>>
+                                    <?= (string)$th === (string)$tahun ? 'selected' : '' ?>>
                                     <?= esc($tahun) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -103,8 +111,7 @@ $sel = $activeKonteks ?? [];
                             <i class="ti ti-search"></i>
                         </button>
                         <button type="button" class="btn btn-light btn-icon"
-                            id="arCsBtnReset" title="Reset Konteks"
-                            style="<?= $activeKonteks ? '' : 'display:none;' ?>">
+                            onclick="window.location.href='<?= site_url('analisis-risiko') ?>'">
                             <i class="ti ti-refresh"></i>
                         </button>
                     </div>

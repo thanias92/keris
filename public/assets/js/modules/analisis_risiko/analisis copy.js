@@ -1,5 +1,5 @@
 
-const USER = window.APP_USER || {};
+/* URL & CSRF (di-inject dari view lewat window.AR_CONFIG) */
 const AR_URL = window.AR_CONFIG?.url || {};
 let arCsrfToken = window.AR_CONFIG?.csrf?.token || "";
 const arCsrfName = window.AR_CONFIG?.csrf?.name || "";
@@ -12,80 +12,28 @@ function arSetMode(mode) {
 
   document.getElementById("arMode").value = mode;
 
-  const role = USER.role || "guest";
-
-  let isReadonly = false;
-
-  if (role === "ketua") {
-    isReadonly = true;
-  } else if (role === "operator") {
-    isReadonly = window.AR_IS_BEDA_TIM === true;
-  }
-
-  // ===== BUTTONS =====
-  const btnEdit = document.getElementById("arBtnEdit");
-  const btnBatal = document.getElementById("arBtnBatal");
-  const btnSimpan = document.getElementById("arBtnSimpan");
-  const btnDelete = document.getElementById("arBtnDelete");
-  const btnTutup = document.getElementById("arBtnTutup");
-
-  // reset semua
-  [btnEdit, btnBatal, btnSimpan, btnDelete].forEach((b) =>
-    b?.classList.add("d-none"),
-  );
-
-  // ===== DISABLE FIELD =====
-  [
+  const fields = [
     "arKemungkinan",
     "arDampak",
     "arUraianPengendalian",
     "arEfektivitas",
-  ].forEach((id) => {
+  ];
+  fields.forEach((id) => {
     const el = document.getElementById(id);
-    if (el) el.disabled = isView || isReadonly;
+    if (el) el.disabled = isView;
   });
 
-  // ===== MODE LOGIC =====
-  if (isCreate) {
-    if (!isReadonly) {
-      btnSimpan?.classList.remove("d-none");
-    }
-  } else if (isView) {
-    if (!isReadonly && (role === "admin" || role === "operator")) {
-      btnEdit?.classList.remove("d-none");
-    }
+  document.getElementById("arBtnEdit").classList.toggle("d-none", !isView);
+  document.getElementById("arBtnBatal").classList.toggle("d-none", !isEdit);
+  document.getElementById("arBtnSimpan").classList.toggle("d-none", isView);
+  document.getElementById("arBtnTutup").classList.toggle("d-none", isEdit);
+  document.getElementById("arBtnDelete").classList.toggle("d-none", !isView);
 
-    if (!isReadonly && (role === "admin" || role === "operator")) {
-      btnDelete?.classList.remove("d-none");
-    }
-  } else if (isEdit) {
-    if (!isReadonly) {
-      btnBatal?.classList.remove("d-none");
-      btnSimpan?.classList.remove("d-none");
-    }
-  }
-
-  // Tutup selalu ada
-  btnTutup?.classList.remove("d-none");
-
-  // ===== TITLE =====
   document.getElementById("arOffcanvasTitle").textContent = isCreate
     ? "Tambah Analisis Risiko"
     : isEdit
       ? "Edit Analisis Risiko"
       : "Detail Analisis Risiko";
-
-  // ===== VIEW / EDIT SWITCH =====
-  const viewEl = document.getElementById("arInfoPengendalian");
-  const editEl = document.getElementById("arUraianPengendalian");
-
-  if (isView || isReadonly) {
-    viewEl?.classList.remove("d-none");
-    editEl?.classList.add("d-none");
-  } else {
-    viewEl?.classList.add("d-none");
-    editEl?.classList.remove("d-none");
-  }
 }
 
 /* RESET FORM */
@@ -130,24 +78,8 @@ function arPopulateInfo(d) {
   );
   set("arInfoSasaranKinerja", d.sasaran_kinerja);
   set("arInfoPernyataan", d.pernyataan_risiko);
-  function formatNumberedText(text) {
-    if (!text) return "-";
-
-    const lines = text.split(/\n|\r/).filter((l) => l.trim() !== "");
-
-    return lines.map((line) => `<div>${line}</div>`).join("");
-  }
-
-  document.getElementById("arInfoPenyebab").innerHTML = formatNumberedText(
-    d.penyebab_risiko,
-  );
-
-  document.getElementById("arInfoDampak").innerHTML = formatNumberedText(
-    d.dampak_risiko,
-  );
-  document.getElementById("arInfoPengendalian").innerHTML = formatNumberedText(
-    d.uraian_pengendalian,
-  );
+  set("arInfoPenyebab", d.penyebab_risiko);
+  set("arInfoDampak", d.dampak_risiko);
 }
 
 /* LOAD DETAIL PENILAIAN (view/edit mode) */
@@ -155,14 +87,6 @@ function arLoadDetail(idPenilaian) {
   return fetch(AR_URL.detail(idPenilaian))
     .then((r) => r.json())
     .then((d) => {
-      console.log("USER:", window.APP_USER);
-      console.log("DATA:", d);
-      const currentUser = window.APP_USER || {};
-
-      const isOperator = currentUser.role === "operator";
-      const bedaTim = String(currentUser.id_tim) !== String(d.id_tim);
-
-      window.AR_IS_BEDA_TIM = isOperator && bedaTim;
       document.getElementById("arId").value = d.id_penilaian;
       document.getElementById("arIdIdentifikasi").value = d.id_identifikasi;
       document.getElementById("arKemungkinan").value = d.id_kemungkinan ?? "";
@@ -191,7 +115,6 @@ function arBatal() {
 document.addEventListener("click", function (e) {
   const row = e.target.closest(".ar-row");
   if (!row) return;
-  window.AR_IS_BEDA_TIM = false;
 
   const idIdentifikasi = row.dataset.identifikasi;
   const idPenilaian = row.dataset.penilaian;
@@ -206,12 +129,7 @@ document.addEventListener("click", function (e) {
     fetch(AR_URL.detailIdentifikasi(idIdentifikasi))
       .then((r) => r.json())
       .then((d) => {
-        const currentUser = window.APP_USER || {};
-        const isOperator = currentUser.role === "operator";
-        const bedaTim = String(currentUser.id_tim) !== String(d.id_tim);
-        window.AR_IS_BEDA_TIM = isOperator && bedaTim;
-        arPopulateInfo(d);        
-
+        arPopulateInfo(d);
         arSetMode("create");
       });
   }
@@ -350,49 +268,4 @@ document.getElementById("arForm")?.addEventListener("submit", function (e) {
       },
     });
   });
-});
-
-function enableAutoNumbering(textareaId) {
-  const el = document.getElementById(textareaId);
-  if (!el) return;
-
-  el.addEventListener("keydown", function (e) {
-    if (e.key !== "Enter") return;
-
-    e.preventDefault();
-
-    let value = el.value.trim();
-    let lines = value ? value.split("\n") : [];
-
-    if (lines.length === 1 && !lines[0].match(/^\d+\./)) {
-      el.value = `1. ${lines[0]}\n2. `;
-    } else {
-      const lastLine = lines[lines.length - 1];
-      const match = lastLine.match(/^(\d+)\./);
-      const nextNumber = match ? parseInt(match[1]) + 1 : lines.length + 1;
-      el.value += `\n${nextNumber}. `;
-    }
-
-    setTimeout(() => {
-      el.selectionStart = el.selectionEnd = el.value.length;
-    }, 0);
-  });
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-  enableAutoNumbering("arUraianPengendalian");
-});
-
-document.addEventListener("click", function (e) {
-  if (e.target.closest("#arBtnEdit")) {
-    arSetMode("edit");
-  }
-
-  if (e.target.closest("#arBtnBatal")) {
-    arBatal();
-  }
-
-  if (e.target.closest("#arBtnDelete")) {
-    arHapus();
-  }
 });

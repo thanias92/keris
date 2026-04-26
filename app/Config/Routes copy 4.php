@@ -162,19 +162,13 @@ $routes->group('identifikasi-risiko', ['namespace' => 'App\Controllers','filter'
 });
 
 // Analisis
-$routes->group('analisis-risiko', ['namespace' => 'App\Controllers', 'filter' => ['auth']], function ($routes) {
-
-    $routes->get('/', 'AnalisisRisikoController::index', ['filter' => 'role:admin,operator,ketua']);
-
-    $routes->get('detail/(:num)', 'AnalisisRisikoController::detail/$1', ['filter' => 'role:admin,operator,ketua']);
-    $routes->get('detail-identifikasi/(:num)', 'AnalisisRisikoController::detailIdentifikasi/$1', ['filter' => 'role:admin,operator,ketua']);
-
-    $routes->get('table', 'AnalisisRisikoController::ajaxTable');
-
-    $routes->post('set-active', 'AnalisisRisikoController::setActive', ['filter' => 'role:admin,operator,ketua']);
-    $routes->post('reset-active', 'AnalisisRisikoController::resetActive', ['filter' => 'role:admin,operator,ketua']);
-
-    $routes->group('', ['filter' => 'role:admin,operator'], function ($routes) {
+$routes->group('analisis-risiko', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'AnalisisRisikoController::index');
+    $routes->get('detail/(:num)', 'AnalisisRisikoController::detail/$1');
+    $routes->get('detail-identifikasi/(:num)', 'AnalisisRisikoController::detailIdentifikasi/$1');
+    $routes->post('set-active', 'AnalisisRisikoController::setActive');
+    $routes->post('reset-active', 'AnalisisRisikoController::resetActive');
+    $routes->group('', function ($routes) {
         $routes->post('store', 'AnalisisRisikoController::store');
         $routes->post('update/(:num)', 'AnalisisRisikoController::update/$1');
         $routes->post('delete/(:num)', 'AnalisisRisikoController::delete/$1');
