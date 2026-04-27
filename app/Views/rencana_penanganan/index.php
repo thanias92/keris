@@ -13,8 +13,14 @@
             delete: (id) => `<?= site_url('rencana-penanganan/delete') ?>/${id}`,
             detail: (id) => `<?= site_url('rencana-penanganan/detail') ?>/${id}`,
             detailEvaluasi: (id) => `<?= site_url('rencana-penanganan/detail-evaluasi') ?>/${id}`,
-            preview: '<?= site_url('analisis-risiko/preview') ?>',
+            preview: '<?= site_url('rencana-penanganan/preview') ?>',
         }
+    };
+</script>
+<script>
+    window.APP_USER = {
+        role: '<?= session()->get('user_role') ?>',
+        id_tim: '<?= session()->get('id_tim') ?>'
     };
 </script>
 
@@ -43,22 +49,20 @@
         'activeKonteks' => $activeKonteks,
     ]) ?>
 
+    <!-- Summary Cards -->
+    <?= view('rencana_penanganan/_summary_cards', [
+        'totalRisiko'   => $totalRisiko ?? 0,
+        'totalSudah'    => $totalSudah ?? 0,
+        'totalBelum'    => $totalBelum ?? 0,
+        'levelRisiko'   => $levelRisiko ?? [],
+        'filter'        => $filter ?? '',
+        'activeKonteks' => $activeKonteks ?? null,
+    ]) ?>
+
     <?php if ($activeKonteks): ?>
 
         <!-- Konteks Aktif Info -->
-        <?= view('rencana_penanganan/_context_active', [
-            'activeKonteks' => $activeKonteks,
-        ]) ?>
-
-        <!-- Summary Cards -->
-        <?= view('rencana_penanganan/_summary_cards', [
-            'totalRisiko'   => $totalRisiko,
-            'totalSudah'    => $totalSudah,
-            'totalBelum'    => $totalBelum,
-            'levelRisiko'   => $levelRisiko,
-            'activeKonteks' => $activeKonteks,
-            'filter'        => $filter,
-        ]) ?>
+        <?= view('rencana_penanganan/_context_active', ['activeKonteks' => $activeKonteks,]) ?>
 
         <!-- Filter Badge -->
         <?php if ($filter): ?>
@@ -81,7 +85,10 @@
                 </a>
             </div>
         <?php endif; ?>
-
+    <?php else: ?>
+        <div class="alert alert-warning">
+            Silakan pilih konteks terlebih dahulu.
+        </div>
     <?php endif; ?>
 
     <!-- Table -->
@@ -90,7 +97,7 @@
         'activeKonteks' => $activeKonteks,
         'total'         => $total   ?? 0,
         'from'          => $from    ?? 1,
-        'to'            => $to      ?? count($grouped),
+        'to'            => $to      ?? count($grouped ?? []),
         'perPage'       => $perPage ?? 10,
         'filter'        => $filter  ?? '',
         'pager'         => $pager   ?? null,

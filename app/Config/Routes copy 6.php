@@ -202,26 +202,17 @@ $routes->group('evaluasi-risiko', ['namespace' => 'App\Controllers', 'filter' =>
     });
 });
 // Rencana Penanganan
-$routes->group('rencana-penanganan', ['namespace' => 'App\Controllers', 'filter' => ['auth']], function ($routes) {
-
-    $routes->get('/', 'RencanaPenangananController::index', ['filter' => 'role:admin,operator,ketua']);
-
-    $routes->get('detail/(:num)', 'RencanaPenangananController::detail/$1', ['filter' => 'role:admin,operator,ketua']);
-    $routes->get('detail-evaluasi/(:num)', 'RencanaPenangananController::detailEvaluasi/$1', ['filter' => 'role:admin,operator,ketua']);
-
-    // ✅ WAJIB biar sama seperti Analisis & Evaluasi
-    $routes->get('table', 'RencanaPenangananController::ajaxTable');
-
-    $routes->post('set-active', 'RencanaPenangananController::setActive', ['filter' => 'role:admin,operator,ketua']);
-    $routes->post('reset-active', 'RencanaPenangananController::resetActive', ['filter' => 'role:admin,operator,ketua']);
-
-    // 🔒 WRITE ACCESS
-    $routes->group('', ['filter' => 'role:admin,operator'], function ($routes) {
-        $routes->post('store', 'RencanaPenangananController::store');
-        $routes->post('update/(:num)', 'RencanaPenangananController::update/$1');
-        $routes->post('delete/(:num)', 'RencanaPenangananController::delete/$1');
-        $routes->post('preview', 'RencanaPenangananController::preview');
-    });
+$routes->group('rencana-penanganan', ['filter' => ['auth']], function ($routes) {
+    $routes->get('/', 'RencanaPenangananController::index');
+    $routes->post('set-active', 'RencanaPenangananController::setActive');
+    $routes->post('reset-active', 'RencanaPenangananController::resetActive');
+    $routes->post('store', 'RencanaPenangananController::store');
+    $routes->post('update/(:num)', 'RencanaPenangananController::update/$1');
+    $routes->post('delete/(:num)', 'RencanaPenangananController::delete/$1');
+    $routes->get('detail/(:num)', 'RencanaPenangananController::detail/$1');
+    $routes->get('detail-evaluasi/(:num)', 'RencanaPenangananController::detailEvaluasi/$1');
+    $routes->get('kriteria-kemungkinan', 'RencanaPenangananController::getKriteriaKemungkinan');
+    $routes->get('kriteria-dampak', 'RencanaPenangananController::getKriteriaDampak');
 });
 
 // Pemantauan

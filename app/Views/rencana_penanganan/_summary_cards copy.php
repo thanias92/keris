@@ -1,7 +1,5 @@
 <?php
-$qCtx = (!empty($activeKonteks['id_konteks']))
-    ? '?id_konteks=' . $activeKonteks['id_konteks']
-    : '';
+$qCtx = $activeKonteks ? '?id_konteks=' . $activeKonteks['id_konteks'] : '';
 ?>
 
 <div class="d-flex flex-wrap gap-2 mb-3 er-summary-row">

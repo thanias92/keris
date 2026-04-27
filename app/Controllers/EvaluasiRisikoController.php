@@ -121,7 +121,7 @@ class EvaluasiRisikoController extends BaseController
         $db            = \Config\Database::connect();
 
         /* PAGINATION CONFIG */
-        $perPage = (int) ($this->request->getGet('perPage') ?? 5);
+        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
         $page    = (int) ($this->request->getGet('page') ?? 1);
         $offset  = ($page - 1) * $perPage;
 

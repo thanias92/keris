@@ -1,9 +1,25 @@
 /* URL & CSRF */
+let RTP_CAN_EDIT = false;
+const USER = window.APP_USER || {};
 const RTP_URL = window.RTP_CONFIG?.url || {};
 let rtpCsrfToken = window.RTP_CONFIG?.csrf?.token || "";
 const rtpCsrfName = window.RTP_CONFIG?.csrf?.name || "csrf_token";
 
-/* MODE MANAGEMENT */
+/* ================= RBAC ================= */
+function rtpCanEdit(data) {
+  if (!USER) return false;
+
+  if (USER.role === "admin") return true;
+  if (USER.role === "ketua") return false;
+
+  if (USER.role === "operator") {
+    return String(USER.id_tim) === String(data.id_tim);
+  }
+
+  return false;
+}
+
+/* ================= MODE ================= */
 function rtpSetMode(mode) {
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -14,33 +30,43 @@ function rtpSetMode(mode) {
   const createBox = document.getElementById("rtpCreateContainer");
   const timelineBox = document.getElementById("rtpTimelineContainer");
 
-  if (isCreate) {
-    createBox.classList.remove("d-none");
-    timelineBox.classList.add("d-none");
-  }
+  createBox.classList.toggle("d-none", isView);
+  timelineBox.classList.toggle("d-none", !isView);
 
-  if (isView) {
-    createBox.classList.add("d-none");
-    timelineBox.classList.remove("d-none");
-  }
+  const disableAll = isView && !RTP_CAN_EDIT;
 
-  if (isEdit) {
-    createBox.classList.remove("d-none");
-    timelineBox.classList.add("d-none");
-  }
+  document
+    .querySelectorAll(
+      "#rtpOffcanvas input, #rtpOffcanvas textarea, #rtpOffcanvas select",
+    )
+    .forEach((el) => {
+      if (el.id === "rtpMode") return;
+      el.disabled = disableAll;
+    });
 
   document
     .querySelectorAll("#rtpCreateContainer textarea, #rtpCreateContainer input")
-    .forEach((el) => (el.disabled = isView));
+    .forEach((el) => (el.disabled = isView && !RTP_CAN_EDIT));
 
-  document.getElementById("rtpBtnEdit").classList.toggle("d-none", !isView);
-  document.getElementById("rtpBtnHapus").classList.toggle("d-none", !isView);
-  document.getElementById("rtpBtnBatal").classList.toggle("d-none", !isEdit && !isCreate);
-  document.getElementById("rtpBtnSimpan").classList.toggle("d-none", isView);
-  document.getElementById("rtpBtnTutup").classList.toggle("d-none", isEdit || isCreate);
-  
-  const addWrapper = document.getElementById("rtpAddWrapper");
-  if (addWrapper) addWrapper.classList.toggle("d-none", isView);
+  document
+    .getElementById("rtpBtnEdit")
+    .classList.toggle("d-none", !isView || !RTP_CAN_EDIT);
+
+  document
+    .getElementById("rtpBtnHapus")
+    .classList.toggle("d-none", !isView || !RTP_CAN_EDIT);
+
+  document
+    .getElementById("rtpBtnBatal")
+    .classList.toggle("d-none", !isEdit || !RTP_CAN_EDIT);
+
+  document
+    .getElementById("rtpBtnSimpan")
+    .classList.toggle("d-none", isView || !RTP_CAN_EDIT);
+
+  document.getElementById("rtpBtnTutup").classList.toggle("d-none", isEdit);
+
+  document.getElementById("rtpAddWrapper")?.classList.toggle("d-none", isView);
 
   document.getElementById("rtpOffcanvasTitle").textContent = isCreate
     ? "Tambah RTP"
@@ -49,14 +75,19 @@ function rtpSetMode(mode) {
       : "Detail RTP";
 }
 
-/* RESET FORM */
+/* ================= FORMAT TEXT ================= */
+function rtpFormatText(text) {
+  if (!text) return "-";
+  return text
+    .split(/\n|\r/)
+    .filter((l) => l.trim())
+    .map((l) => `<div>${l}</div>`)
+    .join("");
+}
+
+/* ================= RESET ================= */
 function rtpResetForm() {
   document.getElementById("rtpForm").reset();
-  document.getElementById("rtpForm").classList.remove("was-validated");
-
-  document.getElementById("rtpId").value = "";
-  document.getElementById("rtpIdEvaluasi").value = "";
-
   document.getElementById("rtpCreateContainer")?.replaceChildren();
   document.getElementById("rtpTimelineContainer")?.replaceChildren();
 
@@ -77,64 +108,10 @@ function rtpResetForm() {
     if (el) el.textContent = "-";
   });
 
-  // Reset preview skor aktual
-  const nilaiEl = document.getElementById("rtpPreviewNilai");
-  const badgeEl = document.getElementById("rtpPreviewBadge");
-  if (nilaiEl) {
-    nilaiEl.textContent = "0";
-    nilaiEl.style.color = "";
-  }
-  if (badgeEl) {
-    badgeEl.textContent = "";
-    badgeEl.style.backgroundColor = "";
-  }
-
-  // Reset preview skor residu
   rtpResetResidu();
 }
 
-/* RTP CARD MANAGER */
-
-document.getElementById("rtpAddBtn")?.addEventListener("click", function () {
-  rtpAddCard();
-});
-
-function rtpAddCard(data = {}) {
-  const tpl = document.getElementById("rtpCardTemplate");
-  const container = document.getElementById("rtpCreateContainer");
-
-  const node = tpl.content.cloneNode(true);
-
-  const textarea = node.querySelector("textarea[name='uraian_rtp[]']");
-  const output = node.querySelector('input[name="target_output[]"]');
-  const waktu = node.querySelector('input[name="target_waktu[]"]');
-
-  textarea.value = data.uraian_rtp || "";
-  output.value = data.target_output || "";
-  waktu.value = data.target_waktu ? data.target_waktu.substring(0, 7) : "";
-
-  node.querySelector(".rtp-card-remove").addEventListener("click", function () {
-    this.closest(".rtp-card").remove();
-  });
-
-  container.appendChild(node);
-}
-
-/* RESET RESIDU PREVIEW */
-function rtpResetResidu() {
-  const nilaiEl = document.getElementById("rtpResiduNilai");
-  const badgeEl = document.getElementById("rtpResiduBadge");
-  if (nilaiEl) {
-    nilaiEl.textContent = "0";
-    nilaiEl.style.color = "";
-  }
-  if (badgeEl) {
-    badgeEl.textContent = "";
-    badgeEl.style.backgroundColor = "";
-  }
-}
-
-/* POPULATE INFO KONTEKS & RISIKO */
+/* ================= POPULATE ================= */
 function rtpPopulateInfo(d) {
   const set = (id, val) => {
     const el = document.getElementById(id);
@@ -145,94 +122,103 @@ function rtpPopulateInfo(d) {
   set("rtpInfoTimKerja", d.nama_tim);
   set("rtpInfoPengelola", d.nama_pengelola);
   set("rtpInfoSasaran", d.sasaran_strategis);
-  set("rtpInfoProses",(d.kode_proses ? d.kode_proses + " — " : "") + (d.uraian_proses ?? ""),);
+
+  set(
+    "rtpInfoProses",
+    (d.kode_proses ? d.kode_proses + " — " : "") + (d.uraian_proses ?? ""),
+  );
+
   set("rtpInfoPernyataan", d.pernyataan_risiko);
-  set("rtpInfoPenyebab", d.penyebab_risiko);
-  set("rtpInfoDampakRisiko", d.dampak_risiko);
+
+  document.getElementById("rtpInfoPenyebab").innerHTML = rtpFormatText(
+    d.penyebab_risiko,
+  );
+
+  document.getElementById("rtpInfoDampakRisiko").innerHTML = rtpFormatText(
+    d.dampak_risiko,
+  );
+
   set("rtpInfoProb", d.level_kemungkinan);
   set("rtpInfoImpact", d.level_dampak);
 
-  // Penanggung jawab — derive dari satuan kerja
-  set("rtpInfoPenanggungjawab",d.nama_tim ? "Ketua " + d.nama_tim : "-",);
+  set("rtpInfoPenanggungjawab", d.nama_tim ? "Ketua " + d.nama_tim : "-");
 
-  // Preview skor risiko aktual
+  // preview skor (SAMAKAN evaluasi)
   const nilaiEl = document.getElementById("rtpPreviewNilai");
   const badgeEl = document.getElementById("rtpPreviewBadge");
+
   if (nilaiEl) {
     nilaiEl.textContent = d.nilai_risiko || "0";
-    nilaiEl.style.color = d.warna_risiko || d.warna_selera || "";
+    nilaiEl.style.color = d.warna_risiko || "";
   }
+
   if (badgeEl) {
     badgeEl.textContent = d.nama_selera || "";
-    badgeEl.style.backgroundColor = d.warna_risiko || d.warna_selera || "";
+    badgeEl.style.backgroundColor = d.warna_risiko || "";
   }
+
+  RTP_CAN_EDIT = rtpCanEdit(d);
 }
 
-/* HITUNG SKOR RESIDU (live preview) */
-function rtpHitungResidu() {
-  const selK = document.getElementById("rtpKemungkinanResidu");
-  const selD = document.getElementById("rtpDampakResidu");
+function rtpAddCard(data = {}) {
+  const tpl = document.getElementById("rtpCardTemplate");
+  const container = document.getElementById("rtpCreateContainer");
 
-  const idK = selK?.value;
-  const idD = selD?.value;
+  if (!tpl || !container) return;
 
-  if (!idK || !idD) {
-    rtpResetResidu();
-    return;
+  const node = tpl.content.cloneNode(true);
+
+  const textarea = node.querySelector("textarea[name='uraian_rtp[]']");
+  const output = node.querySelector('input[name="target_output[]"]');
+  const waktu = node.querySelector('input[name="target_waktu[]"]');
+
+  if (textarea) textarea.value = data.uraian_rtp || "";
+  if (output) output.value = data.target_output || "";
+  if (waktu) {
+    waktu.value = data.target_waktu ? data.target_waktu.substring(0, 7) : "";
   }
 
-  fetch(RTP_URL.preview, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `id_kemungkinan=${idK}&id_dampak=${idD}`,
-  })
-    .then((r) => r.json())
-    .then((res) => {
-      if (res.status !== "success") {
-        rtpResetResidu();
-        return;
-      }
-      const nilaiEl = document.getElementById("rtpResiduNilai");
-      const badgeEl = document.getElementById("rtpResiduBadge");
-      if (nilaiEl) {
-        nilaiEl.textContent = res.nilai_risiko;
-        nilaiEl.style.color = res.warna;
-      }
-      if (badgeEl) {
-        badgeEl.textContent = res.nama_selera;
-        badgeEl.style.backgroundColor = res.warna;
-        badgeEl.style.color = "#fff";
-      }
+  node
+    .querySelector(".rtp-card-remove")
+    ?.addEventListener("click", function () {
+      this.closest(".rtp-card").remove();
     });
-}
-document.getElementById("rtpKemungkinanResidu")?.addEventListener("change", rtpHitungResidu);
-document.getElementById("rtpDampakResidu")?.addEventListener("change", rtpHitungResidu);
 
-/* LOAD DETAIL RTP (view/edit mode) */
+  container.appendChild(node);
+}
+
 function rtpLoadDetail(idRtp) {
   return fetch(RTP_URL.detail(idRtp))
     .then((r) => r.json())
     .then((d) => {
+      console.log("USER", USER);
+      console.log("DATA", d);
+      console.log("CAN EDIT?", rtpCanEdit(d));
       document.getElementById("rtpId").value = d.id_rtp;
       document.getElementById("rtpIdEvaluasi").value = d.id_evaluasi;
 
-      // Set dropdown residu
+      // ✅ SET RESIDU DARI RTP LIST
       const selK = document.getElementById("rtpKemungkinanResidu");
       const selD = document.getElementById("rtpDampakResidu");
-      if (selK) selK.value = d.id_kemungkinan_residu ?? "";
-      if (selD) selD.value = d.id_dampak_residu ?? "";
+
+      if (d.rtp_list && d.rtp_list.length > 0) {
+        const r = d.rtp_list[0];
+        if (selK) selK.value = d.id_kemungkinan_residu ?? "";
+        if (selD) selD.value = d.id_dampak_residu ?? "";
+      }
 
       rtpPopulateInfo(d);
       rtpHitungResidu();
 
-      // Populate timeline (view mode)
+      // timeline (view)
       if (d.rtp_list && d.rtp_list.length > 0) {
         rtpRenderTimeline(d.rtp_list);
       }
 
-      // Populate cards (edit mode) — siapkan dulu, rtpSetMode yang atur visibilitas
+      // cards (edit)
       const container = document.getElementById("rtpCreateContainer");
       container.innerHTML = "";
+
       if (d.rtp_list && d.rtp_list.length > 0) {
         d.rtp_list.forEach((rtp) => rtpAddCard(rtp));
       } else {
@@ -243,58 +229,62 @@ function rtpLoadDetail(idRtp) {
     });
 }
 
-/* BATAL */
-function rtpBatal() {
-  const id = document.getElementById("rtpId").value;
-  if (id) {
-    rtpLoadDetail(id).then(() => rtpSetMode("view"));
-  } else {
-    bootstrap.Offcanvas.getInstance(
-      document.getElementById("rtpOffcanvas"),
-    ).hide();
-  }
+/* ================= RESIDU ================= */
+function rtpHitungResidu() {
+  const k = document.getElementById("rtpKemungkinanResidu")?.value;
+  const d = document.getElementById("rtpDampakResidu")?.value;
+
+  if (!k || !d) return rtpResetResidu();
+
+  fetch(RTP_URL.preview, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    body: `id_kemungkinan=${k}&id_dampak=${d}&${rtpCsrfName}=${rtpCsrfToken}`,
+  })
+    .then((r) => r.json())
+    .then((res) => {
+      if (res.csrf_token) rtpCsrfToken = res.csrf_token;
+
+      if (res.status !== "success") return rtpResetResidu();
+
+      document.getElementById("rtpResiduNilai").textContent = res.nilai_risiko;
+      document.getElementById("rtpResiduNilai").style.color = res.warna;
+
+      const badge = document.getElementById("rtpResiduBadge");
+      badge.textContent = res.nama_selera;
+      badge.style.backgroundColor = res.warna;
+      badge.style.color = "#fff";
+    });
 }
 
-/* OPEN ROW — klik baris tabel (RTP sudah ada) */
-document.addEventListener("click", function (e) {
-  // Klik baris RTP yang sudah ada
-  const rtpRow = e.target.closest("tr[data-rtp]");
-  if (rtpRow) {
-    const idRtp = rtpRow.dataset.rtp;
+function rtpResetResidu() {
+  const nilai = document.getElementById("rtpResiduNilai");
+  const badge = document.getElementById("rtpResiduBadge");
 
-    // Baris kosong (belum ada RTP) → arahkan ke mode tambah
-    if (!idRtp || idRtp === "") {
-      const idEvaluasi = rtpRow.dataset.idEvaluasi;
-      if (!idEvaluasi) return;
-      rtpResetForm();
-      bootstrap.Offcanvas.getOrCreateInstance(
-        document.getElementById("rtpOffcanvas"),
-      ).show();
-      document.getElementById("rtpIdEvaluasi").value = idEvaluasi;
-      fetch(RTP_URL.detailEvaluasi(idEvaluasi))
-        .then((r) => r.json())
-        .then((d) => {
-          rtpPopulateInfo(d);
-          rtpSetMode("create");
-          rtpAddCard();
-        });
-      return;
-    }
-
-    // Baris dengan RTP
-    rtpResetForm();
-    bootstrap.Offcanvas.getOrCreateInstance(
-      document.getElementById("rtpOffcanvas"),
-    ).show();
-    rtpLoadDetail(idRtp).then(() => rtpSetMode("view"));
-    return;
+  if (nilai) {
+    nilai.textContent = "0";
+    nilai.style.color = "";
   }
-});
 
-function rtpRenderTimeline(list = []) {
+  if (badge) {
+    badge.textContent = "";
+    badge.style.backgroundColor = "";
+    badge.style.color = "";
+  }
+
+  const k = document.getElementById("rtpKemungkinanResidu");
+  const d = document.getElementById("rtpDampakResidu");
+
+  if (k) k.value = "";
+  if (d) d.value = "";
+}
+
+function rtpRenderTimeline(list) {
   const container = document.getElementById("rtpTimelineContainer");
   if (!container) return;
-  container.innerHTML = "";
 
   const wrapper = document.createElement("div");
   wrapper.className = "rtp-timeline";
@@ -318,99 +308,78 @@ function rtpRenderTimeline(list = []) {
   container.appendChild(wrapper);
 }
 
-function rtpHapus() {
-  const id = document.getElementById("rtpId").value;
-  if (!id) return;
+function rtpBatal() {
+  const mode = document.getElementById("rtpMode").value;
 
-  Swal.fire({
-    title: "Hapus RTP ini?",
-    text: "Data akan dihapus permanen.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Ya, Hapus",
-    cancelButtonText: "Batal",
-    confirmButtonColor: "#dc3545",
-    reverseButtons: true,
-  }).then((result) => {
-    if (!result.isConfirmed) return;
-
-    $.ajax({
-      url: RTP_URL.delete(id),
-      method: "POST",
-      data: { [rtpCsrfName]: rtpCsrfToken },
-      processData: true,
-      contentType: "application/x-www-form-urlencoded",
-      headers: { "X-Requested-With": "XMLHttpRequest" },
-      success(res) {
-        if (res.csrf_token) rtpCsrfToken = res.csrf_token;
-        bootstrap.Offcanvas.getInstance(
-          document.getElementById("rtpOffcanvas"),
-        ).hide();
-        Swal.fire({
-          icon: "success",
-          title: "Berhasil dihapus",
-          timer: 1200,
-          showConfirmButton: false,
-        }).then(() => location.reload());
-      },
-      error() {
-        Swal.fire({ icon: "error", title: "Gagal menghapus" });
-      },
+  if (mode === "edit") {
+    rtpLoadDetail(document.getElementById("rtpId").value).then(() => {
+      rtpSetMode("view");
     });
-  });
+  } else {
+    rtpResetForm();
+    rtpSetMode("view");
+  }
 }
 
-/* SUBMIT (STORE / UPDATE) */
-document.getElementById("rtpForm")?.addEventListener("submit", function (e) {
-  e.preventDefault();
+document
+  .getElementById("rtpKemungkinanResidu")
+  ?.addEventListener("change", rtpHitungResidu);
 
-  const form = e.target;
-  const mode = document.getElementById("rtpMode").value;
-  const id = document.getElementById("rtpId").value;
+document
+  .getElementById("rtpDampakResidu")
+  ?.addEventListener("change", rtpHitungResidu);
 
-  if (!form.checkValidity()) {
-    form.classList.add("was-validated");
+
+/* ================= CLICK ROW ================= */
+document.addEventListener("click", function (e) {
+  if (e.target.closest("a, button")) return;
+
+  const row = e.target.closest("tr[data-rtp]");
+
+  if (!row) return;
+
+  console.log("ROW CLICKED", row);
+
+  const idRtp = row.dataset.rtp || "";
+  const idEvaluasi = row.dataset.idEvaluasi || "";
+
+  const offcanvasEl = document.getElementById("rtpOffcanvas");
+  if (!offcanvasEl) {
+    console.error("Offcanvas tidak ditemukan");
     return;
   }
 
-  Swal.fire({
-    title: mode === "edit" ? "Simpan Perubahan?" : "Simpan RTP?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Simpan",
-    cancelButtonText: "Batal",
-    reverseButtons: true,
-  }).then((result) => {
-    if (!result.isConfirmed) return;
+  const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
 
-    const freshData = new FormData(form);
-    freshData.append(rtpCsrfName, rtpCsrfToken);
+  rtpResetForm();
+  offcanvas.show();
 
-    $.ajax({
-      url: mode === "edit" ? RTP_URL.update(id) : RTP_URL.store,
-      method: "POST",
-      data: freshData,
-      processData: false,
-      contentType: false,
-      headers: { "X-Requested-With": "XMLHttpRequest" },
+  if (!idRtp) {
+    if (!idEvaluasi) return;
 
-      success(res) {
-        if (res.csrf_token) rtpCsrfToken = res.csrf_token;
-        bootstrap.Offcanvas.getInstance(
-          document.getElementById("rtpOffcanvas"),
-        ).hide();
-        Swal.fire({
-          icon: "success",
-          title: "Berhasil disimpan",
-          timer: 1200,
-          showConfirmButton: false,
-        }).then(() => location.reload());
-      },
+    document.getElementById("rtpIdEvaluasi").value = idEvaluasi;
 
-      error(xhr) {
-        const msg = xhr.responseJSON?.message ?? "Terjadi kesalahan.";
-        Swal.fire({ icon: "error", title: "Gagal", text: msg });
-      },
-    });
+    fetch(RTP_URL.detailEvaluasi(idEvaluasi))
+      .then((r) => r.json())
+      .then((d) => {
+        console.log("USER", USER);
+        console.log("DATA (CREATE)", d);
+        console.log("CAN EDIT?", rtpCanEdit(d));
+          
+        rtpPopulateInfo(d);
+        rtpSetMode("create");
+        rtpAddCard();
+        rtpResetResidu();
+      });
+
+    return;
+  }
+
+  rtpLoadDetail(idRtp).then(() => {
+    rtpSetMode("view");
   });
+});
+
+document.getElementById("rtpAddBtn")?.addEventListener("click", function () {
+  rtpAddCard();
 });

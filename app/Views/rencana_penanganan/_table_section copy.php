@@ -1,4 +1,4 @@
-<div class="rtp-table-wrapper" id="rtpTableCard">
+<div class="rtp-table-wrapper">
     <div class="table-responsive">
         <table class="table rtp-table align-middle mb-0">
 
@@ -22,7 +22,7 @@
             </thead>
 
             <tbody>
-                <?php if (empty($grouped)): ?>
+                <?php if (empty($data)): ?>
                     <tr>
                         <td colspan="8" class="text-center py-5 text-muted">
                             <i class="ti ti-inbox fs-3 d-block mb-2 opacity-25"></i>
@@ -36,7 +36,7 @@
                         $jumlahRtp  = count($rtpList);
                         $noPrioritas = $item['no_prioritas'] ?? null;
 
-                        /* === RISIKO RESIDU — ambil dari rtp_list[0] (BALIK KE LOGIKA BENAR) === */
+                        /* === RISIKO RESIDU — ambil dari rtp_list[0] jika ada === */
                         $levelP   = null;
                         $levelD   = null;
                         $skorSR   = null;
@@ -110,7 +110,7 @@
                                 </td>
 
                                 <td class="rtp-td rtp-td-pj text-muted small">
-                                    Ketua <?= esc($item['nama_tim'] ?? '-') ?>
+                                    Ketua <?= esc($item['nama_tim']) ?>
                                 </td>
 
                                 <td class="rtp-td text-center text-muted">—</td>
@@ -176,7 +176,7 @@
                                     <!-- RTP -->
                                     <td class="rtp-td rtp-td-rtp">
                                         <div class="rtp-truncate">
-                                            <?= esc($rtp['uraian_rtp'] ?? '—') ?>
+                                            <?= esc($rtp['uraian_rtp']) ?>
                                         </div>
                                     </td>
 
@@ -201,23 +201,23 @@
                                         <!-- Penanggung Jawab — rowspan -->
                                         <td class="rtp-td rtp-td-pj rtp-td-group small"
                                             rowspan="<?= $rowspanCount ?>">
-                                            Ketua <?= esc($item['nama_tim'] ?? '-') ?>
+                                            Ketua <?= esc($item['nama_tim']) ?>
                                         </td>
 
                                         <!-- P, D, SR — rowspan karena 1 risiko = 1 nilai residu -->
                                         <td class="rtp-td text-center rtp-td-group"
                                             rowspan="<?= $rowspanCount ?>">
-                                            <?= $levelP !== null ? esc($levelP) : '<span class="text-muted">—</span>' ?>
+                                            <?= $levelP ? esc($levelP) : '<span class="text-muted">—</span>' ?>
                                         </td>
 
                                         <td class="rtp-td text-center rtp-td-group"
                                             rowspan="<?= $rowspanCount ?>">
-                                            <?= $levelD !== null ? esc($levelD) : '<span class="text-muted">—</span>' ?>
+                                            <?= $levelD ? esc($levelD) : '<span class="text-muted">—</span>' ?>
                                         </td>
 
                                         <td class="rtp-td text-center rtp-td-group"
                                             rowspan="<?= $rowspanCount ?>">
-                                            <?php if ($skorSR !== null): ?>
+                                            <?php if ($skorSR): ?>
                                                 <span class="badge fw-bold px-2 py-1"
                                                     style="background-color:<?= esc($warnaSR) ?>;color:#fff;font-size:0.85rem">
                                                     <?= esc($skorSR) ?>

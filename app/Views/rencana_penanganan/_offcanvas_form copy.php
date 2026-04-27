@@ -191,11 +191,8 @@
                             <option value="">— Pilih —</option>
                             <?php if (!empty($kriteriaKemungkinan)): ?>
                                 <?php foreach ($kriteriaKemungkinan as $k): ?>
-                                    <option
-                                        value="<?= esc($k['id_kriteria']) ?>"
-                                        data-level="<?= esc($k['level']) ?>"
-                                        data-nama="<?= esc($k['nama_level']) ?>">
-                                        <?= esc($k['level']) ?> - <?= esc($k['nama_level']) ?>
+                                    <option value="<?= esc($k['id_kriteria']) ?>" data-level="<?= esc($k['level']) ?>">
+                                        <?= esc($k['level']) ?> — <?= esc($k['nama_level']) ?>
                                     </option>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -208,11 +205,8 @@
                             <option value="">— Pilih —</option>
                             <?php if (!empty($kriteriaDampak)): ?>
                                 <?php foreach ($kriteriaDampak as $k): ?>
-                                    <option
-                                        value="<?= esc($k['id_kriteria']) ?>"
-                                        data-level="<?= esc($k['level']) ?>"
-                                        data-nama="<?= esc($k['nama_level']) ?>">
-                                        <?= esc($k['level']) ?> - <?= esc($k['nama_level']) ?>
+                                    <option value="<?= esc($k['id_kriteria']) ?>" data-level="<?= esc($k['level']) ?>">
+                                        <?= esc($k['level']) ?> — <?= esc($k['nama_level']) ?>
                                     </option>
                                 <?php endforeach; ?>
                             <?php endif; ?>
