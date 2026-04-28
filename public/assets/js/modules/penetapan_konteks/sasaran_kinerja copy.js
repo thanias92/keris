@@ -206,7 +206,9 @@ document.addEventListener("DOMContentLoaded", function () {
       PkAlert.confirm({ text: confirmText }).then((result) => {
         if (!result.isConfirmed) return;
 
-        const url = isEdit ? SK_URL.update(currentId) : SK_URL.store;
+        const url = isEdit
+          ? `/penetapan-konteks/sasaran-kinerja/update/${currentId}`
+          : `/penetapan-konteks/sasaran-kinerja/store`;
         const params = new URLSearchParams(
           new FormData(document.getElementById("skForm")),
         );
@@ -241,7 +243,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!result.isConfirmed) return;
 
         PkAjax.post({
-          url: SK_URL.delete(currentId),
+          url: `/penetapan-konteks/sasaran-kinerja/delete/${currentId}`,
           onSuccess(res) {
             if (res.status !== "success") return;
             bootstrap.Offcanvas.getInstance(offcanvasEl)?.hide();
@@ -254,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // REFRESH TABLE
   function refreshTable() {
     PkAjax.get({
-      url: SK_URL.table,
+      url: "/penetapan-konteks/sasaran-kinerja/table",
       onSuccess(html) {
         $("#pkSasaranKinerjaTableWrapper").html(html);
         bindRowClick();

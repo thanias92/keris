@@ -1,3 +1,4 @@
+const PROSES_URL = window.PROSES_CONFIG?.url || {};
 document.addEventListener("DOMContentLoaded", function () {
   const offcanvasEl = document.getElementById("offcanvasProsesBisnis");
   if (!offcanvasEl) return;
@@ -67,48 +68,48 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-// ambil data user & konteks dari global (inject dari blade nanti)
-const currentUser = window.APP_USER || {};
-const activeKonteks = window.APP_KONTEKS || {};
+  // ambil data user & konteks dari global (inject dari blade nanti)
+  const currentUser = window.APP_USER || {};
+  const activeKonteks = window.APP_KONTEKS || {};
 
-const isKetua = currentUser.role === "ketua";
-const isOperator = currentUser.role === "operator";
-const bedaTim = String(currentUser.id_tim) !== String(activeKonteks.id_tim);
+  const isKetua = currentUser.role === "ketua";
+  const isOperator = currentUser.role === "operator";
+  const bedaTim = String(currentUser.id_tim) !== String(activeKonteks.id_tim);
 
-// hide tombol tambah untuk ketua
-if (isKetua) {
-  const btnAdd = document.querySelector(
-    '[data-bs-target="#offcanvasProsesBisnis"]',
-  );
-  if (btnAdd) btnAdd.style.display = "none";
-}
+  // hide tombol tambah untuk ketua
+  if (isKetua) {
+    const btnAdd = document.querySelector(
+      '[data-bs-target="#offcanvasProsesBisnis"]',
+    );
+    if (btnAdd) btnAdd.style.display = "none";
+  }
 
-// Row click → RBAC check
-document
-  .querySelectorAll("#pkProsesBisnisTableWrapper tbody tr")
-  .forEach((row) => {
-    if (isKetua) {
-      row.style.cursor = "default";
-      return;
-    }
+  // Row click → RBAC check
+  document
+    .querySelectorAll("#pkProsesBisnisTableWrapper tbody tr")
+    .forEach((row) => {
+      if (isKetua) {
+        row.style.cursor = "default";
+        return;
+      }
 
-    if (isOperator && bedaTim) {
-      row.style.cursor = "not-allowed";
+      if (isOperator && bedaTim) {
+        row.style.cursor = "not-allowed";
 
-      row.addEventListener("click", () => {
-        PkAlert.notAllowed({
-          text: "Kamu hanya bisa melihat proses bisnis tim lain.",
+        row.addEventListener("click", () => {
+          PkAlert.notAllowed({
+            text: "Kamu hanya bisa melihat proses bisnis tim lain.",
+          });
         });
+
+        return;
+      }
+
+      row.style.cursor = "pointer";
+      row.addEventListener("click", () => {
+        new bootstrap.Offcanvas(offcanvasEl).show();
       });
-
-      return;
-    }
-
-    row.style.cursor = "pointer";
-    row.addEventListener("click", () => {
-      new bootstrap.Offcanvas(offcanvasEl).show();
     });
-  });
 
   document
     .getElementById("pbBtnSwitchEdit")
@@ -138,7 +139,7 @@ document
           if (!result.isConfirmed) return;
 
           PkAjax.post({
-            url: "/penetapan-konteks/proses-bisnis/sync",
+            url: PROSES_URL.sync,
             data: params.toString(),
             onSuccess(res) {
               if (res.status !== "success") return;
@@ -166,7 +167,7 @@ document
         ).value;
 
         PkAjax.post({
-          url: "/penetapan-konteks/proses-bisnis/sync",
+          url: PROSES_URL.sync,
           data: `id_konteks=${idKonteks}`,
           onSuccess(res) {
             if (res.status !== "success") return;
@@ -189,7 +190,7 @@ document
 
   function refreshTable() {
     PkAjax.get({
-      url: "/penetapan-konteks/proses-bisnis/ajax-table",
+      url: PROSES_URL.table,
       onSuccess(html) {
         $("#pkProsesBisnisTableWrapper").html(html);
 

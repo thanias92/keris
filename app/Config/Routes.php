@@ -211,7 +211,7 @@ $routes->group('rencana-penanganan', ['namespace' => 'App\Controllers', 'filter'
 
     // ✅ WAJIB biar sama seperti Analisis & Evaluasi
     $routes->get('table', 'RencanaPenangananController::ajaxTable');
-
+                            
     $routes->post('set-active', 'RencanaPenangananController::setActive', ['filter' => 'role:admin,operator,ketua']);
     $routes->post('reset-active', 'RencanaPenangananController::resetActive', ['filter' => 'role:admin,operator,ketua']);
 

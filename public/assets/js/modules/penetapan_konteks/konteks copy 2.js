@@ -1,5 +1,3 @@
-const KONTEKS_URL = window.KONTEKS_CONFIG?.url || {};
-const KONTEKS_CSRF = window.KONTEKS_CONFIG?.csrf || {};
 const KonteksModule = {
   init() {
     console.log("Konteks module loaded");
@@ -80,7 +78,7 @@ const KonteksModule = {
 
   // PEMILIK RISIKO
   loadProvinsiPemilik() {
-    $.get(KONTEKS_URL.getPemilik, (res) => {
+    $.get("/penetapan-konteks/konteks/get-pemilik-provinsi", (res) => {
       if (!res) return;
 
       this.setPemilikRisiko(res);
@@ -118,7 +116,11 @@ const KonteksModule = {
     const tahun =
       document.getElementById("pkTahun")?.value || new Date().getFullYear();
 
-    $.get(KONTEKS_URL.getPengelola + "?tim=" + id + "&tahun=" + tahun,
+    $.get(
+      "/penetapan-konteks/konteks/get-pengelola-list?tim=" +
+        id +
+        "&tahun=" +
+        tahun,
       (res) => {
         // response sekarang object tunggal, bukan array
         if (!res || Object.keys(res).length === 0) {
@@ -206,7 +208,7 @@ const KonteksModule = {
       "#pkKegiatanBox .pk-combobox-dropdown",
     );
 
-    $.get(KONTEKS_URL.getKegiatan(id), function (res) {
+    $.get("/penetapan-konteks/konteks/get-kegiatan/" + id, function (res) {
       wrapper.innerHTML = "";
       input.value = "";
       hidden.value = "";
@@ -390,21 +392,21 @@ const KonteksModule = {
       "#pkFormKonteks input:not([type=hidden]), #pkFormKonteks select, #pkFormKonteks textarea",
     );
     // 🔒 LOCK struktur organisasi (radio card)
-    document.querySelectorAll(".struktur-card").forEach((card) => {
-      const radio = card.querySelector('input[type="radio"]');
+document.querySelectorAll(".struktur-card").forEach((card) => {
+  const radio = card.querySelector('input[type="radio"]');
 
-      if (isReadonly) {
-        card.style.pointerEvents = "none";
-        card.classList.add("pk-disabled");
+  if (isReadonly) {
+    card.style.pointerEvents = "none";
+    card.classList.add("pk-disabled");
 
-        if (radio) radio.disabled = true;
-      } else {
-        card.style.pointerEvents = "";
-        card.classList.remove("pk-disabled");
+    if (radio) radio.disabled = true;
+  } else {
+    card.style.pointerEvents = "";
+    card.classList.remove("pk-disabled");
 
-        if (radio) radio.disabled = false;
-      }
-    });
+    if (radio) radio.disabled = false;
+  }
+});
     fields.forEach((el) => {
       if (isReadonly) {
         el.setAttribute("readonly", true);
@@ -520,7 +522,10 @@ const KonteksModule = {
         if (!result.isConfirmed) return;
 
         const mode = document.getElementById("pkMode").value;
-        const url = mode === "edit" ? KONTEKS_URL.update : KONTEKS_URL.store;
+        const url =
+          mode === "edit"
+            ? baseUrl +"/penetapan-konteks/konteks/update"
+            : baseUrl + "/penetapan-konteks/konteks/store";
 
         PkAjax.post({
           url,
@@ -548,7 +553,7 @@ const KonteksModule = {
       if (!result.isConfirmed) return;
 
       PkAjax.post({
-        url: KONTEKS_URL.delete,
+        url: "/penetapan-konteks/konteks/delete",
         data: { id_konteks: id },
         onSuccess(res) {
           if (res.status !== "success") return;
@@ -564,7 +569,7 @@ const KonteksModule = {
 
   // REFRESH TABLE (AJAX)
   refreshTable() {
-    $.get(KONTEKS_URL.table, function (html) {
+    $.get("/penetapan-konteks/konteks/table", function (html) {
       $("#pkKonteksTableWrapper").html(html);
     });
   },
@@ -678,7 +683,7 @@ window.pkOpenViewMode = function (el) {
 
   new bootstrap.Offcanvas(document.getElementById("offcanvasKonteks")).show();
 
-  $.get(KONTEKS_URL.detail(id), (res) => {
+  $.get(`/penetapan-konteks/konteks/detail/${id}`, (res) => {
     const k = res.konteks;
 
     // ===== FIX WILAYAH =====
@@ -734,7 +739,10 @@ window.pkOpenViewMode = function (el) {
     // isi pengelola — response sekarang object tunggal, bukan array
     if (k.pengelola_risiko_id) {
       $.get(
-        KONTEKS_URL.getPengelola + "?tim=" + k.id_tim + "&tahun=" + k.tahun,
+        "/penetapan-konteks/konteks/get-pengelola-list?tim=" +
+          k.id_tim +
+          "&tahun=" +
+          k.tahun,
         (res) => {
           if (res && Object.keys(res).length > 0) {
             KonteksModule.setPengelolaRisiko(res);
