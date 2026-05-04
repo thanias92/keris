@@ -66,7 +66,7 @@
                 <div class="rtp-section-title"><i class="ti ti-target me-1"></i>Target</div>
 
                 <div class="rtp-grid-2">
-                    <div class="rtp-info-row"><span class="rtp-info-label">Output</span><span class="rtp-info-value" id="prInfoTargetOutput">-</span></div>
+                    <div class="rtp-info-row"><span class="rtp-info-label">Output</span><span class="rtp-info-value" id="prInfoTargetOutput">-</span></div>                    
                     <div class="rtp-info-row"><span class="rtp-info-label">Waktu</span><span class="rtp-info-value" id="prInfoTargetWaktu">-</span></div>
                 </div>
             </div>
@@ -80,7 +80,7 @@
                 <div class="pr-grid-realisasi">
                     <div>
                         <label class="rtp-form-label">Realisasi Output</label>
-                        <input type="text" name="realisasi_output" id="prRealisasiOutput" class="form-control" required>
+                        <input type="text" name="realisasi_output" id="prRealisasiOutput" class="form-control">
                     </div>
 
                     <div>
@@ -94,13 +94,13 @@
             <div class="rtp-grid-2 mb-3">
 
                 <div>
-                    <div class="rtp-section-title">
-                        <i class="ti ti-flag me-1"></i>Status
-                    </div>
-
-                    <span id="prStatusBadge" class="badge bg-secondary-subtle text-secondary">
-                        -
-                    </span>
+                    <div class="rtp-section-title"><i class="ti ti-flag me-1"></i>Status</div>
+                    <select name="status" id="prStatus" class="form-select">
+                        <option value="Belum Dilaksanakan">Belum Dilaksanakan</option>
+                        <option value="Dalam Proses">Dalam Proses</option>
+                        <option value="Selesai">Selesai</option>
+                        <option value="Terlambat">Terlambat</option>
+                    </select>
                 </div>
 
                 <div>
@@ -112,18 +112,15 @@
 
             <!-- ===== BUKTI ===== -->
             <div class="mb-3">
-                <div class="rtp-section-title">
-                    <i class="ti ti-link me-1"></i>Bukti Dukung (Link)
-                </div>
-
+                <div class="rtp-section-title"><i class="ti ti-paperclip me-1"></i>Bukti Dukung</div>
                 <input
-                    type="url"
-                    name="bukti_link"
-                    id="prBuktiLinkInput"
-                    class="form-control"
-                    placeholder="https://contoh.com">
+                    type="file"
+                    name="bukti_file"
+                    id="prBuktiFileInput"
+                    accept=".jpg,.jpeg,.png,.pdf"
+                    class="form-control">
 
-                <div id="prBuktiPreview" class="mt-2 small"></div>
+                <div id="prBuktiPreview" class="mt-2"></div>
             </div>
 
             <hr class="rtp-divider">

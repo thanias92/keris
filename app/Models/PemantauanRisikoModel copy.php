@@ -70,7 +70,7 @@ class PemantauanRisikoModel extends Model
                 ir.dampak_risiko,
                 pb.kode_proses,
                 pb.uraian_proses,
-                sk.nama_tim,
+                sk.nama_satuan_kerja,
                 k.tahun,
                 ss.uraian_sasaran,
                 sk_kinerja.uraian_sasaran  as uraian_sasaran_kinerja,
@@ -86,7 +86,7 @@ class PemantauanRisikoModel extends Model
             ->join('konteks_proses_bisnis kpb',      'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb',               'pb.id_proses = kpb.id_proses')
             ->join('konteks k',                      'k.id_konteks = kpb.id_konteks')
-            ->join('tim_kerja sk',                'sk.id_tim = k.id_tim',              'left')
+            ->join('satuan_kerja sk',                'sk.id_satuan_kerja = k.id_satuan_kerja',              'left')
             ->join('sasaran_strategis ss',           'ss.id_sasaran_strategis = k.id_sasaran_strategis',   'left')
             ->join('sasaran_kinerja sk_kinerja',     'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
             ->join('pengelola_risiko g',             'g.id = k.pengelola_risiko_id',                       'left')
@@ -109,7 +109,7 @@ class PemantauanRisikoModel extends Model
                 ir.pernyataan_risiko,
                 pb.kode_proses,
                 pb.uraian_proses,
-                sk.nama_tim,
+                sk.nama_satuan_kerja,
                 k.tahun,
                 ss.uraian_sasaran,
                 sk_kinerja.uraian_sasaran as uraian_sasaran_kinerja,
@@ -121,10 +121,10 @@ class PemantauanRisikoModel extends Model
             ->join('konteks_proses_bisnis kpb',      'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb',               'pb.id_proses = kpb.id_proses')
             ->join('konteks k',                      'k.id_konteks = kpb.id_konteks')
-            ->join('tim_kerja sk',                'sk.id_tim = k.id_tim', 'left')
-            ->join('sasaran_strategis ss',           'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
+            ->join('satuan_kerja sk',                'sk.id_satuan_kerja = k.id_satuan_kerja',              'left')
+            ->join('sasaran_strategis ss',           'ss.id_sasaran_strategis = k.id_sasaran_strategis',   'left')
             ->join('sasaran_kinerja sk_kinerja',     'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
-            ->join('pengelola_risiko g',             'g.id = k.pengelola_risiko_id', 'left')
+            ->join('pengelola_risiko g',             'g.id = k.pengelola_risiko_id',                       'left')
             ->where('pm.id_pemantauan', $idPemantauan)
             ->get()->getRowArray() ?: null;
     }
@@ -144,7 +144,7 @@ class PemantauanRisikoModel extends Model
         // 🔥 TAMBAHAN BENAR DI SINI
         $data['status_validasi'] = 'Menunggu';
 
-        $this->skipValidation(true)->insert($data);
+        $this->skipValidation(false)->insert($data);
         return (int) $this->getInsertID();
     }
 

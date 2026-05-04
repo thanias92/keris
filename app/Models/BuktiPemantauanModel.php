@@ -68,6 +68,10 @@ class BuktiPemantauanModel extends Model
             'created_at'    => date('Y-m-d H:i:s'),
         ]);
 
+        if (!$this->db->affectedRows()) {
+            log_message('error', 'Insert bukti gagal: ' . json_encode($this->errors()));
+        }
+
         return (int) $this->getInsertID();
     }
 

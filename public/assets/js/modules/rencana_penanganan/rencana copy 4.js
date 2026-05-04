@@ -48,8 +48,7 @@ function rtpSetMode(mode) {
 
   document
     .querySelectorAll(
-      "#rtpCreateContainer textarea, #rtpCreateContainer input, #rtpCreateContainer select",
-    )
+      "#rtpCreateContainer textarea, #rtpCreateContainer input, #rtpCreateContainer select")
     .forEach((el) => {
       el.disabled = isView && !RTP_CAN_EDIT;
     });
@@ -79,17 +78,6 @@ function rtpSetMode(mode) {
     : isEdit
       ? "Edit RTP"
       : "Detail RTP";
-
-  if (isCreate) {
-    document
-      .querySelectorAll(
-        "#rtpOffcanvas input, #rtpOffcanvas textarea, #rtpOffcanvas select",
-      )
-      .forEach((el) => (el.disabled = false));
-  }
-
-  // 🔥 pastikan hidden field tidak pernah disabled
-  document.getElementById("rtpIdEvaluasi").disabled = false;
 }
 
 /* ================= FORMAT TEXT ================= */
@@ -365,14 +353,14 @@ document.addEventListener("click", function (e) {
   if (!idRtp) {
     if (!idEvaluasi) return;
 
+    document.getElementById("rtpIdEvaluasi").value = idEvaluasi;
+
     fetch(RTP_URL.detailEvaluasi(idEvaluasi))
       .then((r) => r.json())
       .then((d) => {
-        document.getElementById("rtpIdEvaluasi").value = d.id_evaluasi;
         console.log("USER", USER);
         console.log("DATA (CREATE)", d);
         console.log("CAN EDIT?", rtpCanEdit(d));
-        console.log("ID EVALUASI DIKIRIM:", d.id_evaluasi);
           
         rtpPopulateInfo(d);
         rtpSetMode("create");
@@ -401,7 +389,11 @@ document.addEventListener("DOMContentLoaded", function () {
     rtpAddCard();
   });
 
-  document.getElementById("rtpForm")?.addEventListener("submit", function (e) {
+  document.addEventListener("submit", function (e) {
+    const form = e.target;
+
+    if (form.id !== "rtpForm") return;
+
     e.preventDefault();
 
     console.log("SUBMIT KE-TRIGGER 🔥");
@@ -416,7 +408,7 @@ document.addEventListener("DOMContentLoaded", function () {
       url = RTP_URL.update(id);
     }
 
-    const formData = new FormData(this);
+    const formData = new FormData(form);
     formData.append(rtpCsrfName, rtpCsrfToken);
 
     fetch(url, {
@@ -442,6 +434,56 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((err) => {
         console.error("ERROR SIMPAN:", err);
       });
-  });  
+  });
+});
+
+document.addEventListener("click", function (e) {
+  const btn = e.target.closest("#rtpBtnSimpan");
+  if (!btn) return;
+
+  console.log("BTN SIMPAN DIKLIK");
+
+  const form = document.getElementById("rtpForm");
+  if (!form) {
+    console.error("FORM TIDAK DITEMUKAN");
+    return;
+  }
+
+  const mode = document.getElementById("rtpMode").value;
+  const id = document.getElementById("rtpId").value;
+
+  let url = "";
+  if (mode === "create") {
+    url = RTP_URL.store;
+  } else if (mode === "edit") {
+    url = RTP_URL.update(id);
+  }
+
+  const formData = new FormData(form);
+  formData.append(rtpCsrfName, rtpCsrfToken);
+
+  fetch(url, {
+    method: "POST",
+    body: formData,
+    headers: {
+      "X-Requested-With": "XMLHttpRequest",
+    },
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log("RESPONSE:", res);
+
+      if (res.csrf_token) rtpCsrfToken = res.csrf_token;
+
+      if (res.status !== "success") {
+        alert("Gagal menyimpan data");
+        return;
+      }
+
+      location.reload();
+    })
+    .catch((err) => {
+      console.error("ERROR SIMPAN:", err);
+    });
 });
 

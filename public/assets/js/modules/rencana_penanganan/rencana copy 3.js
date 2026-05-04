@@ -1,5 +1,3 @@
-
-console.log("Rencana.js loaded 🚀");
 /* URL & CSRF */
 let RTP_CAN_EDIT = false;
 const USER = window.APP_USER || {};
@@ -48,8 +46,7 @@ function rtpSetMode(mode) {
 
   document
     .querySelectorAll(
-      "#rtpCreateContainer textarea, #rtpCreateContainer input, #rtpCreateContainer select",
-    )
+      "#rtpCreateContainer textarea, #rtpCreateContainer input, #rtpCreateContainer select")
     .forEach((el) => {
       el.disabled = isView && !RTP_CAN_EDIT;
     });
@@ -79,17 +76,6 @@ function rtpSetMode(mode) {
     : isEdit
       ? "Edit RTP"
       : "Detail RTP";
-
-  if (isCreate) {
-    document
-      .querySelectorAll(
-        "#rtpOffcanvas input, #rtpOffcanvas textarea, #rtpOffcanvas select",
-      )
-      .forEach((el) => (el.disabled = false));
-  }
-
-  // 🔥 pastikan hidden field tidak pernah disabled
-  document.getElementById("rtpIdEvaluasi").disabled = false;
 }
 
 /* ================= FORMAT TEXT ================= */
@@ -337,6 +323,14 @@ function rtpBatal() {
   }
 }
 
+document
+  .getElementById("rtpKemungkinanResidu")
+  ?.addEventListener("change", rtpHitungResidu);
+
+document
+  .getElementById("rtpDampakResidu")
+  ?.addEventListener("change", rtpHitungResidu);
+
 
 /* ================= CLICK ROW ================= */
 document.addEventListener("click", function (e) {
@@ -365,14 +359,14 @@ document.addEventListener("click", function (e) {
   if (!idRtp) {
     if (!idEvaluasi) return;
 
+    document.getElementById("rtpIdEvaluasi").value = idEvaluasi;
+
     fetch(RTP_URL.detailEvaluasi(idEvaluasi))
       .then((r) => r.json())
       .then((d) => {
-        document.getElementById("rtpIdEvaluasi").value = d.id_evaluasi;
         console.log("USER", USER);
         console.log("DATA (CREATE)", d);
         console.log("CAN EDIT?", rtpCanEdit(d));
-        console.log("ID EVALUASI DIKIRIM:", d.id_evaluasi);
           
         rtpPopulateInfo(d);
         rtpSetMode("create");
@@ -388,60 +382,48 @@ document.addEventListener("click", function (e) {
   });
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-  document
-    .getElementById("rtpKemungkinanResidu")
-    ?.addEventListener("change", rtpHitungResidu);
-
-  document
-    .getElementById("rtpDampakResidu")
-    ?.addEventListener("change", rtpHitungResidu);
-
-  document.getElementById("rtpAddBtn")?.addEventListener("click", function () {
-    rtpAddCard();
-  });
-
-  document.getElementById("rtpForm")?.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    console.log("SUBMIT KE-TRIGGER 🔥");
-
-    const mode = document.getElementById("rtpMode").value;
-    const id = document.getElementById("rtpId").value;
-
-    let url = "";
-    if (mode === "create") {
-      url = RTP_URL.store;
-    } else if (mode === "edit") {
-      url = RTP_URL.update(id);
-    }
-
-    const formData = new FormData(this);
-    formData.append(rtpCsrfName, rtpCsrfToken);
-
-    fetch(url, {
-      method: "POST",
-      body: formData,
-      headers: {
-        "X-Requested-With": "XMLHttpRequest",
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        console.log("RESPONSE:", res);
-
-        if (res.csrf_token) rtpCsrfToken = res.csrf_token;
-
-        if (res.status !== "success") {
-          alert("Gagal menyimpan data");
-          return;
-        }
-
-        location.reload();
-      })
-      .catch((err) => {
-        console.error("ERROR SIMPAN:", err);
-      });
-  });  
+document.getElementById("rtpAddBtn")?.addEventListener("click", function () {
+  rtpAddCard();
 });
 
+document.getElementById("rtpForm")?.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const mode = document.getElementById("rtpMode").value;
+  const id = document.getElementById("rtpId").value;
+
+  let url = "";
+  if (mode === "create") {
+    url = RTP_URL.store;
+  } else if (mode === "edit") {
+    url = RTP_URL.update(id);
+  }
+
+  const formData = new FormData(this);
+
+  // inject csrf
+  formData.append(rtpCsrfName, rtpCsrfToken);
+
+  fetch(url, {
+    method: "POST",
+    body: formData,
+    headers: {
+      "X-Requested-With": "XMLHttpRequest",
+    },
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.csrf_token) rtpCsrfToken = res.csrf_token;
+
+      if (res.status !== "success") {
+        alert("Gagal menyimpan data");
+        return;
+      }
+
+      // reload table / halaman
+      location.reload();
+    })
+    .catch((err) => {
+      console.error("ERROR SIMPAN:", err);
+    });
+});

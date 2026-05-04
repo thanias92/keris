@@ -610,14 +610,6 @@ class RencanaPenangananController extends BaseController
             }
 
             $this->db->transComplete();
-            if ($this->db->transStatus() === false) {
-                log_message('error', 'TRANSACTION FAILED (STORE RTP)');
-
-                return $this->response->setStatusCode(500)->setJSON([
-                    'status'  => 'error',
-                    'message' => 'Gagal menyimpan ke database',
-                ]);
-            }
 
             return $this->response->setJSON([
                 'status'     => 'success',

@@ -252,9 +252,11 @@
                     <button type="button" id="rtpBtnBatal"
                         class="btn btn-sm btn-light d-none"
                         onclick="rtpBatal()">Batal</button>
-                    <button type="submit" id="rtpBtnSimpan"
-                        class="btn btn-sm btn-primary px-4 d-none">
-                        <i class="ti ti-device-floppy me-1"></i>Simpan</button>
+                    <button type="submit"
+                        id="rtpBtnSimpan"
+                        class="btn btn-sm btn-primary px-4">
+                        <i class="ti ti-device-floppy me-1"></i>Simpan
+                    </button>
                     <button type="button" id="rtpBtnTutup"
                         class="btn btn-sm btn-light"
                         data-bs-dismiss="offcanvas">Tutup</button>

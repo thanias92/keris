@@ -100,7 +100,7 @@ class PemantauanRisikoController extends BaseController
         $filter  = $this->request->getGet('filter');
 
         $builder = $this->db->table('rencana_penanganan_risiko rtp')
-            ->select("
+            ->select('
                 ir.id_identifikasi,
                 rtp.id_rtp,
                 rtp.uraian_rtp,
@@ -122,15 +122,10 @@ class PemantauanRisikoController extends BaseController
                 pm.id_pemantauan,
                 pm.realisasi_output,
                 pm.realisasi_waktu,
-                CASE
-                    WHEN pm.id_pemantauan IS NULL THEN 'Terlambat'
-                    WHEN bp.id_bukti IS NOT NULL THEN 'Selesai'
-                    WHEN pm.realisasi_output IS NOT NULL THEN 'Dalam Proses'
-                    ELSE 'Terlambat'
-                END as status,
+                COALESCE(pm.status, \'Belum Dilaksanakan\') as status,
                 pm.catatan,
                 pm.updated_at as pemantauan_updated_at
-            ")
+            ')
             ->join('evaluasi_risiko er',        'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir',    'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
@@ -142,7 +137,6 @@ class PemantauanRisikoController extends BaseController
             ->join('kriteria_dampak kd',        'kd.id_kriteria = pr.id_dampak', 'left')
             ->join('selera_risiko sl',          'sl.id_selera = pr.id_selera', 'left')
             ->join('pemantauan_risiko pm',      'pm.id_rtp = rtp.id_rtp', 'left')
-            ->join('bukti_pemantauan bp', 'bp.id_pemantauan = pm.id_pemantauan', 'left')
             ->orderBy('pb.kode_proses', 'ASC')
             ->orderBy('rtp.id_rtp', 'ASC');
 
@@ -253,14 +247,13 @@ class PemantauanRisikoController extends BaseController
     /* DETAIL (AJAX) [FIX] Join sasaran_kinerja pakai id_konteks_proses, sama persis dengan EvaluasiRisikoController */
     public function detail($idRtp)
     {
-        try {
-            // Coba ambil via model jika pemantauan sudah ada
-            $data = $this->pemantauanModel->getByRtp((int) $idRtp);
+        // Coba ambil via model jika pemantauan sudah ada
+        $data = $this->pemantauanModel->getByRtp((int) $idRtp);
 
-            if (!$data) {
-                // Fallback: belum ada record pemantauan, ambil dari RTP saja
-                $data = $this->db->table('rencana_penanganan_risiko rtp')
-                    ->select('
+        if (!$data) {
+            // Fallback: belum ada record pemantauan, ambil dari RTP saja
+            $data = $this->db->table('rencana_penanganan_risiko rtp')
+                ->select('
                     rtp.id_rtp,
                     rtp.uraian_rtp,
                     rtp.target_output,
@@ -277,50 +270,43 @@ class PemantauanRisikoController extends BaseController
                     sk_kinerja.uraian_sasaran as uraian_sasaran_kinerja,
                     g.nama as nama_pengelola
                 ')
-                    ->join('evaluasi_risiko er',        'er.id_evaluasi = rtp.id_penilaian_awal')
-                    ->join('identifikasi_risiko ir',    'ir.id_identifikasi = er.id_identifikasi')
-                    ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-                    ->join('proses_bisnis pb',          'pb.id_proses = kpb.id_proses')
-                    ->join('konteks k',                 'k.id_konteks = kpb.id_konteks')
-                    ->join('tim_kerja sk',           'sk.id_tim = k.id_tim',           'left')
-                    ->join('sasaran_strategis ss',      'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
-                    // [FIX] Sama dengan EvaluasiRisikoController: join via id_konteks_proses
-                    ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
-                    ->join('pengelola_risiko g',        'g.id = k.pengelola_risiko_id',                     'left')
-                    ->where('rtp.id_rtp', $idRtp)
-                    ->get()->getRowArray();
+                ->join('evaluasi_risiko er',        'er.id_evaluasi = rtp.id_penilaian_awal')
+                ->join('identifikasi_risiko ir',    'ir.id_identifikasi = er.id_identifikasi')
+                ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+                ->join('proses_bisnis pb',          'pb.id_proses = kpb.id_proses')
+                ->join('konteks k',                 'k.id_konteks = kpb.id_konteks')
+                ->join('tim_kerja sk',           'sk.id_tim = k.id_tim',           'left')
+                ->join('sasaran_strategis ss',      'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
+                // [FIX] Sama dengan EvaluasiRisikoController: join via id_konteks_proses
+                ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
+                ->join('pengelola_risiko g',        'g.id = k.pengelola_risiko_id',                     'left')
+                ->where('rtp.id_rtp', $idRtp)
+                ->get()->getRowArray();
 
-                if (!$data) {
-                    return $this->response->setStatusCode(404)->setJSON([
-                        'status'  => 'error',
-                        'message' => 'Data RTP tidak ditemukan.',
-                    ]);
-                }
-
-                $data['id_pemantauan']         = null;
-                $data['realisasi_output']      = null;
-                $data['realisasi_waktu']       = null;
-                $data['status']                = 'Belum Dilaksanakan';
-                $data['catatan']               = null;
-                $data['pemantauan_updated_at'] = null;
+            if (!$data) {
+                return $this->response->setStatusCode(404)->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Data RTP tidak ditemukan.',
+                ]);
             }
 
-            $data['bukti_list'] = !empty($data['id_pemantauan'])
-                ? $this->buktiModel->getByPemantauan((int) $data['id_pemantauan'])
-                : [];
-
-            return $this->response->setJSON($data);
-
-        } catch (\Throwable $e) {
-            return $this->response->setJSON([
-                'error' => $e->getMessage()
-            ]);
+            $data['id_pemantauan']         = null;
+            $data['realisasi_output']      = null;
+            $data['realisasi_waktu']       = null;
+            $data['status']                = 'Belum Dilaksanakan';
+            $data['catatan']               = null;
+            $data['pemantauan_updated_at'] = null;
         }
+
+        $data['bukti_list'] = !empty($data['id_pemantauan'])
+            ? $this->buktiModel->getByPemantauan((int) $data['id_pemantauan'])
+            : [];
+
+        return $this->response->setJSON($data);
     }
 
     public function store()
     {
-        log_message('error', 'POST: ' . json_encode($this->request->getPost()));
         try {
             $idRtp           = $this->request->getPost('id_rtp');
             $realisasiOutput = $this->request->getPost('realisasi_output');
@@ -331,6 +317,7 @@ class PemantauanRisikoController extends BaseController
                 // convert YYYY-MM → YYYY-MM-01 00:00:00
                 $realisasiWaktu = $realisasiWaktuInput . '-01 00:00:00';
             }
+            $status          = $this->request->getPost('status') ?? 'Belum Dilaksanakan';
             $catatan         = $this->request->getPost('catatan') ?: null;
 
             if (empty($idRtp)) {
@@ -340,23 +327,20 @@ class PemantauanRisikoController extends BaseController
                 ]);
             }
 
-            if (empty($realisasiOutput)) {
-                return $this->response->setStatusCode(422)->setJSON([
-                    'status'  => 'error',
-                    'message' => 'Realisasi output wajib diisi.',
-                ]);
-            }
+            $file = $this->request->getFile('bukti_file');
+            if ($file && $file->isValid()) {
+                $allowedMimes = ['image/jpeg', 'image/png', 'application/pdf'];
+                $allowedExts  = ['jpg', 'jpeg', 'png', 'pdf'];
 
-            $link = trim($this->request->getPost('bukti_link') ?? '');
-
-            $status = 'Terlambat';
-
-            if (!empty($realisasiOutput)) {
-                $status = 'Dalam Proses';
-            }
-
-            if (!empty($link)) {
-                $status = 'Selesai';
+                if (
+                    !in_array($file->getMimeType(), $allowedMimes)
+                    || !in_array(strtolower($file->getExtension()), $allowedExts)
+                ) {
+                    return $this->response->setStatusCode(422)->setJSON([
+                        'status'  => 'error',
+                        'message' => 'File hanya boleh berupa JPG, PNG, atau PDF.',
+                    ]);
+                }
             }
 
             $this->db->transStart();
@@ -368,32 +352,15 @@ class PemantauanRisikoController extends BaseController
                 'catatan'          => $catatan,
             ]);
 
-            if (!$idPemantauan) {
-                throw new \Exception('Gagal insert pemantauan');
-            }
-
-            if (!empty($link)) {
-
-                if (!filter_var($link, FILTER_VALIDATE_URL)) {
-                    return $this->response->setStatusCode(422)->setJSON([
-                        'status'  => 'error',
-                        'message' => 'Format link tidak valid.',
-                    ]);
-                }
-
+            if ($file && $file->isValid()) {
                 $this->buktiModel->hapusSemuaByPemantauan((int) $idPemantauan);
-                $this->buktiModel->simpanLink((int) $idPemantauan, $link);
+                $this->buktiModel->simpanFile($file, $idPemantauan);
             }
 
             $this->db->transComplete();
 
             if ($this->db->transStatus() === false) {
-                log_message('error', 'DB ERROR: ' . json_encode($this->db->error()));
-
-                return $this->response->setJSON([
-                    'status' => 'error',
-                    'message' => $this->db->error(),
-                ]);
+                throw new \RuntimeException('Transaksi gagal.');
             }
 
             $buktiList = $this->buktiModel->getByPemantauan((int) $idPemantauan);
@@ -418,7 +385,7 @@ class PemantauanRisikoController extends BaseController
     public function deleteBukti($idBukti)
     {
         try {
-            $berhasil = $this->buktiModel->hapus((int) $idBukti);
+            $berhasil = $this->buktiModel->hapusDenganFile((int) $idBukti);
 
             if (!$berhasil) {
                 return $this->response->setStatusCode(404)->setJSON([
@@ -471,5 +438,88 @@ class PemantauanRisikoController extends BaseController
                 'message' => $e->getMessage(),
             ]);
         }
+    }
+
+    /* VIEW BUKTI — full screen di tab baru */
+    public function viewBukti($idBukti)
+    {
+        $bukti = $this->buktiModel->find((int) $idBukti);
+
+        if (!$bukti) {
+            return $this->response->setStatusCode(404)->setBody('File tidak ditemukan.');
+        }
+
+        $filePath = WRITEPATH . $bukti['path_file'];
+        if (!file_exists($filePath)) {
+            return $this->response->setStatusCode(404)->setBody('File fisik tidak ditemukan.');
+        }
+
+        $mime        = mime_content_type($filePath);
+        $ext         = strtolower(pathinfo($bukti['nama_file'], PATHINFO_EXTENSION));
+        $fileData    = base64_encode(file_get_contents($filePath));
+        $fileName    = $bukti['nama_file'];
+        $downloadUrl = site_url('pemantauan-risiko/bukti/download/' . $idBukti);
+        $isPdf       = ($mime === 'application/pdf' || $ext === 'pdf');
+        $isImage     = in_array($ext, ['jpg', 'jpeg', 'png']);
+
+        $html = '<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bukti Dukung — ' . htmlspecialchars($fileName) . '</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#1a1a2e; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; height:100vh; display:flex; flex-direction:column; }
+  .toolbar { background:#16213e; padding:10px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid #0f3460; flex-shrink:0; }
+  .toolbar-title { color:#e2e8f0; font-size:14px; font-weight:500; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .btn-download { background:#3b82f6; color:#fff; border:none; padding:8px 18px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:background .2s; }
+  .btn-download:hover { background:#2563eb; color:#fff; }
+  .btn-close-tab { background:#475569; color:#fff; border:none; padding:8px 14px; border-radius:6px; font-size:13px; cursor:pointer; }
+  .btn-close-tab:hover { background:#334155; }
+  .viewer { flex:1; display:flex; align-items:center; justify-content:center; overflow:auto; padding:16px; }
+  .viewer iframe { width:100%; height:100%; border:none; border-radius:4px; }
+  .viewer img { max-width:100%; max-height:100%; object-fit:contain; border-radius:4px; box-shadow:0 4px 24px rgba(0,0,0,.5); }
+  .unsupported { color:#94a3b8; text-align:center; }
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <span class="toolbar-title">📎 ' . htmlspecialchars($fileName) . '</span>
+    <a href="' . $downloadUrl . '" class="btn-download" download>⬇ Unduh File</a>
+    <button class="btn-close-tab" onclick="window.close()">✕ Tutup</button>
+  </div>
+  <div class="viewer">';
+
+        if ($isPdf) {
+            $html .= '<iframe src="data:application/pdf;base64,' . $fileData . '" type="application/pdf"></iframe>';
+        } elseif ($isImage) {
+            $html .= '<img src="data:' . $mime . ';base64,' . $fileData . '" alt="' . htmlspecialchars($fileName) . '">';
+        } else {
+            $html .= '<div class="unsupported"><p>Format tidak dapat ditampilkan.</p><a href="' . $downloadUrl . '" class="btn-download" style="margin-top:16px">⬇ Unduh File</a></div>';
+        }
+
+        $html .= '</div></body></html>';
+
+        return $this->response
+            ->setHeader('Content-Type', 'text/html; charset=utf-8')
+            ->setBody($html);
+    }
+
+    /* DOWNLOAD BUKTI */
+    public function downloadBukti($idBukti)
+    {
+        $bukti = $this->buktiModel->find((int) $idBukti);
+
+        if (!$bukti) {
+            return $this->response->setStatusCode(404)->setBody('File tidak ditemukan.');
+        }
+
+        $filePath = WRITEPATH . $bukti['path_file'];
+        if (!file_exists($filePath)) {
+            return $this->response->setStatusCode(404)->setBody('File fisik tidak ditemukan.');
+        }
+
+        return $this->response->download($filePath, null)->setFileName($bukti['nama_file']);
     }
 }

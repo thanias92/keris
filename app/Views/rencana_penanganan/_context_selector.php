@@ -113,8 +113,9 @@ $th = $get['th'] ?? '';
                             <i class="ti ti-search"></i>
                         </button>
 
-                        <button type="button" class="btn btn-light btn-icon"
-                            onclick="window.location.href='<?= site_url('rencana-penanganan') ?>'">
+                        <button type="button"
+                            id="rtpCsBtnReset"
+                            class="btn btn-light btn-icon">
                             <i class="ti ti-refresh"></i>
                         </button>
                     </div>

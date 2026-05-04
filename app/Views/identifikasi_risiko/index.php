@@ -74,7 +74,5 @@
 <script>
     window.APP_USER = <?= json_encode(session('user')) ?>;
     window.APP_KONTEKS = <?= json_encode($activeKonteks ?? null) ?>;
-
-    const BASE_URL =
 </script>
 <?= $this->endSection() ?>
