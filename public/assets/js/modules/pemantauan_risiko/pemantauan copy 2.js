@@ -153,18 +153,10 @@ document.addEventListener("DOMContentLoaded", function () {
       new URL(val);
 
       preview.innerHTML = `
-        <div class="small text-muted">Link:</div>
-        <div class="text-break mb-2">${val}</div>
-
-        <button type="button"
-          class="btn btn-sm btn-outline-primary"
-          onclick="window.open('${val}', '_blank')">
-          🔗 Buka Link
-        </button>
-
-        <div class="text-muted small">
-          Jika link tidak bisa dibuka, silakan copy dan buka di tab baru.
-        </div>
+        <a href="${val}" target="_blank"
+           class="text-primary text-decoration-underline small">
+           🔗 Buka Link
+        </a>
       `;
     } catch {
       preview.innerHTML =
