@@ -240,7 +240,7 @@ class RencanaPenangananController extends BaseController
 
         if ($idKonteks) {
             $qCount->where('kpb.id_konteks', $idKonteks);
-        }
+        }   
 
         $total = (int) ($qCount->get()->getRowArray()['total'] ?? 0);
 
@@ -256,7 +256,7 @@ class RencanaPenangananController extends BaseController
                 $grouped[$idEval] = [
                     'id_evaluasi'       => $row['id_evaluasi'],
                     'id_identifikasi'   => $row['id_identifikasi'],
-                    'id_tim'            => $row['id_tim'], // 🔥 penting untuk RBAC JS
+                    'id_tim'            => $row['id_tim'],
                     'pernyataan_risiko' => $row['pernyataan_risiko'],
                     'penyebab_risiko'   => $row['penyebab_risiko'],
                     'dampak_risiko'     => $row['dampak_risiko'],

@@ -9,6 +9,7 @@
                         <th rowspan="2" class="rtp-th text-center">Kode<br>Proses</th>
                         <th rowspan="2" class="rtp-th">Risiko</th>
                         <th rowspan="2" class="rtp-th">RTP</th>
+
                         <th colspan="2" class="rtp-th text-center">Target</th>
                         <th colspan="3" class="rtp-th text-center">Realisasi</th>
                     </tr>
@@ -16,6 +17,7 @@
                     <tr class="rtp-thead-sub">
                         <th class="rtp-th text-center">Output</th>
                         <th class="rtp-th text-center">Waktu</th>
+
                         <th class="rtp-th text-center">Output</th>
                         <th class="rtp-th text-center">Waktu</th>
                         <th class="rtp-th text-center">Status</th>
@@ -27,26 +29,44 @@
                         <tr>
                             <td colspan="9" class="text-center py-5 text-muted">
                                 <i class="ti ti-inbox fs-3 d-block mb-2 opacity-25"></i>
-                                Belum ada data.
+                                Belum ada data. 
                             </td>
                         </tr>
                     <?php else: ?>
 
-                        <?php $no = 1; ?>
+                        <?php
+                        // =============================
+                        // GROUP BY RISIKO
+                        // =============================
+                        $grouped = [];
 
-                        <?php foreach ($grouped as $item): ?>
+                        foreach ($data as $row) {
+                            $id = $row['id_identifikasi'];
 
-                            <?php
-                            $rtpList = $item['pemantauan_list'] ?? [];
-                            $rowspan = max(count($rtpList), 1);
-                            ?>
+                            if (!isset($grouped[$id])) {
+                                $grouped[$id] = [
+                                    'risiko' => $row,
+                                    'rtp_list' => []
+                                ];
+                            }
 
-                            <?php foreach ($rtpList as $i => $rtp): ?>
+                            $grouped[$id]['rtp_list'][] = $row;
+                        }
 
-                                <?php
+                        $no = 1;
+                        ?>
+
+                        <?php $rtpList = $item['pemantauan_list'];:
+
+                            $rtpList   = $item['rtp_list'];
+                            $rowspan   = count($rtpList);
+                        ?>
+
+                            <?php foreach ($rtpList as $i => $rtp):
+
                                 $isFirst = ($i === 0);
 
-                                // TARGET
+                                // TARGET WAKTU
                                 $bulan = $tahun = null;
                                 if (!empty($rtp['target_waktu'])) {
                                     $ts = strtotime($rtp['target_waktu']);
@@ -54,7 +74,7 @@
                                     $tahun = date('Y', $ts);
                                 }
 
-                                // REALISASI
+                                // REALISASI WAKTU
                                 $rBulan = $rTahun = null;
                                 if (!empty($rtp['realisasi_waktu'])) {
                                     $ts2 = strtotime($rtp['realisasi_waktu']);
@@ -62,7 +82,7 @@
                                     $rTahun = date('Y', $ts2);
                                 }
 
-                                // STATUS
+                                // STATUS BADGE
                                 $status = $rtp['status'] ?? 'Belum Dilaksanakan';
 
                                 $statusClass = match ($status) {
@@ -71,36 +91,42 @@
                                     'Terlambat' => 'danger',
                                     default => 'secondary'
                                 };
-                                ?>
+                            ?>
 
                                 <tr class="rtp-row" data-rtp="<?= esc($rtp['id_rtp']) ?>">
-
                                     <?php if ($isFirst): ?>
+                                        <!-- NO -->
                                         <td rowspan="<?= $rowspan ?>" class="text-center">
                                             <?= $no++ ?>
                                         </td>
 
+                                        <!-- KODE -->
                                         <td rowspan="<?= $rowspan ?>" class="text-center">
                                             <span class="badge bg-primary-subtle text-primary">
-                                                <?= esc($item['kode_proses']) ?>
+                                                <?= esc($rtp['kode_proses']) ?>
                                             </span>
                                         </td>
 
+                                        <!-- RISIKO -->
                                         <td rowspan="<?= $rowspan ?>">
                                             <div class="fw-semibold">
-                                                <?= esc($item['pernyataan_risiko']) ?>
+                                                <?= esc($rtp['pernyataan_risiko']) ?>
                                             </div>
                                             <div class="text-muted small">
-                                                → <?= esc($item['uraian_proses']) ?>
+                                                → <?= esc($rtp['uraian_proses']) ?>
                                             </div>
                                         </td>
                                     <?php endif; ?>
 
                                     <!-- RTP -->
-                                    <td><?= esc($rtp['uraian_rtp']) ?></td>
+                                    <td>
+                                        <?= esc($rtp['uraian_rtp']) ?>
+                                    </td>
 
                                     <!-- TARGET OUTPUT -->
-                                    <td><?= esc($rtp['target_output'] ?? '—') ?></td>
+                                    <td>
+                                        <?= esc($rtp['target_output'] ?? '—') ?>
+                                    </td>
 
                                     <!-- TARGET WAKTU -->
                                     <td class="text-center">
@@ -141,15 +167,16 @@
                         <?php endforeach; ?>
 
                     <?php endif; ?>
-                </tbody>
 
+                </tbody>
             </table>
         </div>
     </div>
 
-    <?php if (!empty($grouped)): ?>
+    <?php if (!empty($data)): ?>
         <div class="pr-table-bottom">
 
+            <!-- LEFT: per page + info -->
             <div class="pr-table-info">
 
                 <form method="get" class="pr-perpage-form" id="prPerPageForm">
@@ -159,7 +186,8 @@
                         onchange="document.getElementById('prPerPageForm').submit()">
 
                         <?php foreach ([5, 10, 25, 50] as $size): ?>
-                            <option value="<?= $size ?>" <?= ($perPage ?? 10) == $size ? 'selected' : '' ?>>
+                            <option value="<?= $size ?>"
+                                <?= ($perPage ?? 10) == $size ? 'selected' : '' ?>>
                                 <?= $size ?>
                             </option>
                         <?php endforeach; ?>
@@ -168,14 +196,16 @@
                 </form>
 
                 <div class="pr-info-text">
-                    Menampilkan <?= $from ?? 0 ?>–<?= $to ?? 0 ?> dari <?= $total ?? 0 ?> data
+                    Menampilkan <?= $from ?? 1 ?>–<?= $to ?? count($data) ?> dari <?= $total ?> data
                 </div>
             </div>
 
-            <?php if (!empty($pager) && $pager['totalPages'] > 1): ?>
+            <!-- RIGHT: pagination -->
+            <?php if (isset($pager)): ?>
                 <div class="pr-pagination">
                     <ul class="pagination mb-0">
 
+                        <!-- PREV -->
                         <li class="page-item <?= $pager['currentPage'] <= 1 ? 'disabled' : '' ?>">
                             <a class="page-link" href="#"
                                 onclick="prGoToPage(<?= $pager['currentPage'] - 1 ?>); return false;">
@@ -183,18 +213,39 @@
                             </a>
                         </li>
 
-                        <?php for ($i = 1; $i <= $pager['totalPages']; $i++): ?>
-                            <li class="page-item <?= $i === $pager['currentPage'] ? 'active' : '' ?>">
+                        <?php
+                        $cur         = $pager['currentPage'];
+                        $total_pages = $pager['totalPages'];
+                        $shown       = [];
+
+                        for ($i = 1; $i <= $total_pages; $i++) {
+                            if ($i === 1 || $i === $total_pages || abs($i - $cur) <= 2) {
+                                $shown[] = $i;
+                            }
+                        }
+
+                        $prev = null;
+                        foreach ($shown as $i):
+                            if ($prev !== null && $i - $prev > 1): ?>
+                                <li class="page-item disabled">
+                                    <span class="page-link">…</span>
+                                </li>
+                            <?php endif; ?>
+
+                            <li class="page-item <?= $i === $cur ? 'active' : '' ?>">
                                 <a class="page-link" href="#"
                                     onclick="prGoToPage(<?= $i ?>); return false;">
                                     <?= $i ?>
                                 </a>
                             </li>
-                        <?php endfor; ?>
 
-                        <li class="page-item <?= $pager['currentPage'] >= $pager['totalPages'] ? 'disabled' : '' ?>">
+                        <?php $prev = $i;
+                        endforeach; ?>
+
+                        <!-- NEXT -->
+                        <li class="page-item <?= $cur >= $total_pages ? 'disabled' : '' ?>">
                             <a class="page-link" href="#"
-                                onclick="prGoToPage(<?= $pager['currentPage'] + 1 ?>); return false;">
+                                onclick="prGoToPage(<?= $cur + 1 ?>); return false;">
                                 &raquo;
                             </a>
                         </li>
@@ -206,3 +257,32 @@
         </div>
     <?php endif; ?>
 </div>
+
+<script>
+    function prGoToPage(page) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', page);
+        url.searchParams.set('perPage', <?= $perPage ?? 10 ?>);
+        url.searchParams.set('filter', '<?= esc($filter ?? '') ?>');
+
+        const wrapper = document.getElementById('prTableCard');
+        const scrollY = window.scrollY;
+
+        fetch(url.toString())
+            .then(r => r.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newCard = doc.getElementById('prTableCard');
+
+                if (newCard && wrapper) {
+                    wrapper.outerHTML = newCard.outerHTML;
+                    window.history.pushState({}, '', url.toString());
+
+                    window.scrollTo({
+                        top: scrollY
+                    });
+                }
+            });
+    }
+</script>

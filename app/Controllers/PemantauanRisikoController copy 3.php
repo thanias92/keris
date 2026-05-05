@@ -113,13 +113,6 @@ class PemantauanRisikoController extends BaseController
 
     public function index()
     {
-        $db = $this->db;
-
-        $idFromGet = $this->request->getGet('id_konteks');
-        if ($idFromGet) {
-            session()->set('id_konteks_pemantauan', $idFromGet);
-        }
-
         $activeKonteks = $this->getActiveKonteks();
         $idKonteks     = $activeKonteks ? (int) $activeKonteks['id_konteks'] : null;
 
@@ -215,49 +208,21 @@ class PemantauanRisikoController extends BaseController
         $rows  = $builder->limit($perPage, $offset)->get()->getResultArray();
 
         $grouped = [];
-
         foreach ($rows as $row) {
-            $idIdentifikasi = $row['id_identifikasi'];
-
-            if (!isset($grouped[$idIdentifikasi])) {
-                $grouped[$idIdentifikasi] = [
-                    'id_identifikasi'   => $row['id_identifikasi'],
-                    'id_tim'            => $row['id_tim'],
-                    'pernyataan_risiko' => $row['pernyataan_risiko'],
-                    'penyebab_risiko'   => $row['penyebab_risiko'],
-                    'dampak_risiko'     => $row['dampak_risiko'],
-                    'kode_proses'       => $row['kode_proses'],
-                    'uraian_proses'     => $row['uraian_proses'],
-                    'nama_tim'          => $row['nama_tim'],
-                    'nilai_risiko'      => $row['nilai_risiko'],
-                    'warna_risiko'      => $row['warna_risiko'],
-                    'level_kemungkinan' => $row['level_kemungkinan'],
-                    'level_dampak'      => $row['level_dampak'],
-                    'nama_selera'       => $row['nama_selera'],
-                    'warna_selera'      => $row['warna_selera'],
-                    'pemantauan_list'   => [],
-                ];
+            $id = $row['id_identifikasi'];
+            if (!isset($grouped[$id])) {
+                $grouped[$id] = ['nilai_risiko' => $row['nilai_risiko'] ?? 0, 'rows' => []];
             }
-
-            $grouped[$idIdentifikasi]['pemantauan_list'][] = [
-                'id_rtp'            => $row['id_rtp'],
-                'uraian_rtp'        => $row['uraian_rtp'],
-                'target_output'     => $row['target_output'],
-                'target_waktu'      => $row['target_waktu'],
-                'id_pemantauan'     => $row['id_pemantauan'],
-                'realisasi_output'  => $row['realisasi_output'],
-                'realisasi_waktu'   => $row['realisasi_waktu'],
-                'status'            => $row['status'],
-                'catatan'           => $row['catatan'],
-                'updated_at'        => $row['pemantauan_updated_at'],
-            ];
+            $grouped[$id]['rows'][] = $row;
         }
 
         uasort($grouped, fn($a, $b) => ($b['nilai_risiko'] ?? 0) <=> ($a['nilai_risiko'] ?? 0));
-        $i = 1;
-        foreach ($grouped as &$item) {
-            $item['no_prioritas'] = $i++;
+
+        $sortedRows = [];
+        foreach ($grouped as $g) {
+            foreach ($g['rows'] as $r) $sortedRows[] = $r;
         }
+        $rows = $sortedRows;
 
         foreach ($rows as &$row) {
             $row['jumlah_bukti'] = !empty($row['id_pemantauan'])
@@ -273,7 +238,7 @@ class PemantauanRisikoController extends BaseController
         $summary = $this->getSummary($idKonteks);
 
         return view('pemantauan_risiko/index', [
-            'grouped' => $grouped,
+            'data'               => $rows,
             'listKonteks'        => $this->getListKonteks(),
             'activeKonteks'      => $activeKonteks,
             'total'              => $total,
@@ -296,128 +261,6 @@ class PemantauanRisikoController extends BaseController
         ]);
     }
 
-    public function ajaxTable()
-    {
-        if (!$this->request->isAJAX()) return redirect()->back();
-
-        $db = $this->db;
-
-        $activeKonteks = $this->getActiveKonteks();
-        $idKonteks     = $activeKonteks ? (int)$activeKonteks['id_konteks'] : null;
-
-        $filter  = $this->request->getGet('filter');
-        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
-        $page    = (int) ($this->request->getGet('page') ?? 1);
-        $offset  = ($page - 1) * $perPage;
-
-        /* ================= QUERY ================= */
-        $builder = $db->table('rencana_penanganan_risiko rtp')
-            ->select("
-            ir.id_identifikasi,
-            rtp.id_rtp,
-            rtp.uraian_rtp,
-            rtp.target_output,
-            rtp.target_waktu,
-            k.id_tim,
-            pb.kode_proses,
-            pb.uraian_proses,
-            sk.nama_tim,
-            pr.nilai_risiko,
-            pr.warna_risiko,
-            sl.nama_level as nama_selera,
-            pm.id_pemantauan,
-            pm.realisasi_output,
-            pm.realisasi_waktu,
-            CASE
-                WHEN pm.id_pemantauan IS NULL THEN 'Terlambat'
-                WHEN pm.realisasi_output IS NOT NULL THEN 'Dalam Proses'
-                ELSE 'Terlambat'
-            END as status
-        ")
-            ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
-            ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
-            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
-            ->join('tim_kerja sk', 'sk.id_tim = k.id_tim', 'left')
-            ->join('penilaian_risiko pr', 'pr.id_penilaian = er.id_penilaian', 'left')
-            ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
-            ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left');
-
-        if ($idKonteks) {
-            $builder->where('kpb.id_konteks', $idKonteks);
-        }
-
-        if ($filter && $filter !== 'semua') {
-            if ($filter === 'Belum Dilaksanakan') {
-                $builder->where('pm.id_pemantauan IS NULL', null, false);
-            } else {
-                $builder->where('pm.status', $filter);
-            }
-        }
-
-        /* ================= TOTAL ================= */
-        $qCount = $db->table('rencana_penanganan_risiko rtp')
-            ->select('COUNT(rtp.id_rtp) as total')
-            ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
-            ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
-            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left');
-
-        if ($idKonteks) {
-            $qCount->where('kpb.id_konteks', $idKonteks);
-        }
-
-        $total = (int) ($qCount->get()->getRowArray()['total'] ?? 0);
-
-        $rows = $builder->limit($perPage, $offset)->get()->getResultArray();
-
-        /* ================= GROUPING ================= */
-        $grouped = [];
-
-        foreach ($rows as $row) {
-            $idIdentifikasi = $row['id_identifikasi'];
-
-            if (!isset($grouped[$idIdentifikasi])) {
-                $grouped[$idIdentifikasi] = [
-                    'id_identifikasi'   => $row['id_identifikasi'],
-                    'id_tim'            => $row['id_tim'],
-                    'kode_proses'       => $row['kode_proses'],
-                    'uraian_proses'     => $row['uraian_proses'],
-                    'nama_tim'          => $row['nama_tim'],
-                    'nilai_risiko'      => $row['nilai_risiko'],
-                    'nama_selera'       => $row['nama_selera'],
-                    'pemantauan_list'   => [],
-                ];
-            }
-
-            $grouped[$idIdentifikasi]['pemantauan_list'][] = [
-                'id_rtp'           => $row['id_rtp'],
-                'uraian_rtp'       => $row['uraian_rtp'],
-                'target_output'    => $row['target_output'],
-                'target_waktu'     => $row['target_waktu'],
-                'id_pemantauan'    => $row['id_pemantauan'],
-                'realisasi_output' => $row['realisasi_output'],
-                'realisasi_waktu'  => $row['realisasi_waktu'],
-                'status'           => $row['status'],
-            ];
-        }
-
-        /* ================= RETURN VIEW ================= */
-        return view('pemantauan_risiko/_table_section', [
-            'grouped' => $grouped,
-            'total'   => $total,
-            'from'    => $total > 0 ? $offset + 1 : 0,
-            'to'      => min($offset + $perPage, $total),
-            'perPage' => $perPage,
-            'pager'   => [
-                'currentPage' => $page,
-                'totalPages'  => (int) ceil($total / $perPage),
-            ],
-            'filter'  => $filter,
-        ]);
-    }
-
     public function setActive()
     {
         $id = $this->request->getPost('id_konteks');
@@ -436,6 +279,13 @@ class PemantauanRisikoController extends BaseController
     public function detail($idRtp)
     {
         try {
+            if (!$this->validateTimAccessByRtp($idRtp)) {
+                return $this->response->setStatusCode(403)->setJSON([
+                    'status' => 'error',
+                    'message' => 'Tidak punya akses'
+                ]);
+            }
+
             // Coba ambil via model jika pemantauan sudah ada
             $data = $this->pemantauanModel->getByRtp((int) $idRtp);
 
@@ -444,7 +294,6 @@ class PemantauanRisikoController extends BaseController
                 $data = $this->db->table('rencana_penanganan_risiko rtp')
                     ->select('
                     rtp.id_rtp,
-                     k.id_tim,
                     rtp.uraian_rtp,
                     rtp.target_output,
                     rtp.target_waktu,

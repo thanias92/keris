@@ -1,3 +1,6 @@
+console.log("Pemantauan.js loaded");
+let PR_CAN_EDIT = false;
+const USER = window.APP_USER || {};
 const PR_URL = window.PR_CONFIG?.url || {};
 let prCsrfToken = window.PR_CONFIG?.csrf?.token || "";
 const prCsrfName = window.PR_CONFIG?.csrf?.name || "csrf_token";
@@ -35,16 +38,18 @@ function prSetMode(mode) {
   document.getElementById("prMode").value = mode;
 
   // Disable/enable field form
+  const disableAll = isView && !PR_CAN_EDIT;
+
   ["prRealisasiOutput", "prRealisasiWaktu", "prStatus", "prCatatan"].forEach(
     (id) => {
       const el = document.getElementById(id);
-      if (el) el.disabled = isView;
+      if (el) el.disabled = disableAll;
     },
   );
 
   const linkInput = document.getElementById("prBuktiLinkInput");
   if (linkInput) {
-    linkInput.disabled = isView;
+    linkInput.disabled = disableAll;
   }
 
   const toggle = (id, show) => {
@@ -52,11 +57,11 @@ function prSetMode(mode) {
     if (el) el.classList.toggle("d-none", !show);
   };
 
-  toggle("prBtnEdit", isView);
-  toggle("prBtnBatal", isEdit);
-  toggle("prBtnSimpan", !isView);
+  toggle("prBtnEdit", isView && PR_CAN_EDIT);
+  toggle("prBtnBatal", isEdit && PR_CAN_EDIT);
+  toggle("prBtnSimpan", !isView && PR_CAN_EDIT);
   toggle("prBtnTutup", !isEdit);
-  toggle("prBtnDelete", isView);
+  toggle("prBtnDelete", isView && PR_CAN_EDIT);
 
   const titleEl = document.getElementById("prOffcanvasTitle");
   if (titleEl) {
@@ -261,6 +266,10 @@ function prLoadDetail(idRtp) {
   return fetch(PR_URL.detail(idRtp))
     .then((r) => r.json())
     .then((d) => {
+      console.log("USER", USER);
+      console.log("DATA", d);
+      PR_CAN_EDIT = prCanEdit(d);
+      console.log("CAN EDIT?", prCanEdit(d));
       document.getElementById("prIdRtp").value = d.id_rtp;
       prPopulateInfo(d);
       return d;
@@ -284,10 +293,17 @@ document.addEventListener("click", function (e) {
   ).show();
 
   prLoadDetail(idRtp).then((d) => {
+    const canEdit = prCanEdit(d);
+
     if (d.id_pemantauan) {
-      prSetMode("view"); // prSetMode akan re-render bukti tanpa tombol ✕
+      prSetMode("view");
     } else {
       prSetMode("create");
+    }
+
+    // 🔥 kalau tidak boleh edit → paksa view
+    if (!canEdit) {
+      prSetMode("view");
     }
   });
 });
@@ -453,3 +469,18 @@ function prAutoSetStatus(data) {
 
   statusEl.value = data.status || "Terlambat";
 }
+
+function prCanEdit(data) {
+  if (!USER) return false;
+
+  if (USER.role === "admin") return true;
+  if (USER.role === "ketua") return false; 
+
+  if (USER.role === "operator") {
+    return String(USER.id_tim) === String(data.id_tim);
+  }
+
+  return false;
+}
+
+

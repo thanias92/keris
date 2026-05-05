@@ -20,7 +20,7 @@
 
 <script>
     window.APP_USER = {
-        role: '<?= session()->get('user_role') ?>',
+        role: '<?= session()->get('role') ?>',
         id_tim: '<?= session()->get('id_tim') ?>'
     };
 </script>
@@ -50,14 +50,6 @@
         'activeKonteks' => $activeKonteks,
     ]) ?>
 
-    <!-- Summary Cards -->
-    <?= view('pemantauan_risiko/_summary_cards', [
-        'totalRtp'      => $totalRtp,
-        'distribusi'    => $distribusi,
-        'activeKonteks' => $activeKonteks,
-        'filter'        => $filter ?? '',
-    ]) ?>
-
     <!-- Jika ada konteks aktif -->
     <?php if ($activeKonteks): ?>
 
@@ -66,37 +58,20 @@
             'activeKonteks' => $activeKonteks
         ]) ?>
 
-        <?php if ($filter && $filter !== 'semua'): ?>
-            <div class="mb-3 d-flex align-items-center gap-2">
-                <span class="text-muted small">Menampilkan:</span>
+        <!-- Summary Cards -->
+        <?= view('pemantauan_risiko/_summary_cards', [
+            'totalRtp'      => $totalRtp,
+            'distribusi'    => $distribusi,
+            'activeKonteks' => $activeKonteks,
+            'filter'        => $filter ?? '',
+        ]) ?>
 
-                <span class="badge bg-primary-subtle text-primary border border-primary">
-                    <?= esc($filter) ?>
-                </span>
-
-                <a href="<?= site_url('pemantauan-risiko') ?>"
-                    class="small text-decoration-none text-danger ms-2">
-                    ✕ Clear Filter
-                </a>
-            </div>
-        <?php endif; ?>
-
-    <?php else: ?>
-        <div class="alert alert-warning">
-            Silakan pilih konteks terlebih dahulu.
-        </div>
     <?php endif; ?>
 
     <!-- TABLE -->
     <?= view('pemantauan_risiko/_table_section', [
-        'grouped' => $grouped,
+        'data'          => $data,
         'activeKonteks' => $activeKonteks,
-        'total'         => $total ?? 0,
-        'from'          => $from ?? 0,
-        'to'            => $to ?? 0,
-        'perPage'       => $perPage ?? 10,
-        'filter'        => $filter ?? '',
-        'pager'         => $pager ?? null,
     ]) ?>
 
     <!-- Offcanvas Form -->

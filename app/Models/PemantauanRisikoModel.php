@@ -61,6 +61,8 @@ class PemantauanRisikoModel extends Model
         return $this->db->table('pemantauan_risiko pm')
             ->select('
                 pm.*,
+                rtp.id_rtp,
+                k.id_tim,
                 rtp.uraian_rtp,
                 rtp.target_output,
                 rtp.target_waktu,

@@ -9,11 +9,9 @@ foreach ($listKonteks as $k) {
     $id = $k['id_konteks'];
 
     $konteksMap[$id] = [
-        'id_tim'     => $k['id_tim'] ?? '',
+        'id_tim'     => $k['id_tim']     ?? '',
         'pengelola_risiko_id' => $k['pengelola_risiko_id'] ?? '',
-        'nama_pengelola'      => $k['nama_pengelola'] ?? '',
-        'id_kegiatan'         => $k['id_kegiatan'] ?? '',
-        'nama_kegiatan'       => $k['nama_kegiatan'] ?? '',
+        'id_kegiatan'         => $k['id_kegiatan']         ?? '',
         'tahun'               => $k['tahun'],
     ];
 
@@ -33,18 +31,12 @@ asort($pengelolaOpt);
 ksort($tahunOpt);
 
 $sel = $activeKonteks ?? [];
-$get = request()->getGet();
-
-$sk = $get['sk'] ?? '';
-$pg = $get['pg'] ?? '';
-$kg = $get['kg'] ?? '';
-$th = $get['th'] ?? '';
 ?>
 
 <div class="card shadow-sm mb-3 pk-context-filter">
     <div class="card-body">
-        <form id="pmContextSelectorForm" method="get"
-            action="<?= site_url('pemantauan-risiko') ?>">
+        <form id="pmContextSelectorForm" method="post"
+            action="<?= site_url('pemantauan-risiko/set-active') ?>">
 
             <?= csrf_field() ?>
             <input type="hidden" name="id_konteks" id="pmCsIdKonteks">
@@ -58,7 +50,7 @@ $th = $get['th'] ?? '';
                             <option value="">– Pilih –</option>
                             <?php foreach ($timKerjaOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= (string)$sk === (string)$id ? 'selected' : '' ?>>
+                                    <?= isset($sel['id_tim']) && (string)$sel['id_tim'] === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -71,7 +63,7 @@ $th = $get['th'] ?? '';
                             <option value="">– Pilih –</option>
                             <?php foreach ($pengelolaOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= (string)$pg === (string)$id ? 'selected' : '' ?>>
+                                    <?= isset($sel['pengelola_risiko_id']) && (string)$sel['pengelola_risiko_id'] === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -84,7 +76,7 @@ $th = $get['th'] ?? '';
                             <option value="">– Pilih –</option>
                             <?php foreach ($kegiatanOpt as $id => $nama): ?>
                                 <option value="<?= $id ?>"
-                                    <?= (string)$kg === (string)$id ? 'selected' : '' ?>>
+                                    <?= isset($sel['id_kegiatan']) && (string)$sel['id_kegiatan'] === (string)$id ? 'selected' : '' ?>>
                                     <?= esc($nama) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -100,7 +92,7 @@ $th = $get['th'] ?? '';
                             <option value="">– Pilih –</option>
                             <?php foreach ($tahunOpt as $tahun => $_): ?>
                                 <option value="<?= $tahun ?>"
-                                    <?= (string)$th === (string)$tahun ? 'selected' : '' ?>>
+                                    <?= isset($sel['tahun']) && (string)$sel['tahun'] === (string)$tahun ? 'selected' : '' ?>>
                                     <?= esc($tahun) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -113,9 +105,9 @@ $th = $get['th'] ?? '';
                             <i class="ti ti-search"></i>
                         </button>
 
-                        <button type="button"
-                            id="pmCsBtnReset"
-                            class="btn btn-light btn-icon">
+                        <button type="button" class="btn btn-light btn-icon"
+                            id="pmCsBtnReset" title="Reset Konteks"
+                            style="<?= $activeKonteks ? '' : 'display:none;' ?>">
                             <i class="ti ti-refresh"></i>
                         </button>
                     </div>

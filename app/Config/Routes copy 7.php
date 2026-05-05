@@ -225,27 +225,16 @@ $routes->group('rencana-penanganan', ['namespace' => 'App\Controllers', 'filter'
 });
 
 // Pemantauan
-$routes->group('pemantauan-risiko', ['filter' => ['auth']], function ($routes) {
-
-    // READ ACCESS (semua role terkait)
-    $routes->get('/', 'PemantauanRisikoController::index', ['filter' => 'role:admin,operator,ketua']);
-    $routes->get('detail/(:num)', 'PemantauanRisikoController::detail/$1', ['filter' => 'role:admin,operator,ketua']);
-
-    $routes->post('set-active', 'PemantauanRisikoController::setActive', ['filter' => 'role:admin,operator,ketua']);
-    $routes->post('reset-active', 'PemantauanRisikoController::resetActive', ['filter' => 'role:admin,operator,ketua']);
-    $routes->get('table', 'PemantauanRisikoController::ajaxTable');
-
-    // WRITE ACCESS (terbatas)
-    $routes->group('', ['filter' => 'role:admin,operator'], function ($routes) {
-        $routes->post('store', 'PemantauanRisikoController::store');
-        $routes->post('delete/(:num)', 'PemantauanRisikoController::delete/$1');
-
-        $routes->delete('bukti/(:num)', 'PemantauanRisikoController::deleteBukti/$1');
-    });
-
-    // OPTIONAL (view file tetap boleh semua)
-    $routes->get('bukti/view/(:num)', 'PemantauanRisikoController::viewBukti/$1', ['filter' => 'role:admin,operator,ketua']);
-    $routes->get('bukti/download/(:num)', 'PemantauanRisikoController::downloadBukti/$1', ['filter' => 'role:admin,operator,ketua']);
+$routes->group('pemantauan-risiko', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'PemantauanRisikoController::index');
+    $routes->post('set-active', 'PemantauanRisikoController::setActive');
+    $routes->post('reset-active', 'PemantauanRisikoController::resetActive');
+    $routes->get('detail/(:num)', 'PemantauanRisikoController::detail/$1');
+    $routes->post('store', 'PemantauanRisikoController::store');
+    $routes->post('delete/(:num)', 'PemantauanRisikoController::delete/$1');
+    $routes->delete('bukti/(:num)', 'PemantauanRisikoController::deleteBukti/$1');
+    $routes->get('bukti/view/(:num)', 'PemantauanRisikoController::viewBukti/$1');
+    $routes->get('bukti/download/(:num)', 'PemantauanRisikoController::downloadBukti/$1');
 });
 
 // Pelaporan (semua role)
