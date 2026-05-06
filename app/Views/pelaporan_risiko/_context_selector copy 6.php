@@ -7,9 +7,7 @@ foreach ($listKonteks as $k) {
     $konteksMap[$id] = [
         'id_tim' => $k['id_tim'] ?? '',
         'pengelola_risiko_id' => $k['pengelola_risiko_id'] ?? '',
-        'nama_pengelola' => $k['nama_pengelola'] ?? '',
         'id_kegiatan' => $k['id_kegiatan'] ?? '',
-        'nama_kegiatan' => $k['nama_kegiatan'] ?? '',
         'tahun' => $k['tahun'],
     ];
     if (!empty($k['id_tim'])) $timKerjaOpt[$k['id_tim']] = $k['nama_tim'];
@@ -37,18 +35,16 @@ $type = $tipe_periode ?? 'bulanan';
                         <span class="pl-field-label">Tim Kerja</span>
                         <div class="pl-field-value">
                             <?php if ($userRole === 'admin'): ?>
-                                <select class="pl-select" id="plCsTimKerja" name="id_tim">
+                                <select class="pl-select" id="plCsTimKerja">
                                     <option value="">– Pilih Tim –</option>
                                     <?php foreach ($timKerjaOpt as $id => $nama): ?>
-                                        <option value="<?= $id ?>" <?= ($sel['id_tim'] ?? '') == $id ? 'selected' : '' ?>>
-                                            <?= esc($nama) ?>
-                                        </option>
+                                        <option value="<?= $id ?>" <?= ($sel['id_tim'] ?? '') == $id ? 'selected' : '' ?>><?= esc($nama) ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                            <?php elseif ($userRole === 'operator'): ?>
+                                <span class="pl-field-static"><?= esc($operatorInfo['nama_tim'] ?? '-') ?></span>
                             <?php else: ?>
-                                <span class="pl-field-static">
-                                    <?= esc($ketuaInfo['nama_tim'] ?? '-') ?>
-                                </span>
+                                <span class="pl-field-static"><?= esc($ketuaInfo['nama_tim'] ?? '-') ?></span>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -56,18 +52,16 @@ $type = $tipe_periode ?? 'bulanan';
                         <span class="pl-field-label">Pengelola</span>
                         <div class="pl-field-value">
                             <?php if ($userRole === 'admin'): ?>
-                                <select class="pl-select" id="plCsPengelola" name="pengelola_risiko_id">
+                                <select class="pl-select" id="plCsPengelola">
                                     <option value="">– Pilih Pengelola –</option>
                                     <?php foreach ($pengelolaOpt as $id => $nama): ?>
-                                        <option value="<?= $id ?>" <?= ($sel['pengelola_risiko_id'] ?? '') == $id ? 'selected' : '' ?>>
-                                            <?= esc($nama) ?>
-                                        </option>
+                                        <option value="<?= $id ?>" <?= ($sel['pengelola_risiko_id'] ?? '') == $id ? 'selected' : '' ?>><?= esc($nama) ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                            <?php elseif ($userRole === 'operator'): ?>
+                                <span class="pl-field-static"><?= esc($operatorInfo['nama_ketua'] ?? '-') ?></span>
                             <?php else: ?>
-                                <span class="pl-field-static">
-                                    <?= esc($ketuaInfo['nama'] ?? '-') ?>
-                                </span>
+                                <span class="pl-field-static"><?= esc($ketuaInfo['nama'] ?? '-') ?></span>
                             <?php endif; ?>
                         </div>
                     </div>

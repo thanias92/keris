@@ -218,7 +218,7 @@
         </div>
     <?php endif; ?>
 
-</div><!-- /.card -->
+</div>
 
 <script>
     function arGoToPage(page) {

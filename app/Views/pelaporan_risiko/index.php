@@ -64,7 +64,7 @@
 <script>
     window.USER_ROLE = "<?= session('user_role') ?>";
 </script>
-
+<script src="<?= base_url('assets/js/modules/pelaporan_risiko/context-selector.js') ?>"></script>
 <script src="<?= base_url('assets/js/modules/pelaporan_risiko/pelaporan.js') ?>"></script>
 
 <?= $this->endSection() ?>

@@ -1,120 +1,107 @@
-const PlContextSelector = {
-  elements: {},
-  map: {},
-  bulan: [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "Mei",
-    "Jun",
-    "Jul",
-    "Agu",
-    "Sep",
-    "Okt",
-    "Nov",
-    "Des",
-  ],
+document.addEventListener("DOMContentLoaded", function () {
+  const typeEl = document.getElementById("plCsType");
+  const single = document.getElementById("plSingle");
+  const range = document.getElementById("plRange");
+  const startEl = document.getElementById("plStart");
+  const endEl = document.getElementById("plEnd");
 
-  init() {
-    const form = document.getElementById("plContextSelectorForm");
-    if (!form) return;
+  if (!typeEl) return;
 
-    this.map = window.PL_CS_DATA?.konteksMap ?? {};
+  function setMonthPlaceholder(input, label) {
+    input.addEventListener("focus", function () {
+      input.type = "month";
+    });
+    input.addEventListener("blur", function () {
+      if (!input.value) input.type = "text";
+    });
+    if (!input.value) {
+      input.type = "text";
+      input.placeholder = label;
+    }
+  }
 
-    this.elements = {
-      form,
-      sk: document.getElementById("plCsTimKerja"),
-      pg: document.getElementById("plCsPengelola"),
-      bulan: document.getElementById("plCsBulan"),
-      tahun: document.getElementById("plCsTahun"),
-      display: document.getElementById("plPeriodeDisplay"),
-      dropdown: document.getElementById("plPeriodeDropdown"),
-      monthGrid: document.getElementById("plMonthGrid"),
-      yearLabel: document.getElementById("plYearLabel"),
-      idEl: document.getElementById("plCsIdKonteks"),
-    };
+  if (startEl) setMonthPlaceholder(startEl, "Pilih bulan awal");
+  if (endEl) setMonthPlaceholder(endEl, "Pilih bulan akhir");
 
-    this.renderPeriode();
-    this.bindEvents();
-    this.resolveId();
-  },
+  function toggleMode() {
+    const isRange = typeEl.value === "range";
+    single.style.display = isRange ? "none" : "block";
+    range.style.display = isRange ? "block" : "none";
+  }
 
-  bindEvents() {
-    const { sk, pg, display, dropdown, form } = this.elements;
+  typeEl.addEventListener("change", toggleMode);
 
-    [sk, pg].forEach((el) => {
-      if (el) el.addEventListener("change", () => this.resolveId());
+  if (startEl && endEl) {
+    startEl.addEventListener("change", function () {
+      if (!startEl.value) return;
+      const s = new Date(startEl.value);
+      const exactEnd = new Date(s);
+      exactEnd.setMonth(s.getMonth() + 2);
+      const exactEndStr = exactEnd.toISOString().slice(0, 7);
+      endEl.min = exactEndStr;
+      endEl.max = exactEndStr;
+      endEl.value = exactEndStr;
+      endEl.type = "month";
     });
 
-    display.addEventListener("click", () => {
-      dropdown.classList.toggle("d-none");
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!e.target.closest(".pl-period")) {
-        dropdown.classList.add("d-none");
+    endEl.addEventListener("change", function () {
+      if (!startEl.value || !endEl.value) return;
+      const s = new Date(startEl.value);
+      const e = new Date(endEl.value);
+      const diff =
+        (e.getFullYear() - s.getFullYear()) * 12 +
+        (e.getMonth() - s.getMonth());
+      if (diff !== 2) {
+        alert("Harus memilih rentang tepat 3 bulan");
+        endEl.value = "";
+        endEl.type = "text";
       }
     });
+  }
 
-    form.addEventListener("submit", (e) => this.onSubmit(e));
-  },
+  const timSelect = document.getElementById("plCsTimKerja");
+  const pengelolaSelect = document.getElementById("plCsPengelola");
 
-  renderPeriode() {
-    const { bulan, tahun, display, monthGrid, yearLabel } = this.elements;
+  if (timSelect && pengelolaSelect && window.PL_CS_DATA) {
+    const konteksMap = window.PL_CS_DATA.konteksMap;
 
-    const currentYear = parseInt(tahun.value);
-    const currentMonth = parseInt(bulan.value) - 1;
+    function filterPengelola() {
+      const selectedTim = timSelect.value;
 
-    yearLabel.textContent = currentYear;
+      // simpan value lama
+      const currentPengelola = pengelolaSelect.value;
 
-    display.value = this.bulan[currentMonth] + " " + currentYear;
+      // reset
+      pengelolaSelect.innerHTML =
+        '<option value="">– Pilih Pengelola –</option>';
 
-    monthGrid.innerHTML = "";
+      const added = new Set();
 
-    this.bulan.forEach((b, i) => {
-      const el = document.createElement("div");
-      el.className = "pl-month" + (i === currentMonth ? " active" : "");
-      el.textContent = b;
+      Object.values(konteksMap).forEach((item) => {
+        if (
+          item.id_tim == selectedTim &&
+          item.pengelola_risiko_id &&
+          !added.has(item.pengelola_risiko_id)
+        ) {
+          added.add(item.pengelola_risiko_id);
 
-      el.onclick = () => {
-        bulan.value = (i + 1).toString().padStart(2, "0");
-        this.renderPeriode();
-        this.resolveId();
-      };
+          const opt = document.createElement("option");
+          opt.value = item.pengelola_risiko_id;
+          opt.textContent = item.nama_pengelola;
 
-      monthGrid.appendChild(el);
-    });
-  },
+          // restore selected value
+          if (item.pengelola_risiko_id == currentPengelola) {
+            opt.selected = true;
+          }
 
-  resolveId() {
-    const { sk, pg, tahun, idEl } = this.elements;
-
-    const vSk = sk?.value ?? "";
-    const vPg = pg?.value ?? "";
-    const vTh = tahun?.value ?? "";
-
-    idEl.value = "";
-
-    for (const [id, k] of Object.entries(this.map)) {
-      const matchSk = !vSk || String(k.id_tim) === vSk;
-      const matchPg = !vPg || String(k.pengelola_risiko_id) === vPg;
-      const matchTh = !vTh || String(k.tahun) === vTh;
-
-      if (matchSk && matchPg && matchTh) {
-        idEl.value = id;
-        return;
-      }
+          pengelolaSelect.appendChild(opt);
+        }
+      });
     }
-  },
 
-  onSubmit(e) {
-    const { idEl } = this.elements;
-    if (!idEl.value) {
-      e.preventDefault();
-      alert("Konteks tidak ditemukan");
-    }
-  },
-};
+    timSelect.addEventListener("change", filterPengelola);
+    filterPengelola();
+  }
 
-document.addEventListener("DOMContentLoaded", () => PlContextSelector.init());
+  toggleMode();
+});
