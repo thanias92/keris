@@ -32,24 +32,7 @@
 
                         <?php
                         $no = $from ?? 1;
-                        $lastKegiatan = null;
-
                         foreach ($data as $row):
-                            $currentKegiatan = $row['nama_kegiatan'] ?? 'Tanpa Kegiatan';
-                            if ($currentKegiatan !== $lastKegiatan):
-                        ?>
-                                <tr class="pl-kegiatan-separator">
-                                    <td colspan="8">
-                                        <div class="pl-kegiatan-title">
-                                            <i class="ti ti-folders me-2"></i>
-                                            <?= esc($currentKegiatan) ?>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php
-                                $lastKegiatan = $currentKegiatan;
-
-                            endif;
                             $status = $row['status'] ?? 'Belum Dilaksanakan';
                             $badge  = match ($status) {
                                 'Selesai'      => 'success',
@@ -57,7 +40,7 @@
                                 'Terlambat'    => 'danger',
                                 default        => 'secondary',
                             };
-                            ?>
+                        ?>
 
                             <tr class="pl-row"
                                 data-id="<?= esc($row['id_rtp']) ?>"
@@ -240,7 +223,6 @@
         const type = document.getElementById('plCsType');
         const tim = document.getElementById('plCsTimKerja');
         const pengelola = document.getElementById('plCsPengelola');
-        const kegiatan = document.getElementById('plCsKegiatan');
         const start = document.getElementById('plStart');
         const end = document.getElementById('plEnd');
 
@@ -248,7 +230,6 @@
         if (type) url.searchParams.set('tipe_periode', type.value);
         if (tim) url.searchParams.set('id_tim', tim.value);
         if (pengelola) url.searchParams.set('pengelola_risiko_id', pengelola.value);
-        if (kegiatan) url.searchParams.set('id_kegiatan', kegiatan.value);
         if (start) url.searchParams.set('start_periode', start.value);
         if (end) url.searchParams.set('end_periode', end.value);
 

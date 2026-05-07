@@ -62,25 +62,7 @@
 
 <link rel="stylesheet" href="<?= base_url('assets/css/pelaporan-risiko.css') ?>">
 <script>
-    window.PL_CONFIG = {
-        csrf: {
-            name: '<?= csrf_token() ?>',
-            token: '<?= csrf_hash() ?>',
-        },
-
-        url: {
-            detail: (id) => `<?= site_url('pelaporan-risiko/detail') ?>/${id}`,
-            approve: (id) => `<?= site_url('pelaporan-risiko/approve') ?>/${id}`,
-            reject: (id) => `<?= site_url('pelaporan-risiko/reject') ?>/${id}`,
-            print: '<?= site_url('pelaporan-risiko/print') ?>',
-            export: '<?= site_url('pelaporan-risiko/export') ?>',
-        }
-    };
-
-    window.APP_USER = {
-        role: '<?= session('user_role') ?>',
-        id_tim: '<?= session('id_tim') ?>'
-    };
+    window.USER_ROLE = "<?= session('user_role') ?>";
 </script>
 <script src="<?= base_url('assets/js/modules/pelaporan_risiko/context-selector.js') ?>"></script>
 <script src="<?= base_url('assets/js/modules/pelaporan_risiko/pelaporan.js') ?>"></script>

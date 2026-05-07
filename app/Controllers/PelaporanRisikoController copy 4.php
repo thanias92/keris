@@ -71,46 +71,18 @@ class PelaporanRisikoController extends BaseController
     {
         $userRole  = session('user_role');
         $idKonteks = session('id_konteks_pl');
-        $periodeInput = $this->request->getGet('periode');
-
-        if ($periodeInput) {
-
-            [$tahun, $bulan] = explode('-', $periodeInput);
-
-            $periode = [
-                'bulan' => $bulan,
-                'tahun' => $tahun
-            ];
-        } else {
-
-            $periode = $this->getPeriode();
-
-            $bulan = $periode['bulan'];
-            $tahun = $periode['tahun'];
-        }
+        $periode   = $this->getPeriode();
+        $bulan     = $periode['bulan'];
+        $tahun     = $periode['tahun'];
         $type      = $this->request->getGet('tipe_periode') ?? 'bulanan';
-        $idKegiatan = $this->request->getGet('id_kegiatan');
 
         $builder = $this->db->table('rencana_penanganan_risiko rtp')
-            ->select('
-                rtp.id_rtp,
-                rtp.uraian_rtp,
-                rtp.target_output,
-                rtp.target_waktu,
-                ir.pernyataan_risiko,
-                sk.nama_tim,
-                kegiatan.id_kegiatan,
-                kegiatan.nama_kegiatan,
-                pm.realisasi_output,
-                pm.realisasi_waktu,
-                COALESCE(pm.status, \'Belum Dilaksanakan\') as status
-            ')
+            ->select('rtp.id_rtp,rtp.uraian_rtp,rtp.target_output,rtp.target_waktu,ir.pernyataan_risiko,sk.nama_tim,pm.realisasi_output,pm.realisasi_waktu,COALESCE(pm.status, \'Belum Dilaksanakan\') as status')
             ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
             ->join('tim_kerja sk', 'sk.id_tim = k.id_tim', 'left')
-            ->join('kegiatan', 'kegiatan.id_kegiatan = k.id_kegiatan', 'left')
             ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left');
 
         $ketuaInfo = null;
@@ -169,13 +141,10 @@ class PelaporanRisikoController extends BaseController
                     ->getRowArray();
             }
         } else {
+
             if ($idKonteks) {
                 $builder->where('kpb.id_konteks', $idKonteks);
             }
-        }
-        
-        if (!empty($idKegiatan)) {
-            $builder->where('k.id_kegiatan', $idKegiatan);
         }
 
         if ($type === 'range') {
@@ -193,29 +162,23 @@ class PelaporanRisikoController extends BaseController
         }
 
         $builder->groupStart()
-
+            ->where('rtp.target_waktu <=', $endDate)
+            ->groupStart()
             ->groupStart()
             ->where('pm.status IS NULL', null, false)
-            ->orWhereIn('pm.status', [
-                'Dalam Proses',
-                'Belum Dilaksanakan',
-                'Terlambat'
-            ])
+            ->orWhereIn('pm.status', ['Dalam Proses', 'Belum Dilaksanakan', 'Terlambat'])
             ->groupEnd()
-
             ->orGroupStart()
             ->where('pm.realisasi_waktu >=', $startDate)
             ->where('pm.realisasi_waktu <=', $endDate)
             ->groupEnd()
-
             ->orGroupStart()
             ->where('pm.updated_at >=', $startDate)
             ->where('pm.updated_at <=', $endDate)
             ->groupEnd()
-
+            ->groupEnd()
             ->groupEnd();
 
-        $builder->orderBy('kegiatan.nama_kegiatan', 'ASC');
         $builder->orderBy('rtp.id_rtp', 'ASC');
 
         $allData = $builder->get()->getResultArray();
@@ -260,12 +223,6 @@ class PelaporanRisikoController extends BaseController
             }
         }
 
-        $listKegiatan = $this->db->table('kegiatan')
-            ->select('id_kegiatan, nama_kegiatan, id_tim')
-            ->orderBy('nama_kegiatan', 'ASC')
-            ->get()
-            ->getResultArray();
-
         return view('pelaporan_risiko/index', [
             'data' => $data,
             'summary' => $summary,
@@ -282,45 +239,14 @@ class PelaporanRisikoController extends BaseController
             'activeKonteks' => [
                 'id_tim' => $this->request->getGet('id_tim'),
                 'pengelola_risiko_id' => $this->request->getGet('pengelola_risiko_id'),
-            ],
-            'listKegiatan' => $listKegiatan,
-            'selectedKegiatan' => $idKegiatan,
+            ]
         ]);
     }
 
     public function detail($id)
     {
         $data = $this->db->table('rencana_penanganan_risiko rtp')
-            ->select('
-            rtp.id_rtp,
-            rtp.uraian_rtp,
-            rtp.target_output,
-            rtp.target_waktu,
-            ir.pernyataan_risiko,
-            ir.penyebab_risiko,
-            ir.dampak_risiko,
-            sk.nama_tim,
-            kegiatan.nama_kegiatan,
-            g.nama as nama_pengelola,
-            k.tahun,
-            ss.uraian_sasaran as sasaran_strategis,
-            pb.kode_proses,
-            pb.uraian_proses,
-            sk_kinerja.uraian_sasaran as sasaran_kinerja,
-            pr.nilai_risiko,
-            pr.warna_risiko,
-            pr.tindakan as tindakan_selera,
-            pr.efektivitas,
-            pr.uraian_pengendalian,
-            sl.nama_level as nama_selera,
-            km.level as level_kemungkinan,
-            kd.level as level_dampak,
-            pm.realisasi_output,
-            pm.realisasi_waktu,
-            COALESCE(pm.status, \'Belum Dilaksanakan\') as status,
-            km_res.level as level_kemungkinan_residu,
-            kd_res.level as level_dampak_residu,
-            bp.url_link as link_bukti')
+            ->select('rtp.id_rtp,rtp.uraian_rtp,rtp.target_output,rtp.target_waktu,ir.pernyataan_risiko,ir.penyebab_risiko,ir.dampak_risiko,sk.nama_tim,g.nama as nama_pengelola,k.tahun,ss.uraian_sasaran as sasaran_strategis,pb.kode_proses,pb.uraian_proses,sk_kinerja.uraian_sasaran as sasaran_kinerja,pr.nilai_risiko,pr.warna_risiko,pr.tindakan as tindakan_selera,pr.efektivitas,pr.uraian_pengendalian,sl.nama_level as nama_selera,km.level as level_kemungkinan,kd.level as level_dampak,pm.realisasi_output,pm.realisasi_waktu,COALESCE(pm.status, \'Belum Dilaksanakan\') as status')
             ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
             ->join('penilaian_risiko pr', 'pr.id_penilaian = er.id_penilaian', 'left')
@@ -331,45 +257,12 @@ class PelaporanRisikoController extends BaseController
             ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
             ->join('tim_kerja sk', 'sk.id_tim = k.id_tim', 'left')
-            ->join('kegiatan', 'kegiatan.id_kegiatan = k.id_kegiatan', 'left')
             ->join('sasaran_strategis ss', 'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko g', 'g.id = k.pengelola_risiko_id', 'left')
             ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
             ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left')
-            ->join('bukti_pemantauan bp', 'bp.id_pemantauan = pm.id_pemantauan', 'left')
-            ->join('kriteria_kemungkinan km_res', 'km_res.id_kriteria = rtp.id_kemungkinan_residu', 'left')
-            ->join('kriteria_dampak kd_res', 'kd_res.id_kriteria = rtp.id_dampak_residu', 'left')
             ->where('rtp.id_rtp', $id)
             ->get()->getRowArray();
-
-        helper('selera_risiko');
-
-        $probResidu = (int) ($data['level_kemungkinan_residu'] ?? 0);
-        $dampakResidu = (int) ($data['level_dampak_residu'] ?? 0);
-
-        $nilaiResidu = $probResidu * $dampakResidu;
-
-        $data['nilai_residu'] = $nilaiResidu;
-
-        // ambil master selera risiko
-        $seleraList = $this->db->table('selera_risiko')
-            ->get()
-            ->getResultArray();
-
-        // mapping berdasarkan nilai residu
-        $seleraResidu = selera_risiko_by_nilai(
-            $nilaiResidu,
-            $seleraList
-        );
-
-        $data['nama_selera_residu'] =
-            $seleraResidu['nama_level'] ?? '-';
-
-        $data['warna_residu'] =
-            $seleraResidu['warna'] ?? 'secondary';
-
-        $data['tindakan_residu'] =
-            $seleraResidu['tindakan'] ?? '-';
 
         return $this->response->setJSON($data);
     }

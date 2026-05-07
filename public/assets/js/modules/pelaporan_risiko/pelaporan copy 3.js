@@ -21,9 +21,7 @@ function setFormattedText(id, value) {
   let formatted = value;
 
   //formatted = formatted.replace(/(\d+\.)/g, "<br>$1");
-  //formatted = formatted.replace(/(?:^|\s)(\d+\.)/g, "<br>$1");
-  formatted = formatted.replace(/(\d+\.)/g, "<br>$1");
-  formatted = formatted.replace(/^<br>/, "");
+  formatted = formatted.replace(/(?:^|\s)(\d+\.)/g, "<br>$1");
 
   el.innerHTML = formatted;
 }
@@ -51,38 +49,6 @@ document.addEventListener("click", function (e) {
 
   openPelaporanDetail(id);
 });
-
-function applyBadgeColor(el, warna) {
-  if (!el) return;
-
-  el.className = "ar-preview-badge";
-
-  switch (warna) {
-    case "biru":
-      el.classList.add("bg-primary", "text-white");
-      break;
-
-    case "hijau":
-      el.classList.add("bg-success", "text-white");
-      break;
-
-    case "kuning":
-      el.classList.add("bg-warning", "text-dark");
-      break;
-
-    case "oranye":
-      el.classList.add("bg-orange", "text-white");
-      break;
-
-    case "merah":
-      el.classList.add("bg-danger", "text-white");
-      break;
-
-    default:
-      el.classList.add("bg-secondary", "text-white");
-      break;
-  }
-}
 
 // OPEN DETAIL
 function openPelaporanDetail(id) {
@@ -115,11 +81,6 @@ function openPelaporanDetail(id) {
         data.nilai_risiko || 0;
       document.getElementById("plPreviewBadge").textContent =
         data.nama_selera || "";
-      
-      applyBadgeColor(
-        document.getElementById("plPreviewBadge"),
-        data.warna_risiko,
-      );
 
       setFormattedText("plInfoPengendalian", data.uraian_pengendalian);
       setText("plInfoEfektivitas", data.efektivitas);
@@ -153,11 +114,6 @@ function openPelaporanDetail(id) {
 
       document.getElementById("plPreviewBadgeResidu").textContent =
         data.nama_selera_residu || "";
-      
-      applyBadgeColor(
-        document.getElementById("plPreviewBadgeResidu"),
-        data.warna_residu,
-      );
 
       document.getElementById("plCatatan").value = "";
 

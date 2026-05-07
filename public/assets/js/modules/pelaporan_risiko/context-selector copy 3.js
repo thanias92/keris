@@ -61,87 +61,45 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const timSelect = document.getElementById("plCsTimKerja");
   const pengelolaSelect = document.getElementById("plCsPengelola");
-  const kegiatanSelect = document.getElementById("plCsKegiatan");
 
-  if (window.PL_CS_DATA) {
+  if (timSelect && pengelolaSelect && window.PL_CS_DATA) {
     const konteksMap = window.PL_CS_DATA.konteksMap;
-    const listKegiatan = window.PL_CS_DATA.listKegiatan || [];
 
     function filterPengelola() {
-      const selectedTim = timSelect
-        ? timSelect.value
-        : window.PL_CS_DATA.activeTimId;
+      const selectedTim = timSelect.value;
 
-      // simpan selected lama
-      const currentPengelola = pengelolaSelect ? pengelolaSelect.value : "";
-      const currentKegiatan = kegiatanSelect ? kegiatanSelect.value : "";
+      // simpan value lama
+      const currentPengelola = pengelolaSelect.value;
 
-      // reset pengelola
-      if (pengelolaSelect) {
-        pengelolaSelect.innerHTML =
-          '<option value="">– Pilih Pengelola –</option>';
-      }
+      // reset
+      pengelolaSelect.innerHTML =
+        '<option value="">– Pilih Pengelola –</option>';
 
-      // reset kegiatan
-      if (kegiatanSelect) {
-        kegiatanSelect.innerHTML = '<option value="">Semua Kegiatan</option>';
-      }
-
-      const addedPengelola = new Set();
-      const addedKegiatan = new Set();
+      const added = new Set();
 
       Object.values(konteksMap).forEach((item) => {
-        // FILTER BERDASARKAN TIM
-        if (item.id_tim != selectedTim) return;
-
-        // PENGELOLA
         if (
+          item.id_tim == selectedTim &&
           item.pengelola_risiko_id &&
-          !addedPengelola.has(item.pengelola_risiko_id)
+          !added.has(item.pengelola_risiko_id)
         ) {
-          addedPengelola.add(item.pengelola_risiko_id);
+          added.add(item.pengelola_risiko_id);
 
           const opt = document.createElement("option");
-
           opt.value = item.pengelola_risiko_id;
           opt.textContent = item.nama_pengelola;
 
+          // restore selected value
           if (item.pengelola_risiko_id == currentPengelola) {
             opt.selected = true;
           }
 
-          if (pengelolaSelect) {
-            pengelolaSelect.appendChild(opt);
-          }
+          pengelolaSelect.appendChild(opt);
         }
       });
-
-      if (kegiatanSelect) {
-        listKegiatan.forEach((item) => {
-          if (item.id_tim != selectedTim) return;
-
-          if (addedKegiatan.has(item.id_kegiatan)) return;
-
-          addedKegiatan.add(item.id_kegiatan);
-
-          const kegiatanOpt = document.createElement("option");
-
-          kegiatanOpt.value = item.id_kegiatan;
-          kegiatanOpt.textContent = item.nama_kegiatan;
-
-          if (item.id_kegiatan == currentKegiatan) {
-            kegiatanOpt.selected = true;
-          }
-
-          kegiatanSelect.appendChild(kegiatanOpt);
-        });
-      }
     }
 
-    if (timSelect) {
-      timSelect.addEventListener("change", filterPengelola);
-    }
-
+    timSelect.addEventListener("change", filterPengelola);
     filterPengelola();
   }
 

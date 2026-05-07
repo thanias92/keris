@@ -74,7 +74,9 @@ $type = $tipe_periode ?? 'bulanan';
                     <div class="pl-field">
                         <span class="pl-field-label">Kegiatan</span>
                         <div class="pl-field-value">
-                            <span class="pl-field-static">Semua Kegiatan</span>
+                            <select class="pl-select" id="plCsKegiatan" name="id_kegiatan">
+                                <option value="">Semua Kegiatan</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -126,6 +128,8 @@ $type = $tipe_periode ?? 'bulanan';
 
 <script>
     window.PL_CS_DATA = {
-        konteksMap: <?= json_encode($konteksMap) ?>
+        konteksMap: <?= json_encode($konteksMap) ?>,
+        listKegiatan: <?= json_encode($listKegiatan) ?>,
+        activeTimId: <?= json_encode($sel['id_tim'] ?? session('id_tim')) ?>
     };
 </script>

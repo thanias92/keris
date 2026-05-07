@@ -25,10 +25,6 @@
                         <span class="ar-info-label">Tim Kerja</span>
                         <span class="ar-info-value" id="plInfoTimKerja">-</span>
                     </div>
-                    <div class="ar-info-row">
-                        <span class="ar-info-label">Kegiatan</span>
-                        <span class="ar-info-value" id="plInfoKegiatan">-</span>
-                    </div>
                 </div>
                 <div>
                     <div class="ar-info-row">
@@ -161,47 +157,6 @@
             <div class="ar-info-row">
                 <span class="ar-info-label">Status</span>
                 <span class="ar-info-value" id="plStatus">-</span>
-            </div>
-
-            <div class="ar-info-row" id="plRowBukti">
-                <span class="ar-info-label">Bukti</span>
-
-                <span class="ar-info-value">
-                    <a href="#" target="_blank" id="plLinkBukti">
-                        Lihat Bukti
-                    </a>
-                </span>
-            </div>
-        </div>
-
-        <hr class="ar-divider">
-
-        <div class="mb-3">
-            <div class="ar-section-title">
-                <i class="ti ti-shield-half-filled me-1"></i>Risiko Residu
-            </div>
-
-            <div class="ar-grid-2">
-                <div class="ar-info-row">
-                    <span class="ar-info-label">Probability</span>
-                    <span class="ar-info-value" id="plInfoProbResidu">-</span>
-                </div>
-
-                <div class="ar-info-row">
-                    <span class="ar-info-label">Dampak</span>
-                    <span class="ar-info-value" id="plInfoImpactResidu">-</span>
-                </div>
-            </div>
-
-            <div class="ar-preview-card">
-                <div>
-                    <div class="ar-preview-label">Skor Residu</div>
-                    <div class="ar-preview-nilai" id="plPreviewNilaiResidu">0</div>
-                </div>
-
-                <div class="text-end">
-                    <div id="plPreviewBadgeResidu" class="ar-preview-badge"></div>
-                </div>
             </div>
         </div>
 

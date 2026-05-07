@@ -56,7 +56,7 @@
                         $no = 1;
                         ?>
 
-                        <?php $rtpList = $item['pemantauan_list'];:
+                        <?php $rtpList = $item['pemantauan_list']:
 
                             $rtpList   = $item['rtp_list'];
                             $rowspan   = count($rtpList);
