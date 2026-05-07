@@ -113,10 +113,8 @@ $th = $get['th'] ?? '';
                             <i class="ti ti-search"></i>
                         </button>
 
-                        <button type="button"
-                            class="btn btn-light btn-icon"
-                            id="erCsBtnReset"
-                            title="Reset Konteks">
+                        <button type="button" class="btn btn-light btn-icon"
+                            onclick="window.location.href='<?= site_url('evaluasi-risiko') ?>'">
                             <i class="ti ti-refresh"></i>
                         </button>
                     </div>
