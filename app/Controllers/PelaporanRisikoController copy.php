@@ -10,26 +10,23 @@ class PelaporanRisikoController extends BaseController
     protected $db;
     protected $pemantauanModel;
 
-    // fungsinya untuk inisialisasi dependency
     public function __construct()
     {
         $this->db = \Config\Database::connect();
         $this->pemantauanModel = new PemantauanRisikoModel();
     }
 
-    // fungsinya untuk mengambil daftar konteks
     private function getListKonteks()
     {
         return $this->db->table('konteks k')
-            ->select('k.id_konteks,k.tahun,k.id_satuan_kerja,k.id_kegiatan,k.pengelola_risiko_id,g.nama as nama_pengelola,sk.nama_satuan_kerja,kegiatan.nama_kegiatan')
-            ->join('satuan_kerja sk', 'sk.id_satuan_kerja=k.id_satuan_kerja', 'left')
+            ->select('k.id_konteks,k.tahun,k.id_tim,k.id_kegiatan,k.pengelola_risiko_id,g.nama as nama_pengelola,sk.nama_tim,kegiatan.nama_kegiatan')
+            ->join('tim_kerja sk', 'sk.id_tim=k.id_tim', 'left')
             ->join('kegiatan', 'kegiatan.id_kegiatan=k.id_kegiatan', 'left')
             ->join('pengelola_risiko g', 'g.id=k.pengelola_risiko_id', 'left')
             ->orderBy('k.created_at', 'DESC')
             ->get()->getResultArray();
     }
 
-    // fungsinya untuk mengambil periode aktif
     private function getPeriode()
     {
         $periode = session('pl_periode');
@@ -39,7 +36,17 @@ class PelaporanRisikoController extends BaseController
         return $periode;
     }
 
-    // fungsinya untuk set konteks + periode
+    private function getDateRange($bulan, $tahun, $type = 'bulanan')
+    {
+        $startDate = date('Y-m-01', strtotime("$tahun-$bulan-01"));
+        if ($type === '3bulan') {
+            $endDate = date('Y-m-t', strtotime("+2 months", strtotime($startDate)));
+        } else {
+            $endDate = date('Y-m-t', strtotime($startDate));
+        }
+        return [$startDate, $endDate];
+    }
+
     public function setActive()
     {
         $id = $this->request->getPost('id_konteks');
@@ -60,108 +67,183 @@ class PelaporanRisikoController extends BaseController
         return redirect()->to('/pelaporan-risiko');
     }
 
-    // fungsinya untuk menampilkan halaman pelaporan risiko
     public function index()
     {
         $userRole  = session('user_role');
         $idKonteks = session('id_konteks_pl');
-        $periode   = $this->getPeriode();
-        $bulan     = $periode['bulan'];
-        $tahun     = $periode['tahun'];
+        $periodeInput = $this->request->getGet('periode');
+
+        if ($periodeInput) {
+
+            [$tahun, $bulan] = explode('-', $periodeInput);
+
+            $periode = [
+                'bulan' => $bulan,
+                'tahun' => $tahun
+            ];
+        } else {
+
+            $periode = $this->getPeriode();
+
+            $bulan = $periode['bulan'];
+            $tahun = $periode['tahun'];
+        }
+        $type      = $this->request->getGet('tipe_periode') ?? 'bulanan';
+        $idKegiatan = $this->request->getGet('id_kegiatan');
 
         $builder = $this->db->table('rencana_penanganan_risiko rtp')
             ->select('
-            rtp.id_rtp,
-            rtp.uraian_rtp,
-            rtp.target_output,
-            rtp.target_waktu,
-            ir.pernyataan_risiko,
-            sk.nama_satuan_kerja,
-            pm.realisasi_output,
-            pm.realisasi_waktu,
-            COALESCE(pm.status, \'Belum Dilaksanakan\') as status
-        ')
-            ->join('evaluasi_risiko er',         'er.id_evaluasi = rtp.id_penilaian_awal')
-            ->join('identifikasi_risiko ir',     'ir.id_identifikasi = er.id_identifikasi')
-            ->join('konteks_proses_bisnis kpb',  'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k',                  'k.id_konteks = kpb.id_konteks')
-            ->join('satuan_kerja sk',            'sk.id_satuan_kerja = k.id_satuan_kerja', 'left')
-            ->join('pemantauan_risiko pm',       'pm.id_rtp = rtp.id_rtp', 'left');
+                rtp.id_rtp,
+                rtp.uraian_rtp,
+                rtp.target_output,
+                rtp.target_waktu,
+                ir.pernyataan_risiko,
+                sk.nama_tim,
+                kegiatan.id_kegiatan,
+                kegiatan.nama_kegiatan,
+                pm.realisasi_output,
+                pm.realisasi_waktu,
+                COALESCE(pm.status, \'Belum Dilaksanakan\') as status
+            ')
+            ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
+            ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
+            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
+            ->join('tim_kerja sk', 'sk.id_tim = k.id_tim', 'left')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = k.id_kegiatan', 'left')
+            ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left');
 
-        // Filter konteks
-        if ($userRole === 'admin' || $userRole === 'operator') {
+        $ketuaInfo = null;
+
+        if ($userRole === 'operator') {
+
+            $idTim = session('id_tim');
+
+            if ($idTim) {
+
+                // filter data operator
+                $builder->where('k.id_tim', $idTim);
+
+                // ambil info tim + ketua
+                $ketuaInfo = $this->db->table('tim_kerja sk')
+                    ->select('sk.nama_tim, g.nama')
+                    ->join(
+                        'penugasan_pengelola p',
+                        'p.tim_kerja_id = sk.id_tim',
+                        'left'
+                    )
+                    ->join('pengelola_risiko g', 'g.id = p.pengelola_id', 'left')
+                    ->where('sk.id_tim', $idTim)
+                    ->where('p.is_ketua_tim', true)
+                    ->get()
+                    ->getRowArray();
+            }
+        } elseif ($userRole === 'ketua') {
+
+            $pengelola_id = session('pengelola_id');
+
+            $penugasan = $this->db->table('penugasan_pengelola')
+                ->where('pengelola_id', $pengelola_id)
+                ->get()
+                ->getRow();
+
+            if ($penugasan) {
+
+                $idTim = $penugasan->tim_kerja_id;
+
+                // filter data ketua
+                $builder->where('k.id_tim', $idTim);
+
+                // info dirinya sendiri
+                $ketuaInfo = $this->db->table('tim_kerja sk')
+                    ->select('sk.nama_tim, g.nama')
+                    ->join(
+                        'penugasan_pengelola p',
+                        'p.tim_kerja_id = sk.id_tim',
+                        'left'
+                    )
+                    ->join('pengelola_risiko g', 'g.id = p.pengelola_id', 'left')
+                    ->where('sk.id_tim', $idTim)
+                    ->where('p.is_ketua_tim', true)
+                    ->get()
+                    ->getRowArray();
+            }
+        } else {
             if ($idKonteks) {
                 $builder->where('kpb.id_konteks', $idKonteks);
             }
         }
-
-        if ($userRole === 'ketua') {
-            $pengelola_id = session('pengelola_id');
-            $penugasan = $this->db->table('penugasan_pengelola')
-                ->where('pengelola_id', $pengelola_id)
-                ->get()->getRow();
-
-            if ($penugasan) {
-                $builder->where('k.id_satuan_kerja', $penugasan->satuan_kerja_id);
-            }
+        
+        if (!empty($idKegiatan)) {
+            $builder->where('k.id_kegiatan', $idKegiatan);
         }
 
-        /*
-     * Filter periode — tampilkan RTP yang RELEVAN dengan bulan/tahun dipilih:
-     * 1. Target waktu <= akhir bulan yang dipilih (sudah jatuh tempo atau sedang berjalan)
-     * 2. Belum selesai ATAU selesai/ditolak di bulan yang dipilih
-     * Dengan kata lain: semua RTP yang target waktunya <= periode dipilih
-     * dan belum selesai, ATAU yang realisasinya di bulan tersebut
-     */
-        $periodeStr = $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT);
+        if ($type === 'range') {
+            $start = $this->request->getGet('start_periode');
+            $end   = $this->request->getGet('end_periode');
+
+            if ($start && $end) {
+                $startDate = date('Y-m-01', strtotime($start));
+                $endDate   = date('Y-m-t', strtotime($end));
+            } else {
+                [$startDate, $endDate] = $this->getDateRange($bulan, $tahun, 'bulanan');
+            }
+        } else {
+            [$startDate, $endDate] = $this->getDateRange($bulan, $tahun, $type);
+        }
 
         $builder->groupStart()
-            // Target waktu sudah lewat atau sama dengan bulan dipilih
-            ->where("TO_CHAR(rtp.target_waktu, 'YYYY-MM') <=", $periodeStr)
-            ->groupStart()
-            // Belum selesai / masih aktif
+
             ->groupStart()
             ->where('pm.status IS NULL', null, false)
-            ->orWhereIn('pm.status', ['Dalam Proses', 'Belum Dilaksanakan', 'Terlambat'])
+            ->orWhereIn('pm.status', [
+                'Dalam Proses',
+                'Belum Dilaksanakan',
+                'Terlambat'
+            ])
             ->groupEnd()
-            // ATAU realisasi di bulan yang dipilih
-            ->orWhere("TO_CHAR(pm.realisasi_waktu, 'YYYY-MM')", $periodeStr)
-            // ATAU selesai/ditolak di bulan yang dipilih
-            ->orWhere("TO_CHAR(pm.updated_at, 'YYYY-MM')", $periodeStr)
+
+            ->orGroupStart()
+            ->where('pm.realisasi_waktu >=', $startDate)
+            ->where('pm.realisasi_waktu <=', $endDate)
             ->groupEnd()
+
+            ->orGroupStart()
+            ->where('pm.updated_at >=', $startDate)
+            ->where('pm.updated_at <=', $endDate)
+            ->groupEnd()
+
             ->groupEnd();
 
+        $builder->orderBy('kegiatan.nama_kegiatan', 'ASC');
         $builder->orderBy('rtp.id_rtp', 'ASC');
 
-        $data = $builder->get()->getResultArray();
+        $allData = $builder->get()->getResultArray();
 
-        $page    = (int)($this->request->getGet('page')    ?? 1);
+        $page    = (int)($this->request->getGet('page') ?? 1);
         $perPage = (int)($this->request->getGet('perPage') ?? 10);
 
-        $total  = count($data);
+        $total  = count($allData);
         $offset = ($page - 1) * $perPage;
-        $data   = array_slice($data, $offset, $perPage);
+        $data   = array_slice($allData, $offset, $perPage);
 
         $pager = [
             'currentPage' => $page,
-            'totalPages'  => (int)ceil($total / $perPage),
+            'totalPages' => (int)ceil($total / $perPage),
         ];
 
         $from = $total > 0 ? $offset + 1 : 0;
         $to   = min($offset + $perPage, $total);
 
-        // Summary dihitung dari SEMUA data (sebelum slice)
-        $allData = $builder->get()->getResultArray(); // ambil ulang untuk summary
-
         $summary = [
-            'total'       => $total,
-            'selesai'     => 0,
+            'total' => $total,
+            'selesai' => 0,
             'dalam_proses' => 0,
-            'belum'       => 0,
-            'terlambat'   => 0,
+            'belum' => 0,
+            'terlambat' => 0,
         ];
 
-        foreach ($data as $row) {
+        foreach ($allData as $row) {
             switch ($row['status']) {
                 case 'Selesai':
                     $summary['selesai']++;
@@ -178,33 +260,34 @@ class PelaporanRisikoController extends BaseController
             }
         }
 
-        $ketuaInfo = null;
-        if ($userRole === 'ketua') {
-            $pengelola_id = session('pengelola_id');
-            $ketuaInfo = $this->db->table('pengelola_risiko g')
-                ->select('g.nama, sk.nama_satuan_kerja')
-                ->join('penugasan_pengelola p', 'p.pengelola_id = g.id', 'left')
-                ->join('satuan_kerja sk',       'sk.id_satuan_kerja = p.satuan_kerja_id', 'left')
-                ->where('g.id', $pengelola_id)
-                ->get()->getRowArray();
-        }
+        $listKegiatan = $this->db->table('kegiatan')
+            ->select('id_kegiatan, nama_kegiatan, id_tim')
+            ->orderBy('nama_kegiatan', 'ASC')
+            ->get()
+            ->getResultArray();
 
         return view('pelaporan_risiko/index', [
-            'data'        => $data,
-            'summary'     => $summary,
+            'data' => $data,
+            'summary' => $summary,
             'listKonteks' => $this->getListKonteks(),
-            'periode'     => $periode,
-            'userRole'    => $userRole,
-            'pager'       => $pager,
-            'perPage'     => $perPage,
-            'total'       => $total,
-            'from'        => $from,
-            'to'          => $to,
-            'ketuaInfo'   => $ketuaInfo,
+            'periode' => $periode,
+            'userRole' => $userRole,
+            'pager' => $pager,
+            'perPage' => $perPage,
+            'total' => $total,
+            'from' => $from,
+            'to' => $to,
+            'ketuaInfo' => $ketuaInfo,
+            'tipe_periode' => $type,
+            'activeKonteks' => [
+                'id_tim' => $this->request->getGet('id_tim'),
+                'pengelola_risiko_id' => $this->request->getGet('pengelola_risiko_id'),
+            ],
+            'listKegiatan' => $listKegiatan,
+            'selectedKegiatan' => $idKegiatan,
         ]);
     }
 
-    // fungsinya untuk mengambil detail pelaporan
     public function detail($id)
     {
         $data = $this->db->table('rencana_penanganan_risiko rtp')
@@ -213,19 +296,17 @@ class PelaporanRisikoController extends BaseController
             rtp.uraian_rtp,
             rtp.target_output,
             rtp.target_waktu,
-
             ir.pernyataan_risiko,
             ir.penyebab_risiko,
             ir.dampak_risiko,
-
-            sk.nama_satuan_kerja,
+            sk.nama_tim,
+            kegiatan.nama_kegiatan,
             g.nama as nama_pengelola,
             k.tahun,
             ss.uraian_sasaran as sasaran_strategis,
             pb.kode_proses,
             pb.uraian_proses,
             sk_kinerja.uraian_sasaran as sasaran_kinerja,
-
             pr.nilai_risiko,
             pr.warna_risiko,
             pr.tindakan as tindakan_selera,
@@ -234,11 +315,12 @@ class PelaporanRisikoController extends BaseController
             sl.nama_level as nama_selera,
             km.level as level_kemungkinan,
             kd.level as level_dampak,
-
             pm.realisasi_output,
             pm.realisasi_waktu,
-            COALESCE(pm.status, \'Belum Dilaksanakan\') as status
-        ')
+            COALESCE(pm.status, \'Belum Dilaksanakan\') as status,
+            km_res.level as level_kemungkinan_residu,
+            kd_res.level as level_dampak_residu,
+            bp.url_link as link_bukti')
             ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
             ->join('penilaian_risiko pr', 'pr.id_penilaian = er.id_penilaian', 'left')
@@ -248,25 +330,54 @@ class PelaporanRisikoController extends BaseController
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->join('satuan_kerja sk', 'sk.id_satuan_kerja = k.id_satuan_kerja', 'left')
+            ->join('tim_kerja sk', 'sk.id_tim = k.id_tim', 'left')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = k.id_kegiatan', 'left')
             ->join('sasaran_strategis ss', 'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko g', 'g.id = k.pengelola_risiko_id', 'left')
             ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
             ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left')
+            ->join('bukti_pemantauan bp', 'bp.id_pemantauan = pm.id_pemantauan', 'left')
+            ->join('kriteria_kemungkinan km_res', 'km_res.id_kriteria = rtp.id_kemungkinan_residu', 'left')
+            ->join('kriteria_dampak kd_res', 'kd_res.id_kriteria = rtp.id_dampak_residu', 'left')
             ->where('rtp.id_rtp', $id)
+            ->get()->getRowArray();
+
+        helper('selera_risiko');
+
+        $probResidu = (int) ($data['level_kemungkinan_residu'] ?? 0);
+        $dampakResidu = (int) ($data['level_dampak_residu'] ?? 0);
+
+        $nilaiResidu = $probResidu * $dampakResidu;
+
+        $data['nilai_residu'] = $nilaiResidu;
+
+        // ambil master selera risiko
+        $seleraList = $this->db->table('selera_risiko')
             ->get()
-            ->getRowArray();
+            ->getResultArray();
+
+        // mapping berdasarkan nilai residu
+        $seleraResidu = selera_risiko_by_nilai(
+            $nilaiResidu,
+            $seleraList
+        );
+
+        $data['nama_selera_residu'] =
+            $seleraResidu['nama_level'] ?? '-';
+
+        $data['warna_residu'] =
+            $seleraResidu['warna'] ?? 'secondary';
+
+        $data['tindakan_residu'] =
+            $seleraResidu['tindakan'] ?? '-';
 
         return $this->response->setJSON($data);
     }
 
-    // fungsinya untuk approve RTP (hanya ketua)
     public function approve($id)
     {
         if (session('user_role') !== 'ketua') {
-            return $this->response->setStatusCode(403)->setJSON([
-                'error' => 'Akses ditolak'
-            ]);
+            return $this->response->setStatusCode(403)->setJSON(['error' => 'Akses ditolak']);
         }
 
         $this->pemantauanModel->where('id_rtp', $id)->set([
@@ -277,13 +388,10 @@ class PelaporanRisikoController extends BaseController
         return $this->response->setJSON(['success' => true]);
     }
 
-    // fungsinya untuk reject RTP (hanya ketua)
     public function reject($id)
     {
         if (session('user_role') !== 'ketua') {
-            return $this->response->setStatusCode(403)->setJSON([
-                'error' => 'Akses ditolak'
-            ]);
+            return $this->response->setStatusCode(403)->setJSON(['error' => 'Akses ditolak']);
         }
 
         $payload = $this->request->getJSON(true);
@@ -299,16 +407,48 @@ class PelaporanRisikoController extends BaseController
 
     public function print()
     {
+        $periode = session('pl_periode') ?? ['bulan' => date('m'), 'tahun' => date('Y')];
+        $bulan = $periode['bulan'];
+        $tahun = $periode['tahun'];
+
+        $bulanNama = [
+            '01' => 'Januari',
+            '02' => 'Februari',
+            '03' => 'Maret',
+            '04' => 'April',
+            '05' => 'Mei',
+            '06' => 'Juni',
+            '07' => 'Juli',
+            '08' => 'Agustus',
+            '09' => 'September',
+            '10' => 'Oktober',
+            '11' => 'November',
+            '12' => 'Desember'
+        ];
+
         $data = $this->db->table('rencana_penanganan_risiko rtp')
-            ->select('rtp.uraian_rtp, ir.pernyataan_risiko, pm.realisasi_output, pm.status')
+            ->select('rtp.uraian_rtp,ir.pernyataan_risiko,pm.realisasi_output,COALESCE(pm.status, \'Belum Dilaksanakan\') as status,sk.nama_tim')
             ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
+            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
+            ->join('tim_kerja sk', 'sk.id_tim = k.id_tim', 'left')
             ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left')
+            ->orderBy('rtp.id_rtp', 'ASC')
             ->get()->getResultArray();
 
+        $ketua = $this->db->table('pengelola_risiko g')
+            ->select('g.nama')
+            ->join('penugasan_pengelola p', 'p.pengelola_id = g.id', 'left')
+            ->where('p.is_ketua_tim', true)
+            ->get()->getRowArray();
+
         return view('pelaporan_risiko/print', [
-            'data' => $data
+            'data' => $data,
+            'bulan' => $bulanNama[$bulan] ?? $bulan,
+            'tahun' => $tahun,
+            'satker' => $data[0]['nama_tim'] ?? '-',
+            'nama_ketua' => $ketua['nama'] ?? '(................................)'
         ]);
     }
-    
 }

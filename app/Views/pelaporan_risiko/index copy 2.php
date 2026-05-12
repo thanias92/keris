@@ -33,7 +33,6 @@
         'periode'     => $periode,
         'userRole'    => $userRole,
         'ketuaInfo'   => $ketuaInfo ?? null,
-        'statusValidasi' => $statusValidasi ?? '',
     ]) ?>
 
     <?= view('pelaporan_risiko/_summary_cards', [
@@ -73,8 +72,13 @@
         url: {
             detail: (id) => `<?= site_url('pelaporan-risiko/detail') ?>/${id}`,
             ajukan: '<?= site_url('pelaporan-risiko/ajukan') ?>',
-            approveKegiatan: (id) =>`<?= site_url('pelaporan-risiko/approve-kegiatan') ?>/${id}`,
-            rejectKegiatan: (id) =>`<?= site_url('pelaporan-risiko/reject-kegiatan') ?>/${id}`,
+            approve: (id) => `<?= site_url('pelaporan-risiko/approve') ?>/${id}`,
+            reject: (id) => `<?= site_url('pelaporan-risiko/reject') ?>/${id}`,
+            approveKegiatan: (id) =>
+                `<?= site_url('pelaporan-risiko/approve-kegiatan') ?>/${id}`,
+
+            rejectKegiatan: (id) =>
+                `<?= site_url('pelaporan-risiko/reject-kegiatan') ?>/${id}`,
             print: '<?= site_url('pelaporan-risiko/print') ?>',
             export: '<?= site_url('pelaporan-risiko/export') ?>',
         }

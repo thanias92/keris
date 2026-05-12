@@ -40,9 +40,84 @@
                         ?>
                                 <tr class="pl-kegiatan-separator">
                                     <td colspan="8">
-                                        <div class="pl-kegiatan-title">
-                                            <i class="ti ti-folders me-2"></i>
-                                            <?= esc($currentKegiatan) ?>
+                                        <div class="d-flex justify-content-between align-items-center">
+
+                                            <div class="d-flex flex-column align-items-start">
+
+                                                <div class="pl-kegiatan-title">
+                                                    <i class="ti ti-folders me-2"></i>
+                                                    <?= esc($currentKegiatan) ?>
+                                                </div>
+
+                                                <?php
+                                                $statusValidasi = $row['status_validasi'] ?? 'Draft';
+
+                                                $badgeClass = match ($statusValidasi) {
+                                                    'Diajukan'  => 'bg-warning text-dark',
+                                                    'Disetujui' => 'bg-success',
+                                                    'Ditolak'   => 'bg-danger',
+                                                    default     => 'bg-secondary',
+                                                };
+                                                ?>
+
+                                                <div class="d-flex align-items-center gap-2">
+
+                                                    <span class="badge <?= $badgeClass ?>">
+                                                        <?= esc($statusValidasi) ?>
+                                                    </span>
+
+                                                </div>
+                                                <?php if (
+                                                    ($row['status_validasi'] ?? '') === 'Ditolak'
+                                                    && !empty($row['catatan_validasi'])
+                                                ): ?>
+
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-link btn-sm text-danger p-0 mt-1"
+                                                        onclick="event.stopPropagation(); plShowCatatan(`<?= esc($row['catatan_validasi']) ?>`)">
+
+                                                        <i class="ti ti-alert-circle me-1"></i>
+                                                        Lihat catatan
+
+                                                    </button>
+
+                                                <?php endif; ?>
+                                            </div>
+
+                                            <?php if (
+                                                ($userRole ?? '') === 'operator'
+                                                && ($row['status_validasi'] ?? 'Draft') !== 'Diajukan'
+                                            ): ?>
+                                                <button
+                                                    class="btn btn-sm btn-primary"
+                                                    onclick="event.stopPropagation(); plAjukanKegiatan(<?= (int)$row['id_kegiatan'] ?>)">
+                                                    <i class="ti ti-send me-1"></i>
+                                                    Ajukan ke Ketua
+                                                </button>
+                                            <?php endif; ?>
+                                            <?php if (
+                                                ($userRole ?? '') === 'ketua'
+                                                && ($statusValidasi ?? '') === 'Diajukan'
+                                            ): ?>
+
+                                                <div class="d-flex gap-2">
+
+                                                    <button
+                                                        class="btn btn-sm btn-success"
+                                                        onclick="event.stopPropagation(); plApproveKegiatan(<?= (int)$row['id_kegiatan'] ?>)">
+                                                        <i class="ti ti-check"></i>
+                                                    </button>
+
+                                                    <button
+                                                        class="btn btn-sm btn-danger"
+                                                        onclick="event.stopPropagation(); plRejectKegiatan(<?= (int)$row['id_kegiatan'] ?>)">
+                                                        <i class="ti ti-x"></i>
+                                                    </button>
+
+                                                </div>
+
+                                            <?php endif; ?>
                                         </div>
                                     </td>
                                 </tr>

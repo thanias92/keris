@@ -559,3 +559,10 @@
     display: flex;
     align-items: center;
 }
+
+.pl-catatan-validasi {
+    max-width: 420px;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.35;
+}

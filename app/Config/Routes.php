@@ -248,15 +248,26 @@ $routes->group('pemantauan-risiko', ['filter' => ['auth']], function ($routes) {
     $routes->get('bukti/download/(:num)', 'PemantauanRisikoController::downloadBukti/$1', ['filter' => 'role:admin,operator,ketua']);
 });
 
-// Pelaporan (semua role)
+// Pelaporan Risiko
 $routes->group('pelaporan-risiko', ['filter' => ['auth']], function ($routes) {
-    $routes->get('/', 'PelaporanRisikoController::index');
-    $routes->post('set-active', 'PelaporanRisikoController::setActive');
-    $routes->post('set-periode', 'PelaporanRisikoController::setPeriode');
-    $routes->get('detail/(:num)', 'PelaporanRisikoController::detail/$1');
-    $routes->post('approve/(:num)', 'PelaporanRisikoController::approve/$1');
-    $routes->post('reject/(:num)', 'PelaporanRisikoController::reject/$1');
-    $routes->post('validasi/(:num)', 'PelaporanRisikoController::validasi/$1');
-    $routes->get('export', 'PelaporanRisikoController::export');
-    $routes->get('print', 'PelaporanRisikoController::print');
+
+    // READ ACCESS
+    $routes->get('/', 'PelaporanRisikoController::index', ['filter' => 'role:admin,operator,ketua']);
+    $routes->get('detail/(:num)', 'PelaporanRisikoController::detail/$1', ['filter' => 'role:admin,operator,ketua']);
+    $routes->get('export', 'PelaporanRisikoController::export', ['filter' => 'role:admin,operator,ketua']);
+    $routes->get('print', 'PelaporanRisikoController::print', ['filter' => 'role:admin,operator,ketua']);
+
+    // OPERATOR
+    $routes->group('', ['filter' => 'role:operator'], function ($routes) {
+
+        $routes->post('set-active', 'PelaporanRisikoController::setActive');
+        $routes->post('set-periode', 'PelaporanRisikoController::setPeriode');
+        $routes->post('ajukan', 'PelaporanRisikoController::ajukan');
+    });
+
+    // KETUA
+    $routes->group('', ['filter' => 'role:ketua'], function ($routes) {
+        $routes->post('approve-kegiatan/(:num)','PelaporanRisikoController::approveKegiatan/$1');
+        $routes->post('reject-kegiatan/(:num)','PelaporanRisikoController::rejectKegiatan/$1');
+    });
 });

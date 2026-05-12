@@ -146,4 +146,26 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   toggleMode();
+
+  // SAVE SCROLL POSITION
+  const form = document.getElementById("plContextSelectorForm");
+
+  if (form) {
+    form.addEventListener("submit", function () {
+      sessionStorage.setItem("plScrollY", window.scrollY);
+    });
+  }
+
+  // RESTORE AFTER PAGE FULLY LOADED
+  window.addEventListener("load", function () {
+    const savedScroll = sessionStorage.getItem("plScrollY");
+
+    if (savedScroll !== null) {
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScroll, 10));
+        sessionStorage.removeItem("plScrollY");
+      }, 50);
+    }
+  });  
 });
+

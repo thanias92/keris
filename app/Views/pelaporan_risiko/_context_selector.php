@@ -79,6 +79,45 @@ $type = $tipe_periode ?? 'bulanan';
                             </select>
                         </div>
                     </div>
+
+                    <?php if (in_array($userRole, ['operator', 'ketua'])): ?>
+                        <div class="pl-field">
+                            <span class="pl-field-label">Status Validasi</span>
+
+                            <div class="pl-field-value">
+                                <select
+                                    class="pl-select"
+                                    id="plCsStatusValidasi"
+                                    name="status_validasi">
+
+                                    <option value="">Semua Status</option>
+
+                                    <?php if (($userRole ?? '') !== 'ketua'): ?>
+                                        <option value="Draft"
+                                            <?= ($statusValidasi ?? '') === 'Draft' ? 'selected' : '' ?>>
+                                            Draft
+                                        </option>
+                                    <?php endif; ?>
+
+                                    <option value="Diajukan"
+                                        <?= ($statusValidasi ?? '') === 'Diajukan' ? 'selected' : '' ?>>
+                                        Diajukan
+                                    </option>
+
+                                    <option value="Disetujui"
+                                        <?= ($statusValidasi ?? '') === 'Disetujui' ? 'selected' : '' ?>>
+                                        Disetujui
+                                    </option>
+
+                                    <option value="Ditolak"
+                                        <?= ($statusValidasi ?? '') === 'Ditolak' ? 'selected' : '' ?>>
+                                        Ditolak
+                                    </option>
+
+                                </select>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
 

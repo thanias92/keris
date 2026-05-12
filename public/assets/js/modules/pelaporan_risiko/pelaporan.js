@@ -37,7 +37,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // hanya tampilkan footer untuk ketua
   const footer = document.getElementById("plFooterKetua");
   if (footer) {
-    footer.style.display = role === "ketua" ? "block" : "none";
   }
 });
 
@@ -111,10 +110,8 @@ function openPelaporanDetail(id) {
       setText("plInfoProb", data.level_kemungkinan);
       setText("plInfoImpact", data.level_dampak);
 
-      document.getElementById("plPreviewNilai").textContent =
-        data.nilai_risiko || 0;
-      document.getElementById("plPreviewBadge").textContent =
-        data.nama_selera || "";
+      document.getElementById("plPreviewNilai").textContent = data.nilai_risiko || 0;
+      document.getElementById("plPreviewBadge").textContent = data.nama_selera || "";
       
       applyBadgeColor(
         document.getElementById("plPreviewBadge"),
@@ -148,18 +145,14 @@ function openPelaporanDetail(id) {
 
       setText("plInfoImpactResidu", data.level_dampak_residu);
 
-      document.getElementById("plPreviewNilaiResidu").textContent =
-        data.nilai_residu || 0;
+      document.getElementById("plPreviewNilaiResidu").textContent = data.nilai_residu || 0;
 
-      document.getElementById("plPreviewBadgeResidu").textContent =
-        data.nama_selera_residu || "";
+      document.getElementById("plPreviewBadgeResidu").textContent = data.nama_selera_residu || "";
       
       applyBadgeColor(
         document.getElementById("plPreviewBadgeResidu"),
         data.warna_residu,
       );
-
-      document.getElementById("plCatatan").value = "";
 
       bootstrap.Offcanvas.getOrCreateInstance(
         document.getElementById("plOffcanvas"),
@@ -169,50 +162,136 @@ function openPelaporanDetail(id) {
       Swal.fire("Error", "Gagal load detail", "error");
     });
 }
-//   APPROVE
-function plApprove() {
-  if (!currentId) return;
 
+function plAjukanKegiatan(idKegiatan) {
   Swal.fire({
-    title: "Approve data ini?",
+    title: "Ajukan laporan ke ketua?",
+    text: "Semua RTP pada kegiatan ini akan dikirim untuk validasi.",
     icon: "question",
     showCancelButton: true,
-    confirmButtonText: "Ya",
-  }).then((res) => {
-    if (!res.isConfirmed) return;
+    confirmButtonText: "Ya, Ajukan",
+    cancelButtonText: "Batal",
+  }).then((result) => {
+    if (!result.isConfirmed) return;
 
-    fetch(PL_URL.approve(currentId), {
+    fetch(PL_URL.ajukan, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id_kegiatan: idKegiatan,
+      }),
     })
-      .then(() => {
-        Swal.fire("Berhasil", "Data di-approve", "success").then(() =>
-          location.reload(),
-        );
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.success) {
+          Swal.fire("Error", data.error || "Gagal mengajukan laporan", "error");
+          return;
+        }
+
+        Swal.fire(
+          "Berhasil",
+          "Laporan berhasil diajukan ke ketua",
+          "success",
+        ).then(() => {
+          location.reload();
+        });
       })
-      .catch(() => Swal.fire("Error", "Gagal approve", "error"));
+      .catch(() => {
+        Swal.fire("Error", "Terjadi kesalahan server", "error");
+      });
   });
 }
 
-//   REJECT
-function plReject() {
-  if (!currentId) return;
+function plApproveKegiatan(idKegiatan) {
+  Swal.fire({
+    title: "Setujui laporan kegiatan?",
+    text: "Semua RTP pada kegiatan ini akan disetujui.",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Ya, Setujui",
+    cancelButtonText: "Batal",
+  }).then((result) => {
+    if (!result.isConfirmed) return;
 
-  const alasan = document.getElementById("plCatatan").value.trim();
-
-  if (!alasan) {
-    Swal.fire("Warning", "Catatan wajib diisi", "warning");
-    return;
-  }
-
-  fetch(PL_URL.reject(currentId), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ alasan }),
-  })
-    .then(() => {
-      Swal.fire("Berhasil", "Data ditolak", "success").then(() =>
-        location.reload(),
-      );
+    fetch(PL_URL.approveKegiatan(idKegiatan), {
+      method: "POST",
     })
-    .catch(() => Swal.fire("Error", "Gagal reject", "error"));
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.success) {
+          Swal.fire("Error", data.error || "Gagal approve", "error");
+          return;
+        }
+
+        Swal.fire("Berhasil", "Laporan berhasil disetujui", "success").then(
+          () => {
+            location.reload();
+          },
+        );
+      })
+      .catch(() => {
+        Swal.fire("Error", "Terjadi kesalahan server", "error");
+      });
+  });
+}
+
+function plRejectKegiatan(idKegiatan) {
+  Swal.fire({
+    title: "Reject laporan kegiatan?",
+    input: "textarea",
+    inputLabel: "Catatan Ketua",
+    inputPlaceholder: "Wajib isi alasan reject...",
+    inputAttributes: {
+      "aria-label": "Catatan Ketua",
+    },
+    showCancelButton: true,
+    confirmButtonText: "Reject",
+    cancelButtonText: "Batal",
+    confirmButtonColor: "#dc3545",
+
+    inputValidator: (value) => {
+      if (!value) {
+        return "Catatan wajib diisi";
+      }
+    },
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    fetch(PL_URL.rejectKegiatan(idKegiatan), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        alasan: result.value,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.success) {
+          Swal.fire("Error", data.error || "Gagal reject", "error");
+          return;
+        }
+
+        Swal.fire("Berhasil", "Laporan berhasil ditolak", "success").then(
+          () => {
+            location.reload();
+          },
+        );
+      })
+      .catch(() => {
+        Swal.fire("Error", "Terjadi kesalahan server", "error");
+      });
+  });
+}
+
+function plShowCatatan(catatan) {
+  Swal.fire({
+    title: "Catatan Ketua",
+    text: catatan,
+    icon: "info",
+    confirmButtonText: "Tutup",
+  });
 }

@@ -144,7 +144,7 @@ class PemantauanRisikoModel extends Model
         $data['id_rtp'] = $idRtp;
 
         // 🔥 TAMBAHAN BENAR DI SINI
-        $data['status_validasi'] = 'Menunggu';
+        $data['status_validasi'] = 'Draft';
 
         $this->skipValidation(true)->insert($data);
         return (int) $this->getInsertID();

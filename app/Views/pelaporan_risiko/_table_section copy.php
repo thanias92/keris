@@ -2,23 +2,24 @@
     <div class="card-body">
 
         <div class="ar-table-scroll">
-            <table class="table table-hover align-middle mb-0" id="plTable">
-
+            <table class="table table-hover align-middle mb-0 pl-report-table" id="plTable">
                 <thead class="table-light">
                     <tr>
-                        <th style="width:40px">#</th>
-                        <th>Risiko</th>
-                        <th>RTP</th>
-                        <th style="width:160px">Target Output</th>
-                        <th style="width:120px" class="text-center">Target Waktu</th>
-                        <th style="width:160px">Realisasi Output</th>
-                        <th style="width:120px" class="text-center">Realisasi Waktu</th>
-                        <th style="width:130px" class="text-center">Status</th>
+                        <th rowspan="2" style="width:50px">#</th>
+                        <th rowspan="2" style="width:24%">Risiko</th>
+                        <th rowspan="2" style="width:24%">RTP</th>
+                        <th colspan="2" class="text-center" style="width:22%">Target</th>
+                        <th colspan="3" class="text-center" style="width:30%">Realisasi</th>
+                    </tr>
+                    <tr>
+                        <th style="width:14%">Output</th>
+                        <th style="width:8%" class="text-center">Waktu</th>
+                        <th style="width:14%">Output</th>
+                        <th style="width:8%" class="text-center">Waktu</th>
+                        <th style="width:8%" class="text-center">Status</th>
                     </tr>
                 </thead>
-
                 <tbody>
-
                     <?php if (empty($data)): ?>
                         <tr>
                             <td colspan="8" class="text-center py-5 text-muted">
@@ -31,7 +32,24 @@
 
                         <?php
                         $no = $from ?? 1;
+                        $lastKegiatan = null;
+
                         foreach ($data as $row):
+                            $currentKegiatan = $row['nama_kegiatan'] ?? 'Tanpa Kegiatan';
+                            if ($currentKegiatan !== $lastKegiatan):
+                        ?>
+                                <tr class="pl-kegiatan-separator">
+                                    <td colspan="8">
+                                        <div class="pl-kegiatan-title">
+                                            <i class="ti ti-folders me-2"></i>
+                                            <?= esc($currentKegiatan) ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php
+                                $lastKegiatan = $currentKegiatan;
+
+                            endif;
                             $status = $row['status'] ?? 'Belum Dilaksanakan';
                             $badge  = match ($status) {
                                 'Selesai'      => 'success',
@@ -39,7 +57,7 @@
                                 'Terlambat'    => 'danger',
                                 default        => 'secondary',
                             };
-                        ?>
+                            ?>
 
                             <tr class="pl-row"
                                 data-id="<?= esc($row['id_rtp']) ?>"
@@ -49,15 +67,14 @@
                                 <td><?= $no++ ?></td>
 
                                 <!-- RISIKO -->
-                                <td class="ar-risiko-cell">
-                                    <div class="fw-semibold text-truncate ar-risiko-text"
-                                        style="font-size:0.875rem"
+                                <td class="pl-col-risiko">
+                                    <div class="fw-semibold text-truncate pl-truncate"
                                         title="<?= esc($row['pernyataan_risiko']) ?>">
                                         <?= esc($row['pernyataan_risiko']) ?>
                                     </div>
+
                                     <?php if (!empty($row['nama_tim'])): ?>
-                                        <div class="text-muted text-truncate ar-risiko-text"
-                                            style="font-size:0.78rem"
+                                        <div class="text-muted text-truncate small pl-truncate"
                                             title="<?= esc($row['nama_tim']) ?>">
                                             <i class="ti ti-building me-1"></i><?= esc($row['nama_tim']) ?>
                                         </div>
@@ -65,9 +82,8 @@
                                 </td>
 
                                 <!-- RTP -->
-                                <td class="ar-risiko-cell">
-                                    <div class="text-truncate ar-risiko-text"
-                                        style="font-size:0.85rem"
+                                <td class="pl-col-rtp">
+                                    <div class="text-truncate pl-truncate"
                                         title="<?= esc($row['uraian_rtp']) ?>">
                                         <?= esc($row['uraian_rtp']) ?>
                                     </div>
@@ -75,7 +91,7 @@
 
                                 <!-- TARGET OUTPUT -->
                                 <td>
-                                    <div class="text-truncate small"
+                                    <div class="text-truncate small pl-truncate" style="font-size:0.85rem"
                                         title="<?= esc($row['target_output']) ?>">
                                         <?= esc($row['target_output'] ?? '-') ?>
                                     </div>
@@ -96,7 +112,7 @@
 
                                 <!-- REALISASI OUTPUT -->
                                 <td>
-                                    <div class="text-truncate small"
+                                    <div class="text-truncate small pl-truncate" style="font-size:0.85rem"
                                         title="<?= esc($row['realisasi_output'] ?? '') ?>">
                                         <?= esc($row['realisasi_output'] ?? '-') ?>
                                     </div>
@@ -159,13 +175,13 @@
             </div>
 
             <!-- PAGINATION -->
-            <?php if (isset($pager) && ($pager['totalPages'] ?? 1) > 1): ?>
+            <?php if (isset($pager)): ?>
                 <div class="ar-pagination">
                     <ul class="pagination mb-0">
 
                         <li class="page-item <?= $pager['currentPage'] <= 1 ? 'disabled' : '' ?>">
-                            <a class="page-link"
-                                href="?page=<?= $pager['currentPage'] - 1 ?>&perPage=<?= $perPage ?>">
+                            <a class="page-link" href="#"
+                                onclick="plGoToPage(<?= $pager['currentPage'] - 1 ?>); return false;">
                                 &laquo;
                             </a>
                         </li>
@@ -188,7 +204,8 @@
                             <?php endif; ?>
                             <li class="page-item <?= $i === $cur ? 'active' : '' ?>">
                                 <a class="page-link"
-                                    href="?page=<?= $i ?>&perPage=<?= $perPage ?>">
+                                    href="#"
+                                    onclick="plGoToPage(<?= $i ?>); return false;">
                                     <?= $i ?>
                                 </a>
                             </li>
@@ -196,8 +213,8 @@
                         endforeach; ?>
 
                         <li class="page-item <?= $cur >= $total_pages ? 'disabled' : '' ?>">
-                            <a class="page-link"
-                                href="?page=<?= $cur + 1 ?>&perPage=<?= $perPage ?>">
+                            <a class="page-link" href="#"
+                                onclick="plGoToPage(<?= $cur + 1 ?>); return false;">
                                 &raquo;
                             </a>
                         </li>
@@ -210,3 +227,50 @@
     <?php endif; ?>
 
 </div>
+
+<script>
+    function plGoToPage(page) {
+        const url = new URL(window.location.href);
+
+        url.searchParams.set('page', page);
+        url.searchParams.set('perPage', <?= $perPage ?? 10 ?>);
+
+        // preserve filter
+        const periode = document.getElementById('plCsPeriode');
+        const type = document.getElementById('plCsType');
+        const tim = document.getElementById('plCsTimKerja');
+        const pengelola = document.getElementById('plCsPengelola');
+        const kegiatan = document.getElementById('plCsKegiatan');
+        const start = document.getElementById('plStart');
+        const end = document.getElementById('plEnd');
+
+        if (periode) url.searchParams.set('periode', periode.value);
+        if (type) url.searchParams.set('tipe_periode', type.value);
+        if (tim) url.searchParams.set('id_tim', tim.value);
+        if (pengelola) url.searchParams.set('pengelola_risiko_id', pengelola.value);
+        if (kegiatan) url.searchParams.set('id_kegiatan', kegiatan.value);
+        if (start) url.searchParams.set('start_periode', start.value);
+        if (end) url.searchParams.set('end_periode', end.value);
+
+        const wrapper = document.getElementById('plTableCard');
+        const scrollY = window.scrollY;
+
+        fetch(url.toString())
+            .then(r => r.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newCard = doc.getElementById('plTableCard');
+
+                if (newCard && wrapper) {
+                    wrapper.outerHTML = newCard.outerHTML;
+
+                    window.history.pushState({}, '', url.toString());
+
+                    window.scrollTo({
+                        top: scrollY
+                    });
+                }
+            });
+    }
+</script>

@@ -206,22 +206,4 @@
         </div>
 
     </div>
-
-    <!-- FOOTER (hanya tampil untuk role ketua) -->
-    <div class="p-3 border-top" id="plFooterKetua">
-        <div class="mb-2">
-            <label class="small text-muted">Catatan Ketua Tim</label>
-            <textarea id="plCatatan" class="form-control" rows="2"
-                placeholder="Wajib diisi jika reject"></textarea>
-        </div>
-        <div class="d-flex gap-2">
-            <button class="btn btn-success w-100" onclick="plApprove()">
-                <i class="ti ti-check me-1"></i>Approve
-            </button>
-            <button class="btn btn-danger w-100" onclick="plReject()">
-                <i class="ti ti-x me-1"></i>Reject
-            </button>
-        </div>
-    </div>
-
 </div>
