@@ -10,17 +10,10 @@ $routes->post('login', 'AuthController::attemptLogin');
 $routes->get('logout', 'AuthController::logout');
 
 // Dashboard
-$routes->group('', ['filter' => ['auth']], function ($routes) {
-    $routes->get('/','DashboardController::index',['filter' => 'role:admin,operator,ketua']);
-    $routes->get('dashboard','DashboardController::index',['filter' => 'role:admin,operator,ketua']);
-    $routes->get('dashboard/data','DashboardController::data',['filter' => 'role:admin,operator,ketua']);
-});
-
-// Global Context
-$routes->group('global-context', ['filter' => ['auth']], function ($routes) {
-    $routes->post('set','GlobalContextController::set',['filter' => 'role:admin,operator,ketua']);
-    $routes->get('kegiatan','GlobalContextController::getKegiatanByTim',['filter' => 'role:admin,operator,ketua']);
-    $routes->post('reset','GlobalContextController::reset',['filter' => 'role:admin,operator,ketua']);
+$routes->group('', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'DashboardController::index');
+    $routes->get('dashboard', 'DashboardController::index');
+    $routes->get('dashboard/data', 'DashboardController::data');
 });
 
 // Manajemen User (admin)

@@ -4,19 +4,13 @@
 }
 
 body {
-    font-family: DejaVu Sans, sans-serif;
-    font-size: 11px;
+    font-family: "Times New Roman", serif;
+    font-size: 12px;
     color: #000;
-    margin: 0;
-    padding: 0;
 }
 
 .report-wrapper {
     width: 100%;
-}
-
-.report-section {
-    margin-bottom: 40px;
 }
 
 /* =========================
@@ -24,31 +18,25 @@ body {
 ========================= */
 
 .report-header {
-    width: 100%;
-    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 12px;
 }
 
-.header-table {
-    width: 100%;
-    border-collapse: collapse;
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
 }
 
-.header-table td {
-    border: none;
-    vertical-align: middle;
+.header-left img {
+    width: 72px;
 }
 
-.logo-cell {
-    width: 90px;
-}
-
-.logo-cell img {
-    width: 70px;
-}
-
-.instansi-cell {
-    width: 150px;
-    line-height: 1.2;
+.header-instansi {
+    line-height: 1.3;
 }
 
 .bps-title {
@@ -60,15 +48,18 @@ body {
     font-size: 14px;
 }
 
-.title-cell {
+.header-center {
+    flex: 1;
     text-align: center;
-    font-size: 16px;
+
+    font-size: 24px;
     font-weight: bold;
+
+    margin-right: 90px;
 }
 
 .header-line {
-    border-top: 1px solid #000;
-    margin-top: 10px;
+    border: 1px solid #000;
     margin-bottom: 18px;
 }
 
@@ -80,15 +71,9 @@ body {
     margin-bottom: 18px;
 }
 
-.meta-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.meta-table td {
-    border: none;
-    padding: 3px 0;
-    vertical-align: top;
+.meta-row {
+    display: flex;
+    margin-bottom: 5px;
 }
 
 .meta-label {
@@ -101,6 +86,10 @@ body {
     text-align: center;
 }
 
+.meta-value {
+    flex: 1;
+}
+
 /* =========================
    TABLE
 ========================= */
@@ -108,17 +97,16 @@ body {
 .report-table {
     width: 100%;
     border-collapse: collapse;
+
     margin-top: 10px;
-    font-size: 10px;
 }
 
 .report-table th,
 .report-table td {
     border: 1px solid #000;
-    padding: 5px;
+    padding: 8px;
+
     vertical-align: top;
-    line-height: 1.4;
-    word-wrap: break-word;
 }
 
 .report-table th {
@@ -148,21 +136,16 @@ body {
 /* =========================
    SIGNATURE
 ========================= */
-
 .signature-wrapper {
-    width: 100%;
-    margin-top: 40px;
+    margin-top: 70px;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 80px;
 }
 
-.signature-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.signature-table td {
-    width: 50%;
-    border: none;
-    vertical-align: top;
+.signature-box {
+    flex: 1;
     text-align: center;
 }
 
@@ -179,11 +162,13 @@ body {
 }
 
 .signature-space {
-    height: 70px;
+    height: 90px;
 }
 
 .signature-name {
+    font-weight: normal;
     text-decoration: underline;
+
     margin-bottom: 4px;
 }
 
@@ -199,17 +184,5 @@ thead {
 }
 
 tr {
-    page-break-inside: avoid;
-}
-
-table {
-    page-break-inside: auto;
-}
-
-tr {
-    page-break-inside: avoid;
-}
-
-.signature-wrapper {
     page-break-inside: avoid;
 }

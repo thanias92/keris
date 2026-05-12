@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\PemantauanRisikoModel;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class PelaporanRisikoController extends BaseController
 {
@@ -512,9 +514,22 @@ class PelaporanRisikoController extends BaseController
 
     public function print()
     {
-        $periode = session('pl_periode') ?? ['bulan' => date('m'), 'tahun' => date('Y')];
-        $bulan = $periode['bulan'];
-        $tahun = $periode['tahun'];
+        $periodeInput = $this->request->getGet('periode');
+
+        if ($periodeInput) {
+            [$tahun, $bulan] = explode('-', $periodeInput);
+        } else {
+            $periode = session('pl_periode') ?? [
+                'bulan' => date('m'),
+                'tahun' => date('Y')
+            ];
+
+            $bulan = $periode['bulan'];
+            $tahun = $periode['tahun'];
+        }
+
+        $idKegiatan = $this->request->getGet('id_kegiatan');
+        $form = $this->request->getGet('form') ?? 'form4';
 
         $bulanNama = [
             '01' => 'Januari',
@@ -531,29 +546,134 @@ class PelaporanRisikoController extends BaseController
             '12' => 'Desember'
         ];
 
-        $data = $this->db->table('rencana_penanganan_risiko rtp')
-            ->select('rtp.uraian_rtp,ir.pernyataan_risiko,pm.realisasi_output,COALESCE(pm.status, \'Belum Dilaksanakan\') as status,sk.nama_tim')
-            ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
-            ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
-            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->join('tim_kerja sk', 'sk.id_tim = k.id_tim', 'left')
-            ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left')
-            ->orderBy('rtp.id_rtp', 'ASC')
-            ->get()->getResultArray();
+        $builder = $this->db->table('rencana_penanganan_risiko rtp')
+            ->select("
+            rtp.id_rtp,
+            rtp.uraian_rtp,
+            rtp.target_output,
+            rtp.target_waktu,
+            ir.pernyataan_risiko,
+            pm.realisasi_output,
+            pm.realisasi_waktu,
+            COALESCE(pm.status, 'Belum Dilaksanakan') as status,
+            sk.nama_tim,
+            kegiatan.id_kegiatan,
+            kegiatan.nama_kegiatan
+        ")
+            ->join('evaluasi_risiko er','er.id_evaluasi = rtp.id_penilaian_awal')
+            ->join('identifikasi_risiko ir','ir.id_identifikasi = er.id_identifikasi')
+            ->join('konteks_proses_bisnis kpb','kpb.id_konteks_proses = ir.id_konteks_proses')
+            ->join('konteks k','k.id_konteks = kpb.id_konteks')
+            ->join('tim_kerja sk','sk.id_tim = k.id_tim','left')
+            ->join('kegiatan','kegiatan.id_kegiatan = k.id_kegiatan','left')
+            ->join('pemantauan_risiko pm','pm.id_rtp = rtp.id_rtp','left')
+            ->where('pm.status_validasi', 'Disetujui');
 
+        // FILTER TIM LOGIN
+        if (session('user_role') === 'operator') {
+            $builder->where('k.id_tim',session('id_tim'));
+        }
+
+        // FILTER KETUA
+        if (session('user_role') === 'ketua') {
+            $pengelolaId = session('pengelola_id');
+            $penugasan = $this->db->table('penugasan_pengelola')
+                ->where('pengelola_id', $pengelolaId)
+                ->get()
+                ->getRowArray();
+            if ($penugasan) {
+                $builder->where('k.id_tim', $penugasan['tim_kerja_id']);
+            }
+        }
+
+        // FILTER KEGIATAN
+        if (!empty($idKegiatan)) {
+            $builder->where('k.id_kegiatan',$idKegiatan);
+        }
+
+        $builder->orderBy('rtp.id_rtp', 'ASC');
+        $data = $builder->get()->getResultArray();
+
+        // TIM
+        $timkerja = $data[0]['nama_tim'] ?? '-';
+        // KEGIATAN
+        $kegiatan = $data[0]['nama_kegiatan'] ?? '-';
+        // KETUA TIM
         $ketua = $this->db->table('pengelola_risiko g')
-            ->select('g.nama')
-            ->join('penugasan_pengelola p', 'p.pengelola_id = g.id', 'left')
+            ->select('g.nama,g.nip,sk.nama_tim')
+            ->join('penugasan_pengelola p','p.pengelola_id = g.id')
+            ->join('tim_kerja sk','sk.id_tim = p.tim_kerja_id')
             ->where('p.is_ketua_tim', true)
-            ->get()->getRowArray();
+            ->where('sk.nama_tim', $timkerja)
+            ->get()
+            ->getRowArray();
 
-        return view('pelaporan_risiko/print', [
+        // PEMILIK RISIKO
+        $pemilik = $this->db->table('pengelola_risiko')
+            ->where('is_pemilik', true)
+            ->get()
+            ->getRowArray();
+
+        $viewData = [
             'data' => $data,
             'bulan' => $bulanNama[$bulan] ?? $bulan,
             'tahun' => $tahun,
-            'satker' => $data[0]['nama_tim'] ?? '-',
-            'nama_ketua' => $ketua['nama'] ?? '(................................)'
+            'timkerja' => $timkerja,
+            'kegiatan' => $kegiatan,
+            'nama_ketua' => $ketua['nama'] ?? '-',
+            'nip_ketua' => $ketua['nip'] ?? '-',
+            'nama_pemilik' => $pemilik['nama'] ?? '-',
+            'nip_pemilik' => $pemilik['nip'] ?? '-',
+            'jabatan_pemilik' => $pemilik['jabatan'] ?? '-',
+            'form' => $form,
+        ];
+
+        // RENDER HTML VIEW
+        $html = view('pelaporan_risiko/pdf/print', $viewData);
+
+        // DOMPDF OPTIONS
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', true);
+
+        // INIT DOMPDF
+        $dompdf = new Dompdf($options);
+
+        // LOAD HTML
+        $dompdf->loadHtml($html);
+
+        // PAPER
+        $dompdf->setPaper('A4', 'landscape');
+
+        // RENDER PDF
+        $dompdf->render();
+
+        // FILENAME
+        $formLabel = match ($form) {
+            'form1' => 'Form-1-Konteks',
+            'form2' => 'Form-2-Risiko',
+            'form3' => 'Form-3-RTP',
+            'form4' => 'Form-4-Pelaporan',
+            default => 'Semua-Form'
+        };
+
+        $namaKegiatan = preg_replace(
+            '/[^A-Za-z0-9\-]/',
+            '_',
+            $kegiatan ?? 'Kegiatan'
+        );
+
+        $filename = 'Laporan-Risiko-' .
+            $formLabel .
+            '-' .
+            $namaKegiatan .
+            '.pdf';
+
+        // STREAM PDF
+        $dompdf->stream($filename, [
+            'Attachment' => false
         ]);
+
+        exit;
     }
 }

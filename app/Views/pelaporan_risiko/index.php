@@ -16,13 +16,92 @@
                     <h2 class="page-title mb-0">Pelaporan Risiko</h2>
                 </div>
                 <div class="col-12 col-lg-4 text-lg-end mt-2 mt-lg-0">
-                    <a href="<?= base_url('pelaporan-risiko/print') ?>" target="_blank" class="btn btn-outline-secondary me-2">
-                        🖨️ Print PDF
-                    </a>
+                    <div class="dropdown d-inline-block">
+                        <button
+                            class="btn btn-sm btn-outline-primary dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
 
-                    <a href="<?= base_url('pelaporan-risiko/export') ?>" class="btn btn-primary">
-                        ⬇️ Export Excel
-                    </a>
+                            <i class="ti ti-download me-1"></i>
+                            Export
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <li>
+                                <button
+                                    type="button"
+                                    class="dropdown-item"
+                                    onclick="plPrintReport('form1')">
+
+                                    <i class="ti ti-file-text me-2"></i>
+                                    Export Form 1
+                                </button>
+                            </li>
+
+                            <li>
+                                <button
+                                    type="button"
+                                    class="dropdown-item"
+                                    onclick="plPrintReport('form2')">
+
+                                    <i class="ti ti-file-text me-2"></i>
+                                    Export Form 2
+                                </button>
+                            </li>
+
+                            <li>
+                                <button
+                                    type="button"
+                                    class="dropdown-item"
+                                    onclick="plPrintReport('form3')">
+
+                                    <i class="ti ti-file-text me-2"></i>
+                                    Export Form 3
+                                </button>
+                            </li>
+
+                            <li>
+                                <button
+                                    type="button"
+                                    class="dropdown-item"
+                                    onclick="plPrintReport('form4')">
+
+                                    <i class="ti ti-file-text me-2"></i>
+                                    Export Form 4
+                                </button>
+                            </li>
+
+                            <li>
+                                <button
+                                    type="button"
+                                    class="dropdown-item"
+                                    onclick="plPrintReport('all')">
+
+                                    <i class="ti ti-stack-2 me-2"></i>
+                                    Export Semua Form
+                                </button>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <li>
+                                <button
+                                    type="button"
+                                    class="dropdown-item"
+                                    onclick="plExportExcel()">
+
+                                    <i class="ti ti-file-export me-2"></i>
+                                    Export Excel
+                                </button>
+                            </li>
+
+                        </ul>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -73,8 +152,8 @@
         url: {
             detail: (id) => `<?= site_url('pelaporan-risiko/detail') ?>/${id}`,
             ajukan: '<?= site_url('pelaporan-risiko/ajukan') ?>',
-            approveKegiatan: (id) =>`<?= site_url('pelaporan-risiko/approve-kegiatan') ?>/${id}`,
-            rejectKegiatan: (id) =>`<?= site_url('pelaporan-risiko/reject-kegiatan') ?>/${id}`,
+            approveKegiatan: (id) => `<?= site_url('pelaporan-risiko/approve-kegiatan') ?>/${id}`,
+            rejectKegiatan: (id) => `<?= site_url('pelaporan-risiko/reject-kegiatan') ?>/${id}`,
             print: '<?= site_url('pelaporan-risiko/print') ?>',
             export: '<?= site_url('pelaporan-risiko/export') ?>',
         }
