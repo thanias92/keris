@@ -98,16 +98,10 @@ class AnalisisRisikoController extends BaseController
             $idKonteks = session('id_konteks_ar');
         }
 
-        $idTim = $this->request->getGet('sk')
-            ?? session('global_id_tim');
-
-        $idKegiatan = $this->request->getGet('kg')
-            ?? session('global_id_kegiatan');
-
-        $tahun = $this->request->getGet('th')
-            ?? session('global_tahun');
-
-        $idPengelola = $this->request->getGet('pg');
+        $idTim        = $this->request->getGet('sk');
+        $idPengelola  = $this->request->getGet('pg');
+        $idKegiatan   = $this->request->getGet('kg');
+        $tahun        = $this->request->getGet('th');
 
         $activeKonteks = $this->getActiveKonteks();
 
@@ -306,16 +300,10 @@ class AnalisisRisikoController extends BaseController
             $idKonteks = session('id_konteks_ar');
         }
 
-        $idTim = $this->request->getGet('sk')
-            ?? session('global_id_tim');
-
-        $idKegiatan = $this->request->getGet('kg')
-            ?? session('global_id_kegiatan');
-
-        $tahun = $this->request->getGet('th')
-            ?? session('global_tahun');
-
-        $idPengelola = $this->request->getGet('pg');
+        $idTim        = $this->request->getGet('sk');
+        $idPengelola  = $this->request->getGet('pg');
+        $idKegiatan   = $this->request->getGet('kg');
+        $tahun        = $this->request->getGet('th');
 
         $activeKonteks = $this->getActiveKonteks();
 

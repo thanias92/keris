@@ -115,12 +115,13 @@ class PemantauanRisikoController extends BaseController
     {
         $db = $this->db;
 
-        $globalTahun    = session('global_tahun');
-        $globalTim      = session('global_id_tim');
-        $globalKegiatan = session('global_id_kegiatan');
+        $idFromGet = $this->request->getGet('id_konteks');
+        if ($idFromGet) {
+            session()->set('id_konteks_pemantauan', $idFromGet);
+        }
 
-        $activeKonteks = null;
-        $idKonteks = null;
+        $activeKonteks = $this->getActiveKonteks();
+        $idKonteks     = $activeKonteks ? (int) $activeKonteks['id_konteks'] : null;
 
         $perPage = (int) ($this->request->getGet('perPage') ?? 10);
         $page    = (int) ($this->request->getGet('page')    ?? 1);
@@ -175,16 +176,8 @@ class PemantauanRisikoController extends BaseController
             ->orderBy('pb.kode_proses', 'ASC')
             ->orderBy('rtp.id_rtp', 'ASC');
 
-        if ($globalTahun) {
-            $builder->where('k.tahun', $globalTahun);
-        }
-
-        if ($globalTim) {
-            $builder->where('k.id_tim', $globalTim);
-        }
-
-        if ($globalKegiatan) {
-            $builder->where('k.id_kegiatan', $globalKegiatan);
+        if ($idKonteks) {
+            $builder->where('kpb.id_konteks', $idKonteks);
         }
 
         if ($filter && $filter !== 'semua') {
@@ -200,23 +193,12 @@ class PemantauanRisikoController extends BaseController
 
         $qCount = $this->db->table('rencana_penanganan_risiko rtp')
             ->select('COUNT(rtp.id_rtp) as total')
-            ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
-            ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
+            ->join('evaluasi_risiko er',        'er.id_evaluasi = rtp.id_penilaian_awal')
+            ->join('identifikasi_risiko ir',    'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->join('pemantauan_risiko pm','pm.id_rtp = rtp.id_rtp', 'left');
+            ->join('pemantauan_risiko pm',      'pm.id_rtp = rtp.id_rtp', 'left');
 
-        if ($globalTahun) {
-            $qCount->where('k.tahun', $globalTahun);
-        }
-
-        if ($globalTim) {
-            $qCount->where('k.id_tim', $globalTim);
-        }
-
-        if ($globalKegiatan) {
-            $qCount->where('k.id_kegiatan', $globalKegiatan);
-        }
+        if ($idKonteks) $qCount->where('kpb.id_konteks', $idKonteks);
 
         if ($filter && $filter !== 'semua') {
             if ($filter === 'Belum Dilaksanakan') {
@@ -322,12 +304,6 @@ class PemantauanRisikoController extends BaseController
 
         $activeKonteks = $this->getActiveKonteks();
         $idKonteks     = $activeKonteks ? (int)$activeKonteks['id_konteks'] : null;
-        $globalTahun    = session('global_tahun');
-        $globalTim      = session('global_id_tim');
-        $globalKegiatan = session('global_id_kegiatan');
-
-        $activeKonteks = null;
-        $idKonteks = null;
 
         $filter  = $this->request->getGet('filter');
         $perPage = (int) ($this->request->getGet('perPage') ?? 10);
@@ -368,16 +344,8 @@ class PemantauanRisikoController extends BaseController
             ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
             ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left');
 
-        if ($globalTahun) {
-            $builder->where('k.tahun', $globalTahun);
-        }
-
-        if ($globalTim) {
-            $builder->where('k.id_tim', $globalTim);
-        }
-
-        if ($globalKegiatan) {
-            $builder->where('k.id_kegiatan', $globalKegiatan);
+        if ($idKonteks) {
+            $builder->where('kpb.id_konteks', $idKonteks);
         }
 
         if ($filter && $filter !== 'semua') {
@@ -394,19 +362,10 @@ class PemantauanRisikoController extends BaseController
             ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
             ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left');
 
-        if ($globalTahun) {
-            $qCount->where('k.tahun', $globalTahun);
-        }
-
-        if ($globalTim) {
-            $qCount->where('k.id_tim', $globalTim);
-        }
-
-        if ($globalKegiatan) {
-            $qCount->where('k.id_kegiatan', $globalKegiatan);
+        if ($idKonteks) {
+            $qCount->where('kpb.id_konteks', $idKonteks);
         }
 
         $total = (int) ($qCount->get()->getRowArray()['total'] ?? 0);

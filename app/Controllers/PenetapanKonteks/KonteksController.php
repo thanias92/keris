@@ -96,6 +96,7 @@ class KonteksController extends BaseContextController
                     'listSasaran'     => $listSasaran,
                     'listWilayah'     => $listWilayah,
                     'filters'         => compact('sk', 'pg', 'th', 'kg', 'ss'),
+                    'hideGlobalContext' => true,
                 ]
             )
         );

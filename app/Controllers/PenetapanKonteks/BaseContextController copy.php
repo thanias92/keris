@@ -9,40 +9,34 @@ class BaseContextController extends BaseController
 {
     protected function getActiveKonteks()
     {
-        $tahun       = session('global_tahun');
-        $idTim       = session('global_id_tim');
-        $idKegiatan  = session('global_id_kegiatan');
+        $id = session('id_konteks_aktif');
+        if (!$id) return null;
 
-        $builder = (new KonteksModel())
+        $model = new KonteksModel();
+
+        $data = $model
             ->select('
-            konteks.*,
-            kegiatan.nama_kegiatan,
-            tim_kerja.nama_tim,
-            sasaran_strategis.uraian_sasaran,
-            p.nama as nama_pemilik,
-            g.nama as nama_pengelola
-        ')
+                konteks.*,
+                kegiatan.nama_kegiatan,
+                tim_kerja.nama_tim,
+                sasaran_strategis.uraian_sasaran,
+                p.nama as nama_pemilik,
+                g.nama as nama_pengelola
+            ')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan')
             ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim')
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
-            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left');
-
-        if ($tahun) {
-            $builder->where('konteks.tahun', $tahun);
-        }
-
-        if ($idTim) {
-            $builder->where('konteks.id_tim', $idTim);
-        }
-
-        if ($idKegiatan) {
-            $builder->where('konteks.id_kegiatan', $idKegiatan);
-        }
-
-        return $builder
-            ->orderBy('konteks.created_at', 'DESC')
+            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
+            ->where('konteks.id_konteks', $id)
             ->first();
+
+        if (!$data) {
+            session()->remove('id_konteks_aktif');
+            return null;
+        }
+
+        return $data;
     }
 
     protected function getListKonteks()

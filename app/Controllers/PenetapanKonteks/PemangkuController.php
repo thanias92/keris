@@ -36,6 +36,7 @@ class PemangkuController extends BaseContextController
                 'to'        => $to,
                 'total'     => $total,
                 'perPage'   => $perPage,
+                'hideGlobalContext' => true,
             ]
         ));
     }

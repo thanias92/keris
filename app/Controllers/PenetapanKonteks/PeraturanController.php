@@ -20,7 +20,8 @@ class PeraturanController extends BaseContextController
                     'activeTab' => 'peraturan',
                     'data'      => $data,
                     'pager'     => $model->pager,
-                    'filters'   => []
+                    'filters'   => [],
+                    'hideGlobalContext' => true,
                 ]
             )
         );

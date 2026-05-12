@@ -171,10 +171,6 @@ class RencanaPenangananController extends BaseController
         $activeKonteks = $this->getActiveKonteks();
         $idKonteks     = $activeKonteks ? (int)$activeKonteks['id_konteks'] : null;
 
-        $idTim = session('global_id_tim');
-        $idKegiatan = session('global_id_kegiatan');
-        $tahun = session('global_tahun');
-
         /* ================= PAGINATION ================= */
         $perPage = (int) ($this->request->getGet('perPage') ?? 10);
         $page    = (int) ($this->request->getGet('page') ?? 1);
@@ -228,18 +224,6 @@ class RencanaPenangananController extends BaseController
             $builder->where('kpb.id_konteks', $idKonteks);
         }
 
-        if ($idTim) {
-            $builder->where('k.id_tim', $idTim);
-        }
-
-        if ($idKegiatan) {
-            $builder->where('k.id_kegiatan', $idKegiatan);
-        }
-
-        if ($tahun) {
-            $builder->where('k.tahun', $tahun);
-        }
-
         if ($filter === 'sudah') {
             $builder->where('rtp.id_rtp IS NOT NULL', null, false);
         } elseif ($filter === 'belum') {
@@ -251,25 +235,12 @@ class RencanaPenangananController extends BaseController
             ->select('COUNT(DISTINCT er.id_evaluasi) as total')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
             ->join('rencana_penanganan_risiko rtp', 'rtp.id_penilaian_awal = er.id_evaluasi', 'left')
             ->where('er.opsi_tindakan', 'Mengurangi');
 
         if ($idKonteks) {
             $qCount->where('kpb.id_konteks', $idKonteks);
-        }
-
-        if ($idTim) {
-            $qCount->where('k.id_tim', $idTim);
-        }
-
-        if ($idKegiatan) {
-            $qCount->where('k.id_kegiatan', $idKegiatan);
-        }
-
-        if ($tahun) {
-            $qCount->where('k.tahun', $tahun);
-        }
+        }   
 
         $total = (int) ($qCount->get()->getRowArray()['total'] ?? 0);
 
@@ -355,9 +326,6 @@ class RencanaPenangananController extends BaseController
 
         $activeKonteks = $this->getActiveKonteks();
         $idKonteks     = $activeKonteks ? (int)$activeKonteks['id_konteks'] : null;
-        $idTim = session('global_id_tim');
-        $idKegiatan = session('global_id_kegiatan');
-        $tahun = session('global_tahun');
 
         $filter = $this->request->getGet('filter');
 
@@ -397,17 +365,6 @@ class RencanaPenangananController extends BaseController
         if ($idKonteks) {
             $builder->where('kpb.id_konteks', $idKonteks);
         }
-        if ($idTim) {
-            $builder->where('k.id_tim', $idTim);
-        }
-
-        if ($idKegiatan) {
-            $builder->where('k.id_kegiatan', $idKegiatan);
-        }
-
-        if ($tahun) {
-            $builder->where('k.tahun', $tahun);
-        }
 
         if ($filter === 'sudah') {
             $builder->where('rtp.id_rtp IS NOT NULL', null, false);
@@ -419,23 +376,11 @@ class RencanaPenangananController extends BaseController
             ->select('COUNT(DISTINCT er.id_evaluasi) as total')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
             ->join('rencana_penanganan_risiko rtp', 'rtp.id_penilaian_awal = er.id_evaluasi', 'left')
             ->where('er.opsi_tindakan', 'Mengurangi');
 
         if ($idKonteks) {
             $qCount->where('kpb.id_konteks', $idKonteks);
-        }
-        if ($idTim) {
-            $qCount->where('k.id_tim', $idTim);
-        }
-
-        if ($idKegiatan) {
-            $qCount->where('k.id_kegiatan', $idKegiatan);
-        }
-
-        if ($tahun) {
-            $qCount->where('k.tahun', $tahun);
         }
 
         $total = (int) ($qCount->get()->getRowArray()['total'] ?? 0);

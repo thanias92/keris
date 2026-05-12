@@ -50,7 +50,7 @@ $qCtx = (!empty($activeKonteks['id_konteks']))
     </a>
 
     <!-- SUDAH -->
-    <a href="<?= site_url('evaluasi-risiko') . '?filter=sudah' . (!empty($activeKonteks['id_konteks']) ? '&id_konteks=' . $activeKonteks['id_konteks'] : '') ?>" class="er-stat-link">
+    <a href="<?= site_url('evaluasi-risiko') ?>?filter=sudah<?= $activeKonteks ? '&id_konteks=' . $activeKonteks['id_konteks'] : '' ?>" class="er-stat-link">
         <div class="er-stat-card <?= $filter === 'sudah' ? 'er-stat-active-sudah' : '' ?>">
             <div class="er-stat-label">Sudah Dievaluasi</div>
             <div class="er-stat-value text-success"><?= $totalSudah ?></div>
@@ -58,7 +58,7 @@ $qCtx = (!empty($activeKonteks['id_konteks']))
     </a>
 
     <!-- BELUM -->
-    <a href="<?= site_url('evaluasi-risiko') . '?filter=belum' . (!empty($activeKonteks['id_konteks']) ? '&id_konteks=' . $activeKonteks['id_konteks'] : '') ?>" class="er-stat-link">
+    <a href="<?= site_url('evaluasi-risiko') ?>?filter=belum<?= $activeKonteks ? '&id_konteks=' . $activeKonteks['id_konteks'] : '' ?>" class="er-stat-link">
         <div class="er-stat-card <?= $filter === 'belum' ? 'er-stat-active-belum' : '' ?>">
             <div class="er-stat-label">Belum Dievaluasi</div>
             <div class="er-stat-value text-warning"><?= $totalBelum ?></div>

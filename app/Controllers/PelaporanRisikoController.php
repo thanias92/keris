@@ -295,6 +295,7 @@ class PelaporanRisikoController extends BaseController
             'listKegiatan' => $listKegiatan,
             'selectedKegiatan' => $idKegiatan,
             'statusValidasi' => $statusValidasi,
+            'hideGlobalContext' => true,
         ]);
     }
 

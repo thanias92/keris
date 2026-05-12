@@ -7,6 +7,7 @@ const gcCsrfName = window.GC_CONFIG?.csrf?.name || "";
 const GC_DEFAULT = window.GC_CONFIG?.default || {};
 
 const GC_USER = window.GC_CONFIG?.user || {};
+let gcInitialized = false;
 
 document.addEventListener("DOMContentLoaded", () => {
   initGlobalContext();
@@ -20,6 +21,7 @@ async function initGlobalContext() {
   if (selectedTim) {
     await loadKegiatan(selectedTim, GC_DEFAULT.id_kegiatan);
   }
+  gcInitialized = true;
 }
 
 function bindEvents() {
@@ -41,6 +43,7 @@ function bindEvents() {
 }
 
 async function saveGlobalContext() {
+  if (!gcInitialized) return;
   const tahun = document.getElementById("ctx_tahun").value;
   const idTim = document.getElementById("ctx_tim").value;
   const idKegiatan = document.getElementById("ctx_kegiatan").value;

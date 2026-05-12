@@ -72,7 +72,9 @@
             </div>
         </div>
 
-        <?= $this->include('partials/global_context_selector') ?>
+        <?php if (empty($hideGlobalContext)): ?>
+            <?= $this->include('partials/global_context_selector') ?>
+        <?php endif; ?>
 
         <!-- [Mobile Media Block end] -->
         <div class="ms-auto">

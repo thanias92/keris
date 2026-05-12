@@ -24,9 +24,10 @@ class MasterDataController extends BaseContextController
                     'dampak' => (new KriteriaDampakModel())
                         ->orderBy('level', 'ASC')
                         ->findAll(),
-                    'filters' => []
+                    'filters' => [],
+                    'hideGlobalContext' => true,
                 ]
-            )
+            ),
         );
     }
 
@@ -44,7 +45,8 @@ class MasterDataController extends BaseContextController
                         ->orderBy('level_kemungkinan', 'DESC')
                         ->orderBy('level_dampak', 'ASC')
                         ->findAll(),
-                    'filters' => []
+                    'filters' => [],
+                    'hideGlobalContext' => true,
                 ]
             )
         );
@@ -63,7 +65,8 @@ class MasterDataController extends BaseContextController
                     'data' => $model
                         ->orderBy('level', 'ASC')
                         ->findAll(),
-                    'filters' => []
+                    'filters' => [],
+                    'hideGlobalContext' => true,
                 ]
             )
         );
@@ -82,7 +85,8 @@ class MasterDataController extends BaseContextController
                     'data' => $model
                         ->orderBy('kode_sasaran', 'ASC')
                         ->findAll(),
-                    'filters' => []
+                    'filters' => [],
+                    'hideGlobalContext' => true,
                 ]
             )
         );

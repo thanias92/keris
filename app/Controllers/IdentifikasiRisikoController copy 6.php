@@ -76,12 +76,13 @@ class IdentifikasiRisikoController extends BaseController
         $kategoriModel = new KategoriRisikoModel();
         $areaModel     = new AreaDampakModel();
 
-        $globalTahun    = session('global_tahun');
-        $globalTim      = session('global_id_tim');
-        $globalKegiatan = session('global_id_kegiatan');
+        $idKonteks = $this->request->getGet('id_konteks');
 
-        $idKonteks = null;
-        $activeKonteks = null;
+        if ($idKonteks) {
+            session()->set('id_konteks_ir', $idKonteks);
+        } else {
+            $idKonteks = session('id_konteks_ir');
+        }
 
         /* QUERY DATA IDENTIFIKASI RISIKO
            JOIN: identifikasi_risiko → konteks_proses_bisnis → proses_bisnis */
@@ -112,10 +113,20 @@ class IdentifikasiRisikoController extends BaseController
                 kategori_risiko.nama_kategori
             ');
 
-        $idTim = $globalTim;
-        $idKegiatan = $globalKegiatan;
-        $tahun = $globalTahun;
-        $idPengelola = null;
+        $idTim = $this->request->getGet('sk');
+        $idPengelola = $this->request->getGet('pg');
+        $idKegiatan = $this->request->getGet('kg');
+        $tahun = $this->request->getGet('th');
+
+        $activeKonteks = $this->getActiveKonteks();
+        if ($idKonteks) {
+            $activeKonteks = (new KonteksModel())->find($idKonteks);
+        }
+        if (!$activeKonteks && $idTim) {
+            $activeKonteks = [
+                'id_tim' => $idTim
+            ];
+        }
 
         // PRIORITAS: kalau ada filter → pakai filter
         if ($idTim) {
@@ -132,6 +143,11 @@ class IdentifikasiRisikoController extends BaseController
 
         if ($tahun) {
             $builder->where('k.tahun', $tahun);
+        }
+
+        // fallback ke id_konteks (kalau ada)
+        if (!$idTim && !$idPengelola && !$idKegiatan && !$tahun && $idKonteks) {
+            $builder->where('konteks_proses_bisnis.id_konteks', $idKonteks);
         }
 
         $idKategori = $this->request->getGet('filter_kategori');
@@ -538,14 +554,10 @@ class IdentifikasiRisikoController extends BaseController
                 kategori_risiko.nama_kategori
             ');
 
-        $globalTahun    = session('global_tahun');
-        $globalTim      = session('global_id_tim');
-        $globalKegiatan = session('global_id_kegiatan');
-
-        $idTim = $globalTim;
-        $idKegiatan = $globalKegiatan;
-        $tahun = $globalTahun;
-        $idPengelola = null;
+        $idTim = $this->request->getGet('sk');
+        $idPengelola = $this->request->getGet('pg');
+        $idKegiatan = $this->request->getGet('kg');
+        $tahun = $this->request->getGet('th');
 
         if ($idTim) {
             $builder->where('k.id_tim', $idTim);
