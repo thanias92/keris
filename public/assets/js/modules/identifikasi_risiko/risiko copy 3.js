@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const isOperator = user.role === "operator";
 
-    if (!konteks || !konteks.id_konteks) {
+    if (!konteks) {
       PkAlert.notAllowed({
         text: "Untuk menambah risiko, silakan pilih konteks terlebih dahulu melalui filter (Tim, Pengelola, Kegiatan, dan Tahun).",
       });

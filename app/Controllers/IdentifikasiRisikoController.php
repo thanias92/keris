@@ -83,6 +83,31 @@ class IdentifikasiRisikoController extends BaseController
         $idKonteks = null;
         $activeKonteks = null;
 
+        if ($globalTim && $globalTahun) {
+            $activeKonteks = (new KonteksModel())
+                ->select('
+            konteks.*,
+            kegiatan.nama_kegiatan,
+            tim_kerja.nama_tim,
+            sasaran_strategis.uraian_sasaran,
+            p.nama as nama_pemilik,
+            g.nama as nama_pengelola
+        ')
+                ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
+                ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
+                ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
+                ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
+                ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
+                ->where('konteks.id_tim', $globalTim)
+                ->where('konteks.tahun', $globalTahun)
+                ->when($globalKegiatan, function ($q) use ($globalKegiatan) {
+                    $q->where('konteks.id_kegiatan', $globalKegiatan);
+                })
+                ->first();
+
+            $idKonteks = $activeKonteks['id_konteks'] ?? null;
+        }
+
         /* QUERY DATA IDENTIFIKASI RISIKO
            JOIN: identifikasi_risiko → konteks_proses_bisnis → proses_bisnis */
         $builder = $risikoModel

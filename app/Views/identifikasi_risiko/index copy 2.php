@@ -23,10 +23,7 @@
                     $user = session('user');
                     $role = $user['role'] ?? '';
 
-                    $hasFilter =
-                        session('global_id_tim') ||
-                        session('global_id_kegiatan') ||
-                        session('global_tahun');
+                    $hasFilter = isset($_GET['sk']) || isset($_GET['pg']) || isset($_GET['kg']) || isset($_GET['th']);
                     ?>
 
                     <?php if ($role !== 'ketua'): ?>

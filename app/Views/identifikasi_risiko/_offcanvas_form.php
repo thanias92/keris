@@ -20,7 +20,7 @@
                         <div class="d-flex">
                             <span style="width:130px; flex-shrink:0;">Tahun</span>
                             <span style="margin-right:8px;">:</span>
-                            <span class="text-dark fw-500"><?= esc($activeKonteks['nama_tim'] ?? 'Berdasarkan filter') ?></span>
+                            <span class="text-dark fw-500"><?= esc($activeKonteks['tahun'] ?? 'Berdasarkan filter') ?></span>
                         </div>
                         <div class="d-flex">
                             <span style="width:130px; flex-shrink:0;">Tim Kerja</span>
