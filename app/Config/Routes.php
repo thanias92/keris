@@ -32,7 +32,7 @@ $routes->group('manajemen-user', ['filter' => ['auth', 'role:admin']], function 
 });
 
 // RBAC (Role & Permission)
-$routes->group('rbac', ['filter' => ['auth']], function ($routes) {
+$routes->group('rbac', ['filter' => ['auth', 'role:admin']], function ($routes) {
     $routes->get('role', 'RBAC\RoleController::index');
     $routes->post('role/store', 'RBAC\RoleController::store');
     $routes->post('role/update/(:num)', 'RBAC\RoleController::update/$1');
