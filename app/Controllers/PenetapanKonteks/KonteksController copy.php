@@ -280,53 +280,15 @@ class KonteksController extends BaseContextController
        → sekarang pakai penugasan_pengelola */
     public function getPengelolaList()
     {
-        $id_tim = (int) $this->request->getGet('tim');
-        $tahun  = (int) ($this->request->getGet('tahun') ?? date('Y'));
+        $id_tim = $this->request->getGet('tim');
+        $tahun     = (int) ($this->request->getGet('tahun') ?? date('Y'));
 
         if (!$id_tim) {
             return $this->response->setJSON([]);
         }
 
-        $db = \Config\Database::connect();
-
-        // ambil ketua tim sesuai tahun
-        $data = $db->table('penugasan_pengelola pp')
-            ->select('
-            pr.id,
-            pr.nama,
-            pr.nip,
-            pr.jabatan,
-            pp.tahun
-        ')
-            ->join('pengelola_risiko pr', 'pr.id = pp.pengelola_id')
-            ->where('pp.tim_kerja_id', $id_tim)
-            ->where('pp.tahun', $tahun)
-            ->where('pp.is_ketua_tim', true)
-            ->orderBy('pp.id', 'DESC')
-            ->get()
-            ->getRowArray();
-
-        // fallback tahun lain
-        if (!$data) {
-            $data = $db->table('penugasan_pengelola pp')
-                ->select('
-                pr.id,
-                pr.nama,
-                pr.nip,
-                pr.jabatan,
-                pp.tahun
-            ')
-                ->join('pengelola_risiko pr', 'pr.id = pp.pengelola_id')
-                ->where('pp.tim_kerja_id', $id_tim)
-                ->where('pp.is_ketua_tim', true)
-                ->orderBy('pp.tahun', 'DESC')
-                ->get()
-                ->getRowArray();
-
-            if ($data) {
-                $data['is_fallback'] = true;
-            }
-        }
+        $penugasanModel = new PenugasanPengelolaModel();
+        $data           = $penugasanModel->getKetuaTimWithFallback((int) $id_tim, $tahun);
 
         return $this->response->setJSON($data ?? []);
     }
