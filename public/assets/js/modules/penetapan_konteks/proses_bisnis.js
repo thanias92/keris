@@ -33,24 +33,36 @@ document.addEventListener("DOMContentLoaded", function () {
     document
       .querySelectorAll('#pbFormSync input[type="checkbox"]')
       .forEach((el) => (el.disabled = false));
-    document.getElementById("pbBtnView").style.display = "none";
-    document.getElementById("pbBtnEdit").style.display = "flex";
+
+    const btnView = document.getElementById("pbBtnView");
+    const btnEdit = document.getElementById("pbBtnEdit");
+
+    if (btnView) btnView.style.display = "none";
+    if (btnEdit) btnEdit.style.display = "flex";
   }
 
   function setViewMode() {
     document
       .querySelectorAll('#pbFormSync input[type="checkbox"]')
       .forEach((el) => (el.disabled = true));
-    document.getElementById("pbBtnView").style.display = "flex";
-    document.getElementById("pbBtnEdit").style.display = "none";
+
+    const btnView = document.getElementById("pbBtnView");
+    const btnEdit = document.getElementById("pbBtnEdit");
+
+    if (btnView) btnView.style.display = "flex";
+    if (btnEdit) btnEdit.style.display = "none";
   }
 
   function setEditMode() {
     document
       .querySelectorAll('#pbFormSync input[type="checkbox"]')
       .forEach((el) => (el.disabled = false));
-    document.getElementById("pbBtnView").style.display = "none";
-    document.getElementById("pbBtnEdit").style.display = "flex";
+
+    const btnView = document.getElementById("pbBtnView");
+    const btnEdit = document.getElementById("pbBtnEdit");
+
+    if (btnView) btnView.style.display = "none";
+    if (btnEdit) btnEdit.style.display = "flex";
   }
 
   let originalChecked = [];
