@@ -43,52 +43,33 @@
         </div>
     </div>
 
-    <!-- Context Selector -->
-    <?= view('analisis_risiko/_context_selector', [
-        'listKonteks'   => $listKonteks,
-        'activeKonteks' => $activeKonteks,
-    ]) ?>
-
-    <!-- Konteks Aktif Info -->
     <!-- Summary Cards (SELALU MUNCUL) -->
     <?= view('analisis_risiko/_summary_cards', [
         'totalRisiko'   => $totalRisiko,
         'totalSudah'    => $totalSudah,
         'totalBelum'    => $totalBelum,
         'levelRisiko'   => $levelRisiko,
-        'activeKonteks' => $activeKonteks,
         'filter'        => $filter,
     ]) ?>
 
-    <?php if ($activeKonteks): ?>
-
-        <?= view('analisis_risiko/_context_active', ['activeKonteks' => $activeKonteks]) ?>
-
-        <!-- Filter Active Badge -->
-        <?php if ($filter): ?>
-            <div class="mb-3 d-flex align-items-center gap-2">
-                <span class="text-muted small">Menampilkan:</span>
-                <?php if ($filter === 'sudah'): ?>
-                    <span class="badge bg-success-subtle text-success border border-success">Sudah Dianalisis</span>
-                <?php elseif ($filter === 'belum'): ?>
-                    <span class="badge bg-warning-subtle text-warning border border-warning">Belum Dianalisis</span>
-                <?php endif; ?>
-                <a href="<?= site_url('analisis-risiko') ?>" class="small text-decoration-none text-danger ms-2">
-                    ✕ Clear Filter
-                </a>
-            </div>
-        <?php endif; ?>
-
-    <?php else: ?>
-        <div class="alert alert-warning">
-            Silakan pilih konteks terlebih dahulu.
+    <!-- Filter Active Badge -->
+    <?php if ($filter): ?>
+        <div class="mb-3 d-flex align-items-center gap-2">
+            <span class="text-muted small">Menampilkan:</span>
+            <?php if ($filter === 'sudah'): ?>
+                <span class="badge bg-success-subtle text-success border border-success">Sudah Dianalisis</span>
+            <?php elseif ($filter === 'belum'): ?>
+                <span class="badge bg-warning-subtle text-warning border border-warning">Belum Dianalisis</span>
+            <?php endif; ?>
+            <a href="<?= site_url('analisis-risiko') ?>" class="small text-decoration-none text-danger ms-2">
+                ✕ Clear Filter
+            </a>
         </div>
     <?php endif; ?>
 
     <!-- Table tetap muncul -->
     <?= view('analisis_risiko/_table_section', [
         'data'          => $data,
-        'activeKonteks' => $activeKonteks,
         'total'         => $total ?? 0,
         'from'          => $from ?? 1,
         'to'            => $to ?? count($data),
@@ -99,7 +80,6 @@
 
     <!-- Offcanvas Form -->
     <?= view('analisis_risiko/_offcanvas_form', [
-        'activeKonteks'   => $activeKonteks,
         'kemungkinanList' => $kemungkinanList,
         'dampakList'      => $dampakList,
     ]) ?>
@@ -110,7 +90,6 @@
 <link rel="stylesheet" href="<?= base_url('assets/css/analisis-risiko.css') ?>">
 
 <!-- JS Modules -->
-<script src="<?= base_url('assets/js/modules/analisis_risiko/context-selector.js') ?>"></script>
 <script src="<?= base_url('assets/js/modules/analisis_risiko/analisis.js') ?>"></script>
 
 <?= $this->endSection() ?>

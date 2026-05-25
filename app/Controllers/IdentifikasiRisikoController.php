@@ -13,38 +13,6 @@ use App\Models\BankRisikoModel;
 
 class IdentifikasiRisikoController extends BaseController
 {
-    /* HELPER — ambil konteks aktif dari session */
-    private function getActiveKonteks(): ?array
-    {
-        $id = session('id_konteks_ir');
-        if (!$id) return null;
-
-        $model = new KonteksModel();
-        $data  = $model
-            ->select('
-                konteks.*,
-                kegiatan.nama_kegiatan,
-                tim_kerja.nama_tim,
-                sasaran_strategis.uraian_sasaran,
-                p.nama as nama_pemilik,
-                g.nama as nama_pengelola
-            ')
-            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
-            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
-            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
-            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
-            ->where('konteks.id_konteks', $id)
-            ->first();
-
-        if (!$data) {
-            session()->remove('id_konteks_ir');
-            return null;
-        }
-
-        return $data;
-    }
-
     private function getListKonteks(): array
     {
         $builder = (new KonteksModel())
@@ -238,29 +206,6 @@ class IdentifikasiRisikoController extends BaseController
             'perPage' => $perPage,
             'pager'   => $pager,
         ]);
-    }
-
-    /* SET ACTIVE KONTEKS (dari _context_selector) */
-    public function setActive()
-    {
-        $id = $this->request->getPost('id_konteks');
-        if (!$id) return redirect()->back();
-
-        // VALIDASI TIM
-        if (!$this->validateKonteksAccess($id)) {
-            session()->remove('id_konteks_ir');
-            return redirect()->back();
-        }
-
-        session()->set('id_konteks_ir', $id);
-
-        return redirect()->to(site_url('identifikasi-risiko'));
-    }
-
-    public function resetActive()
-    {
-        session()->remove('id_konteks_ir');
-        return redirect()->to(site_url('identifikasi-risiko'));
     }
 
     /* VALIDASI AKSES TIM */

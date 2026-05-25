@@ -1,9 +1,3 @@
-<?php
-$qCtx = (!empty($activeKonteks['id_konteks']))
-    ? '?id_konteks=' . $activeKonteks['id_konteks']
-    : '';
-?>
-
 <div class="d-flex flex-wrap gap-2 mb-3 ar-summary-row">
 
     <!-- ✅ SELALU TAMPIL -->
@@ -47,31 +41,25 @@ $qCtx = (!empty($activeKonteks['id_konteks']))
         </div>
     <?php endif; ?>
 
+    <a href="<?= site_url('analisis-risiko') ?>" class="ar-stat-link">
+        <div class="ar-stat-card <?= !$filter ? 'ar-stat-active' : '' ?>">
+            <div class="ar-stat-label">Total Risiko</div>
+            <div class="ar-stat-value"><?= $totalRisiko ?></div>
+        </div>
+    </a>
 
-    <!-- ❌ HANYA JIKA ADA KONTEKS -->
-    <?php if (!empty($activeKonteks)): ?>
+    <a href="<?= site_url('analisis-risiko?filter=sudah') ?>" class="ar-stat-link">
+        <div class="ar-stat-card <?= $filter === 'sudah' ? 'ar-stat-active-sudah' : '' ?>">
+            <div class="ar-stat-label">Sudah Dianalisis</div>
+            <div class="ar-stat-value text-success"><?= $totalSudah ?></div>
+        </div>
+    </a>
 
-        <a href="<?= site_url('analisis-risiko') . $qCtx ?>" class="ar-stat-link">
-            <div class="ar-stat-card <?= !$filter ? 'ar-stat-active' : '' ?>">
-                <div class="ar-stat-label">Total Risiko</div>
-                <div class="ar-stat-value"><?= $totalRisiko ?></div>
-            </div>
-        </a>
-
-        <a href="<?= site_url('analisis-risiko') ?>?filter=sudah<?= $qCtx ?>" class="ar-stat-link">
-            <div class="ar-stat-card <?= $filter === 'sudah' ? 'ar-stat-active-sudah' : '' ?>">
-                <div class="ar-stat-label">Sudah Dianalisis</div>
-                <div class="ar-stat-value text-success"><?= $totalSudah ?></div>
-            </div>
-        </a>
-
-        <a href="<?= site_url('analisis-risiko') ?>?filter=belum<?= $qCtx ?>" class="ar-stat-link">
-            <div class="ar-stat-card <?= $filter === 'belum' ? 'ar-stat-active-belum' : '' ?>">
-                <div class="ar-stat-label">Belum Dianalisis</div>
-                <div class="ar-stat-value text-warning"><?= $totalBelum ?></div>
-            </div>
-        </a>
-
-    <?php endif; ?>
+    <a href="<?= site_url('analisis-risiko?filter=belum') ?>" class="ar-stat-link">
+        <div class="ar-stat-card <?= $filter === 'belum' ? 'ar-stat-active-belum' : '' ?>">
+            <div class="ar-stat-label">Belum Dianalisis</div>
+            <div class="ar-stat-value text-warning"><?= $totalBelum ?></div>
+        </div>
+    </a>
 
 </div>

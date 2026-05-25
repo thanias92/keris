@@ -60,7 +60,7 @@ $selectedKegiatan = session('global_id_kegiatan') ?? '';
 
 </div>
 
-<link rel="stylesheet" href="<?= base_url('assets/css/global-context-selector.css') ?>">
+<link rel="stylesheet" href="<?= base_url('assets/css/layout/global-context-selector.css') ?>">
 <script>
     window.GC_CONFIG = {
         csrf: {

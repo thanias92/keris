@@ -41,17 +41,6 @@
         </div>
     </div>
 
-    <!-- Context Selector -->
-    <?= view('identifikasi_risiko/_context_selector', [
-        'listKonteks'   => $listKonteks,
-        'activeKonteks' => $activeKonteks,
-    ]) ?>
-
-    <!-- Context Active -->
-    <?= view('identifikasi_risiko/_context_active', [
-        'activeKonteks' => $activeKonteks,
-    ]) ?>
-
     <!-- Content: filter + table -->
     <?= view('identifikasi_risiko/content', [
         'data'           => $data,
@@ -72,7 +61,6 @@
 ]) ?>
 
 <!-- JS Modules -->
-<script src="<?= base_url('assets/js/modules/identifikasi_risiko/context-selector.js') ?>"></script>
 <script src="<?= base_url('assets/js/modules/identifikasi_risiko/risiko.js') ?>"></script>
 <script>
     window.APP_USER = <?= json_encode(session('user')) ?>;

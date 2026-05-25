@@ -39,7 +39,10 @@ function bindEvents() {
     saveGlobalContext();
   });
 
-  kegiatan.addEventListener("change", saveGlobalContext);
+  kegiatan.addEventListener("change", () => {
+    applySelectedAlias();
+    saveGlobalContext();
+  });
 }
 
 async function saveGlobalContext() {
@@ -61,6 +64,7 @@ async function saveGlobalContext() {
       method: "POST",
       body: formData,
     });
+    window.location.reload();
   } catch (err) {
     console.error("Gagal menyimpan global context:", err);
   }
@@ -82,7 +86,11 @@ async function loadKegiatan(idTim, selectedKegiatan = "") {
       const option = document.createElement("option");
 
       option.value = item.id_kegiatan;
-      option.textContent = item.nama_kegiatan;
+      const nama = item.nama_kegiatan || "";
+      const match = nama.match(/\(([^)]+)\)/);
+
+      option.textContent = nama;
+      option.dataset.alias = match ? match[1] : nama;
 
       if (String(selectedKegiatan) === String(item.id_kegiatan)) {
         option.selected = true;
@@ -90,19 +98,52 @@ async function loadKegiatan(idTim, selectedKegiatan = "") {
 
       kegiatanSelect.appendChild(option);
     });
+    applySelectedAlias();
   } catch (err) {
     console.error("Gagal load kegiatan:", err);
   }
 }
 
+function applySelectedAlias() {
+  const select = document.getElementById("ctx_kegiatan");
+
+  if (!select) return;
+
+  const selectedOption = select.options[select.selectedIndex];
+
+  if (!selectedOption) return;
+
+  // restore semua option ke nama lengkap
+  Array.from(select.options).forEach((opt) => {
+    if (opt.dataset.fulltext) {
+      opt.textContent = opt.dataset.fulltext;
+    }
+  });
+
+  // simpan nama asli
+  if (!selectedOption.dataset.fulltext) {
+    selectedOption.dataset.fulltext = selectedOption.textContent;
+  }
+
+  // ubah selected jadi alias
+  if (selectedOption.dataset.alias) {
+    selectedOption.textContent = selectedOption.dataset.alias;
+  }
+}
+
 async function resetGlobalContext() {
-  document.getElementById("ctx_tahun").value = new Date().getFullYear();
+  const formData = new FormData();
 
-  document.getElementById("ctx_tim").value = GC_USER.id_tim;
+  formData.append(gcCsrfName, gcCsrfToken);
 
-  await loadKegiatan(GC_USER.id_tim);
+  try {
+    await fetch(GC_URL.reset, {
+      method: "POST",
+      body: formData,
+    });
 
-  document.getElementById("ctx_kegiatan").value = "";
-
-  saveGlobalContext();
+    window.location.reload();
+  } catch (err) {
+    console.error("Gagal reset global context:", err);
+  }
 }

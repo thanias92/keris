@@ -20,70 +20,38 @@ class PemantauanRisikoController extends BaseController
         $this->db              = \Config\Database::connect();
     }
 
-    private function getActiveKonteks(): ?array
+    private function getSummary(): array
     {
-        $id = session('id_konteks_pemantauan');
-        if (!$id) return null;
+        $globalTahun    = session('global_tahun');
+        $globalTim      = session('global_id_tim');
+        $globalKegiatan = session('global_id_kegiatan');
 
-        $data = (new KonteksModel())
-            ->select('
-                konteks.*,
-                kegiatan.nama_kegiatan,
-                tim_kerja.nama_tim,
-                sasaran_strategis.uraian_sasaran,
-                p.nama as nama_pemilik,
-                g.nama as nama_pengelola
-            ')
-            ->join('kegiatan',           'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('tim_kerja',       'tim_kerja.id_tim = konteks.id_tim', 'left')
-            ->join('sasaran_strategis',  'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
-            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
-            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
-            ->where('konteks.id_konteks', $id)
-            ->first();
-
-        if (!$data) {
-            session()->remove('id_konteks_pemantauan');
-            return null;
-        }
-
-        return $data;
-    }
-
-    private function getListKonteks(): array
-    {
-        return (new KonteksModel())
-            ->select('
-                konteks.id_konteks,
-                konteks.tahun,
-                konteks.id_tim,
-                konteks.id_kegiatan,
-                konteks.pengelola_risiko_id,
-                tim_kerja.nama_tim,
-                sasaran_strategis.uraian_sasaran,
-                kegiatan.nama_kegiatan,
-                p.nama as nama_pemilik,
-                g.nama as nama_pengelola
-            ')
-            ->join('tim_kerja',       'tim_kerja.id_tim = konteks.id_tim', 'left')
-            ->join('sasaran_strategis',  'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
-            ->join('kegiatan',           'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
-            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
-            ->orderBy('konteks.created_at', 'DESC')
-            ->findAll();
-    }
-
-    private function getSummary(?int $idKonteks): array
-    {
         $qTotal = $this->db->table('rencana_penanganan_risiko rtp')
             ->join('evaluasi_risiko er',        'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir',    'ir.id_identifikasi = er.id_identifikasi')
-            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses');
-        if ($idKonteks) $qTotal->where('kpb.id_konteks', $idKonteks);
+            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+            ->join('konteks k',                 'k.id_konteks = kpb.id_konteks');
+
+        if ($globalTahun) {
+            $qTotal->where('k.tahun', $globalTahun);
+        }
+
+        if ($globalTim) {
+            $qTotal->where('k.id_tim', $globalTim);
+        }
+
+        if ($globalKegiatan) {
+            $qTotal->where('k.id_kegiatan', $globalKegiatan);
+        }
+
         $totalRtp = $qTotal->countAllResults();
 
-        $distribusi         = $this->pemantauanModel->getDistribusiStatus($idKonteks);
+        $distribusi = $this->pemantauanModel->getDistribusiStatus(
+            $globalTahun,
+            $globalTim,
+            $globalKegiatan
+        );
+
         $totalSudahDipantau = $totalRtp - ($distribusi['Belum Dilaksanakan'] ?? 0);
 
         return compact('totalRtp', 'totalSudahDipantau', 'distribusi');
@@ -119,8 +87,9 @@ class PemantauanRisikoController extends BaseController
         $globalTim      = session('global_id_tim');
         $globalKegiatan = session('global_id_kegiatan');
 
-        $activeKonteks = null;
-        $idKonteks = null;
+        $activeKonteks = [
+            'id_tim' => $globalTim
+        ];
 
         $perPage = (int) ($this->request->getGet('perPage') ?? 10);
         $page    = (int) ($this->request->getGet('page')    ?? 1);
@@ -288,12 +257,10 @@ class PemantauanRisikoController extends BaseController
         $to         = min($offset + $perPage, $total);
         $totalPages = (int) ceil($total / max($perPage, 1));
 
-        $summary = $this->getSummary($idKonteks);
+        $summary = $this->getSummary();
 
         return view('pemantauan_risiko/index', [
             'grouped' => $grouped,
-            'listKonteks'        => $this->getListKonteks(),
-            'activeKonteks'      => $activeKonteks,
             'total'              => $total,
             'from'               => $from,
             'to'                 => $to,
@@ -320,14 +287,13 @@ class PemantauanRisikoController extends BaseController
 
         $db = $this->db;
 
-        $activeKonteks = $this->getActiveKonteks();
-        $idKonteks     = $activeKonteks ? (int)$activeKonteks['id_konteks'] : null;
         $globalTahun    = session('global_tahun');
         $globalTim      = session('global_id_tim');
         $globalKegiatan = session('global_id_kegiatan');
 
-        $activeKonteks = null;
-        $idKonteks = null;
+        $activeKonteks = [
+            'id_tim' => $globalTim
+        ];
 
         $filter  = $this->request->getGet('filter');
         $perPage = (int) ($this->request->getGet('perPage') ?? 10);
@@ -457,20 +423,6 @@ class PemantauanRisikoController extends BaseController
             ],
             'filter'  => $filter,
         ]);
-    }
-
-    public function setActive()
-    {
-        $id = $this->request->getPost('id_konteks');
-        if (!$id) return redirect()->back();
-        session()->set('id_konteks_pemantauan', $id);
-        return redirect()->to(site_url('pemantauan-risiko'));
-    }
-
-    public function resetActive()
-    {
-        session()->remove('id_konteks_pemantauan');
-        return redirect()->to(site_url('pemantauan-risiko'));
     }
 
     /* DETAIL (AJAX) [FIX] Join sasaran_kinerja pakai id_konteks_proses, sama persis dengan EvaluasiRisikoController */

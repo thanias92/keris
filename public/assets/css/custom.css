@@ -1,21 +1,5 @@
-/* ===================================== */
-/* GLOBAL FONT SCALE – KERIS RAJA */
-/* Membuat tampilan setara zoom 90% */
-/* ===================================== */
-
-html {
-    font-size: 14px; /* default browser 16px */
-}
-
-body {
-    font-size: 1rem;
-}
-
 /* Compact table */
-.table th,
-.table td {
-    padding: 0.6rem 0.75rem;
-}
+
 
 /* Compact card body */
 .card-body {
@@ -39,32 +23,6 @@ body {
     padding-bottom: 0.45rem;
     font-weight: 400;
     color: #495057;
-}
-
-.table th,
-.table td {
-    border-top: 1px solid #f1f3f6;
-}
-
-
-/* Center icon */
-.pc-sidebar.pc-sidebar-mini .pc-submenu .pc-micon {
-  margin: 0 !important;
-}
-
-/* MINI SIDEBAR ACTIVE FIX */
-.pc-sidebar.pc-sidebar-mini .pc-submenu .pc-item.active > .pc-link {
-  background: rgba(13,110,253,0.12);
-}
-
-.pc-sidebar.pc-sidebar-mini .pc-submenu .pc-item.active > .pc-link::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 3px;
-  height: 100%;
-  background: var(--bs-primary);
 }
 
 /* === PENETAPAN KONTEKS PAGE=== */
@@ -146,34 +104,13 @@ body {
 }
 
 /* === TABEL PROSES BISNIS === */
-.table th, .table td {
-    border-top: 1px solid #eef1f4;
-}
-.table thead th {
-    border-bottom: 2px solid #e6ebf1;
-}
-.table-responsive {
-  position: relative; /* WAJIB untuk sticky */
-}
-.table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 5;
 
-  background-color: #f8f9fa; /* samakan dengan table-light */
-  box-shadow: inset 0 -1px 0 #dee2e6;
-}
+
 
 .pk-header .breadcrumb {
     margin-bottom: 4px;
 }
 
-@media (max-width: 768px) {
-    .pk-header .text-end {
-        text-align: left !important;
-        margin-top: 8px;
-    }
-}
 .pk-header-action {
     padding-top: 20px; /* coba 4–8px sesuai selera */
 }
@@ -333,18 +270,6 @@ body {
     font-size: 0.9rem;
 }
 
-.table td:nth-child(2),
-.table th:nth-child(2) {
-    width: 80px;
-    white-space: nowrap;
-}
-.truncate {
-    max-width: 250px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 /* Saat sidebar mini */
 body.sidebar-mini .col-risiko {
     width: 450px;
@@ -416,191 +341,4 @@ body:not(.sidebar-mini) .col-risiko {
     transform: translateY(-1px);
     box-shadow: 0 3px 8px rgba(0,0,0,0.1);
     cursor: pointer;
-}
-
-/* ===================================== */
-/* FIX HEADER STICKY TRANSPARENT ISSUE */
-/* ===================================== */
-.pc-header {
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-    z-index: 1025;
-}
-
-
-
-/* Header BPS Sidebar */
-.bps-header {
-    padding: 18px 16px;
-}
-
-.bps-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.bps-logo {
-    height: 42px;
-    width: auto;
-}
-
-.bps-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.1;
-}
-
-.bps-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: #333;
-}
-
-.bps-subtitle {
-    font-size: 11px;
-    color: #666;
-}
-
-/* Logo KERIS RAJA di navbar */
-
-.keris-raja-logo-wrapper {
-    display: flex;
-    align-items: center;
-}
-
-.keris-raja-logo {
-    height: 32px;
-    width: auto;
-    max-width: 200px;
-}   
-
-/* ===============================
-   Navbar BPS Logo
-================================ */
-
-.navbar-bps-logo {
-    display: flex;
-    align-items: center;
-    margin-left: 15px;
-}
-
-.navbar-bps-logo img {
-    height: 36px;
-    width: auto;
-    margin-right: 10px;
-}
-
-.navbar-bps-text {
-    line-height: 1.1;
-}
-
-.navbar-bps-main {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-}
-
-.navbar-bps-sub {
-    font-size: 12px;
-    color: #777;
-}
-
-/* align logo BPS dengan tombol hamburger */
-.me-auto.pc-mob-drp {
-    display: flex;
-    align-items: center;
-}
-
-.navbar-bps-logo {
-    display: flex;
-    align-items: center;
-    margin-left: 12px;
-}
-
-/* padding atas sidebar */
-
-.pc-sidebar .m-header {
-    padding-top: 22px;
-    padding-bottom: 10px;
-}
-
-/* ===============================
-   SIDEBAR LOGO BARU (KERIS)
-================================ */
-
-.keris-brand {
-    display: flex;
-    align-items: center;
-    padding-left: 20px;   /* sejajar icon menu */
-    padding-top: 12px;    /* biar ga nempel atas */
-    padding-bottom: 6px;
-    gap: 8px;
-}
-
-/* icon kiri */
-.keris-icon {
-    height: 42px;
-}
-
-/* tulisan KERIS */
-.keris-text-logo {
-    height: 24px;
-}
-
-/* saat sidebar MINI → sembunyikan tulisan */
-.pc-sidebar.pc-sidebar-mini .keris-text-logo {
-    display: none;
-}
-
-/* saat sidebar NORMAL → tampil */
-.pc-sidebar:not(.pc-sidebar-mini) .keris-text-logo {
-    display: block;
-}
-
-/* ===================================== */
-/* FORCE SIDEBAR ALWAYS OPEN */
-/* ===================================== */
-
-/* Matikan animasi sidebar */
-.pc-sidebar {
-    transition: none !important;
-}
-
-/* Jangan geser keluar layar */
-.pc-sidebar {
-    transform: translateX(0) !important;
-}
-
-/* Kembalikan layout submenu seperti normal */
-.pc-sidebar.pc-sidebar-mini .pc-item.pc-hasmenu > .pc-link {
-    display: flex !important;
-}
-
-/* Fix icon + text alignment */
-.pc-sidebar.pc-sidebar-mini .pc-link {
-    justify-content: flex-start !important;
-    padding-left: 20px !important;
-}
-
-/* FIX MINI SIDEBAR NORMAL */
-/* ===================================== */
-
-.pc-sidebar.pc-sidebar-mini {
-    width: 80px !important;
-}
-
-/* sembunyikan teks */
-.pc-sidebar.pc-sidebar-mini .pc-mtext {
-    display: none !important;
-}
-
-/* center icon */
-.pc-sidebar.pc-sidebar-mini .pc-link {
-    justify-content: center !important;
-}
-
-/* submenu tetap hidden */
-.pc-sidebar.pc-sidebar-mini .pc-submenu {
-    display: none !important;
 }

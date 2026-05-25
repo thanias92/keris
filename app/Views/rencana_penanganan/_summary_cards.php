@@ -1,9 +1,3 @@
-<?php
-$qCtx = (!empty($activeKonteks['id_konteks']))
-    ? '?id_konteks=' . $activeKonteks['id_konteks']
-    : '';
-?>
-
 <div class="d-flex flex-wrap gap-2 mb-3 er-summary-row">
 
     <!-- TOTAL RISIKO DITANGANI -->
@@ -15,7 +9,7 @@ $qCtx = (!empty($activeKonteks['id_konteks']))
     <!-- SUDAH ADA RTP -->
     <div class="er-stat-card <?= $filter === 'sudah' ? 'er-stat-active-sudah' : '' ?>"
         style="cursor:pointer"
-        onclick="window.location='<?= site_url('rencana-penanganan') ?>?filter=sudah<?= $activeKonteks ? '&id_konteks=' . $activeKonteks['id_konteks'] : '' ?>'">
+        onclick="window.location='<?= site_url('rencana-penanganan?filter=sudah') ?>'">
         <div class="er-stat-label">Sudah Ada RTP</div>
         <div class="er-stat-value text-success"><?= $totalSudah ?></div>
     </div>
@@ -23,7 +17,7 @@ $qCtx = (!empty($activeKonteks['id_konteks']))
     <!-- BELUM ADA RTP -->
     <div class="er-stat-card <?= $filter === 'belum' ? 'er-stat-active-belum' : '' ?>"
         style="cursor:pointer"
-        onclick="window.location='<?= site_url('rencana-penanganan') ?>?filter=belum<?= $activeKonteks ? '&id_konteks=' . $activeKonteks['id_konteks'] : '' ?>'">
+        onclick="window.location='<?= site_url('rencana-penanganan?filter=belum') ?>'">
         <div class="er-stat-label">Belum Ada RTP</div>
         <div class="er-stat-value text-warning"><?= $totalBelum ?></div>
     </div>

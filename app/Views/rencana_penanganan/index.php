@@ -43,12 +43,6 @@
         </div>
     </div>
 
-    <!-- Context Selector -->
-    <?= view('rencana_penanganan/_context_selector', [
-        'listKonteks'   => $listKonteks,
-        'activeKonteks' => $activeKonteks,
-    ]) ?>
-
     <!-- Summary Cards -->
     <?= view('rencana_penanganan/_summary_cards', [
         'totalRisiko'   => $totalRisiko ?? 0,
@@ -59,35 +53,25 @@
         'activeKonteks' => $activeKonteks ?? null,
     ]) ?>
 
-    <?php if ($activeKonteks): ?>
+    <!-- Filter Badge -->
+    <?php if ($filter): ?>
+        <div class="mb-3 d-flex align-items-center gap-2">
+            <span class="text-muted small">Menampilkan:</span>
 
-        <!-- Konteks Aktif Info -->
-        <?= view('rencana_penanganan/_context_active', ['activeKonteks' => $activeKonteks,]) ?>
+            <?php if ($filter === 'sudah'): ?>
+                <span class="badge bg-success-subtle text-success border border-success">
+                    Sudah Ada RTP
+                </span>
+            <?php elseif ($filter === 'belum'): ?>
+                <span class="badge bg-warning-subtle text-warning border border-warning">
+                    Belum Ada RTP
+                </span>
+            <?php endif; ?>
 
-        <!-- Filter Badge -->
-        <?php if ($filter): ?>
-            <div class="mb-3 d-flex align-items-center gap-2">
-                <span class="text-muted small">Menampilkan:</span>
-
-                <?php if ($filter === 'sudah'): ?>
-                    <span class="badge bg-success-subtle text-success border border-success">
-                        Sudah Ada RTP
-                    </span>
-                <?php elseif ($filter === 'belum'): ?>
-                    <span class="badge bg-warning-subtle text-warning border border-warning">
-                        Belum Ada RTP
-                    </span>
-                <?php endif; ?>
-
-                <a href="<?= site_url('rencana-penanganan') ?>"
-                    class="small text-decoration-none text-danger ms-2">
-                    ✕ Clear Filter
-                </a>
-            </div>
-        <?php endif; ?>
-    <?php else: ?>
-        <div class="alert alert-warning">
-            Silakan pilih konteks terlebih dahulu.
+            <a href="<?= site_url('rencana-penanganan') ?>"
+                class="small text-decoration-none text-danger ms-2">
+                ✕ Clear Filter
+            </a>
         </div>
     <?php endif; ?>
 
@@ -116,7 +100,6 @@
 <link rel="stylesheet" href="<?= base_url('assets/css/rencana-penanganan.css') ?>">
 
 <!-- JS Modules -->
-<script src="<?= base_url('assets/js/modules/rencana_penanganan/context-selector.js') ?>"></script>
 <script src="<?= base_url('assets/js/modules/rencana_penanganan/rencana.js') ?>"></script>
 
 <?= $this->endSection() ?>

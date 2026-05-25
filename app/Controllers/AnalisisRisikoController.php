@@ -11,61 +11,6 @@ use App\Models\SeleraRisikoModel;
 
 class AnalisisRisikoController extends BaseController
 {
-    /* HELPER — ambil konteks aktif dari session */
-    private function getActiveKonteks(): ?array
-    {
-        $id = session('id_konteks_ar');
-        if (!$id) return null;
-
-        $data = (new KonteksModel())
-            ->select('
-                konteks.*,
-                kegiatan.nama_kegiatan,
-                tim_kerja.nama_tim,
-                sasaran_strategis.uraian_sasaran,
-                p.nama as nama_pemilik,
-                g.nama as nama_pengelola
-            ')
-            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
-            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
-            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
-            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
-            ->where('konteks.id_konteks', $id)
-            ->first();
-
-        if (!$data) {
-            session()->remove('id_konteks_ar');
-            return null;
-        }
-
-        return $data;
-    }
-
-    private function getListKonteks(): array
-    {
-        return (new KonteksModel())
-            ->select('
-                konteks.id_konteks,
-                konteks.tahun,
-                konteks.id_tim,
-                konteks.id_kegiatan,
-                konteks.pengelola_risiko_id,
-                tim_kerja.nama_tim,
-                sasaran_strategis.uraian_sasaran,
-                kegiatan.nama_kegiatan,
-                p.nama as nama_pemilik,
-                g.nama as nama_pengelola
-            ')
-            ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
-            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
-            ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
-            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
-            ->orderBy('konteks.created_at', 'DESC')
-            ->findAll();
-    }
-
     private function validateTimAccessByIdentifikasi($idIdentifikasi): bool
     {
         $db = \Config\Database::connect();
@@ -89,36 +34,35 @@ class AnalisisRisikoController extends BaseController
 
     public function index()
     {
-        //dd(session()->get());
-        $idKonteks = $this->request->getGet('id_konteks');
+        $idTim       = session('global_id_tim');
+        $idKegiatan  = session('global_id_kegiatan');
+        $tahun       = session('global_tahun');
 
-        if ($idKonteks) {
-            session()->set('id_konteks_ar', $idKonteks);
-        } else {
-            $idKonteks = session('id_konteks_ar');
-        }
+        $idPengelola = null;
 
-        $idTim = $this->request->getGet('sk')
-            ?? session('global_id_tim');
+        $activeKonteks = null;
 
-        $idKegiatan = $this->request->getGet('kg')
-            ?? session('global_id_kegiatan');
-
-        $tahun = $this->request->getGet('th')
-            ?? session('global_tahun');
-
-        $idPengelola = $this->request->getGet('pg');
-
-        $activeKonteks = $this->getActiveKonteks();
-
-        if ($idKonteks) {
-            $activeKonteks = (new KonteksModel())->find($idKonteks);
-        }
-
-        if (!$activeKonteks && $idTim) {
-            $activeKonteks = [
-                'id_tim' => $idTim
-            ];
+        if ($idTim && $tahun) {
+            $activeKonteks = (new KonteksModel())
+                ->select('
+            konteks.*,
+            kegiatan.nama_kegiatan,
+            tim_kerja.nama_tim,
+            sasaran_strategis.uraian_sasaran,
+            p.nama as nama_pemilik,
+            g.nama as nama_pengelola
+        ')
+                ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
+                ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim', 'left')
+                ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
+                ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
+                ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
+                ->where('konteks.id_tim', $idTim)
+                ->where('konteks.tahun', $tahun)
+                ->when($idKegiatan, function ($q) use ($idKegiatan) {
+                    $q->where('konteks.id_kegiatan', $idKegiatan);
+                })
+                ->first();
         }
         $db            = \Config\Database::connect();
 
@@ -277,8 +221,6 @@ class AnalisisRisikoController extends BaseController
 
         return view('analisis_risiko/index', [
             'data'            => $data,
-            'listKonteks'     => $this->getListKonteks(),
-            'activeKonteks'   => $activeKonteks,
             'kemungkinanList' => $kemungkinanList,
             'dampakList'      => $dampakList,
             'totalRisiko'     => $totalRisiko,
@@ -298,36 +240,10 @@ class AnalisisRisikoController extends BaseController
     {
         if (!$this->request->isAJAX()) return redirect()->back();
 
-        $idKonteks = $this->request->getGet('id_konteks');
-
-        if ($idKonteks) {
-            session()->set('id_konteks_ar', $idKonteks);
-        } else {
-            $idKonteks = session('id_konteks_ar');
-        }
-
-        $idTim = $this->request->getGet('sk')
-            ?? session('global_id_tim');
-
-        $idKegiatan = $this->request->getGet('kg')
-            ?? session('global_id_kegiatan');
-
-        $tahun = $this->request->getGet('th')
-            ?? session('global_tahun');
-
-        $idPengelola = $this->request->getGet('pg');
-
-        $activeKonteks = $this->getActiveKonteks();
-
-        if ($idKonteks) {
-            $activeKonteks = (new KonteksModel())->find($idKonteks);
-        }
-
-        if (!$activeKonteks && $idTim) {
-            $activeKonteks = [
-                'id_tim' => $idTim
-            ];
-        }
+        $idTim       = session('global_id_tim');
+        $idKegiatan  = session('global_id_kegiatan');
+        $tahun       = session('global_tahun');
+        $idPengelola = null;
         $db            = \Config\Database::connect();
 
         /* PAGINATION CONFIG */
@@ -484,8 +400,6 @@ class AnalisisRisikoController extends BaseController
 
         return view('analisis_risiko/_table_section', [
             'data'            => $data,
-            'listKonteks'     => $this->getListKonteks(),
-            'activeKonteks'   => $activeKonteks,
             'kemungkinanList' => $kemungkinanList,
             'dampakList'      => $dampakList,
             'totalRisiko'     => $totalRisiko,
@@ -499,20 +413,6 @@ class AnalisisRisikoController extends BaseController
             'perPage'         => $perPage,
             'pager'           => $pager,
         ]);
-    }
-
-    public function setActive()
-    {
-        $id = $this->request->getPost('id_konteks');
-        if (!$id) return redirect()->back();
-        session()->set('id_konteks_ar', $id);
-        return redirect()->to(site_url('analisis-risiko'));
-    }
-
-    public function resetActive()
-    {
-        session()->remove('id_konteks_ar');
-        return redirect()->to(site_url('analisis-risiko'));
     }
 
     /* DETAIL PENILAIAN (AJAX — view/edit mode) */

@@ -21,60 +21,6 @@ class RencanaPenangananController extends BaseController
         $this->db       = \Config\Database::connect();
     }
 
-    private function getActiveKonteks(): ?array
-    {
-        $id = session('id_konteks_rtp');
-        if (!$id) return null;
-
-        $data = (new KonteksModel())
-            ->select('
-                konteks.*,
-                kegiatan.nama_kegiatan,
-                tim_kerja.nama_tim,
-                sasaran_strategis.uraian_sasaran,
-                p.nama as nama_pemilik,
-                g.nama as nama_pengelola
-            ')
-            ->join('kegiatan',           'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('tim_kerja',       'tim_kerja.id_tim = konteks.id_tim', 'left')
-            ->join('sasaran_strategis',  'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
-            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
-            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
-            ->where('konteks.id_konteks', $id)
-            ->first();
-
-        if (!$data) {
-            session()->remove('id_konteks_rtp');
-            return null;
-        }
-
-        return $data;
-    }
-
-    private function getListKonteks(): array
-    {
-        return (new KonteksModel())
-            ->select('
-                konteks.id_konteks,
-                konteks.tahun,
-                konteks.id_tim,
-                konteks.id_kegiatan,
-                konteks.pengelola_risiko_id,
-                tim_kerja.nama_tim,
-                sasaran_strategis.uraian_sasaran,
-                kegiatan.nama_kegiatan,
-                p.nama as nama_pemilik,
-                g.nama as nama_pengelola
-            ')
-            ->join('tim_kerja',       'tim_kerja.id_tim = konteks.id_tim', 'left')
-            ->join('sasaran_strategis',  'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
-            ->join('kegiatan',           'kegiatan.id_kegiatan = konteks.id_kegiatan', 'left')
-            ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
-            ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left')
-            ->orderBy('konteks.created_at', 'DESC')
-            ->findAll();
-    }
-
     /* KRITERIA (dipakai index() dan offcanvas) */
     private function getKriteriaList(): array
     {
@@ -162,18 +108,31 @@ class RencanaPenangananController extends BaseController
     public function index()
     {
         $db = $this->db;
-        $idFromGet = $this->request->getGet('id_konteks');
-        if ($idFromGet) {
-            session()->set('id_konteks_rtp', $idFromGet);
+        $idKonteks = $this->request->getGet('id_konteks')
+            ?? session('global_id_konteks');
+
+        $idTim = $this->request->getGet('sk')
+            ?? session('global_id_tim');
+
+        $idKegiatan = $this->request->getGet('kg')
+            ?? session('global_id_kegiatan');
+
+        $tahun = $this->request->getGet('th')
+            ?? session('global_tahun');
+
+        $idPengelola = $this->request->getGet('pg');
+
+        $activeKonteks = null;
+
+        if ($idKonteks) {
+            $activeKonteks = (new KonteksModel())->find($idKonteks);
         }
 
-        /* ================= CONTEXT ================= */
-        $activeKonteks = $this->getActiveKonteks();
-        $idKonteks     = $activeKonteks ? (int)$activeKonteks['id_konteks'] : null;
-
-        $idTim = session('global_id_tim');
-        $idKegiatan = session('global_id_kegiatan');
-        $tahun = session('global_tahun');
+        if (!$activeKonteks && $idTim) {
+            $activeKonteks = [
+                'id_tim' => $idTim
+            ];
+        }
 
         /* ================= PAGINATION ================= */
         $perPage = (int) ($this->request->getGet('perPage') ?? 10);
@@ -331,7 +290,6 @@ class RencanaPenangananController extends BaseController
 
         return view('rencana_penanganan/index', [
             'grouped'       => $grouped,
-            'listKonteks'   => $this->getListKonteks(),
             'activeKonteks' => $activeKonteks,
             'total'         => $total,
             'from'          => $total > 0 ? $offset + 1 : 0,
@@ -486,20 +444,6 @@ class RencanaPenangananController extends BaseController
             'kriteriaKemungkinan' => $kriteria['kriteriaKemungkinan'],
             'kriteriaDampak'      => $kriteria['kriteriaDampak'],
         ]);
-    }
-
-    public function setActive()
-    {
-        $id = $this->request->getPost('id_konteks');
-        if (!$id) return redirect()->back();
-        session()->set('id_konteks_rtp', $id);
-        return redirect()->to(site_url('rencana-penanganan'));
-    }
-
-    public function resetActive()
-    {
-        session()->remove('id_konteks_rtp');
-        return redirect()->to(site_url('rencana-penanganan'));
     }
 
     /* DETAIL RTP (AJAX — view/edit mode) */

@@ -42,12 +42,6 @@
         </div>
     </div>
 
-    <!-- Context Selector -->
-    <?= view('evaluasi_risiko/_context_selector', [
-        'listKonteks'   => $listKonteks,
-        'activeKonteks' => $activeKonteks,
-    ]) ?>
-
     <!-- Summary Cards -->
     <?= view('evaluasi_risiko/_summary_cards', [
         'totalRisiko'   => $totalRisiko ?? 0,
@@ -55,46 +49,33 @@
         'totalBelum'    => $totalBelum ?? 0,
         'levelRisiko'   => $levelRisiko ?? [],
         'filter'        => $filter ?? '',
-        'activeKonteks' => $activeKonteks ?? null,
     ]) ?>
 
-    <?php if ($activeKonteks): ?>
+    <!-- Filter Badge -->
+    <?php if ($filter): ?>
+        <div class="mb-3 d-flex align-items-center gap-2">
+            <span class="text-muted small">Menampilkan:</span>
 
-        <!-- Konteks Aktif Info -->
-        <?= view('evaluasi_risiko/_context_active', ['activeKonteks' => $activeKonteks,]) ?>
+            <?php if ($filter === 'sudah'): ?>
+                <span class="badge bg-success-subtle text-success border border-success">
+                    Sudah Dievaluasi
+                </span>
+            <?php elseif ($filter === 'belum'): ?>
+                <span class="badge bg-warning-subtle text-warning border border-warning">
+                    Belum Dievaluasi
+                </span>
+            <?php endif; ?>
 
-        <!-- Filter Badge -->
-        <?php if ($filter): ?>
-            <div class="mb-3 d-flex align-items-center gap-2">
-                <span class="text-muted small">Menampilkan:</span>
-
-                <?php if ($filter === 'sudah'): ?>
-                    <span class="badge bg-success-subtle text-success border border-success">
-                        Sudah Dievaluasi
-                    </span>
-                <?php elseif ($filter === 'belum'): ?>
-                    <span class="badge bg-warning-subtle text-warning border border-warning">
-                        Belum Dievaluasi
-                    </span>
-                <?php endif; ?>
-
-                <a href="<?= site_url('evaluasi-risiko') ?>"
-                    class="small text-decoration-none text-danger ms-2">
-                    ✕ Clear Filter
-                </a>
-            </div>
-        <?php endif; ?>
-
-    <?php else: ?>
-        <div class="alert alert-warning">
-            Silakan pilih konteks terlebih dahulu.
+            <a href="<?= site_url('evaluasi-risiko') ?>"
+                class="small text-decoration-none text-danger ms-2">
+                ✕ Clear Filter
+            </a>
         </div>
     <?php endif; ?>
 
     <!-- Table -->
     <?= view('evaluasi_risiko/_table_section', [
         'data'          => $data,
-        'activeKonteks' => $activeKonteks,
         'total'         => $total   ?? 0,
         'from'          => $from    ?? 1,
         'to'            => $to      ?? count($data),
@@ -105,7 +86,6 @@
 
     <!-- Offcanvas Form -->
     <?= view('evaluasi_risiko/_offcanvas_form', [
-        'activeKonteks' => $activeKonteks,
     ]) ?>
 
 </div>
@@ -114,7 +94,6 @@
 <link rel="stylesheet" href="<?= base_url('assets/css/evaluasi-risiko.css') ?>">
 
 <!-- JS Modules -->
-<script src="<?= base_url('assets/js/modules/evaluasi_risiko/context-selector.js') ?>"></script>
 <script src="<?= base_url('assets/js/modules/evaluasi_risiko/evaluasi.js') ?>"></script>
 
 <?= $this->endSection() ?>

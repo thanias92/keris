@@ -18,6 +18,11 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/style-preset.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/custom.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/base/base.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/layout/navbar.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/layout/footer.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/layout/sidebar.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/responsive/mobile.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/context-selector.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/context-active.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/select2-custom.css') ?>">
@@ -57,9 +62,9 @@
     <div class="pc-container">
         <div class="pc-content">
             <?= $this->renderSection('content') ?>
+            <?= $this->include('partials/footer') ?>
         </div>
     </div>
-
     <!-- ================= JS AREA ================= -->
 
     <!-- Global JS Variables -->

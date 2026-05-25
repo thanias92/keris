@@ -44,53 +44,31 @@
         </div>
     </div>
 
-    <!-- Context Selector -->
-    <?= view('pemantauan_risiko/_context_selector', [
-        'listKonteks'   => $listKonteks,
-        'activeKonteks' => $activeKonteks,
-    ]) ?>
-
     <!-- Summary Cards -->
     <?= view('pemantauan_risiko/_summary_cards', [
         'totalRtp'      => $totalRtp,
         'distribusi'    => $distribusi,
-        'activeKonteks' => $activeKonteks,
         'filter'        => $filter ?? '',
     ]) ?>
 
-    <!-- Jika ada konteks aktif -->
-    <?php if ($activeKonteks): ?>
+    <?php if ($filter && $filter !== 'semua'): ?>
+        <div class="mb-3 d-flex align-items-center gap-2">
+            <span class="text-muted small">Menampilkan:</span>
 
-        <!-- Info Konteks -->
-        <?= view('pemantauan_risiko/_context_active', [
-            'activeKonteks' => $activeKonteks
-        ]) ?>
+            <span class="badge bg-primary-subtle text-primary border border-primary">
+                <?= esc($filter) ?>
+            </span>
 
-        <?php if ($filter && $filter !== 'semua'): ?>
-            <div class="mb-3 d-flex align-items-center gap-2">
-                <span class="text-muted small">Menampilkan:</span>
-
-                <span class="badge bg-primary-subtle text-primary border border-primary">
-                    <?= esc($filter) ?>
-                </span>
-
-                <a href="<?= site_url('pemantauan-risiko') ?>"
-                    class="small text-decoration-none text-danger ms-2">
-                    ✕ Clear Filter
-                </a>
-            </div>
-        <?php endif; ?>
-
-    <?php else: ?>
-        <div class="alert alert-warning">
-            Silakan pilih konteks terlebih dahulu.
+            <a href="<?= site_url('pemantauan-risiko') ?>"
+                class="small text-decoration-none text-danger ms-2">
+                ✕ Clear Filter
+            </a>
         </div>
     <?php endif; ?>
 
     <!-- TABLE -->
     <?= view('pemantauan_risiko/_table_section', [
         'grouped' => $grouped,
-        'activeKonteks' => $activeKonteks,
         'total'         => $total ?? 0,
         'from'          => $from ?? 0,
         'to'            => $to ?? 0,
@@ -100,8 +78,7 @@
     ]) ?>
 
     <!-- Offcanvas Form -->
-    <?= view('pemantauan_risiko/_offcanvas_form', [
-        'activeKonteks' => $activeKonteks,
+    <?= view('pemantauan_risiko/_offcanvas_form', [        
     ]) ?>
 
 </div>
@@ -110,7 +87,6 @@
 <link rel="stylesheet" href="<?= base_url('assets/css/pemantauan-risiko.css') ?>">
 
 <!-- JS -->
-<script src="<?= base_url('assets/js/modules/pemantauan_risiko/context-selector.js') ?>"></script>
 <script src="<?= base_url('assets/js/modules/pemantauan_risiko/pemantauan.js') ?>"></script>
 
 <script>

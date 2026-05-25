@@ -1,6 +1,4 @@
 <?php
-$qCtx = $activeKonteks ? '&id_konteks=' . $activeKonteks['id_konteks'] : '';
-
 // Warna per status pemantauan
 $statusConfig = [
     'Belum Dilaksanakan' => ['color' => '#6c757d', 'text' => 'text-secondary'],
@@ -39,7 +37,7 @@ $totalDistribusi = array_sum($distribusi);
     <?php endif; ?>
 
     <!-- TOTAL RTP -->
-    <a href="<?= site_url('pemantauan-risiko') ?><?= $activeKonteks ? '?id_konteks=' . $activeKonteks['id_konteks'] : '' ?>" class="er-stat-link">
+    <a href="<?= site_url('pemantauan-risiko') ?>" class="er-stat-link">
         <div class="er-stat-card <?= !$filter ? 'er-stat-active' : '' ?>">
             <div class="er-stat-label">Total RTP</div>
             <div class="er-stat-value"><?= $totalRtp ?></div>
@@ -47,7 +45,7 @@ $totalDistribusi = array_sum($distribusi);
     </a>
 
     <!-- SUDAH DIPANTAU -->
-    <a href="<?= site_url('pemantauan-risiko') ?>?filter=Selesai<?= $qCtx ?>" class="er-stat-link">
+    <a href="<?= site_url('pemantauan-risiko?filter=Selesai') ?>" class="er-stat-link">
         <div class="er-stat-card <?= $filter === 'Selesai' ? 'er-stat-active-sudah' : '' ?>">
             <div class="er-stat-label">Selesai</div>
             <div class="er-stat-value text-success"><?= $distribusi['Selesai'] ?? 0 ?></div>
@@ -55,7 +53,7 @@ $totalDistribusi = array_sum($distribusi);
     </a>
 
     <!-- DALAM PROSES -->
-    <a href="<?= site_url('pemantauan-risiko') ?>?filter=Dalam+Proses<?= $qCtx ?>" class="er-stat-link">
+    <a href="<?= site_url('pemantauan-risiko?filter=Dalam+Proses') ?>" class="er-stat-link">
         <div class="er-stat-card <?= $filter === 'Dalam Proses' ? 'er-stat-active' : '' ?>">
             <div class="er-stat-label">Dalam Proses</div>
             <div class="er-stat-value text-primary"><?= $distribusi['Dalam Proses'] ?? 0 ?></div>
@@ -63,7 +61,7 @@ $totalDistribusi = array_sum($distribusi);
     </a>
 
     <!-- BELUM DILAKSANAKAN -->
-    <a href="<?= site_url('pemantauan-risiko') ?>?filter=Belum+Dilaksanakan<?= $qCtx ?>" class="er-stat-link">
+    <a href="<?= site_url('pemantauan-risiko?filter=Belum+Dilaksanakan') ?>" class="er-stat-link">
         <div class="er-stat-card <?= $filter === 'Belum Dilaksanakan' ? 'er-stat-active-belum' : '' ?>">
             <div class="er-stat-label">Belum Dilaksanakan</div>
             <div class="er-stat-value text-secondary"><?= $distribusi['Belum Dilaksanakan'] ?? 0 ?></div>
@@ -71,7 +69,7 @@ $totalDistribusi = array_sum($distribusi);
     </a>
 
     <!-- TERLAMBAT -->
-    <a href="<?= site_url('pemantauan-risiko') ?>?filter=Terlambat<?= $qCtx ?>" class="er-stat-link">
+    <a href="<?= site_url('pemantauan-risiko?filter=Terlambat') ?>" class="er-stat-link">
         <div class="er-stat-card <?= $filter === 'Terlambat' ? 'er-stat-active-belum' : '' ?>">
             <div class="er-stat-label">Terlambat</div>
             <div class="er-stat-value text-danger"><?= $distribusi['Terlambat'] ?? 0 ?></div>
