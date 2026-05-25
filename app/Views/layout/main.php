@@ -27,11 +27,16 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/context-active.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/select2-custom.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/uikit.css') ?>">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@chenfengyuan/datepicker/dist/datepicker.min.css">
 
     <!-- OFFCANVAS KONTEKS CUSTOM CSS -->
     <link rel="stylesheet" href="<?= base_url('assets/css/dashboard.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/tabs.css') ?>">
     <link rel=" stylesheet" href="<?= base_url('assets/css/combobox.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/module/penetapan_konteks/ruang_lingkup/ruang-lingkup.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/penetapan-konteks.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/konteks.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/identifikasi-risiko.css') ?>">
@@ -105,6 +110,12 @@
 
     <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- Flatpickr -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- Flatpickr Month Select -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@chenfengyuan/datepicker/dist/datepicker.min.js"></script>
 
     <!-- GLOBAL COMPONENT -->
     <script src="<?= base_url('assets/js/components/combobox.js') ?>"></script>

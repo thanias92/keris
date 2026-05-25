@@ -19,6 +19,7 @@ class KonteksModel extends Model
         'id_kegiatan',
         'tahun',
         'id_sasaran_strategis',
+        'status',
     ];
 
     /**
@@ -47,5 +48,27 @@ class KonteksModel extends Model
     public function getById($id_konteks)
     {
         return $this->where('id_konteks', $id_konteks)->first();
+    }
+
+    /**
+     * Buat draft konteks baru dari Ruang Lingkup
+     */
+    public function createDraft(array $data)
+    {
+        $data['status'] = 'draft';
+
+        $this->insert($data);
+
+        return $this->getInsertID();
+    }
+
+    /**
+     * Tandai konteks selesai
+     */
+    public function markAsCompleted($idKonteks)
+    {
+        return $this->update($idKonteks, [
+            'status' => 'completed',
+        ]);
     }
 }

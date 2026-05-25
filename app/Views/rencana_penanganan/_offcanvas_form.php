@@ -126,112 +126,115 @@
 
             <hr class="rtp-divider">
 
-            <!-- ===== RENCANA TINDAK PENANGANAN ===== -->
-            <div class="mb-3">
+            <!-- ===== INPUT ZONE: RTP + RESIDU ===== -->
+            <div class="rtp-input-zone">
+                <!-- ===== RENCANA TINDAK PENANGANAN ===== -->
+                <div class="mb-3">
 
-                <div class="rtp-section-title">
-                    <i class="ti ti-list-check me-1"></i>Rencana Tindak Penanganan
-                </div>
+                    <div class="rtp-section-title">
+                        <i class="ti ti-list-check me-1"></i>Rencana Tindak Penanganan
+                    </div>
 
-                <!-- CREATE MODE -->
-                <div id="rtpCreateContainer"></div>
+                    <!-- CREATE MODE -->
+                    <div id="rtpCreateContainer"></div>
 
-                <!-- TEMPLATE CARD -->
-                <template id="rtpCardTemplate">
-                    <div class="rtp-card">
-                        <div class="rtp-card-header">
-                            <span class="rtp-card-title">RTP</span>
-                            <button type="button" class="rtp-card-remove">
-                                <i class="ti ti-x"></i>
-                            </button>
-                        </div>
-                        <div class="mb-2">
-                            <label class="rtp-form-label">Uraian RTP</label>
-                            <textarea name="uraian_rtp[]" class="form-control" rows="2"></textarea>
-                        </div>
-                        <div class="rtp-target-grid">
-                            <div>
-                                <label class="rtp-form-label rtp-sub-label">Output</label>
-                                <input type="text" name="target_output[]" class="form-control">
+                    <!-- TEMPLATE CARD -->
+                    <template id="rtpCardTemplate">
+                        <div class="rtp-card">
+                            <div class="rtp-card-header">
+                                <span class="rtp-card-title">RTP</span>
+                                <button type="button" class="rtp-card-remove">
+                                    <i class="ti ti-x"></i>
+                                </button>
                             </div>
-                            <div>
-                                <label class="rtp-form-label rtp-sub-label">Waktu</label>
-                                <input type="month" name="target_waktu[]" class="form-control">
+                            <div class="mb-2">
+                                <label class="rtp-form-label">Uraian RTP</label>
+                                <textarea name="uraian_rtp[]" class="form-control" rows="2"></textarea>
+                            </div>
+                            <div class="rtp-target-grid">
+                                <div>
+                                    <label class="rtp-form-label rtp-sub-label">Output</label>
+                                    <input type="text" name="target_output[]" class="form-control">
+                                </div>
+                                <div>
+                                    <label class="rtp-form-label rtp-sub-label">Waktu</label>
+                                    <input type="month" name="target_waktu[]" class="form-control">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </template>
+                    </template>
 
-                <!-- TIMELINE MODE -->
-                <div id="rtpTimelineContainer" class="d-none"></div>
+                    <!-- TIMELINE MODE -->
+                    <div id="rtpTimelineContainer" class="d-none"></div>
 
-                <!-- ADD BUTTON -->
-                <div id="rtpAddWrapper" class="mt-2">
-                    <button type="button" id="rtpAddBtn" class="btn btn-light btn-sm">
-                        <i class="ti ti-plus"></i>Tambah RTP
-                    </button>
-                </div>
-
-            </div>
-
-            <hr class="rtp-divider">
-
-            <!-- ===== RISIKO RESIDU ===== -->
-            <div class="mb-3">
-
-                <div class="rtp-section-title">
-                    <i class="ti ti-activity me-1"></i>Risiko Residu
-                </div>
-
-                <div class="rtp-grid-2">
-
-                    <div class="mb-3">
-                        <label class="rtp-form-label">Probability (P)</label>
-                        <select name="id_kemungkinan_residu" id="rtpKemungkinanResidu" class="form-select">
-                            <option value="">— Pilih —</option>
-                            <?php if (!empty($kriteriaKemungkinan)): ?>
-                                <?php foreach ($kriteriaKemungkinan as $k): ?>
-                                    <option
-                                        value="<?= esc($k['id_kriteria']) ?>"
-                                        data-level="<?= esc($k['level']) ?>"
-                                        data-nama="<?= esc($k['nama_level']) ?>">
-                                        <?= esc($k['level']) ?> - <?= esc($k['nama_level']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="rtp-form-label">Dampak (D)</label>
-                        <select name="id_dampak_residu" id="rtpDampakResidu" class="form-select">
-                            <option value="">— Pilih —</option>
-                            <?php if (!empty($kriteriaDampak)): ?>
-                                <?php foreach ($kriteriaDampak as $k): ?>
-                                    <option
-                                        value="<?= esc($k['id_kriteria']) ?>"
-                                        data-level="<?= esc($k['level']) ?>"
-                                        data-nama="<?= esc($k['nama_level']) ?>">
-                                        <?= esc($k['level']) ?> - <?= esc($k['nama_level']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
+                    <!-- ADD BUTTON -->
+                    <div id="rtpAddWrapper" class="mt-2">
+                        <button type="button" id="rtpAddBtn" class="btn btn-light btn-sm">
+                            <i class="ti ti-plus"></i>Tambah RTP
+                        </button>
                     </div>
 
                 </div>
 
-                <div class="rtp-residu-card">
-                    <div>
-                        <div class="rtp-preview-label">Skor Risiko Residu</div>
-                        <div class="rtp-residu-nilai" id="rtpResiduNilai">0</div>
-                    </div>
-                    <div class="text-end">
-                        <div id="rtpResiduBadge" class="rtp-residu-badge"></div>
-                    </div>
-                </div>
+                <hr class="rtp-divider">
 
-            </div>
+                <!-- ===== RISIKO RESIDU ===== -->
+                <div class="mb-3">
+
+                    <div class="rtp-section-title">
+                        <i class="ti ti-activity me-1"></i>Risiko Residu
+                    </div>
+
+                    <div class="rtp-grid-2">
+
+                        <div class="mb-3">
+                            <label class="rtp-form-label">Probability (P)</label>
+                            <select name="id_kemungkinan_residu" id="rtpKemungkinanResidu" class="form-select">
+                                <option value="">— Pilih —</option>
+                                <?php if (!empty($kriteriaKemungkinan)): ?>
+                                    <?php foreach ($kriteriaKemungkinan as $k): ?>
+                                        <option
+                                            value="<?= esc($k['id_kriteria']) ?>"
+                                            data-level="<?= esc($k['level']) ?>"
+                                            data-nama="<?= esc($k['nama_level']) ?>">
+                                            <?= esc($k['level']) ?> - <?= esc($k['nama_level']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="rtp-form-label">Dampak (D)</label>
+                            <select name="id_dampak_residu" id="rtpDampakResidu" class="form-select">
+                                <option value="">— Pilih —</option>
+                                <?php if (!empty($kriteriaDampak)): ?>
+                                    <?php foreach ($kriteriaDampak as $k): ?>
+                                        <option
+                                            value="<?= esc($k['id_kriteria']) ?>"
+                                            data-level="<?= esc($k['level']) ?>"
+                                            data-nama="<?= esc($k['nama_level']) ?>">
+                                            <?= esc($k['level']) ?> - <?= esc($k['nama_level']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="rtp-residu-card">
+                        <div>
+                            <div class="rtp-preview-label">Skor Risiko Residu</div>
+                            <div class="rtp-residu-nilai" id="rtpResiduNilai">0</div>
+                        </div>
+                        <div class="text-end">
+                            <div id="rtpResiduBadge" class="rtp-residu-badge"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- end rtp-input-zone -->
 
             <hr class="rtp-divider">
 

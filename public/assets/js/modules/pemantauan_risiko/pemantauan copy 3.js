@@ -43,27 +43,13 @@ function prSetMode(mode) {
   ["prRealisasiOutput", "prRealisasiWaktu", "prStatus", "prCatatan"].forEach(
     (id) => {
       const el = document.getElementById(id);
-      if (el) el.disabled = isView;
+      if (el) el.disabled = disableAll;
     },
   );
 
   const linkInput = document.getElementById("prBuktiLinkInput");
   if (linkInput) {
     linkInput.disabled = disableAll;
-    linkInput.classList.toggle("d-none", isView);
-  }
-
-  const catatanView = document.getElementById("prCatatanView");
-  const catatanEdit = document.getElementById("prCatatan");
-  if (catatanView && catatanEdit) {
-    if (isView) {
-      catatanView.textContent = catatanEdit.value || "-";
-      catatanView.classList.remove("d-none");
-      catatanEdit.classList.add("d-none");
-    } else {
-      catatanView.classList.add("d-none");
-      catatanEdit.classList.remove("d-none");
-    }
   }
 
   const toggle = (id, show) => {
@@ -96,8 +82,7 @@ function prRenderBuktiPreview(buktiList, showDelete = true) {
   if (!container) return;
 
   if (!buktiList || buktiList.length === 0) {
-    container.innerHTML =
-      '<p class="text-muted small mb-0" style="font-size:11px">Belum ada bukti dukung</p>';
+    container.innerHTML = '<p class="text-muted small mb-0">Belum ada link</p>';
     return;
   }
 
@@ -106,18 +91,22 @@ function prRenderBuktiPreview(buktiList, showDelete = true) {
   container.innerHTML = buktiList
     .map((b) => {
       const link = b.url_link;
-      let domain = link;
-      try {
-        domain = new URL(link).hostname;
-      } catch {}
-      const delBtn = showDelete
-        ? `<button type="button" class="pr-bukti-del" onclick="prDeleteBukti(${b.id_bukti})" title="Hapus">✕</button>`
+
+      const deleteBtn = showDelete
+        ? `<button type="button" class="btn btn-sm btn-outline-danger ms-auto"
+             onclick="prDeleteBukti(${b.id_bukti})">✕</button>`
         : "";
-      return `<div class="pr-bukti-card">
-      <span class="pr-bukti-icon ti ti-link"></span>
-      <a href="${link}" target="_blank" class="pr-bukti-url" title="${link}">${domain}</a>
-      ${delBtn}
-    </div>`;
+
+      return `
+      <div class="d-flex align-items-center gap-2 border rounded p-2 mb-2 bg-light">
+        <div class="flex-grow-1 overflow-hidden">
+          <a href="${link}" target="_blank"
+             class="small fw-semibold text-primary text-decoration-underline text-truncate d-block">
+             🔗 ${link}
+          </a>
+        </div>
+        ${deleteBtn}
+      </div>`;
     })
     .join("");
 }
@@ -151,21 +140,35 @@ document.addEventListener("DOMContentLoaded", function () {
   if (!input || !preview) return;
 
   input.addEventListener("input", function () {
+    const container = document.getElementById("prBuktiPreview");
     if (prCurrentMode === "view") return;
     const val = this.value.trim();
+
     if (!val) {
       preview.innerHTML = "";
       return;
     }
+
     try {
-      const u = new URL(val);
-      preview.innerHTML = `<div class="pr-bukti-card">
-        <span class="pr-bukti-icon ti ti-link"></span>
-        <a href="${val}" target="_blank" class="pr-bukti-url" title="${val}">${u.hostname}</a>
-      </div>`;
+      new URL(val);
+
+      preview.innerHTML = `
+        <div class="small text-muted">Link:</div>
+        <div class="text-break mb-2">${val}</div>
+
+        <button type="button"
+          class="btn btn-sm btn-outline-primary"
+          onclick="window.open('${val}', '_blank')">
+          🔗 Buka Link
+        </button>
+
+        <div class="text-muted small">
+          Jika link tidak bisa dibuka, silakan copy dan buka di tab baru.
+        </div>
+      `;
     } catch {
       preview.innerHTML =
-        '<span class="text-danger" style="font-size:11px">Link tidak valid</span>';
+        '<span class="text-danger small">Link tidak valid</span>';
     }
   });
 });

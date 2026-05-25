@@ -7,8 +7,12 @@ use App\Models\KonteksModel;
 
 class BaseContextController extends BaseController
 {
-    protected function getActiveKonteks($id = null)
+    protected function getActiveKonteks()
     {
+        $tahun       = session('global_tahun');
+        $idTim       = session('global_id_tim');
+        $idKegiatan  = session('global_id_kegiatan');
+
         $builder = (new KonteksModel())
             ->select('
             konteks.*,
@@ -23,28 +27,6 @@ class BaseContextController extends BaseController
             ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left');
-
-        /*
-    |--------------------------------------------------------------------------
-    | PRIORITAS 1
-    | explicit context id dari URL
-    |--------------------------------------------------------------------------
-    */
-        if ($id) {
-            return $builder
-                ->where('konteks.id_konteks', $id)
-                ->first();
-        }
-
-        /*
-    |--------------------------------------------------------------------------
-    | PRIORITAS 2
-    | global selector
-    |--------------------------------------------------------------------------
-    */
-        $tahun      = session('global_tahun');
-        $idTim      = session('global_id_tim');
-        $idKegiatan = session('global_id_kegiatan');
 
         if ($tahun) {
             $builder->where('konteks.tahun', $tahun);
@@ -88,10 +70,10 @@ class BaseContextController extends BaseController
             ->findAll();
     }
 
-    protected function contextData($id = null): array
+    protected function contextData(): array
     {
         return [
-            'activeKonteks' => $this->getActiveKonteks($id),
+            'activeKonteks' => $this->getActiveKonteks(),
             'listKonteks'   => $this->getListKonteks(),
         ];
     }

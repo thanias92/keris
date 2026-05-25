@@ -9,7 +9,6 @@
                 token: '<?= csrf_hash() ?>',
             },
             url: {
-                createDraft: '<?= site_url('penetapan-konteks/konteks/create-draft') ?>',
                 store: '<?= site_url('penetapan-konteks/konteks/store') ?>',
                 update: '<?= site_url('penetapan-konteks/konteks/update') ?>',
                 delete: '<?= site_url('penetapan-konteks/konteks/delete') ?>',
@@ -81,12 +80,23 @@
                 </div>
 
                 <div class="col-12 col-lg-4 text-lg-end mt-3 mt-lg-0">
-                    <?php if ($activeTab === 'ruang_lingkup'): ?>
-                        <button
-                            class="btn btn-primary"
+                    <?php
+                    $btn = pk_module_config('penetapan_konteks', $activeTab);
+                    $offcanvasId = match ($btn['module'] ?? '') {
+                        'pemangku_kepentingan' => 'offcanvasPemangku',
+                        'proses_bisnis'        => 'offcanvasProsesBisnis',
+                        'sasaran_kinerja'      => 'offcanvasSasaranKinerja',
+                        'konteks'              => 'offcanvasKonteks',
+                        default                => 'offcanvas' . str_replace('_', '', ucwords($btn['module'] ?? '', '_')),
+                    };
+                    ?>
+
+                    <?php if ($btn): ?>
+                        <button class="btn btn-primary"
                             data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasRuangLingkup">
-                            <i class="ti ti-plus"></i>Ruang Lingkup
+                            data-bs-target="#<?= $offcanvasId ?>"
+                            <?= $btn['module'] === 'konteks' ? 'onclick="pkOpenCreateMode()"' : '' ?>>
+                            <i class="ti ti-plus"></i> <?= esc($btn['label']) ?>
                         </button>
                     <?php endif; ?>
                 </div>
@@ -100,8 +110,8 @@
     </div>
 </div>
 
-<?php if ($activeTab === 'ruang_lingkup'): ?>
-    <?= view('penetapan_konteks/tabs/ruang_lingkup/_offcanvas_form') ?>
+<?php if ($btn): ?>
+    <?= view('penetapan_konteks/tabs/' . $btn['module'] . '/_offcanvas_form') ?>
 <?php endif; ?>
 
 <?= $this->endSection() ?>

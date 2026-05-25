@@ -76,100 +76,97 @@
 
             <hr class="ar-divider">
 
-            <!-- ===== SECTION: INPUT USER (Risiko Aktual + Pengendalian) ===== -->
-            <div class="ar-input-zone">
-                <!-- ===== SECTION: RISIKO AKTUAL ===== -->
-                <div class="mb-3">
-                    <div class="ar-section-title">
-                        <i class="ti ti-chart-bar me-1"></i>Risiko Aktual
-                    </div>
-
-                    <div class="ar-grid-2">
-                        <!-- Probability -->
-                        <div>
-                            <label class="ar-form-label">
-                                Probability (Kemungkinan) <span class="text-danger">*</span>
-                            </label>
-                            <select name="id_kemungkinan" id="arKemungkinan"
-                                class="form-select" required>
-                                <option value="">— Pilih Level —</option>
-                                <?php foreach ($kemungkinanList as $k): ?>
-                                    <option value="<?= esc($k['id_kriteria']) ?>"
-                                        data-level="<?= esc($k['level']) ?>"
-                                        data-desc="<?= esc($k['deskripsi_frekuensi'] ?? '') ?>">
-                                        Level <?= esc($k['level']) ?> — <?= esc($k['nama_level']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <div class="ar-desc-hint" id="arDescKemungkinan"></div>
-                        </div>
-
-                        <!-- Dampak -->
-                        <div>
-                            <label class="ar-form-label">
-                                Dampak <span class="text-danger">*</span>
-                            </label>
-                            <select name="id_dampak" id="arDampak"
-                                class="form-select" required>
-                                <option value="">— Pilih Level —</option>
-                                <?php foreach ($dampakList as $d): ?>
-                                    <option value="<?= esc($d['id_kriteria']) ?>"
-                                        data-level="<?= esc($d['level']) ?>"
-                                        data-desc="<?= esc($d['deskripsi'] ?? '') ?>">
-                                        Level <?= esc($d['level']) ?> — <?= esc($d['nama_level']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <div class="ar-desc-hint" id="arDescDampak"></div>
-                        </div>
-                    </div>
-
-                    <!-- Preview Skor -->
-                    <div id="arPreview" class="ar-preview-card d-none">
-                        <div>
-                            <div class="ar-preview-label">Skor Risiko</div>
-                            <div class="ar-preview-nilai" id="arPreviewNilai">0</div>
-                        </div>
-                        <div class="text-end">
-                            <div id="arPreviewBadge" class="ar-preview-badge"></div>
-                            <div class="ar-preview-tindakan" id="arPreviewTindakan"></div>
-                        </div>
-                    </div>
+            <!-- ===== SECTION: RISIKO AKTUAL ===== -->
+            <div class="mb-3">
+                <div class="ar-section-title">
+                    <i class="ti ti-chart-bar me-1"></i>Risiko Aktual
                 </div>
 
-                <hr class="ar-divider">
-
-                <!-- ===== SECTION: PENGENDALIAN ===== -->
-                <div class="mb-3">
-                    <div class="ar-section-title">
-                        <i class="ti ti-shield-check me-1"></i>Pengendalian yang Telah Dilaksanakan
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="ar-form-label">Uraian Pengendalian</label>
-                        <!-- VIEW MODE -->
-                        <div id="arInfoPengendalian" class="ar-info-value mb-2"></div>
-
-                        <!-- EDIT MODE -->
-                        <textarea name="uraian_pengendalian" id="arUraianPengendalian"
-                            class="form-control d-none" rows="3"
-                            placeholder="Masukkan pengendalian yang telah dilaksanakan"></textarea>
-                    </div>
-
-                    <div style="max-width: 320px;">
+                <div class="ar-grid-2">
+                    <!-- Probability -->
+                    <div>
                         <label class="ar-form-label">
-                            Efektivitas <span class="text-danger">*</span>
+                            Probability (Kemungkinan) <span class="text-danger">*</span>
                         </label>
-                        <select name="efektivitas" id="arEfektivitas"
+                        <select name="id_kemungkinan" id="arKemungkinan"
                             class="form-select" required>
-                            <option value="">— Pilih —</option>
-                            <option value="Efektif">Efektif</option>
-                            <option value="Kurang Efektif">Kurang Efektif</option>
-                            <option value="Tidak Efektif">Tidak Efektif</option>
+                            <option value="">— Pilih Level —</option>
+                            <?php foreach ($kemungkinanList as $k): ?>
+                                <option value="<?= esc($k['id_kriteria']) ?>"
+                                    data-level="<?= esc($k['level']) ?>"
+                                    data-desc="<?= esc($k['deskripsi_frekuensi'] ?? '') ?>">
+                                    Level <?= esc($k['level']) ?> — <?= esc($k['nama_level']) ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
+                        <div class="ar-desc-hint" id="arDescKemungkinan"></div>
+                    </div>
+
+                    <!-- Dampak -->
+                    <div>
+                        <label class="ar-form-label">
+                            Dampak <span class="text-danger">*</span>
+                        </label>
+                        <select name="id_dampak" id="arDampak"
+                            class="form-select" required>
+                            <option value="">— Pilih Level —</option>
+                            <?php foreach ($dampakList as $d): ?>
+                                <option value="<?= esc($d['id_kriteria']) ?>"
+                                    data-level="<?= esc($d['level']) ?>"
+                                    data-desc="<?= esc($d['deskripsi'] ?? '') ?>">
+                                    Level <?= esc($d['level']) ?> — <?= esc($d['nama_level']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="ar-desc-hint" id="arDescDampak"></div>
                     </div>
                 </div>
-            </div><!-- end ar-input-zone -->
+
+                <!-- Preview Skor -->
+                <div id="arPreview" class="ar-preview-card d-none">
+                    <div>
+                        <div class="ar-preview-label">Skor Risiko</div>
+                        <div class="ar-preview-nilai" id="arPreviewNilai">0</div>
+                    </div>
+                    <div class="text-end">
+                        <div id="arPreviewBadge" class="ar-preview-badge"></div>
+                        <div class="ar-preview-tindakan" id="arPreviewTindakan"></div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="ar-divider">
+
+            <!-- ===== SECTION: PENGENDALIAN ===== -->
+            <div class="mb-3">
+                <div class="ar-section-title">
+                    <i class="ti ti-shield-check me-1"></i>Pengendalian yang Telah Dilaksanakan
+                </div>
+
+                <div class="mb-3">
+                    <label class="ar-form-label">Uraian Pengendalian</label>
+                    <!-- VIEW MODE -->
+                    <div id="arInfoPengendalian" class="ar-info-value mb-2"></div>
+
+                    <!-- EDIT MODE -->
+                    <textarea name="uraian_pengendalian" id="arUraianPengendalian"
+                        class="form-control d-none" rows="3"
+                        placeholder="Masukkan pengendalian yang telah dilaksanakan"></textarea>
+                </div>
+
+                <div style="max-width: 320px;">
+                    <label class="ar-form-label">
+                        Efektivitas <span class="text-danger">*</span>
+                    </label>
+                    <select name="efektivitas" id="arEfektivitas"
+                        class="form-select" required>
+                        <option value="">— Pilih —</option>
+                        <option value="Efektif">Efektif</option>
+                        <option value="Kurang Efektif">Kurang Efektif</option>
+                        <option value="Tidak Efektif">Tidak Efektif</option>
+                    </select>
+                </div>
+            </div>
 
             <hr class="ar-divider">
 

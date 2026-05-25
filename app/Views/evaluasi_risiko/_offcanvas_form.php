@@ -164,46 +164,48 @@
             <hr class="ar-divider">
 
             <!-- ===== SECTION: RESPON RISIKO ===== -->
-            <div class="mb-3">
-
-                <div class="ar-section-title">
-                    <i class="ti ti-shield-exclamation me-1"></i>
-                    Respon Risiko
-                </div>
-
+            <div class="er-input-zone">
                 <div class="mb-3">
 
-                    <label class="ar-form-label">
-                        Opsi Tindakan <span class="text-danger">*</span>
-                    </label>
+                    <div class="ar-section-title">
+                        <i class="ti ti-shield-exclamation me-1"></i>
+                        Respon Risiko
+                    </div>
 
-                    <select name="opsi_tindakan"
-                        id="erOpsiTindakan"
-                        class="form-select"
-                        required>
+                    <div class="mb-3">
 
-                        <option value="">— Pilih —</option>
-                        <option value="Menghindari">Menghindari</option>
-                        <option value="Membagi">Membagi</option>
-                        <option value="Mengurangi">Mengurangi</option>
-                        <option value="Menerima">Menerima</option>
-                        <option value="Mengejar">Mengejar</option>
-                    </select>
+                        <label class="ar-form-label">
+                            Opsi Tindakan <span class="text-danger">*</span>
+                        </label>
+
+                        <select name="opsi_tindakan"
+                            id="erOpsiTindakan"
+                            class="form-select"
+                            required>
+
+                            <option value="">— Pilih —</option>
+                            <option value="Menghindari">Menghindari</option>
+                            <option value="Membagi">Membagi</option>
+                            <option value="Mengurangi">Mengurangi</option>
+                            <option value="Menerima">Menerima</option>
+                            <option value="Mengejar">Mengejar</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="ar-form-label">
+                            Keterangan
+                        </label>
+
+                        <textarea name="keterangan"
+                            id="erKeterangan"
+                            class="form-control"
+                            rows="3"
+                            placeholder="Tambahkan keterangan jika diperlukan..."></textarea>
+                    </div>
                 </div>
-
-                <div class="mb-3">
-
-                    <label class="ar-form-label">
-                        Keterangan
-                    </label>
-
-                    <textarea name="keterangan"
-                        id="erKeterangan"
-                        class="form-control"
-                        rows="3"
-                        placeholder="Tambahkan keterangan jika diperlukan..."></textarea>
-                </div>
-            </div>
+            </div><!-- end er-input-zone -->
 
             <hr class="ar-divider">
 

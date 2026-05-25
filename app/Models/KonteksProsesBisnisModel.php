@@ -12,6 +12,7 @@ class KonteksProsesBisnisModel extends Model
     protected $allowedFields = [
         'id_konteks',
         'id_proses',
+        'deskripsi_proses',
     ];
 
     protected $useTimestamps = false;
@@ -23,6 +24,7 @@ class KonteksProsesBisnisModel extends Model
             kpb.id_konteks_proses,
             kpb.id_konteks,
             kpb.id_proses,
+            kpb.deskripsi_proses,
             pb.kode_proses,
             pb.jenis_proses,
             pb.uraian_proses

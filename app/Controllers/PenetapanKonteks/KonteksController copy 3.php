@@ -25,39 +25,38 @@ class KonteksController extends BaseContextController
         $this->model = new KonteksModel();
     }
 
-    public function konteks($id)
+    public function workspace($id)
     {
-        $activeKonteks = $this->getActiveKonteks($id);
+        $konteks = $this->model->find($id);
 
-        if (!$activeKonteks) {
+        if (!$konteks) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        $listPemangku = (new PemangkuKepentinganModel())->findAll();
-        $listPeraturan = (new PeraturanTerkaitModel())->findAll();
-        $listTimKerja = (new TimKerjaModel())->findAll();
+        // SET ACTIVE CONTEXT
+        session()->set('id_konteks_aktif', $id);
+
         $listSasaran = (new SasaranStrategisModel())->findAll();
 
-        $listWilayah = (new WilayahModel())
-            ->orderBy('nama_wilayah', 'ASC')
+        $listPemangku = (new PemangkuKepentinganModel())->findAll();
+
+        $listPeraturan = (new PeraturanTerkaitModel())->findAll();
+
+        $allProses = (new ProsesBisnisModel())
+            ->orderBy('kode_proses', 'ASC')
             ->findAll();
 
-        return view(
-            'penetapan_konteks/index',
-            array_merge(
-                $this->contextData($id),
-                [
-                    'activeTab'         => 'konteks',
-                    'hideGlobalContext' => false,
+        $selectedProses = (new KonteksProsesBisnisModel())
+            ->getByKonteks($id);
 
-                    'listPemangku'   => $listPemangku,
-                    'listPeraturan'  => $listPeraturan,
-                    'listTimKerja'   => $listTimKerja,
-                    'listSasaran'    => $listSasaran,
-                    'listWilayah'    => $listWilayah,
-                ]
-            )
-        );
+        return view('penetapan_konteks/workspace', [
+            'konteks'         => $konteks,
+            'listSasaran'     => $listSasaran,
+            'listPemangku'    => $listPemangku,
+            'listPeraturan'   => $listPeraturan,
+            'allProses'       => $allProses,
+            'selectedProses'  => $selectedProses,
+        ]);
     }
 
     /* INDEX (LOAD FULL PAGE) */
@@ -137,31 +136,6 @@ class KonteksController extends BaseContextController
                 ]
             )
         );
-    }
-
-    public function createDraft()
-    {
-        if (!$this->request->isAJAX()) {
-            return redirect()->back();
-        }
-
-        $toInt = fn($v) => $v !== '' && $v !== null ? (int) $v : null;
-
-        $data = [
-            'tahun'       => (int) $this->request->getPost('tahun'),
-            'id_tim'      => $toInt($this->request->getPost('id_tim')),
-            'id_kegiatan' => $toInt($this->request->getPost('id_kegiatan')),
-            'status'      => 'draft',
-        ];
-
-        $this->model->insert($data);
-
-        $id = $this->model->getInsertID();
-
-        return $this->response->setJSON([
-            'status' => 'success',
-            'id'     => $id,
-        ]);
     }
 
     /* STORE (AJAX CREATE) */
@@ -272,7 +246,7 @@ class KonteksController extends BaseContextController
             ->orderBy('tahun', 'DESC')
             ->findAll();
 
-        return view('penetapan_konteks/tabs/ruang_lingkup/_table_section', [
+        return view('penetapan_konteks/tabs/konteks/_table_section', [
             'data'    => $data,
             'from'    => 1,
             'to'      => count($data),

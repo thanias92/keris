@@ -105,13 +105,13 @@ $routes->group('master', ['filter' => ['auth']], function ($routes) {
 $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKonteks', 'filter' => ['auth']
 ], function ($routes) {
     $routes->get('/', 'KonteksController::index');
-    $routes->get('konteks', 'KonteksController::konteks');
-    $routes->post('konteks/create-draft', 'KonteksController::createDraft', ['filter' => 'role:admin,operator']);
-    $routes->get('konteks/(:num)', 'KonteksController::index/$1', ['filter' => 'role:admin,operator,ketua']);
+    $routes->get('konteks', 'KonteksController::index');
 
     $routes->post('konteks/store', 'KonteksController::store', ['filter' => 'role:admin,operator']);
     $routes->post('konteks/update', 'KonteksController::update', ['filter' => 'role:admin,operator']);
     $routes->post('konteks/delete', 'KonteksController::delete', ['filter' => 'role:admin,operator']);
+    $routes->post('konteks/set-active', 'KonteksController::setActive');
+    $routes->post('konteks/reset-active', 'KonteksController::resetActive');
     $routes->get('konteks/detail/(:num)', 'KonteksController::detail/$1');
 
     $routes->get('konteks/table', 'KonteksController::ajaxTable');

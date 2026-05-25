@@ -84,6 +84,7 @@
     background-color: rgba(13,110,253,0.08);
 }
 
+
 /* ===================================== */
 /* PENETAPAN KONTEKS – EQUAL WIDTH TABS */
 /* Scoped ke .pk-page saja */
@@ -103,6 +104,10 @@
     padding: 12px 0;
 }
 
+.pk-tabs-row-3 .pk-tab {
+    width: 100%;
+    justify-content: center;
+}
 /* === TABEL PROSES BISNIS === */
 
 

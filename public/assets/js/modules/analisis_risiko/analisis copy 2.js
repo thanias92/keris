@@ -65,10 +65,8 @@ function arSetMode(mode) {
     }
   }
 
-  // Tutup hanya di mode view/create, BUKAN saat edit
-  if (!isEdit) {
-    btnTutup?.classList.remove("d-none");
-  }
+  // Tutup selalu ada
+  btnTutup?.classList.remove("d-none");
 
   // ===== TITLE =====
   document.getElementById("arOffcanvasTitle").textContent = isCreate

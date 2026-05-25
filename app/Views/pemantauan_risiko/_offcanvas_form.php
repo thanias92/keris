@@ -73,58 +73,52 @@
 
             <hr class="rtp-divider">
 
-            <!-- ===== REALISASI ===== -->
-            <div class="mb-3">
-                <div class="rtp-section-title"><i class="ti ti-progress-check me-1"></i>Realisasi</div>
+            <!-- ===== INPUT ZONE: REALISASI → BUKTI ===== -->
+            <div class="rtp-input-zone">
 
-                <div class="pr-grid-realisasi">
+                <!-- ===== REALISASI ===== -->
+                <div class="mb-3">
+                    <div class="rtp-section-title"><i class="ti ti-clipboard-check me-1"></i>Realisasi</div>
+
+                    <div class="pr-grid-realisasi">
+                        <div>
+                            <label class="rtp-form-label">Realisasi Output</label>
+                            <input type="text" name="realisasi_output" id="prRealisasiOutput" class="form-control" required>
+                        </div>
+
+                        <div>
+                            <label class="rtp-form-label">Realisasi Waktu</label>
+                            <input type="month" name="realisasi_waktu" id="prRealisasiWaktu" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== STATUS + CATATAN ===== -->
+                <div class="rtp-grid-2 mb-3">
                     <div>
-                        <label class="rtp-form-label">Realisasi Output</label>
-                        <input type="text" name="realisasi_output" id="prRealisasiOutput" class="form-control" required>
+                        <div class="rtp-section-title"><i class="ti ti-flag me-1"></i>Status</div>
+                        <span id="prStatusBadge" class="badge bg-secondary-subtle text-secondary">-</span>
                     </div>
-
                     <div>
-                        <label class="rtp-form-label">Realisasi Waktu</label>
-                        <input type="month" name="realisasi_waktu" id="prRealisasiWaktu" class="form-control">
+                        <div class="rtp-section-title"><i class="ti ti-note me-1"></i>Catatan</div>
+                        <div id="prCatatanView" class="rtp-info-value small d-none">-</div>
+                        <textarea name="catatan" id="prCatatan" class="form-control" rows="2"></textarea>
                     </div>
                 </div>
-            </div>
 
-            <!-- ===== STATUS + CATATAN ===== -->
-            <div class="rtp-grid-2 mb-3">
-
-                <div>
-                    <div class="rtp-section-title">
-                        <i class="ti ti-flag me-1"></i>Status
-                    </div>
-
-                    <span id="prStatusBadge" class="badge bg-secondary-subtle text-secondary">
-                        -
-                    </span>
+                <!-- ===== BUKTI ===== -->
+                <div class="mb-3">
+                    <div class="rtp-section-title"><i class="ti ti-link me-1"></i>Bukti Dukung (Link)</div>
+                    <input
+                        type="url"
+                        name="bukti_link"
+                        id="prBuktiLinkInput"
+                        class="form-control mb-2"
+                        placeholder="https://contoh.com">
+                    <div id="prBuktiPreview" class="mt-1"></div>
                 </div>
 
-                <div>
-                    <div class="rtp-section-title"><i class="ti ti-note me-1"></i>Catatan</div>
-                    <textarea name="catatan" id="prCatatan" class="form-control" rows="2"></textarea>
-                </div>
-
-            </div>
-
-            <!-- ===== BUKTI ===== -->
-            <div class="mb-3">
-                <div class="rtp-section-title">
-                    <i class="ti ti-link me-1"></i>Bukti Dukung (Link)
-                </div>
-
-                <input
-                    type="url"
-                    name="bukti_link"
-                    id="prBuktiLinkInput"
-                    class="form-control"
-                    placeholder="https://contoh.com">
-
-                <div id="prBuktiPreview" class="mt-2 small"></div>
-            </div>
+            </div><!-- end rtp-input-zone -->
 
             <hr class="rtp-divider">
 

@@ -1,45 +1,18 @@
 <div class="pk-tabs-container">
-
-    <!-- ROW 1 -->
-    <div class="pk-tabs-row">
-        <a class="pk-tab <?= $activeTab === 'konteks' ? 'active' : '' ?>" href="<?= site_url('penetapan-konteks/konteks') ?>">
-            <span>Konteks</span>
+    <div class="pk-tabs-row pk-tabs-row-3">
+        <a class="pk-tab <?= $activeTab === 'ruang_lingkup' ? 'active' : '' ?>"
+            href="<?= site_url('penetapan-konteks/konteks') ?>">
+            <i class="ti ti-layout-grid-add me-2"></i> <span>Ruang Lingkup</span>
         </a>
 
-        <a class="pk-tab <?= $activeTab === 'proses_bisnis' ? 'active' : '' ?>" href="<?= site_url('penetapan-konteks/proses-bisnis') ?>">
-            <span>Proses Bisnis</span>
+        <a class="pk-tab <?= $activeTab === 'workspace_konteks' ? 'active' : '' ?>"
+            href="javascript:void(0)">
+            <i class="ti ti-file-text me-2"></i> <span>Konteks</span>
         </a>
 
-        <a class="pk-tab <?= $activeTab === 'sasaran_kinerja' ? 'active' : '' ?>" href="<?= site_url('penetapan-konteks/sasaran-kinerja') ?>">
-            <span>Sasaran Kinerja</span>
-        </a>
-
-        <a class="pk-tab <?= $activeTab === 'pemangku' ? 'active' : '' ?>" href="<?= site_url('penetapan-konteks/pemangku') ?>">
-            <span>Pemangku Kepentingan</span>
-        </a>
-
-        <a class="pk-tab <?= $activeTab === 'peraturan' ? 'active' : '' ?>" href="<?= site_url('penetapan-konteks/peraturan') ?>">
-            <span>Peraturan Terkait</span>
+        <a class="pk-tab <?= in_array($activeTab, ['kriteria', 'matriks', 'selera']) ? 'active' : '' ?>"
+            href="<?= site_url('penetapan-konteks/kriteria') ?>">
+            <i class="ti ti-scale me-2"></i> <span>Kriteria</span>
         </a>
     </div>
-
-    <!-- ROW 2 -->
-    <div class="pk-tabs-row">
-        <a class="pk-tab <?= $activeTab === 'kriteria' ? 'active' : '' ?>" href="<?= site_url('penetapan-konteks/kriteria') ?>">
-            <span>Kriteria</span>
-        </a>
-
-        <a class="pk-tab <?= $activeTab === 'matriks' ? 'active' : '' ?>" href="<?= site_url('penetapan-konteks/matriks') ?>">
-            <span>Matriks Risiko</span>
-        </a>
-
-        <a class="pk-tab <?= $activeTab === 'selera' ? 'active' : '' ?>" href="<?= site_url('penetapan-konteks/selera') ?>">
-            <span>Selera Risiko</span>
-        </a>
-
-        <a class="pk-tab <?= $activeTab === 'sasaran_strategis' ? 'active' : '' ?>" href="<?= site_url('penetapan-konteks/sasaran-strategis') ?>">
-            <span>Sasaran Strategis</span>
-        </a>
-    </div>
-
 </div>

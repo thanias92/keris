@@ -490,3 +490,24 @@ background:#e5e7eb;
     background: #fff;
     cursor: pointer;
 }
+
+/* ================= INPUT ZONE (user-fill area) ================= */
+.rtp-input-zone {
+    background: #eef4ff;
+    border: 1.5px solid #93c5fd;
+    border-radius: 10px;
+    padding: 16px 16px 8px 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 4px rgba(59,130,246,0.08);
+}
+.rtp-input-zone .rtp-section-title {
+    color: #1d4ed8;
+    border-bottom-color: #bfdbfe;
+}
+.rtp-input-zone .rtp-residu-card {
+    background: #fff8f0;
+    border-color: #fed7aa;
+}
+.rtp-input-zone .rtp-divider {
+    border-top-color: #bfdbfe;
+}
