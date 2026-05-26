@@ -245,7 +245,17 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   });
+
   menu_click();
+
+// FORCE SIDEBAR STABLE STATE
+// =====================================
+const sidebar = document.querySelector(".pc-sidebar");
+
+// buka semua submenu
+document.querySelectorAll(".pc-item.pc-hasmenu").forEach((item) => {
+  item.classList.add("pc-trigger");
+});
 });
 
 // AUTO SCROLL KE MENU ACTIVE
@@ -274,23 +284,13 @@ function menu_click() {
   const parents = sidebar.querySelectorAll(".pc-item.pc-hasmenu > .pc-link");
 
   parents.forEach((link) => {
-    link.onclick = function (e) {
-      e.preventDefault();
-
+    link.onclick = function () {
       const parent = link.parentElement;
-      const sameLevelMenus = parent.parentElement.querySelectorAll(
-        ":scope > .pc-item.pc-hasmenu",
-      );
 
-      // tutup sibling submenu
-      sameLevelMenus.forEach((item) => {
-        if (item !== parent) {
-          item.classList.remove("pc-trigger");
-        }
+      // buka semua submenu
+      document.querySelectorAll(".pc-item.pc-hasmenu").forEach((item) => {
+        item.classList.add("pc-trigger");
       });
-
-      // toggle current submenu
-      parent.classList.toggle("pc-trigger");
     };
   });
 }
