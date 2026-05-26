@@ -27,24 +27,11 @@ class KonteksProsesBisnisModel extends Model
             kpb.deskripsi_proses,
             pb.kode_proses,
             pb.jenis_proses,
-            pb.uraian_proses,
-            sk.uraian_sasaran
+            pb.uraian_proses
         ')
-            ->join(
-                'proses_bisnis pb',
-                'pb.id_proses = kpb.id_proses'
-            )
-            ->join(
-                'sasaran_kinerja sk',
-                'sk.id_konteks_proses = kpb.id_konteks_proses',
-                'left'
-            )
+            ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->where('kpb.id_konteks', $idKonteks)
-            ->orderBy(
-                "CASE WHEN pb.jenis_proses = 'Teknis' THEN 1 ELSE 2 END",
-                '',
-                false
-            )
+            ->orderBy("CASE WHEN pb.jenis_proses = 'Teknis' THEN 1 ELSE 2 END", '', false)
             ->orderBy('pb.kode_proses', 'ASC')
             ->get()
             ->getResultArray();

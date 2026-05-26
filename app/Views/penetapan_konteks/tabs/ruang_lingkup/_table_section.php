@@ -30,7 +30,7 @@
                             default               => 'pk-badge-draft',
                         };
                         ?>
-                        <tr class="table-row-click" onclick="window.location.href='<?= site_url('penetapan-konteks/workspace/' . $row['id_konteks']) ?>'">
+                        <tr class="table-row-click rl-row" data-id="<?= $row['id_konteks'] ?>">
                             <td class="text-center text-muted py-1.5" style="font-size: 12.5px;"><?= $no++ ?></td>
                             <td class="py-1.5" style="font-size: 12.5px;"><strong><?= esc($row['tahun']) ?></strong></td>
                             <td class="py-1.5">

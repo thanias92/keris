@@ -50,7 +50,7 @@ class KonteksController extends BaseContextController
             === (string) $row['id_tim'];
     }
 
-    public function show($id)
+    public function konteks($id)
     {
         $activeKonteks = $this->getActiveKonteks($id);
 
@@ -67,110 +67,18 @@ class KonteksController extends BaseContextController
             ->orderBy('nama_wilayah', 'ASC')
             ->findAll();
 
-        $selectedProsesData = (new KonteksProsesBisnisModel())
-            ->getByKonteks($id);
-
-        $allProses = (new ProsesBisnisModel())
-            ->orderBy('kode_proses', 'ASC')
-            ->findAll();
-
-        $sasaranOrganisasi = \Config\Database::connect()
-            ->table('konteks_proses_bisnis kpb')
-            ->select('
-        kpb.id_konteks_proses,
-        kpb.deskripsi_proses,
-        pb.kode_proses,
-        pb.jenis_proses,
-        pb.uraian_proses,
-        sk.id_sasaran,
-        sk.uraian_sasaran
-    ')
-            ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
-            ->join('sasaran_kinerja sk', 'sk.id_konteks_proses = kpb.id_konteks_proses', 'left')
-            ->where('kpb.id_konteks', $id)
-            ->orderBy('pb.kode_proses', 'ASC')
-            ->get()
-            ->getResultArray();
-
         return view(
             'penetapan_konteks/index',
             array_merge(
                 $this->contextData($id),
                 [
                     'activeTab'         => 'konteks',
-                    'mode' => 'view',
                     'hideGlobalContext' => false,
-                    'listPemangku'      => $listPemangku,
-                    'listPeraturan'     => $listPeraturan,
-                    'listTimKerja'      => $listTimKerja,
-                    'listSasaran'       => $listSasaran,
-                    'listWilayah'       => $listWilayah,
-                    'allProses'         => $allProses,
-                    'sasaranOrganisasi' => $sasaranOrganisasi,
-                ]
-            )
-        );
-    }
-
-    public function edit($id)
-    {
-        $activeKonteks = $this->getActiveKonteks($id);
-
-        if (!$activeKonteks) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-        }
-
-        $listPemangku = (new PemangkuKepentinganModel())->findAll();
-        $listPeraturan = (new PeraturanTerkaitModel())->findAll();
-        $listTimKerja = (new TimKerjaModel())->findAll();
-        $listSasaran = (new SasaranStrategisModel())->findAll();
-
-        $listWilayah = (new WilayahModel())
-            ->orderBy('nama_wilayah', 'ASC')
-            ->findAll();
-
-        $selectedProsesData = (new KonteksProsesBisnisModel())
-            ->getByKonteks($id);
-
-        $allProses = (new ProsesBisnisModel())
-            ->orderBy('kode_proses', 'ASC')
-            ->findAll();
-
-        $sasaranOrganisasi = \Config\Database::connect()
-            ->table('konteks_proses_bisnis kpb')
-            ->select('
-            kpb.id_konteks_proses,
-            kpb.deskripsi_proses,
-            pb.kode_proses,
-            pb.jenis_proses,
-            pb.uraian_proses,
-            sk.id_sasaran,
-            sk.uraian_sasaran
-        ')
-            ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
-            ->join('sasaran_kinerja sk', 'sk.id_konteks_proses = kpb.id_konteks_proses', 'left')
-            ->where('kpb.id_konteks', $id)
-            ->orderBy('pb.kode_proses', 'ASC')
-            ->get()
-            ->getResultArray();
-
-        return view(
-            'penetapan_konteks/index',
-            array_merge(
-                $this->contextData($id),
-                [
-                    'activeTab'         => 'konteks',
-                    'mode'              => 'edit',
-                    'hideGlobalContext' => false,
-
-                    'listPemangku'      => $listPemangku,
-                    'listPeraturan'     => $listPeraturan,
-                    'listTimKerja'      => $listTimKerja,
-                    'listSasaran'       => $listSasaran,
-                    'listWilayah'       => $listWilayah,
-
-                    'allProses'         => $allProses,
-                    'sasaranOrganisasi' => $sasaranOrganisasi,
+                    'listPemangku'   => $listPemangku,
+                    'listPeraturan'  => $listPeraturan,
+                    'listTimKerja'   => $listTimKerja,
+                    'listSasaran'    => $listSasaran,
+                    'listWilayah'    => $listWilayah,
                 ]
             )
         );

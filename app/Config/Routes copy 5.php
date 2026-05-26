@@ -105,11 +105,9 @@ $routes->group('master', ['filter' => ['auth']], function ($routes) {
 $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKonteks', 'filter' => ['auth']
 ], function ($routes) {
     $routes->get('/', 'KonteksController::index');
-    $routes->get('konteks/(:num)','KonteksController::show/$1',['filter' => 'role:admin,operator,ketua']);
+    $routes->get('konteks', 'KonteksController::konteks');
     $routes->post('konteks/create-draft', 'KonteksController::createDraft', ['filter' => 'role:admin,operator']);
-    //$routes->get('konteks/(:num)', 'KonteksController::index/$1', ['filter' => 'role:admin,operator,ketua']);
-
-    $routes->get('penetapan-konteks/konteks/(:num)/edit','PenetapanKonteks\KonteksController::edit/$1');
+    $routes->get('konteks/(:num)', 'KonteksController::index/$1', ['filter' => 'role:admin,operator,ketua']);
 
     $routes->post('konteks/store', 'KonteksController::store', ['filter' => 'role:admin,operator']);
     $routes->post('konteks/update', 'KonteksController::update', ['filter' => 'role:admin,operator']);
@@ -123,10 +121,7 @@ $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKo
 
     // Proses Bisnis
     $routes->get('proses-bisnis', 'ProsesBisnisController::index', ['filter' => 'role:admin,operator,ketua']);
-    $routes->post('proses-bisnis/store','ProsesBisnisController::store',['filter' => 'role:admin,operator']);
-    $routes->post('proses-bisnis/update/(:num)','ProsesBisnisController::update/$1',['filter' => 'role:admin,operator']);
-    $routes->post('proses-bisnis/delete/(:num)','ProsesBisnisController::delete/$1',['filter' => 'role:admin,operator']);
-    $routes->get('proses-bisnis/detail/(:num)','ProsesBisnisController::detail/$1',['filter' => 'role:admin,operator,ketua']);
+    $routes->post('proses-bisnis/sync', 'ProsesBisnisController::sync', ['filter' => 'role:admin,operator']);
     $routes->get('proses-bisnis/ajax-table', 'ProsesBisnisController::ajaxTable');
 
     // Sasaran Kinerja

@@ -1,246 +1,299 @@
 const PROSES_URL = window.PROSES_CONFIG?.url || {};
-document.addEventListener("DOMContentLoaded", function () {
+
+document.addEventListener("DOMContentLoaded", () => {
   const offcanvasEl = document.getElementById("offcanvasProsesBisnis");
-  if (!offcanvasEl) return;
+  const form = document.getElementById("pbForm");
 
-  // Reset tombol saat load
-  const btnView = document.getElementById("pbBtnView");
-  const btnEdit = document.getElementById("pbBtnEdit");
+  if (!offcanvasEl || !form) return;
 
-  if (btnView) btnView.style.display = "none";
-  if (btnEdit) btnEdit.style.display = "none";
+  const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
 
-  // Hide tombol + Proses kalau sudah ada data
-  const hasExistingData =
-    document.querySelectorAll('#pbFormSync input[type="checkbox"]:checked')
-      .length > 0;
-
-  if (hasExistingData) {
-    const btnAdd = document.querySelector(
-      '[data-bs-target="#offcanvasProsesBisnis"]',
-    );
-    if (btnAdd) btnAdd.style.display = "none";
-  }
-
-  function hasData() {
-    return (
-      document.querySelectorAll('#pbFormSync input[type="checkbox"]:checked')
-        .length > 0
-    );
-  }
-
-  function setCreateMode() {
-    document
-      .querySelectorAll('#pbFormSync input[type="checkbox"]')
-      .forEach((el) => (el.disabled = false));
-
-    const btnView = document.getElementById("pbBtnView");
-    const btnEdit = document.getElementById("pbBtnEdit");
-
-    if (btnView) btnView.style.display = "none";
-    if (btnEdit) btnEdit.style.display = "flex";
-  }
-
-  function setViewMode() {
-    document
-      .querySelectorAll('#pbFormSync input[type="checkbox"]')
-      .forEach((el) => (el.disabled = true));
-
-    const btnView = document.getElementById("pbBtnView");
-    const btnEdit = document.getElementById("pbBtnEdit");
-
-    if (btnView) btnView.style.display = "flex";
-    if (btnEdit) btnEdit.style.display = "none";
-  }
-
-  function setEditMode() {
-    document
-      .querySelectorAll('#pbFormSync input[type="checkbox"]')
-      .forEach((el) => (el.disabled = false));
-
-    const btnView = document.getElementById("pbBtnView");
-    const btnEdit = document.getElementById("pbBtnEdit");
-
-    if (btnView) btnView.style.display = "none";
-    if (btnEdit) btnEdit.style.display = "flex";
-  }
-
-  let originalChecked = [];
-
-  // Saat offcanvas dibuka
-  offcanvasEl.addEventListener("show.bs.offcanvas", () => {
-    originalChecked = Array.from(
-      document.querySelectorAll('#pbFormSync input[type="checkbox"]:checked'),
-    ).map((el) => el.value);
-
-    if (hasData()) {
-      setViewMode();
-    } else {
-      setCreateMode();
-    }
-  });
-
-  // ambil data user & konteks dari global (inject dari blade nanti)
   const currentUser = window.APP_USER || {};
   const activeKonteks = window.APP_KONTEKS || {};
 
   const isKetua = currentUser.role === "ketua";
-  const isOperator = currentUser.role === "operator";
-  const bedaTim = String(currentUser.id_tim) !== String(activeKonteks.id_tim);
 
-  // hide tombol tambah untuk ketua
-  if (isKetua) {
-    const btnAdd = document.querySelector(
-      '[data-bs-target="#offcanvasProsesBisnis"]',
-    );
-    if (btnAdd) btnAdd.style.display = "none";
+  const bedaTim =
+    currentUser.role === "operator" &&
+    String(currentUser.id_tim) !== String(activeKonteks.id_tim);
+
+  const canManage = !isKetua && !bedaTim;
+
+  function setCreateMode() {
+    document.getElementById("pbMode").value = "create";
+
+    document.getElementById("pbTitle").textContent = "Tambah Proses Bisnis";
+
+    document.getElementById("pbInputZone")?.classList.remove("d-none");
+
+    document.getElementById("pbInfoPanel")?.classList.add("d-none");
+
+    document.getElementById("pbProses").removeAttribute("disabled");
+    document.getElementById("pbDeskripsi").readOnly = false;
+    document.getElementById("pbSasaran").readOnly = false;
+
+    document.getElementById("pbBtnDelete")?.classList.add("d-none");
+
+    document.getElementById("pbBtnEdit")?.classList.add("d-none");
+
+    document.getElementById("pbBtnTutup")?.classList.add("d-none");
+
+    if (canManage) {
+      document.getElementById("pbBtnSave")?.classList.remove("d-none");
+
+      document.getElementById("pbBtnBatal")?.classList.remove("d-none");
+    } else {
+      document.getElementById("pbBtnSave")?.classList.add("d-none");
+
+      document.getElementById("pbBtnBatal")?.classList.add("d-none");
+
+      document.getElementById("pbBtnTutup")?.classList.remove("d-none");
+    }
   }
 
-  // Row click → RBAC check
-  document
-    .querySelectorAll("#pkProsesBisnisTableWrapper tbody tr")
-    .forEach((row) => {
-      if (isKetua) {
-        row.style.cursor = "default";
-        return;
-      }
+  function setViewMode() {
+    document.getElementById("pbMode").value = "view";
 
-      if (isOperator && bedaTim) {
-        row.style.cursor = "not-allowed";
+    document.getElementById("pbTitle").textContent = "Detail Proses Bisnis";
 
-        row.addEventListener("click", () => {
-          PkAlert.notAllowed({
-            text: "Kamu hanya bisa melihat proses bisnis tim lain.",
-          });
+    document.getElementById("pbInputZone")?.classList.remove("d-none");
+
+    document.getElementById("pbProses").setAttribute("disabled", true);
+    document.getElementById("pbDeskripsi").readOnly = true;
+    document.getElementById("pbSasaran").readOnly = true;
+
+    if (canManage) {
+      document.getElementById("pbBtnDelete")?.classList.remove("d-none");
+
+      document.getElementById("pbBtnEdit")?.classList.remove("d-none");
+    } else {
+      document.getElementById("pbBtnDelete")?.classList.add("d-none");
+
+      document.getElementById("pbBtnEdit")?.classList.add("d-none");
+    }
+
+    document.getElementById("pbBtnSave")?.classList.add("d-none");
+
+    document.getElementById("pbBtnBatal")?.classList.add("d-none");
+
+    document.getElementById("pbBtnTutup")?.classList.remove("d-none");
+  }
+
+  function setEditMode() {
+    document.getElementById("pbMode").value = "edit";
+
+    document.getElementById("pbTitle").textContent = "Edit Proses Bisnis";
+
+    document.getElementById("pbProses").removeAttribute("disabled");
+    document.getElementById("pbDeskripsi").readOnly = false;
+    document.getElementById("pbSasaran").readOnly = false;
+
+    if (canManage) {
+      document.getElementById("pbBtnDelete")?.classList.remove("d-none");
+    }
+
+    document.getElementById("pbBtnEdit")?.classList.add("d-none");
+
+    document.getElementById("pbBtnSave")?.classList.remove("d-none");
+
+    document.getElementById("pbBtnBatal")?.classList.remove("d-none");
+
+    document.getElementById("pbBtnTutup")?.classList.add("d-none");
+  }
+
+  function resetForm() {
+    form.reset();
+
+    document.getElementById("pbId").value = "";
+
+    document.getElementById("pbSasaran").value = "";
+
+    setCreateMode();
+  }
+
+  async function openEdit(id) {
+    console.log("OPEN EDIT", id);
+    try {
+      const response = await fetch(PROSES_URL.detail(id), {
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.status !== "success") {
+        PkAlert.error({
+          text: result.message || "Gagal memuat data",
         });
 
         return;
       }
 
-      row.style.cursor = "pointer";
-      row.addEventListener("click", () => {
-        new bootstrap.Offcanvas(offcanvasEl).show();
-      });
-    });
+      const data = result.data;
 
-  document
-    .getElementById("pbBtnSwitchEdit")
-    ?.addEventListener("click", () => setEditMode());
+      document.getElementById("pbId").value = data.id_konteks_proses;
 
-  document.getElementById("pbBtnCancelEdit")?.addEventListener("click", () => {
-    document
-      .querySelectorAll('#pbFormSync input[type="checkbox"]')
-      .forEach((el) => {
-        el.checked = originalChecked.includes(el.value);
-      });
-    if (originalChecked.length > 0) {
+      document.getElementById("pbProses").value = data.id_proses;
+
+      document.getElementById("pbDeskripsi").value =
+        data.deskripsi_proses || "";
+
+      document.getElementById("pbSasaran").value = data.uraian_sasaran || "";
+
       setViewMode();
-    } else {
-      setCreateMode();
+
+      bsOffcanvas.show();
+    } catch (err) {
+      console.error(err);
+
+      PkAlert.error({
+        text: "Gagal memuat detail proses bisnis",
+      });
+    }
+  }
+
+  document.getElementById("pbBtnCreate")?.addEventListener("click", () => {
+    if (!canManage) return;
+
+    resetForm();
+
+    setCreateMode();
+
+    bsOffcanvas.show();
+  });
+  document.getElementById("pbBtnEdit")?.addEventListener("click", () => {
+    setEditMode();
+  });
+
+  document.addEventListener("click", (e) => {
+    console.log("ROW CLICK");
+    const row = e.target.closest("[data-pb-edit]");
+
+    if (!row) return;
+
+    const id = row.dataset.pbEdit;
+
+    if (!id) return;
+
+    openEdit(id);
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const id = document.getElementById("pbId").value;
+
+    const url = id ? PROSES_URL.update(id) : PROSES_URL.store;
+
+    try {
+      const formData = new FormData(form);
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.status !== "success") {
+        PkAlert.error({
+          text: result.message || "Gagal menyimpan data",
+        });
+
+        return;
+      }
+
+      bsOffcanvas.hide();
+
+      PkAlert.toast({
+        text: "Proses bisnis berhasil disimpan",
+        icon: "success",
+      });
+
+      refreshTable();
+    } catch (err) {
+      console.error(err);
+
+      PkAlert.error({
+        text: "Terjadi kesalahan",
+      });
     }
   });
 
   document
-    .getElementById("pbBtnSimpan")
-    ?.addEventListener("click", function () {
-      const form = document.getElementById("pbFormSync");
-      const params = new URLSearchParams(new FormData(form));
-
-      PkAlert.confirm({ text: "Simpan perubahan proses bisnis ini?" }).then(
-        (result) => {
-          if (!result.isConfirmed) return;
-
-          PkAjax.post({
-            url: PROSES_URL.sync,
-            data: params.toString(),
-            onSuccess(res) {
-              if (res.status !== "success") return;
-              bootstrap.Offcanvas.getInstance(offcanvasEl)?.hide();
-              PkAlert.toast({ text: res.message, icon: "success" });
-              refreshTable();
-            },
-          });
-        },
-      );
-    });
-
-  document
     .getElementById("pbBtnDelete")
-    ?.addEventListener("click", function () {
-      PkAlert.warning({
-        title: "Hapus semua proses bisnis?",
-        text: "Semua proses bisnis pada konteks ini akan dihapus.",
-        confirmText: "Hapus",
-      }).then((result) => {
-        if (!result.isConfirmed) return;
+    ?.addEventListener("click", async () => {
+      const id = document.getElementById("pbId").value;
 
-        const idKonteks = document.querySelector(
-          '#pbFormSync input[name="id_konteks"]',
-        ).value;
+      if (!id) return;
 
-        PkAjax.post({
-          url: PROSES_URL.sync,
-          data: `id_konteks=${idKonteks}`,
-          onSuccess(res) {
-            if (res.status !== "success") return;
-            bootstrap.Offcanvas.getInstance(offcanvasEl)?.hide();
-            PkAlert.toast({
-              text: "Semua proses bisnis berhasil dihapus.",
-              icon: "success",
-            });
-            refreshTable();
+      const confirm = await Swal.fire({
+        title: "Hapus proses bisnis?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Hapus",
+        cancelButtonText: "Batal",
+        reverseButtons: true,
+      });
 
-            // Tampilkan kembali tombol + Proses
-            const btnAdd = document.querySelector(
-              '[data-bs-target="#offcanvasProsesBisnis"]',
-            );
-            if (btnAdd) btnAdd.style.display = "";
+      if (!confirm.isConfirmed) return;
+
+      try {
+        const response = await fetch(PROSES_URL.delete(id), {
+          method: "POST",
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
           },
         });
-      });
-    });
 
-  function refreshTable() {
-    PkAjax.get({
-      url: PROSES_URL.table,
-      onSuccess(html) {
-        $("#pkProsesBisnisTableWrapper").html(html);
+        const result = await response.json();
 
-        // Re-bind row click setelah refresh
-        document
-          .querySelectorAll("#pkProsesBisnisTableWrapper tbody tr")
-          .forEach((row) => {
-            const isKetua = currentUser.role === "ketua";
-            const isOperator = currentUser.role === "operator";
-            const bedaTim =
-              String(currentUser.id_tim) !== String(activeKonteks.id_tim);
-
-            // 🔒 KETUA → full read-only (no click sama sekali)
-            if (isKetua) {
-              row.style.cursor = "default";
-              return;
-            }
-
-            // ❌ OPERATOR beda tim → pakai alert
-            if (isOperator && bedaTim) {
-              row.style.cursor = "not-allowed";
-
-              row.addEventListener("click", () => {
-                PkAlert.notAllowed({
-                  text: "Kamu hanya bisa melihat proses bisnis tim lain.",
-                });
-              });
-
-              return;
-            }
-
-            // ✅ normal
-            row.style.cursor = "pointer";
-            row.addEventListener("click", () => {
-              new bootstrap.Offcanvas(offcanvasEl).show();
-            });
+        if (result.status !== "success") {
+          PkAlert.error({
+            text: result.message || "Gagal menghapus data",
           });
-      },
+
+          return;
+        }
+
+        bsOffcanvas.hide();
+
+        PkAlert.toast({
+          text: "Proses bisnis berhasil dihapus",
+          icon: "success",
+        });
+
+        refreshTable();
+      } catch (err) {
+        console.error(err);
+
+        PkAlert.error({
+          text: "Terjadi kesalahan",
+        });
+      }
     });
+
+  async function refreshTable() {
+    try {
+      const response = await fetch(PROSES_URL.table, {
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+
+      const html = await response.text();
+
+      document.getElementById("pkProsesBisnisTableWrapper").innerHTML = html;
+    } catch (err) {
+      console.error(err);
+    }
   }
 });

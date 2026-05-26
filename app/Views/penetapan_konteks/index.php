@@ -27,6 +27,22 @@
     </script>
 <?php endif; ?>
 
+<?php if ($activeTab === 'konteks'): ?>
+    <script>
+        window.PROSES_CONFIG = {
+            url: {
+                store: '<?= site_url('penetapan-konteks/proses-bisnis/store') ?>',
+                update: (id) => `<?= site_url('penetapan-konteks/proses-bisnis/update') ?>/${id}`,
+                delete: (id) => `<?= site_url('penetapan-konteks/proses-bisnis/delete') ?>/${id}`,
+                detail: (id) => `<?= site_url('penetapan-konteks/proses-bisnis/detail') ?>/${id}`,
+                table: '<?= site_url('penetapan-konteks/proses-bisnis/ajax-table') ?>',
+            }
+        };
+    </script>
+
+    <script src="<?= base_url('assets/js/modules/penetapan_konteks/proses_bisnis.js') ?>"></script>
+<?php endif; ?>
+
 <?php if ($activeTab === 'pemangku'): ?>
     <script>
         window.PEMANGKU_CONFIG = {
@@ -75,9 +91,6 @@
                         </ol>
                     </nav>
                     <h2 class="page-title mb-0">Penetapan Konteks</h2>
-                    <li class="breadcrumb">
-                        <a>Kelola ruang lingkup dan informasi konteks untuk penyusunan manajemen risiko</a>
-                    </li>
                 </div>
 
                 <div class="col-12 col-lg-4 text-lg-end mt-3 mt-lg-0">
@@ -94,9 +107,19 @@
         </div>
     </div>
     <?= view('penetapan_konteks/shared/_tabs', ['activeTab' => $activeTab]) ?>
+    
+    <?php if (in_array($activeTab, ['kriteria', 'matriks', 'selera'])): ?>
+        <?= view('penetapan_konteks/shared/_subtabs_kriteria', [
+            'activeTab' => $activeTab
+        ]) ?>
+    <?php endif; ?>
 
     <div class="pk-content-container mt-3">
-        <?= view('penetapan_konteks/tabs/' . $activeTab . '/content') ?>
+        <?php if ($activeTab === 'konteks'): ?>
+            <?= view('penetapan_konteks/tabs/konteks/konteks_workspace') ?>
+        <?php else: ?>
+            <?= view('penetapan_konteks/tabs/' . $activeTab . '/content') ?>
+        <?php endif; ?>
     </div>
 </div>
 
