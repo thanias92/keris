@@ -279,7 +279,7 @@ function menu_click() {
 
       const parent = link.parentElement;
       const sameLevelMenus = parent.parentElement.querySelectorAll(
-        ":scope > .pc-item.pc-hasmenu",
+        ":scope > .pc-item.pc-hasmenu"
       );
 
       // tutup sibling submenu

@@ -1,3 +1,83 @@
+<?php
+
+$db = \Config\Database::connect();
+
+$globalTim = null;
+$globalKegiatan = null;
+
+if (session('global_id_tim')) {
+    $globalTim = $db->table('tim_kerja')
+        ->where('id_tim', session('global_id_tim'))
+        ->get()
+        ->getRowArray();
+}
+
+if (session('global_id_kegiatan')) {
+    $globalKegiatan = $db->table('kegiatan')
+        ->where('id_kegiatan', session('global_id_kegiatan'))
+        ->get()
+        ->getRowArray();
+}
+?>
+
+<div class="pk-section">
+
+    <div class="pk-section-title">
+        Ruang Lingkup Aktif
+    </div>
+
+    <div class="pk-context-panel">
+
+        <div class="row g-3">
+
+            <div class="col-md-4">
+                <div class="pk-info-card h-100">
+
+                    <div class="pk-info-card-label">
+                        Tahun
+                    </div>
+
+                    <div class="pk-info-card-value">
+                        <?= esc(session('global_tahun') ?? '-') ?>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="pk-info-card h-100">
+
+                    <div class="pk-info-card-label">
+                        Tim Kerja
+                    </div>
+
+                    <div class="pk-info-card-value">
+                        <?= esc($globalTim['nama_tim'] ?? '-') ?>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="pk-info-card h-100">
+
+                    <div class="pk-info-card-label">
+                        Kegiatan
+                    </div>
+
+                    <div class="pk-info-card-value">
+                        <?= esc($globalKegiatan['nama_kegiatan'] ?? '-') ?>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 <div class="pk-section">
 
     <div class="pk-section-title">

@@ -97,4 +97,27 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}   
+}
+
+.pk-info-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+}
+
+.pk-info-card-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.pk-info-card-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.5;
+}
