@@ -21,8 +21,8 @@
 
                 <!-- Logo -->
                 <div class="login-logo">
-                    <img src="<?= base_url('assets/images/logo-keris.jpeg') ?>" class="keris-icon" alt="KERIS">
-                    <img src="<?= base_url('assets/images/2.png') ?>" class="keris-text-logo" alt="KERIS TEXT">
+                    <img src="<?= base_url('assets/images/logo-keris-v2.png') ?>" class="keris-icon" alt="KERIS">
+                    <img src="<?= base_url('assets/images/logo-keris-text-v2.png') ?>" class="keris-text-logo" alt="KERIS TEXT">
                 </div>
 
                 <!-- Heading -->

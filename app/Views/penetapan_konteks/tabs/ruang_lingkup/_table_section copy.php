@@ -4,55 +4,26 @@
 
             <div class="pk-filter-group">
                 <label class="pk-filter-label">Tahun</label>
-                <select name="tahun" class="pk-filter-select pk-filter-tahun">
-                    <option value="">Semua Tahun</option>
-
-                    <?php foreach ($listTahun as $tahun): ?>
-                        <option value="<?= $tahun['tahun'] ?>"
-                            <?= ($filters['tahun'] ?? '') == $tahun['tahun'] ? 'selected' : '' ?>>
-                            <?= $tahun['tahun'] ?>
-                        </option>
-                    <?php endforeach; ?>
+                <select name="tahun"
+                    class="pk-filter-select pk-filter-tahun">
                 </select>
             </div>
 
             <div class="pk-filter-group">
                 <label class="pk-filter-label">Tim Kerja</label>
-                <select name="id_tim" class="pk-filter-select">
-                    <option value="">Semua Tim Kerja</option>
-
-                    <?php foreach ($listTimKerja as $tim): ?>
-                        <option value="<?= $tim['id_tim'] ?>"
-                            <?= ($filters['id_tim'] ?? '') == $tim['id_tim'] ? 'selected' : '' ?>>
-                            <?= esc($tim['nama_tim']) ?>
-                        </option>
-                    <?php endforeach; ?>
+                <select name="id_tim"
+                    class="pk-filter-select">
                 </select>
             </div>
 
             <div class="pk-filter-group">
                 <label class="pk-filter-label">Status</label>
-                <select name="status" class="pk-filter-select pk-filter-status">
-                    <option value="">Semua Status</option>
-
-                    <option value="draft"
-                        <?= ($filters['status'] ?? '') === 'draft' ? 'selected' : '' ?>>
-                        Draft
-                    </option>
-
-                    <option value="lengkap"
-                        <?= ($filters['status'] ?? '') === 'lengkap' ? 'selected' : '' ?>>
-                        Ada Konteks
-                    </option>
+                <select name="status"
+                    class="pk-filter-select pk-filter-status">
                 </select>
             </div>
 
-            <button
-                type="button"
-                class="pk-filter-reset"
-                onclick="window.location='<?= current_url() ?>'">
-                <i class="ti ti-rotate"></i>
-            </button>
+            <button type="button" class="pk-filter-reset"><i class="ti ti-rotate"></i></button>
         </form>
     </div>
 
@@ -129,9 +100,7 @@
                                     <input type="hidden" name="<?= $key ?>" value="<?= esc($value) ?>">
                                 <?php endif; ?>
                             <?php endforeach; ?>
-                            <select name="perPage"
-                                class="pk-perpage-select"
-                                onchange="sessionStorage.setItem('pkScrollY', window.scrollY);document.getElementById('pkPerPageForm').submit();">
+                            <select name="perPage" class="pk-perpage-select" onchange="document.getElementById('pkPerPageForm').submit()">
                                 <?php foreach ([5, 10, 25, 50] as $size): ?>
                                     <option value="<?= $size ?>" <?= ($perPage ?? 5) == $size ? 'selected' : '' ?>><?= $size ?></option>
                                 <?php endforeach; ?>
@@ -157,7 +126,7 @@
                             <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
                         <?php else:
                             $queryString['page'] = $currentPage - 1; ?>
-                            <li class="page-item"><a class="page-link" onclick="sessionStorage.setItem('pkScrollY', window.scrollY)" href="?<?= http_build_query($queryString) ?>">&laquo;</a></li>
+                            <li class="page-item"><a class="page-link" href="?<?= http_build_query($queryString) ?>">&laquo;</a></li>
                         <?php endif; ?>
 
                         <?php for ($i = 1; $i <= $totalPages; $i++): ?>
@@ -167,7 +136,7 @@
                                 if ($i == $currentPage): ?>
                                     <li class="page-item active"><span class="page-link"><?= $i ?></span></li>
                                 <?php else: ?>
-                                    <li class="page-item"><a class="page-link" onclick="sessionStorage.setItem('pkScrollY', window.scrollY)" href="?<?= http_build_query($queryString) ?>"><?= $i ?></a></li>
+                                    <li class="page-item"><a class="page-link" href="?<?= http_build_query($queryString) ?>"><?= $i ?></a></li>
                                 <?php endif; ?>
                             <?php elseif ($i == 2 || $i == $totalPages - 1): ?>
                                 <li class="page-item disabled"><span class="page-link">...</span></li>
@@ -178,7 +147,7 @@
                             <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
                         <?php else:
                             $queryString['page'] = $currentPage + 1; ?>
-                            <li class="page-item"><a class="page-link" onclick="sessionStorage.setItem('pkScrollY', window.scrollY)" href="?<?= http_build_query($queryString) ?>">&raquo;</a></li>
+                            <li class="page-item"><a class="page-link" href="?<?= http_build_query($queryString) ?>">&raquo;</a></li>
                         <?php endif; ?>
                     </ul>
                 </div>

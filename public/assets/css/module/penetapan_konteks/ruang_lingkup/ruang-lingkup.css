@@ -63,6 +63,12 @@
     margin-top: 2px;
 }
 
+.pk-table-container {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    overflow: hidden;
+}
 
 /* ==========================================================================
    TABLE DESIGN
@@ -74,7 +80,6 @@
     overflow: hidden;
     box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.04);
 }
-
 .pk-konteks-table {
     margin-bottom: 0;
     width: 100%;
@@ -549,4 +554,125 @@ text-align:right;
 
 .datepicker-dropdown{
 z-index:99999!important;
+}
+
+/* ==========================================================
+   FILTER SECTION
+   ========================================================== */
+
+.pk-filter-section {
+    background: #fff;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.pk-filter-bar {
+    display: flex;
+    align-items: end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pk-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pk-filter-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: .04em;
+}
+
+.pk-filter-select {
+    height: 32px;
+    min-width: 180px;
+    padding: 0 12px;
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #1e293b;
+    font-size: 12px;
+    transition: all .15s ease;
+}
+
+.pk-filter-group select {
+    min-width: 140px;
+}
+
+.pk-filter-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+}
+
+/* Tahun lebih kecil */
+.pk-filter-select.pk-filter-tahun {
+    min-width: 110px;
+    width: 110px;
+}
+
+/* Status sedang */
+.pk-filter-select.pk-filter-status {
+    min-width: 150px;
+    width: 150px;
+}
+
+/* Tombol reset */
+.pk-filter-reset {
+    width: 32px;
+    height: 32px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+    background: #fff;
+    color: #64748b;
+    transition: all .15s ease;
+}
+
+.pk-filter-reset:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #ef4444;
+}
+
+.pk-filter-reset i {
+    font-size: 16px;
+    line-height: 1;
+    transition: transform .2s ease;
+}
+
+.pk-filter-reset:hover i {
+    transform: rotate(180deg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pk-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pk-filter-group {
+        width: 100%;
+    }
+
+    .pk-filter-select,
+    .pk-filter-select.pk-filter-tahun,
+    .pk-filter-select.pk-filter-status {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .pk-filter-reset {
+        width: 100%;
+        justify-content: center;
+    }
 }

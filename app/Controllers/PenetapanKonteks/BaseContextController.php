@@ -20,7 +20,7 @@ class BaseContextController extends BaseController
         ')
             ->join('kegiatan', 'kegiatan.id_kegiatan = konteks.id_kegiatan')
             ->join('tim_kerja', 'tim_kerja.id_tim = konteks.id_tim')
-            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis')
+            ->join('sasaran_strategis', 'sasaran_strategis.id_sasaran_strategis = konteks.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left');
 

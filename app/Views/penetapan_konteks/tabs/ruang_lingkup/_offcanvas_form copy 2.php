@@ -9,6 +9,10 @@
 
     <div class="offcanvas-body">
         <form id="formRuangLingkup" novalidate>
+            <pre>
+                <?php print_r(session('user')); ?>
+            </pre>
+
             <input type="hidden" id="rlMode" value="create">
             <input type="hidden" id="rlId" value="">
 
@@ -34,37 +38,15 @@
                 <div class="mb-2">
                     <label class="ar-form-label">Tahun <span class="text-danger">*</span></label>
                     <input type="text" name="tahun" id="rlTahun" class="form-control" value="<?= date('Y') ?>" autocomplete="off" required>
-                    <div id="debugTahun"></div>
                 </div>
 
                 <div class="mb-2">
                     <label class="ar-form-label">Tim Kerja <span class="text-danger">*</span></label>
-                    <?php
-                    $user = session('user');
-                    $isOperator = ($user['role'] ?? '') === 'operator';
-                    ?>
-
                     <select name="id_tim" id="rl_tim" class="form-select" required>
-
-                        <?php if (!$isOperator): ?>
-                            <option value="">Pilih Tim Kerja</option>
-                        <?php endif; ?>
-
+                        <option value="">Pilih Tim Kerja</option>
                         <?php foreach ($listTimKerja as $tim): ?>
-
-                            <?php if (
-                                !$isOperator ||
-                                (int)$tim['id_tim'] === (int)$user['id_tim']
-                            ): ?>
-
-                                <option value="<?= $tim['id_tim'] ?>">
-                                    <?= esc($tim['nama_tim']) ?>
-                                </option>
-
-                            <?php endif; ?>
-
+                            <option value="<?= $tim['id_tim'] ?>"><?= esc($tim['nama_tim']) ?></option>
                         <?php endforeach; ?>
-
                     </select>
                 </div>
 

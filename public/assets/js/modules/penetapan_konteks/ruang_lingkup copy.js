@@ -64,17 +64,11 @@ function rlPopulateView(data) {
   });
 }
 
-async function loadKegiatan(idTim, tahun = null) {
-  console.log("loadKegiatan", idTim, tahun);
-
+async function loadKegiatan(idTim) {
   try {
     const kegiatanSelect = document.getElementById("rl_kegiatan");
 
-    const url = tahun
-      ? `${RL_URL.getKegiatan(idTim)}?tahun=${tahun}`
-      : RL_URL.getKegiatan(idTim);
-
-    const response = await fetch(url, {
+    const response = await fetch(RL_URL.getKegiatan(idTim), {
       headers: {
         "X-Requested-With": "XMLHttpRequest",
       },
@@ -82,21 +76,15 @@ async function loadKegiatan(idTim, tahun = null) {
 
     const result = await response.json();
 
-    console.log("URL =", url);
-    console.log("RESPONSE =", result);
-
     kegiatanSelect.innerHTML = '<option value="">Pilih Kegiatan</option>';
 
     result.forEach((item) => {
-      const option = document.createElement("option");
-
-      option.value = item.id_kegiatan;
-      option.textContent = item.nama_kegiatan;
-
-      kegiatanSelect.appendChild(option);
+      kegiatanSelect.innerHTML += `
+        <option value="${item.id_kegiatan}">
+          ${item.nama_kegiatan}
+        </option>
+      `;
     });
-
-    console.log("OPTION COUNT =", kegiatanSelect.options.length);
   } catch (err) {
     console.error("Gagal load kegiatan", err);
   }
@@ -229,19 +217,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const timSelect = document.getElementById("rl_tim");
 
   const kegiatanSelect = document.getElementById("rl_kegiatan");
-  console.log("INIT TAHUN =", document.getElementById("rlTahun").value);
 
   if (!form) return;
 
-  const tahunPicker = $('input[name="tahun"]').datepicker({
+  $('input[name="tahun"]').datepicker({
     format: "yyyy",
     minViewMode: 2,
     autoHide: true,
     zIndex: 9999,
   });
-  console.log("DATEPICKER INSTANCE =", $("#rlTahun").data("datepicker"));
-  console.log("JUMLAH INPUT TAHUN =", $('input[name="tahun"]').length);
-  console.log("INIT TAHUN =", document.getElementById("rlTahun").value);
 
   const user = window.APP_USER || {};
 
@@ -249,31 +233,17 @@ document.addEventListener("DOMContentLoaded", () => {
     timSelect.value = user.id_tim;
     timSelect.disabled = true;
 
-    loadKegiatan(user.id_tim, document.getElementById("rlTahun").value);
+    loadKegiatan(user.id_tim);
   }
 
   timSelect.addEventListener("change", function () {
     const idTim = this.value;
-    const tahun = document.getElementById("rlTahun").value;
 
     kegiatanSelect.innerHTML = '<option value="">Pilih Kegiatan</option>';
 
     if (!idTim) return;
 
-    loadKegiatan(idTim, tahun);
-  });
-
-  $("#rlTahun").on("pick.datepicker", function () {
-    setTimeout(() => {
-      const tahun = this.value;
-      const idTim = timSelect.value;
-
-      console.log("PICK YEAR =", tahun);
-
-      if (!idTim) return;
-
-      loadKegiatan(idTim, tahun);
-    }, 0);
+    loadKegiatan(idTim);
   });
 
   form.addEventListener("submit", async function (e) {
@@ -290,24 +260,6 @@ document.addEventListener("DOMContentLoaded", () => {
         window.KONTEKS_CONFIG.csrf.name,
         window.KONTEKS_CONFIG.csrf.token,
       );
-
-      const tahunInput = document.getElementById("rlTahun");
-
-      $("#rlTahun").datepicker("hide");
-      tahunInput.blur();
-
-      document.activeElement?.blur();
-
-      setTimeout(() => {
-        console.log("ACTIVE =", document.activeElement);
-      }, 100);
-
-      const dp = $("#rlTahun").data("datepicker");
-
-      if (dp) {
-        dp.hide();
-        dp.destroy();
-      }
 
       const confirm = await Swal.fire({
         title: "Simpan ruang lingkup?",
@@ -333,8 +285,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const result = await response.json();
-
-      console.log(result);
 
       if (result.status === "success") {
         Swal.fire({
@@ -375,28 +325,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   rlSetMode("create");
-  // FILTER RUANG LINGKUP
-  const filterForm = document.querySelector(".pk-filter-bar");
-
-  if (filterForm) {
-    filterForm.querySelectorAll("select").forEach((select) => {
-      select.addEventListener("change", () => {
-        sessionStorage.setItem("pkScrollY", window.scrollY);
-
-        filterForm.submit();
-      });
-    });
-  }
-
-  const resetBtn = document.querySelector(".pk-filter-reset");
-
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      sessionStorage.setItem("pkScrollY", window.scrollY);
-
-      window.location.href = window.location.pathname;
-    });
-  }
 });
 
 document.addEventListener("click", function (e) {
@@ -405,24 +333,4 @@ document.addEventListener("click", function (e) {
   if (!row) return;
 
   openRuangLingkupDetail(row.dataset.id);
-});
-
-// PERTAHANKAN POSISI SCROLL
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("SCROLL STORAGE =", sessionStorage.getItem("pkScrollY"));
-
-  const scrollY = sessionStorage.getItem("pkScrollY");
-  console.log("SCROLL STORAGE =", scrollY);
-
-  if (scrollY) {
-    console.log("RESTORE SCROLL =", scrollY);
-
-    //window.scrollTo(0, parseInt(scrollY));
-    setTimeout(() => {
-      document.documentElement.scrollTop = parseInt(scrollY);
-      document.body.scrollTop = parseInt(scrollY);
-    }, 300);
-    console.log("AFTER RESTORE =", window.scrollY);
-    sessionStorage.removeItem("pkScrollY");
-  }
 });

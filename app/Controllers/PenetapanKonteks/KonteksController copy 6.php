@@ -190,11 +190,6 @@ class KonteksController extends BaseContextController
         $listTimKerja = (new TimKerjaModel())->findAll();
         $listSasaran = (new SasaranStrategisModel())->findAll();
 
-        // FILTER
-        $filterTahun  = $this->request->getGet('tahun');
-        $filterTim    = $this->request->getGet('id_tim');
-        $filterStatus = $this->request->getGet('status');
-
         $builder = $this->model
             ->select('
                 konteks.*,
@@ -210,27 +205,18 @@ class KonteksController extends BaseContextController
             ->join('pengelola_risiko p', 'p.id = konteks.pemilik_risiko_id', 'left')
             ->join('pengelola_risiko g', 'g.id = konteks.pengelola_risiko_id', 'left');
 
-        if (!empty($filterTahun)) {
-            $builder->where('konteks.tahun', $filterTahun);
-        }
+        // FILTER
+        $sk = $this->request->getGet('sk');
+        $pg = $this->request->getGet('pg');
+        $th = $this->request->getGet('th');
+        $kg = $this->request->getGet('kg');
+        $ss = $this->request->getGet('ss');
 
-        if (!empty($filterTim)) {
-            $builder->where('konteks.id_tim', $filterTim);
-        }
-
-        if (!empty($filterStatus)) {
-
-            if ($filterStatus === 'lengkap') {
-                $builder->where('konteks.status', 'lengkap');
-            }
-
-            if ($filterStatus === 'draft') {
-                $builder->groupStart()
-                    ->where('konteks.status IS NULL', null, false)
-                    ->orWhere('konteks.status !=', 'lengkap')
-                    ->groupEnd();
-            }
-        }
+        if ($sk) $builder->where('konteks.id_tim', $sk);
+        if ($pg) $builder->where('konteks.pengelola_risiko_id', $pg);
+        if ($th) $builder->where('konteks.tahun', $th);
+        if ($kg) $builder->where('konteks.id_kegiatan', $kg);
+        if ($ss) $builder->where('konteks.id_sasaran_strategis', $ss);
 
         $perPage = (int) ($this->request->getGet('perPage') ?? 5);
 
@@ -251,12 +237,6 @@ class KonteksController extends BaseContextController
             ->orderBy('nama_wilayah', 'ASC')
             ->findAll();
 
-        $listTahun = $this->model
-            ->select('tahun')
-            ->distinct()
-            ->orderBy('tahun', 'DESC')
-            ->findAll();
-
         return view(
             'penetapan_konteks/index',
             array_merge(
@@ -274,12 +254,7 @@ class KonteksController extends BaseContextController
                     'listTimKerja' => $listTimKerja,
                     'listSasaran'     => $listSasaran,
                     'listWilayah'     => $listWilayah,
-                    'listTahun' => $listTahun,
-                    'filters' => [
-                        'tahun'  => $filterTahun,
-                        'id_tim' => $filterTim,
-                        'status' => $filterStatus,
-                    ],
+                    'filters'         => compact('sk', 'pg', 'th', 'kg', 'ss'),
                     'hideGlobalContext' => true,
                 ]
             )
