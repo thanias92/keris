@@ -425,10 +425,31 @@ if (session('global_id_kegiatan')) {
         </div>
     </div>
 
+    <?php
+    $user = session('user');
+
+    $canEdit = false;
+
+    if ($user['role'] === 'admin') {
+        $canEdit = true;
+    }
+
+    if (
+        $user['role'] === 'operator'
+        &&
+        !empty($activeKonteks)
+        &&
+        (int)$user['id_tim'] === (int)$activeKonteks['id_tim']
+    ) {
+        $canEdit = true;
+    }
+    ?>
+
     <div class="d-flex justify-content-end gap-2 py-4">
 
-        <?php if ($mode === 'view'): ?>
-            <a href="<?= site_url('penetapan-konteks/konteks/' . $activeKonteks['id_konteks'] . '/edit') ?>"
+        <?php if ($mode === 'view' && $canEdit): ?>
+            <a
+                href="<?= site_url('penetapan-konteks/konteks/' . $activeKonteks['id_konteks'] . '/edit') ?>"
                 class="btn btn-warning">
                 Edit
             </a>

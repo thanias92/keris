@@ -267,6 +267,14 @@ class KonteksController extends BaseContextController
 
     public function edit($id)
     {
+        if (!$this->validateKonteksAccess($id)) {
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Anda tidak memiliki akses untuk mengubah konteks ini.'
+                );
+        }
         $activeKonteks = $this->getActiveKonteks($id);
 
         if (!$activeKonteks) {
