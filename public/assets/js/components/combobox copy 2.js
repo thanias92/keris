@@ -6,8 +6,6 @@ const Combobox = {
     hiddenId = null,
     optionsSelector = ".pk-option",
     onSelect = null,
-    allowCreate = false,
-    onCreate = null,
   }) {
     const combo = document.getElementById(boxId);
     if (!combo) return;
@@ -16,13 +14,6 @@ const Combobox = {
     const hidden = hiddenId ? document.getElementById(hiddenId) : null;
 
     const dropdown = combo.querySelector(".pk-combobox-dropdown");
-    const createOption = document.createElement("div");
-
-    createOption.className = "pk-option pk-option-create";
-
-    createOption.style.display = "none";
-
-    dropdown.querySelector(".pk-combobox-options")?.appendChild(createOption);
 
     let current = -1;
     let selected = false;
@@ -53,31 +44,12 @@ const Combobox = {
       }
     };
 
-    let createKeyword = "";
-
     const filter = (keyword) => {
-      createKeyword = input.value.trim();
-
       getOptions().forEach((o) => {
-        if (o.classList.contains("pk-option-create")) return;
-
         o.style.display = o.innerText.toLowerCase().includes(keyword)
           ? "block"
           : "none";
       });
-
-      const visibleOptions = [...getOptions()].filter(
-        (o) =>
-          !o.classList.contains("pk-option-create") &&
-          o.style.display !== "none",
-      );
-
-      if (allowCreate && keyword.trim() !== "" && visibleOptions.length === 0) {
-        createOption.innerText = `+ Tambah "${keyword}"`;
-        createOption.style.display = "block";
-      } else {
-        createOption.style.display = "none";
-      }
     };
 
     const select = (option) => {
@@ -113,8 +85,6 @@ const Combobox = {
       selected = false;
 
       filter(this.value.toLowerCase());
-      createOption.dataset.keyword = this.value.trim();
-
       open();
 
       const visible = [...getOptions()].filter(
@@ -169,23 +139,16 @@ const Combobox = {
       });
     });
 
-    createOption.addEventListener("click", () => {
-      console.log("CREATE KEYWORD =", createKeyword);
-
-      if (onCreate) {
-        onCreate(createOption.dataset.keyword || input.value.trim());
-      }
-
-      close();
-    });
-
     document.addEventListener("click", function (e) {
       if (!combo.contains(e.target)) close();
     });
   },
 };
 
+// ======================================================
 // TAG INPUT MULTI SELECT
+// ======================================================
+
 const TagInput = {
   init({boxId,inputSelector,hiddenName}){
 

@@ -38,6 +38,10 @@
                 table: '<?= site_url('penetapan-konteks/proses-bisnis/ajax-table') ?>',
             }
         };
+
+        window.PEMANGKU_QUICK_CONFIG = {
+            store: '<?= site_url('penetapan-konteks/pemangku/store') ?>'
+        };
     </script>
 
     <script src="<?= base_url('assets/js/modules/penetapan_konteks/proses_bisnis.js') ?>"></script>
@@ -107,7 +111,7 @@
         </div>
     </div>
     <?= view('penetapan_konteks/shared/_tabs', ['activeTab' => $activeTab]) ?>
-    
+
     <?php if (in_array($activeTab, ['kriteria', 'matriks', 'selera'])): ?>
         <?= view('penetapan_konteks/shared/_subtabs_kriteria', [
             'activeTab' => $activeTab
@@ -125,6 +129,10 @@
 
 <?php if ($activeTab === 'ruang_lingkup'): ?>
     <?= view('penetapan_konteks/tabs/ruang_lingkup/_offcanvas_form') ?>
+<?php endif; ?>
+
+<?php if ($activeTab === 'konteks'): ?>
+    <?= view('penetapan_konteks/tabs/pemangku/_modal_pemangku_create') ?>
 <?php endif; ?>
 
 <?= $this->endSection() ?>

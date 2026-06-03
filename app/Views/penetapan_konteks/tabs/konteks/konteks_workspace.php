@@ -68,13 +68,11 @@ if (session('global_id_kegiatan')) {
                     <div class="pk-info-card-value">
                         <?= esc($globalTim['nama_tim'] ?? '-') ?>
                     </div>
-
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="pk-info-card h-100">
-
                     <div class="pk-info-card-label">
                         Kegiatan
                     </div>
@@ -82,14 +80,10 @@ if (session('global_id_kegiatan')) {
                     <div class="pk-info-card-value">
                         <?= esc($globalKegiatan['nama_kegiatan'] ?? '-') ?>
                     </div>
-
                 </div>
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 <div class="pk-section">
@@ -99,11 +93,8 @@ if (session('global_id_kegiatan')) {
     </div>
 
     <div class="row g-3 mt-1">
-
         <div class="col-lg-6">
-
             <div class="pk-structure-panel h-100">
-
                 <div class="pk-structure-title">
                     Pemilik Risiko
                 </div>
@@ -132,9 +123,7 @@ if (session('global_id_kegiatan')) {
                         <?= esc($pemilikRisiko['jabatan'] ?? '-') ?>
                     </span>
                 </div>
-
             </div>
-
         </div>
 
         <div class="col-lg-6">
@@ -203,15 +192,12 @@ if (!empty($activeKonteks['id_sasaran_strategis'])) {
     </div>
 
     <div class="pk-context-panel">
-
         <div class="pk-field-vertical">
-
             <div class="pk-field-label">
                 Sasaran Strategis
             </div>
 
             <div class="pk-combobox" id="pkSasaranBox">
-
                 <input type="hidden"
                     name="id_sasaran_strategis"
                     id="pkSasaranValue"
@@ -286,54 +272,39 @@ if (!empty($activeKonteks['id_sasaran_strategis'])) {
                         ?>
 
                         <?php foreach ($groupPemangku as $hubungan => $items): ?>
-
                             <div class="pk-option-group">
                                 <?= esc($hubungan) ?>
                             </div>
 
                             <?php foreach ($items as $p): ?>
-
                                 <div class="pk-option pk-option-entity"
-                                    data-value="<?= $p['id_pemangku'] ?>">
+                                    data-value="<?= $p['id_pemangku'] ?>"
+                                    data-role="<?= esc($p['hubungan'] ?? '') ?>">
 
                                     <div class="pk-option-title">
                                         <?= esc($p['nama_instansi']) ?>
                                     </div>
-
                                 </div>
-
                             <?php endforeach; ?>
-
                         <?php endforeach; ?>
-
                     </div>
-
                 </div>
-
             </div>
-
             <div id="pkPemangkuTags"
                 class="pk-pemangku-list mt-3">
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 <div class="pk-section">
-
     <div class="pk-section-title">
         Peraturan Terkait
     </div>
 
     <div class="pk-context-panel">
-
         <div class="pk-field-vertical">
-
             <div class="pk-combobox" id="pkPeraturanBox">
-
                 <input type="text"
                     class="pk-combobox-input"
                     id="pkPeraturanInput"
@@ -341,41 +312,24 @@ if (!empty($activeKonteks['id_sasaran_strategis'])) {
                     autocomplete="off">
 
                 <div class="pk-combobox-dropdown">
-
                     <div class="pk-combobox-options">
-
                         <?php foreach ($listPeraturan as $p): ?>
-
                             <?php if ($p['is_default'] !== 't'): ?>
-
                                 <div class="pk-option"
                                     data-value="<?= $p['id_peraturan'] ?>">
-
                                     <?= esc($p['nama_peraturan']) ?>
-
                                 </div>
-
                             <?php endif; ?>
-
                         <?php endforeach; ?>
-
                     </div>
-
                 </div>
-
             </div>
 
-            <div id="pkPeraturanTags"
-                class="pk-law-list mt-3">
-
+            <div id="pkPeraturanTags" class="pk-law-list mt-3">
                 <?php $loopIndex = 0; ?>
-
                 <?php foreach ($listPeraturan as $p): ?>
-
                     <?php if ($p['is_default'] === 't'): ?>
-
                         <?php $loopIndex++ ?>
-
                         <div class="pk-law-item pk-law-default"
                             data-id="<?= $p['id_peraturan'] ?>">
 
@@ -390,23 +344,15 @@ if (!empty($activeKonteks['id_sasaran_strategis'])) {
                             <input type="hidden"
                                 name="peraturan[]"
                                 value="<?= $p['id_peraturan'] ?>">
-
                         </div>
-
                     <?php endif; ?>
-
                 <?php endforeach; ?>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 <div class="d-flex justify-content-end gap-2 py-4">
-
     <button type="button" class="btn btn-light">Reset</button>
     <button type="submit" class="btn btn-primary">Simpan</button>
 </div>

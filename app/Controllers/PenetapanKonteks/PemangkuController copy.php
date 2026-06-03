@@ -65,25 +65,16 @@ class PemangkuController extends BaseContextController
 
     public function store()
     {
-        if (!$this->request->isAJAX()) {
-            return redirect()->back();
-        }
+        if (!$this->request->isAJAX()) return redirect()->back();
 
         $this->model->insert([
             'nama_instansi' => $this->request->getPost('nama_instansi'),
             'hubungan'      => $this->request->getPost('hubungan'),
         ]);
 
-        $id = $this->model->getInsertID();
-
         return $this->response->setJSON([
             'status'  => 'success',
             'message' => 'Pemangku Kepentingan berhasil disimpan.',
-            'data' => [
-                'id_pemangku'   => $id,
-                'nama_instansi' => $this->request->getPost('nama_instansi'),
-                'hubungan'      => $this->request->getPost('hubungan'),
-            ]
         ]);
     }
 

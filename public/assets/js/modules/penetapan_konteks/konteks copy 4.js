@@ -370,13 +370,39 @@ const KonteksModule = {
       optionsSelector: ".pk-option",
 
       onSelect: (value, text) => {
+        if (tags.querySelector(`[data-id="${value}"]`)) return;
+
+        const index = tags.querySelectorAll(".pk-law-item").length + 1;
+
+        const tag = document.createElement("div");
+        tag.className = "pk-law-item";
+        tag.dataset.id = value;
+        tag.innerHTML = `
+          <div class="pk-law-number">${index}.</div>
+          <div class="pk-law-title">${text}</div>
+          <span class="pk-tag-remove">×</span>
+        `;
+
+        const hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = "peraturan[]";
+        hidden.value = value;
+        tag.appendChild(hidden);
+
+        tags.appendChild(tag);
+
         const option = document.querySelector(
-          `#pkPemangkuBox .pk-option[data-value="${value}"]`,
+          `#pkPeraturanBox .pk-option[data-value="${value}"]`,
         );
+        if (option) option.style.display = "none";
 
-        const role = option?.dataset.role || "";
+        tag.querySelector(".pk-tag-remove").onclick = () => {
+          tag.remove();
+          if (option) option.style.display = "";
+          KonteksModule.reindexPeraturan();
+        };
 
-        this.addPemangkuTag(value, text, role);
+        document.getElementById("pkPeraturanInput").value = "";
       },
     });
   },
@@ -443,67 +469,6 @@ const KonteksModule = {
           el.classList.add("pk-editable");
         }
       });
-  },
-
-  addPemangkuTag(value, text, role) {
-    const container = document.getElementById("pkPemangkuTags");
-
-    if (container.querySelector(`[data-id="${value}"]`)) return;
-
-    let group = container.querySelector(
-      `.pk-pemangku-group[data-role="${role.replace(/"/g, '\\"')}"]`,
-    );
-
-    if (!group) {
-      group = document.createElement("div");
-      group.className = "pk-pemangku-group";
-      group.dataset.role = role;
-
-      group.innerHTML = `
-      <div class="pk-pemangku-title">${role}</div>
-      <div class="pk-pemangku-items"></div>
-    `;
-
-      insertPemangkuGroup(container, group, role);
-    }
-
-    const list = group.querySelector(".pk-pemangku-items");
-
-    const item = document.createElement("div");
-    item.className = "pk-pemangku-item pk-editable";
-    item.dataset.id = value;
-
-    item.innerHTML = `
-    <span>${text}</span>
-    <span class="pk-tag-remove">×</span>
-  `;
-
-    const hidden = document.createElement("input");
-    hidden.type = "hidden";
-    hidden.name = "pemangku[]";
-    hidden.value = value;
-
-    item.appendChild(hidden);
-
-    list.appendChild(item);
-
-    const option = document.querySelector(
-      `#pkPemangkuBox .pk-option[data-value="${value}"]`,
-    );
-
-    item.querySelector(".pk-tag-remove").onclick = function () {
-      if (option) option.style.display = "";
-
-      item.remove();
-
-      if (list.children.length === 0) {
-        group.remove();
-      }
-    };
-
-    if (option) option.style.display = "none";
-
-    document.getElementById("pkPemangkuInput").value = "";
   },
 
   // PEMANGKU TAG INPUT
@@ -643,12 +608,15 @@ const KonteksModule = {
           option.innerText = data.nama_instansi;
 
           optionsContainer.prepend(option);
+          createOption.style.display = "none";
 
-          KonteksModule.addPemangkuTag(
-            data.id_pemangku,
-            data.nama_instansi,
-            data.hubungan,
-          );
+          document.getElementById("pkPemangkuInput").value = "";
+
+          option.style.display = "block";
+
+          option.addEventListener("click", function () {
+            this.click();
+          });
 
           const offcanvas = bootstrap.Offcanvas.getInstance(
             document.getElementById("offcanvasCreatePemangku"),

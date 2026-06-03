@@ -1,35 +1,5 @@
 const KONTEKS_URL = window.KONTEKS_CONFIG?.url || {};
 const KONTEKS_CSRF = window.KONTEKS_CONFIG?.csrf || {};
-const roleOrder = {
-  Pembina: 1,
-  "Pimpinan Lembaga": 2,
-  "Mitra Kerja Internal": 3,
-  "Mitra Kerja Eksternal": 4,
-};
-
-function insertPemangkuGroup(container, group, role) {
-  const groups = container.querySelectorAll(".pk-pemangku-group");
-
-  let inserted = false;
-
-  groups.forEach((existingGroup) => {
-    if (inserted) return;
-
-    const existingRole = existingGroup.dataset.role;
-
-    const currentOrder = roleOrder[role] ?? 999;
-    const existingOrder = roleOrder[existingRole] ?? 999;
-
-    if (currentOrder < existingOrder) {
-      container.insertBefore(group, existingGroup);
-      inserted = true;
-    }
-  });
-
-  if (!inserted) {
-    container.appendChild(group);
-  }
-}
 const KonteksModule = {
   init() {
     console.log("Konteks module loaded");
@@ -42,7 +12,6 @@ const KonteksModule = {
     this.initSasaranCombobox();
     this.initPeraturanCombobox();
     this.initPemangkuCombobox();
-    this.initQuickCreatePemangku();
     this.initFormSubmit();
     this.initPreventEnterSubmit();
   },
@@ -149,8 +118,7 @@ const KonteksModule = {
     const tahun =
       document.getElementById("pkTahun")?.value || new Date().getFullYear();
 
-    $.get(
-      KONTEKS_URL.getPengelola + "?tim=" + id + "&tahun=" + tahun,
+    $.get(KONTEKS_URL.getPengelola + "?tim=" + id + "&tahun=" + tahun,
       (res) => {
         // response sekarang object tunggal, bukan array
         if (!res || Object.keys(res).length === 0) {
@@ -370,13 +338,39 @@ const KonteksModule = {
       optionsSelector: ".pk-option",
 
       onSelect: (value, text) => {
+        if (tags.querySelector(`[data-id="${value}"]`)) return;
+
+        const index = tags.querySelectorAll(".pk-law-item").length + 1;
+
+        const tag = document.createElement("div");
+        tag.className = "pk-law-item";
+        tag.dataset.id = value;
+        tag.innerHTML = `
+          <div class="pk-law-number">${index}.</div>
+          <div class="pk-law-title">${text}</div>
+          <span class="pk-tag-remove">×</span>
+        `;
+
+        const hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = "peraturan[]";
+        hidden.value = value;
+        tag.appendChild(hidden);
+
+        tags.appendChild(tag);
+
         const option = document.querySelector(
-          `#pkPemangkuBox .pk-option[data-value="${value}"]`,
+          `#pkPeraturanBox .pk-option[data-value="${value}"]`,
         );
+        if (option) option.style.display = "none";
 
-        const role = option?.dataset.role || "";
+        tag.querySelector(".pk-tag-remove").onclick = () => {
+          tag.remove();
+          if (option) option.style.display = "";
+          KonteksModule.reindexPeraturan();
+        };
 
-        this.addPemangkuTag(value, text, role);
+        document.getElementById("pkPeraturanInput").value = "";
       },
     });
   },
@@ -445,108 +439,15 @@ const KonteksModule = {
       });
   },
 
-  addPemangkuTag(value, text, role) {
-    const container = document.getElementById("pkPemangkuTags");
-
-    if (container.querySelector(`[data-id="${value}"]`)) return;
-
-    let group = container.querySelector(
-      `.pk-pemangku-group[data-role="${role.replace(/"/g, '\\"')}"]`,
-    );
-
-    if (!group) {
-      group = document.createElement("div");
-      group.className = "pk-pemangku-group";
-      group.dataset.role = role;
-
-      group.innerHTML = `
-      <div class="pk-pemangku-title">${role}</div>
-      <div class="pk-pemangku-items"></div>
-    `;
-
-      insertPemangkuGroup(container, group, role);
-    }
-
-    const list = group.querySelector(".pk-pemangku-items");
-
-    const item = document.createElement("div");
-    item.className = "pk-pemangku-item pk-editable";
-    item.dataset.id = value;
-
-    item.innerHTML = `
-    <span>${text}</span>
-    <span class="pk-tag-remove">×</span>
-  `;
-
-    const hidden = document.createElement("input");
-    hidden.type = "hidden";
-    hidden.name = "pemangku[]";
-    hidden.value = value;
-
-    item.appendChild(hidden);
-
-    list.appendChild(item);
-
-    const option = document.querySelector(
-      `#pkPemangkuBox .pk-option[data-value="${value}"]`,
-    );
-
-    item.querySelector(".pk-tag-remove").onclick = function () {
-      if (option) option.style.display = "";
-
-      item.remove();
-
-      if (list.children.length === 0) {
-        group.remove();
-      }
-    };
-
-    if (option) option.style.display = "none";
-
-    document.getElementById("pkPemangkuInput").value = "";
-  },
-
   // PEMANGKU TAG INPUT
   initPemangkuCombobox() {
     const container = document.getElementById("pkPemangkuTags");
-    const roleOrder = {
-      Pembina: 1,
-      "Pimpinan Lembaga": 2,
-      "Mitra Kerja Internal": 3,
-      "Mitra Kerja Eksternal": 4,
-    };
 
     Combobox.init({
       boxId: "pkPemangkuBox",
       inputId: "pkPemangkuInput",
       hiddenId: null,
       optionsSelector: ".pk-option",
-
-      allowCreate: true,
-
-      onCreate: (keyword) => {
-        console.log("KEYWORD =", keyword);
-        const namaInput = document.getElementById("pmQuickNama");
-        console.log("INPUT =", namaInput);
-        if (namaInput) {
-          namaInput.value = keyword;
-        }
-
-        //document.getElementById("pmQuickNama").value = keyword;
-
-        //document.getElementById("pmQuickHubungan").value = "";
-
-        bootstrap.Offcanvas.getOrCreateInstance(
-          document.getElementById("offcanvasCreatePemangku"),
-        ).show();
-
-        setTimeout(() => {
-          console.log(
-            "AFTER SHOW =",
-            document.getElementById("pmQuickNama")?.value,
-          );
-        }, 100);
-      },
 
       onSelect: (value, text) => {
         if (container.querySelector(`[data-id="${value}"]`)) return;
@@ -568,8 +469,7 @@ const KonteksModule = {
             <div class="pk-pemangku-title">${role}</div>
             <div class="pk-pemangku-items"></div>
           `;
-          //container.appendChild(group);
-          insertPemangkuGroup(container, group, role);
+          container.appendChild(group);
         }
 
         const list = group.querySelector(".pk-pemangku-items");
@@ -602,67 +502,6 @@ const KonteksModule = {
 
         document.getElementById("pkPemangkuInput").value = "";
       },
-    });
-  },
-
-  initQuickCreatePemangku() {
-    const form = document.getElementById("pmQuickCreateForm");
-
-    if (!form) return;
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const formData = new FormData(form);
-
-      try {
-        const response = await fetch(window.PEMANGKU_QUICK_CONFIG.store, {
-          method: "POST",
-          headers: {
-            "X-Requested-With": "XMLHttpRequest",
-          },
-          body: formData,
-        });
-
-        const result = await response.json();
-
-        console.log(result);
-
-        if (result.status === "success") {
-          const data = result.data;
-
-          const optionsContainer = document.querySelector(
-            "#pkPemangkuBox .pk-combobox-options",
-          );
-
-          const option = document.createElement("div");
-
-          option.className = "pk-option";
-          option.dataset.value = data.id_pemangku;
-          option.dataset.role = data.hubungan;
-          option.innerText = data.nama_instansi;
-
-          optionsContainer.prepend(option);
-
-          KonteksModule.addPemangkuTag(
-            data.id_pemangku,
-            data.nama_instansi,
-            data.hubungan,
-          );
-
-          const offcanvas = bootstrap.Offcanvas.getInstance(
-            document.getElementById("offcanvasCreatePemangku"),
-          );
-
-          offcanvas?.hide();
-
-          document.getElementById("pkPemangkuInput").value = "";
-
-          form.reset();
-        }
-      } catch (err) {
-        console.error(err);
-      }
     });
   },
 
@@ -922,8 +761,7 @@ window.pkOpenViewMode = function (el) {
           group.className = "pk-pemangku-group";
           group.dataset.role = role;
           group.innerHTML = `<div class="pk-pemangku-title">${role}</div><div class="pk-pemangku-items"></div>`;
-          //container.appendChild(group);
-          insertPemangkuGroup(container, group, role);
+          container.appendChild(group);
         }
         const list = group.querySelector(".pk-pemangku-items");
         const item = document.createElement("div");
