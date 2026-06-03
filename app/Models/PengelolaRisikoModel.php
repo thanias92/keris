@@ -30,16 +30,16 @@ class PengelolaRisikoModel extends Model
             ->first();
     }
 
-    // Ambil semua pengelola berdasarkan satuan kerja & tahun
+    // Ambil semua pengelola berdasarkan tim kerja & tahun
     // → delegasi ke PenugasanPengelolaModel
-    public function getPengelolaBySatuanKerja($satuan_id, $tahun = null)
+    public function getPengelolaByTimKerja($tim_kerja_id, $tahun = null)
     {
         $tahun = $tahun ?? (int) date('Y');
 
         return $this->db->table('penugasan_pengelola pp')
             ->select('pr.*')
             ->join('pengelola_risiko pr', 'pr.id = pp.pengelola_id')
-            ->where('pp.satuan_kerja_id', $satuan_id)
+            ->where('pp.tim_kerja_id', $tim_kerja_id)
             ->where('pp.tahun', $tahun)
             ->where('pr.aktif', true)
             ->get()

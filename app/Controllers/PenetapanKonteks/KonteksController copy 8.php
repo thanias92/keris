@@ -58,36 +58,10 @@ class KonteksController extends BaseContextController
 
     public function show($id)
     {
-        $activeKonteks = $this->getActiveKonteks($id);
+        $activeKonteks = $this->getActiveKonteks($id);      
 
         if (!$activeKonteks) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-        }
-
-        $pemilikRisiko = (new PengelolaRisikoModel())
-            ->getPemilikByWilayah(1);
-
-        $pengelolaRisiko = (new PenugasanPengelolaModel())
-            ->getKetuaTimWithFallback(
-                (int)$activeKonteks['id_tim'],
-                (int)$activeKonteks['tahun']
-            );
-
-        $requestedTahun      = session('global_tahun');
-        $requestedTim        = session('global_id_tim');
-        $requestedKegiatan   = session('global_id_kegiatan');
-
-        $hasScope = true;
-
-        if (
-            $requestedTahun &&
-            $requestedTim &&
-            $requestedKegiatan
-        ) {
-            $hasScope =
-                (int)$activeKonteks['tahun'] === (int)$requestedTahun
-                && (int)$activeKonteks['id_tim'] === (int)$requestedTim
-                && (int)$activeKonteks['id_kegiatan'] === (int)$requestedKegiatan;
         }
 
         $listPemangku = (new PemangkuKepentinganModel())->findAll();
@@ -124,26 +98,19 @@ class KonteksController extends BaseContextController
             ->get()
             ->getResultArray();
 
-        $mode = $activeKonteks['status'] === 'draft'
-            ? 'create'
-            : 'view';
-
         return view(
             'penetapan_konteks/index',
             array_merge(
                 $this->contextData($id),
                 [
                     'activeTab'         => 'konteks',
-                    'mode' => $mode,
-                    'hasScope' => $hasScope,
+                    'mode' => 'view',
                     'hideGlobalContext' => false,
                     'listPemangku'      => $listPemangku,
                     'listPeraturan'     => $listPeraturan,
                     'listTimKerja'      => $listTimKerja,
                     'listSasaran'       => $listSasaran,
                     'listWilayah'       => $listWilayah,
-                    'pemilikRisiko'   => $pemilikRisiko,
-                    'pengelolaRisiko' => $pengelolaRisiko,
                     'allProses'         => $allProses,
                     'sasaranOrganisasi' => $sasaranOrganisasi,
                 ]

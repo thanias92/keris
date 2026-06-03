@@ -26,6 +26,7 @@ class DashboardController extends BaseController
             'tahunList'       => $tahunList,
             'timKerjaList' => $timKerjaList,
             'kategoriList'    => $kategoriList,
+            'hideGlobalContext' => true,
         ]);
     }
 

@@ -8,15 +8,6 @@ $listTim = $timModel
     ->orderBy('nama_tim', 'ASC')
     ->findAll();
 
-$db = \Config\Database::connect();
-
-$listTahun = $db->table('konteks')
-    ->select('tahun')
-    ->distinct()
-    ->orderBy('tahun', 'DESC')
-    ->get()
-    ->getResultArray();
-
 $selectedTahun = session('global_tahun') ?? date('Y');
 
 $selectedTim = session('global_id_tim') ?? session('id_tim');
@@ -28,15 +19,15 @@ $selectedKegiatan = session('global_id_kegiatan') ?? '';
     <div class="context-group">
         <select name="ctx_tahun" id="ctx_tahun" class="select-tahun">
 
-            <?php foreach ($listTahun as $row): ?>
+            <?php for ($y = date('Y'); $y >= 2024; $y--): ?>
 
                 <option
-                    value="<?= $row['tahun'] ?>"
-                    <?= $selectedTahun == $row['tahun'] ? 'selected' : '' ?>>
-                    <?= $row['tahun'] ?>
+                    value="<?= $y ?>"
+                    <?= $selectedTahun == $y ? 'selected' : '' ?>>
+                    <?= $y ?>
                 </option>
 
-            <?php endforeach; ?>
+            <?php endfor; ?>
 
         </select>
     </div>

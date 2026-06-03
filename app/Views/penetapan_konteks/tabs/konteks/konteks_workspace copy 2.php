@@ -23,16 +23,6 @@ if (session('global_id_kegiatan')) {
 }
 ?>
 
-<?php if (isset($hasScope) && !$hasScope): ?>
-
-    <div class="alert alert-warning">
-        <strong>Belum Ada Ruang Lingkup</strong><br>
-        Ruang Lingkup untuk Tahun, Tim Kerja, dan Kegiatan yang dipilih belum dibuat.
-    </div>
-
-    <?php return; ?>
-<?php endif; ?>
-
 <div class="pk-section">
 
     <div class="pk-section-title">
@@ -113,23 +103,17 @@ if (session('global_id_kegiatan')) {
 
                 <div class="pk-info-row">
                     <span class="pk-info-label">Nama</span>
-                    <span id="pkPemilikNama" class="pk-info-value">
-                        <?= esc($pemilikRisiko['nama'] ?? '-') ?>
-                    </span>
+                    <span id="pkPemilikNama" class="pk-info-value">-</span>
                 </div>
 
                 <div class="pk-info-row">
                     <span class="pk-info-label">NIP</span>
-                    <span id="pkPemilikNip" class="pk-info-value">
-                        <?= esc($pemilikRisiko['nip'] ?? '-') ?>
-                    </span>
+                    <span id="pkPemilikNip" class="pk-info-value">-</span>
                 </div>
 
                 <div class="pk-info-row">
                     <span class="pk-info-label">Jabatan</span>
-                    <span id="pkPemilikJabatan" class="pk-info-value">
-                        <?= esc($pemilikRisiko['jabatan'] ?? '-') ?>
-                    </span>
+                    <span id="pkPemilikJabatan" class="pk-info-value">-</span>
                 </div>
 
             </div>
@@ -148,23 +132,17 @@ if (session('global_id_kegiatan')) {
 
                 <div class="pk-info-row">
                     <span class="pk-info-label">Nama</span>
-                    <span id="pkPengelolaNama" class="pk-info-value">
-                        <?= esc($pengelolaRisiko['nama'] ?? '-') ?>
-                    </span>
+                    <span id="pkPengelolaNama" class="pk-info-value">-</span>
                 </div>
 
                 <div class="pk-info-row">
                     <span class="pk-info-label">NIP</span>
-                    <span id="pkPengelolaNip" class="pk-info-value">
-                        <?= esc($pengelolaRisiko['nip'] ?? '-') ?>
-                    </span>
+                    <span id="pkPengelolaNip" class="pk-info-value">-</span>
                 </div>
 
                 <div class="pk-info-row">
                     <span class="pk-info-label">Jabatan</span>
-                    <span id="pkPengelolaJabatan" class="pk-info-value">
-                        <?= esc($pengelolaRisiko['jabatan'] ?? '-') ?>
-                    </span>
+                    <span id="pkPengelolaJabatan" class="pk-info-value">-</span>
                 </div>
 
                 <small id="pkPengelolaWarning"
