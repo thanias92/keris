@@ -105,7 +105,7 @@ $routes->group('master', ['filter' => ['auth']], function ($routes) {
 $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKonteks', 'filter' => ['auth']
 ], function ($routes) {
     $routes->get('/', 'KonteksController::index');
-    $routes->get('konteks','KonteksController::redirectToActive',['filter' => 'role:admin,operator,ketua']);
+    
     $routes->get('konteks/(:num)','KonteksController::show/$1',['filter' => 'role:admin,operator,ketua']);
     $routes->post('konteks/create-draft', 'KonteksController::createDraft', ['filter' => 'role:admin,operator']);
     //$routes->get('konteks/(:num)', 'KonteksController::index/$1', ['filter' => 'role:admin,operator,ketua']);

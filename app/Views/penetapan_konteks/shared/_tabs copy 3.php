@@ -6,7 +6,9 @@
         </a>
 
         <a class="pk-tab <?= $activeTab === 'konteks' ? 'active' : '' ?>"
-            href="<?= site_url('penetapan-konteks/konteks') ?>">
+            href="<?= $activeKonteks
+                        ? site_url('penetapan-konteks/konteks/' . $activeKonteks['id_konteks'])
+                        : 'javascript:void(0)' ?>">
             <i class="ti ti-file-text me-2"></i>
             <span>Konteks</span>
         </a>

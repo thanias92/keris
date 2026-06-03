@@ -118,61 +118,6 @@ class KonteksController extends BaseContextController
         );
     }
 
-    public function redirectToActive()
-    {
-        $tahun      = session('global_tahun') ?? date('Y');
-        $idTim      = session('global_id_tim') ?? session('id_tim');
-        $idKegiatan = session('global_id_kegiatan');
-
-        $builder = $this->model;
-
-        // PRIORITAS 1
-        // Jika selector sudah memilih kegiatan tertentu
-        if (!empty($idKegiatan)) {
-
-            $konteks = $builder
-                ->where('tahun', $tahun)
-                ->where('id_tim', $idTim)
-                ->where('id_kegiatan', $idKegiatan)
-                ->first();
-
-            if ($konteks) {
-                return redirect()->to(
-                    site_url('penetapan-konteks/konteks/' . $konteks['id_konteks'])
-                );
-            }
-        }
-
-        // PRIORITAS 2
-        // Cari ruang lingkup pertama yang tersedia
-        $konteks = $builder
-            ->where('tahun', $tahun)
-            ->where('id_tim', $idTim)
-            ->orderBy('id_kegiatan', 'ASC')
-            ->first();
-
-        if (!$konteks) {
-
-            return redirect()
-                ->to(site_url('penetapan-konteks'))
-                ->with(
-                    'warning',
-                    'Belum ada Ruang Lingkup untuk tim dan tahun yang dipilih.'
-                );
-        }
-
-        // Sinkronkan Global Context Selector
-        session()->set([
-            'global_tahun'       => $konteks['tahun'],
-            'global_id_tim'      => $konteks['id_tim'],
-            'global_id_kegiatan' => $konteks['id_kegiatan'],
-        ]);
-
-        return redirect()->to(
-            site_url('penetapan-konteks/konteks/' . $konteks['id_konteks'])
-        );
-    }
-
     public function edit($id)
     {
         $activeKonteks = $this->getActiveKonteks($id);
@@ -370,11 +315,6 @@ class KonteksController extends BaseContextController
         $this->model->insert($data);
 
         $id = $this->model->getInsertID();
-        session()->set([
-            'global_tahun'       => $data['tahun'],
-            'global_id_tim'      => $data['id_tim'],
-            'global_id_kegiatan' => $data['id_kegiatan'],
-        ]);
 
         return $this->response->setJSON([
             'status' => 'success',
