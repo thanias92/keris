@@ -23,11 +23,6 @@ const Combobox = {
 
     const getOptions = () => combo.querySelectorAll(optionsSelector);
 
-    if (!dropdown) {
-      console.warn("Combobox dropdown not found:", boxId);
-      return;
-    }
-
     const open = () => dropdown.classList.add("open");
     const close = () => dropdown.classList.remove("open");
 

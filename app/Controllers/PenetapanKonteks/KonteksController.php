@@ -74,6 +74,11 @@ class KonteksController extends BaseContextController
         }
 
         $activeKonteks = $this->getActiveKonteks($id);
+        log_message(
+            'error',
+            'SHOW KONTEKS => ID=' . $id .
+                ' STATUS=' . ($activeKonteks['status'] ?? 'NULL')
+        );
 
         if (!$activeKonteks) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
@@ -176,6 +181,12 @@ class KonteksController extends BaseContextController
 
     public function redirectToActive()
     {
+        // log_message('error', json_encode([
+        //     'tahun' => session('global_tahun'),
+        //     'tim' => session('global_id_tim'),
+        //     'kegiatan' => session('global_id_kegiatan'),
+        // ]));
+
         $tahun      = session('global_tahun') ?? date('Y');
         $idTim      = session('global_id_tim') ?? session('id_tim');
         $idKegiatan = session('global_id_kegiatan');

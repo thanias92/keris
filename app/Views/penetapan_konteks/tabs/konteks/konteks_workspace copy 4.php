@@ -19,7 +19,6 @@
 <?php endif; ?>
 
 <?php
-$isViewMode = ($mode ?? '') === 'view';
 $db = \Config\Database::connect();
 
 $globalTim = null;
@@ -223,35 +222,47 @@ if (!empty($activeKonteks['id_sasaran_strategis'])) {
                     id="pkSasaranInput"
                     value="<?= esc($selectedSasaran['uraian_sasaran'] ?? '') ?>"
                     placeholder="Pilih Sasaran Strategis"
-                    autocomplete="off"
-                    <?= $isViewMode ? 'readonly' : '' ?>>
+                    autocomplete="off">
 
-                <?php if (!$isViewMode): ?>
-                    <div class="pk-combobox-dropdown">
-                        <div class="pk-combobox-options">
-                            <?php foreach ($listSasaran as $ss): ?>
-                                <div class="pk-option"
-                                    data-value="<?= $ss['id_sasaran_strategis'] ?>">
-                                    <?= esc($ss['uraian_sasaran']) ?>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
+                <div class="pk-combobox-dropdown">
+                    <div class="pk-combobox-options">
+
+                        <?php foreach ($listSasaran as $ss): ?>
+
+                            <div class="pk-option"
+                                data-value="<?= $ss['id_sasaran_strategis'] ?>">
+
+                                <?= esc($ss['uraian_sasaran']) ?>
+
+                            </div>
+
+                        <?php endforeach; ?>
+
                     </div>
-                <?php endif; ?>
+                </div>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
 
 <div class="pk-section">
+
     <div class="d-flex justify-content-between align-items-center mb-3">
+
         <div class="pk-section-title mb-0">
             Proses Bisnis & Sasaran Kinerja
         </div>
 
-        <button type="button" class="btn btn-primary btn-sm" id="pbBtnCreate">
+        <button type="button"
+            class="btn btn-primary btn-sm"
+            id="pbBtnCreate">
             <i class="ti ti-plus"></i>Proses
         </button>
+
     </div>
 
     <div id="pkProsesBisnisTableWrapper">
@@ -260,16 +271,21 @@ if (!empty($activeKonteks['id_sasaran_strategis'])) {
         ]) ?>
     </div>
 </div>
+
 <?= view('penetapan_konteks/tabs/proses_bisnis/_offcanvas_form') ?>
 
 <div class="pk-section">
+
     <div class="pk-section-title">
         Pemangku Kepentingan
     </div>
 
     <div class="pk-context-panel">
+
         <div class="pk-field-vertical">
+
             <div class="pk-combobox" id="pkPemangkuBox">
+
                 <input type="text"
                     class="pk-combobox-input"
                     id="pkPemangkuInput"
@@ -277,7 +293,9 @@ if (!empty($activeKonteks['id_sasaran_strategis'])) {
                     autocomplete="off">
 
                 <div class="pk-combobox-dropdown">
+
                     <div class="pk-combobox-options">
+
                         <?php
                         $groupPemangku = [];
                         foreach ($listPemangku as $p) {
