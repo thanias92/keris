@@ -14,6 +14,7 @@ $routes->group('', ['filter' => ['auth']], function ($routes) {
     $routes->get('/','DashboardController::index',['filter' => 'role:admin,operator,ketua']);
     $routes->get('dashboard','DashboardController::index',['filter' => 'role:admin,operator,ketua']);
     $routes->get('dashboard/data','DashboardController::data',['filter' => 'role:admin,operator,ketua']);
+    $routes->get('dashboard/debug', 'DashboardController::debug', ['filter' => 'role:admin,operator,ketua']);
 });
 
 // Global Context
@@ -110,7 +111,9 @@ $routes->group('penetapan-konteks', ['namespace' => 'App\Controllers\PenetapanKo
     $routes->post('konteks/create-draft', 'KonteksController::createDraft', ['filter' => 'role:admin,operator']);
     //$routes->get('konteks/(:num)', 'KonteksController::index/$1', ['filter' => 'role:admin,operator,ketua']);
 
-    $routes->get('penetapan-konteks/konteks/(:num)/edit','PenetapanKonteks\KonteksController::edit/$1');
+    //$routes->get('penetapan-konteks/konteks/(:num)/edit','PenetapanKonteks\KonteksController::edit/$1');
+    $routes->get('konteks/(:num)/edit','KonteksController::edit/$1',['filter' => 'role:admin,operator']);
+
 
     $routes->post('konteks/store', 'KonteksController::store', ['filter' => 'role:admin,operator']);
     $routes->post('konteks/update', 'KonteksController::update', ['filter' => 'role:admin,operator']);

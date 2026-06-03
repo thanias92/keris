@@ -16,8 +16,6 @@
                 setActive: '<?= site_url('penetapan-konteks/konteks/set-active') ?>',
                 resetActive: '<?= site_url('penetapan-konteks/konteks/reset-active') ?>',
 
-                show: (id) => `<?= site_url('penetapan-konteks/konteks') ?>/${id}`,
-
                 detail: (id) => `<?= site_url('penetapan-konteks/konteks/detail') ?>/${id}`,
                 table: '<?= site_url('penetapan-konteks/konteks/table') ?>',
 

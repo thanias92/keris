@@ -68,7 +68,7 @@ class KonteksModel extends Model
     public function markAsCompleted($idKonteks)
     {
         return $this->update($idKonteks, [
-            'status' => 'completed',
+            'status' => 'lengkap',
         ]);
     }
 }

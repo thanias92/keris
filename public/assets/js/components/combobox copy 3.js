@@ -16,15 +16,10 @@ const Combobox = {
     const hidden = hiddenId ? document.getElementById(hiddenId) : null;
 
     const dropdown = combo.querySelector(".pk-combobox-dropdown");
-
-    if (!dropdown) {
-      console.warn("Combobox dropdown not found:", boxId);
-      return;
-    }
-
     const createOption = document.createElement("div");
 
     createOption.className = "pk-option pk-option-create";
+
     createOption.style.display = "none";
 
     dropdown.querySelector(".pk-combobox-options")?.appendChild(createOption);
@@ -33,6 +28,11 @@ const Combobox = {
     let selected = false;
 
     const getOptions = () => combo.querySelectorAll(optionsSelector);
+
+    if (!dropdown) {
+      console.warn("Combobox dropdown not found:", boxId);
+      return;
+    }
 
     const open = () => dropdown.classList.add("open");
     const close = () => dropdown.classList.remove("open");
@@ -81,10 +81,6 @@ const Combobox = {
     };
 
     const select = (option) => {
-      if (option.classList.contains("pk-option-create")) {
-        return;
-      }
-
       input.value = option.innerText;
 
       if (hidden) hidden.value = option.dataset.value;
@@ -173,15 +169,12 @@ const Combobox = {
       });
     });
 
-    createOption.addEventListener("click", (e) => {
-      e.stopPropagation();
+    createOption.addEventListener("click", () => {
+      console.log("CREATE KEYWORD =", createKeyword);
 
       if (onCreate) {
         onCreate(createOption.dataset.keyword || input.value.trim());
       }
-
-      createOption.style.display = "none";
-      input.value = "";
 
       close();
     });

@@ -346,7 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
             popup: "swal-mantis",
           },
         }).then(() => {
-          window.location.href = `/penetapan-konteks/konteks/${result.id}`;
+          window.location.href = KONTEKS_CONFIG.url.show(result.id);
         });
 
         return;

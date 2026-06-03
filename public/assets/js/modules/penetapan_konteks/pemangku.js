@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // ── REFRESH TABLE ─────────────────────────────────────────
   function refreshTable() {
     PkAjax.get({
-      url: "/penetapan-konteks/pemangku/table",
+      url: PEMANGKU_CONFIG.url.table,
       onSuccess(html) {
         $("#pkPemangkuTableWrapper").html(html);
         bindRowClick();

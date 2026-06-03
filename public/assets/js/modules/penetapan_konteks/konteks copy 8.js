@@ -39,8 +39,6 @@ const KonteksModule = {
     this.initPeraturanCombobox();
     this.initPemangkuCombobox();
     this.initQuickCreatePemangku();
-    this.initExistingPemangkuDelete();
-    this.initExistingPeraturanDelete();
     this.initFormSubmit();
     this.initPreventEnterSubmit();
   },
@@ -95,14 +93,6 @@ const KonteksModule = {
 
   // SASARAN STRATEGIS
   initSasaranCombobox() {
-    const box = document.getElementById("pkSasaranBox");
-
-    if (!box) return;
-
-    const dropdown = box.querySelector(".pk-combobox-dropdown");
-
-    if (!dropdown) return;
-
     Combobox.init({
       boxId: "pkSasaranBox",
       inputId: "pkSasaranInput",
@@ -293,20 +283,6 @@ const KonteksModule = {
     KonteksModule.reindexPeraturan();
   },
 
-  initExistingPeraturanDelete() {
-    document
-      .querySelectorAll("#pkPeraturanTags .pk-tag-remove")
-      .forEach((btn) => {
-        btn.onclick = function () {
-          const tag = this.closest(".pk-law-item");
-
-          tag.remove();
-
-          KonteksModule.reindexPeraturan();
-        };
-      });
-  },
-
   // PEMANGKU TAG INPUT
   initPemangkuCombobox() {
     const container = document.getElementById("pkPemangkuTags");
@@ -467,66 +443,50 @@ const KonteksModule = {
     });
   },
 
-  initExistingPemangkuDelete() {
-    document
-      .querySelectorAll("#pkPemangkuTags .pk-tag-remove")
-      .forEach((btn) => {
-        btn.onclick = function () {
-          const item = this.closest(".pk-pemangku-item");
-          const group = this.closest(".pk-pemangku-group");
-
-          item.remove();
-
-          const list = group.querySelector(".pk-pemangku-items");
-
-          if (list.children.length === 0) {
-            group.remove();
-          }
-        };
-      });
-  },
-
   // FORM SUBMIT (CREATE / UPDATE)
   initFormSubmit() {
-    const form = document.getElementById("pkFormKonteks");
-    if (!form) return;
+  const form = document.getElementById("pkFormKonteks");
+  if (!form) return;
 
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
 
-      PkAlert.confirm({
-        text: "Simpan data konteks ini?",
-        confirmText: "Simpan",
-      }).then((result) => {
-        if (!result.isConfirmed) return;
+    PkAlert.confirm({
+      text: "Simpan data konteks ini?",
+      confirmText: "Simpan",
+    }).then((result) => {
 
-        const mode = document.getElementById("pkMode")?.value || "create";
+      if (!result.isConfirmed) return;
 
-        const url = mode === "edit" ? KONTEKS_URL.update : KONTEKS_URL.store;
+      const mode =
+        document.getElementById("pkMode")?.value || "create";
 
-        console.log("MODE =", mode);
-        console.log("URL =", url);
-        console.log($(form).serialize());
+      const url =
+        mode === "edit"
+          ? KONTEKS_URL.update
+          : KONTEKS_URL.store;
+      
+      console.log("MODE =", mode);
+      console.log("URL =", url);
+      console.log($(form).serialize());
 
-        PkAjax.post({
-          url,
-          data: $(form).serialize(),
+      PkAjax.post({
+        url,
+        data: $(form).serialize(),
 
-          onSuccess(res) {
-            if (res.status !== "success") return;
+        onSuccess(res) {
+          if (res.status !== "success") return;
 
-            PkAlert.success({
-              text: res.message,
-            }).then(() => {
-              if (res.redirect) {
-                window.location.href = res.redirect;
-              }
-            });
-          },
-        });
+          PkAlert.success({
+            text: res.message,
+          }).then(() => {
+            window.location.href = res.redirect;
+          });
+        },
       });
     });
-  },
+  });
+},
 
   // DELETE
   deleteKonteks(id) {

@@ -26,4 +26,25 @@ class PeraturanController extends BaseContextController
             )
         );
     }
+    public function store()
+    {
+        if (!$this->request->isAJAX()) {
+            return redirect()->back();
+        }
+
+        $model = new PeraturanTerkaitModel();
+
+        $id = $model->insert([
+            'nama_peraturan' => $this->request->getPost('nama_peraturan'),
+            'is_default'     => false,
+        ]);
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'data' => [
+                'id_peraturan'   => $id,
+                'nama_peraturan' => $this->request->getPost('nama_peraturan'),
+            ]
+        ]);
+    }
 }

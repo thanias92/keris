@@ -483,12 +483,11 @@ class KonteksController extends BaseContextController
             ]);
         }
 
+        //return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil disimpan']);
         return $this->response->setJSON([
             'status'   => 'success',
             'message'  => 'Data berhasil disimpan',
-            'redirect' => site_url(
-                'identifikasi-risiko'
-            )
+            'redirect' => site_url('identifikasi-risiko')
         ]);
     }
 
@@ -512,9 +511,12 @@ class KonteksController extends BaseContextController
         $toInt = fn($v) => $v !== '' && $v !== null ? (int) $v : null;
 
         $data = [
-            'id_sasaran_strategis' => $toInt(
-                $this->request->getPost('id_sasaran_strategis')
-            ),
+            'tahun'                => (int) $this->request->getPost('tahun'),
+            'pengelola_risiko_id'  => $toInt($this->request->getPost('pengelola_risiko_id')),
+            'pemilik_risiko_id'    => $toInt($this->request->getPost('pemilik_risiko_id')),
+            'id_kegiatan'          => $toInt($this->request->getPost('id_kegiatan')),
+            'id_tim'               => $toInt($this->request->getPost('id_tim')),
+            'id_sasaran_strategis' => $toInt($this->request->getPost('id_sasaran_strategis')),
         ];
 
         $db = \Config\Database::connect();
@@ -534,13 +536,7 @@ class KonteksController extends BaseContextController
             $peraturanModel->insert(['id_konteks' => $id, 'id_peraturan' => $idPeraturan]);
         }
 
-        return $this->response->setJSON([
-            'status'   => 'success',
-            'message'  => 'Data berhasil diubah',
-            'redirect' => site_url(
-                'penetapan-konteks/konteks/' . $id
-            )
-        ]);
+        return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil diubah']);
     }
 
     /* DELETE (AJAX) */
