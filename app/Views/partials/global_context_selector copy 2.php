@@ -81,8 +81,6 @@ $selectedKegiatan = session('global_id_kegiatan') ?? '';
             set: '<?= site_url('global-context/set') ?>',
             kegiatan: '<?= site_url('global-context/kegiatan') ?>',
             reset: '<?= site_url('global-context/reset') ?>',
-
-            konteks: '<?= site_url('penetapan-konteks/konteks') ?>'
         },
 
         default: {

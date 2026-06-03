@@ -1,5 +1,24 @@
 <div class="alert alert-info mb-3">
     MODE : <?= esc($mode ?? '-') ?>
+    <div style="background:red;color:white;padding:10px;">
+        active:
+        <?= $activeKonteks['tahun'] ?? '-' ?> |
+        <?= $activeKonteks['id_tim'] ?? '-' ?> |
+        <?= $activeKonteks['id_kegiatan'] ?? '-' ?>
+
+        <br>
+
+        session:
+        <?= session('global_tahun') ?? '-' ?> |
+        <?= session('global_id_tim') ?? '-' ?> |
+        <?= session('global_id_kegiatan') ?? '-' ?>
+
+        <br>
+
+        hasKegiatan = <?= var_export($hasKegiatan, true) ?>
+        |
+        hasScope = <?= var_export($hasScope, true) ?>
+    </div>
 </div>
 
 <?php if (empty($hasKegiatan)): ?>

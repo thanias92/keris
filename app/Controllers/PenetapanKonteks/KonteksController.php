@@ -58,11 +58,50 @@ class KonteksController extends BaseContextController
 
     public function show($id)
     {
+        if ((int)$id === 0) {
+            return view(
+                'penetapan_konteks/index',
+                [
+                    'activeKonteks'      => null,
+                    'listKonteks'        => $this->getListKonteks(),
+                    'activeTab'          => 'konteks',
+                    'mode'               => 'create',
+                    'hasKegiatan'        => true,
+                    'hasScope'           => false,
+                    'hideGlobalContext'  => false,
+                ]
+            );
+        }
+
         $activeKonteks = $this->getActiveKonteks($id);
 
         if (!$activeKonteks) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
+
+        $requestedTahun    = session('global_tahun');
+        $requestedTim      = session('global_id_tim');
+        $requestedKegiatan = session('global_id_kegiatan');
+
+        $hasKegiatan = !empty($requestedKegiatan);
+
+        // Kalau user memilih kegiatan tertentu
+        if ($hasKegiatan) {
+
+            $isMatch =
+                (int)$activeKonteks['tahun'] === (int)$requestedTahun
+                && (int)$activeKonteks['id_tim'] === (int)$requestedTim
+                && (int)$activeKonteks['id_kegiatan'] === (int)$requestedKegiatan;
+
+            // URL masih menunjuk ke konteks lama
+            if (!$isMatch) {
+                return redirect()->to(
+                    site_url('penetapan-konteks/konteks')
+                );
+            }
+        }
+
+        $hasScope = true;
 
         $pemilikRisiko = (new PengelolaRisikoModel())
             ->getPemilikByWilayah(1);
@@ -72,23 +111,6 @@ class KonteksController extends BaseContextController
                 (int)$activeKonteks['id_tim'],
                 (int)$activeKonteks['tahun']
             );
-
-        $requestedTahun      = session('global_tahun');
-        $requestedTim        = session('global_id_tim');
-        $requestedKegiatan   = session('global_id_kegiatan');
-
-        $hasScope = true;
-
-        if (
-            $requestedTahun &&
-            $requestedTim &&
-            $requestedKegiatan
-        ) {
-            $hasScope =
-                (int)$activeKonteks['tahun'] === (int)$requestedTahun
-                && (int)$activeKonteks['id_tim'] === (int)$requestedTim
-                && (int)$activeKonteks['id_kegiatan'] === (int)$requestedKegiatan;
-        }
 
         $listPemangku = (new PemangkuKepentinganModel())->findAll();
         $listPeraturan = (new PeraturanTerkaitModel())->findAll();
@@ -135,6 +157,7 @@ class KonteksController extends BaseContextController
                 [
                     'activeTab'         => 'konteks',
                     'mode' => $mode,
+                    'hasKegiatan' => $hasKegiatan,
                     'hasScope' => $hasScope,
                     'hideGlobalContext' => false,
                     'listPemangku'      => $listPemangku,
@@ -169,11 +192,17 @@ class KonteksController extends BaseContextController
                 ->where('id_kegiatan', $idKegiatan)
                 ->first();
 
+            // ruang lingkup ditemukan
             if ($konteks) {
                 return redirect()->to(
                     site_url('penetapan-konteks/konteks/' . $konteks['id_konteks'])
                 );
             }
+
+            // kegiatan dipilih tetapi ruang lingkup belum ada
+            return redirect()->to(
+                site_url('penetapan-konteks/konteks/0')
+            );
         }
 
         // PRIORITAS 2
@@ -320,7 +349,7 @@ class KonteksController extends BaseContextController
             }
         }
 
-        $perPage = (int) ($this->request->getGet('perPage') ?? 5);
+        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
 
         $data  = $builder->orderBy('tahun', 'DESC')->paginate($perPage);
         $pager = $this->model->pager;

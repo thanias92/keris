@@ -64,13 +64,6 @@ async function saveGlobalContext() {
       method: "POST",
       body: formData,
     });
-    const path = window.location.pathname;
-
-    if (path.startsWith("/penetapan-konteks")) {
-      window.location.href = GC_URL.konteks;
-      return;
-    }
-    
     window.location.reload();
   } catch (err) {
     console.error("Gagal menyimpan global context:", err);
