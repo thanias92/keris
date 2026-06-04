@@ -158,9 +158,6 @@ class RencanaPenangananController extends BaseController
             pr.warna_risiko,
             km.level      as level_kemungkinan,
             kd.level      as level_dampak,
-            mr_r.nilai_risiko as nilai_sr_residu,
-            sr_r.nama_level as nama_selera_residu,
-            sr_r.warna as warna_selera_residu,
             sl.nama_level as nama_selera,
             sl.warna      as warna_selera,
             rtp.id_rtp,
@@ -182,8 +179,6 @@ class RencanaPenangananController extends BaseController
             ->join('rencana_penanganan_risiko rtp', 'rtp.id_penilaian_awal = er.id_evaluasi', 'left')
             ->join('kriteria_kemungkinan km_r', 'km_r.id_kriteria = rtp.id_kemungkinan_residu', 'left')
             ->join('kriteria_dampak kd_r', 'kd_r.id_kriteria = rtp.id_dampak_residu', 'left')
-            ->join('matriks_risiko mr_r','mr_r.level_kemungkinan = km_r.level AND mr_r.level_dampak = kd_r.level','left')
-            ->join('selera_risiko sr_r','mr_r.nilai_risiko BETWEEN sr_r.nilai_min AND sr_r.nilai_max','left')
             ->where('er.opsi_tindakan', 'Mengurangi')
             ->orderBy('pb.kode_proses', 'ASC')
             ->orderBy('rtp.id_rtp', 'ASC');
@@ -269,8 +264,7 @@ class RencanaPenangananController extends BaseController
             if (!empty($row['id_rtp'])) {
                 $levelP = (int) ($row['level_kemungkinan_residu'] ?? 0);
                 $levelD = (int) ($row['level_dampak_residu'] ?? 0);
-
-                $skorSR = $row['nilai_sr_residu'] ?? null;
+                $skorSR = ($levelP > 0 && $levelD > 0) ? $levelP * $levelD : null;
 
                 $grouped[$idEval]['rtp_list'][] = [
                     'id_rtp'        => $row['id_rtp'],
@@ -279,9 +273,7 @@ class RencanaPenangananController extends BaseController
                     'target_waktu'  => $row['target_waktu'],
                     'level_kemungkinan_residu' => $levelP ?: null,
                     'level_dampak_residu'      => $levelD ?: null,
-                    'nilai_sr_residu' => $row['nilai_sr_residu'],
-                    'nama_selera_residu' => $row['nama_selera_residu'],
-                    'warna_selera_residu' => $row['warna_selera_residu'],
+                    'nilai_sr_residu'          => $skorSR,
                 ];
             }
         }

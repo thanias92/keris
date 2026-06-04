@@ -73,7 +73,7 @@
                                 </button>
                             </li>
 
-                            <li>
+                            <!-- <li>
                                 <button
                                     type="button"
                                     class="dropdown-item"
@@ -82,9 +82,9 @@
                                     <i class="ti ti-stack-2 me-2"></i>
                                     Export Semua Form
                                 </button>
-                            </li>
+                            </li> -->
 
-                            <li>
+                            <!-- <li>
                                 <hr class="dropdown-divider">
                             </li>
 
@@ -97,7 +97,7 @@
                                     <i class="ti ti-file-export me-2"></i>
                                     Export Excel
                                 </button>
-                            </li>
+                            </li> -->
 
                         </ul>
                     </div>

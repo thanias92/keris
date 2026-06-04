@@ -343,13 +343,14 @@
             // Kolom: dampak 1→5
             for (let d = 1; d <= 5; d++) {
                 const cell = (grid[k] && grid[k][d]) ? grid[k][d] : {};
-                const count = cell.total || 0;
+                const count = parseInt(cell.total ?? 0);
+
                 const warna = (cell.warna || '').toLowerCase();
                 const bg = WARNA_CSS[warna] || '#f1f5f9';
                 const color = WARNA_TEXT[warna] || '#334155';
                 const nilai = cell.nilai_risiko || '';
                 html += `<td style="background:${bg};color:${color}" title="Nilai: ${nilai}">`;
-                if (count > 0) html += `<span class="hm-dot">${count}</span>`;
+                html += `<span class="hm-dot">${count}</span>`;
                 html += `</td>`;
             }
             html += '</tr>';
