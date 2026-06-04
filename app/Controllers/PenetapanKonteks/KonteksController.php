@@ -151,7 +151,19 @@ class KonteksController extends BaseContextController
             ->get()
             ->getResultArray();
 
-        $mode = $activeKonteks['status'] === 'draft'
+        $user = session('user');
+
+        $canManageContext = in_array(
+            $user['role'] ?? '',
+            ['admin', 'operator']
+        );
+
+        $mode =
+            (
+                $activeKonteks['status'] === 'draft'
+                &&
+                $canManageContext
+            )
             ? 'create'
             : 'view';
 

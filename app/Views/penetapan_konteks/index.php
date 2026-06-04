@@ -103,6 +103,14 @@
     </script>
 <?php endif; ?>
 
+<?php
+$user = session('user');
+$canManageContext = in_array(
+    $user['role'] ?? '',
+    ['admin', 'operator']
+);
+?>
+
 <div class="pk-page">
 
     <div class="page-header pk-header mb-3">
@@ -127,7 +135,11 @@
                 </div>
 
                 <div class="col-12 col-lg-4 text-lg-end mt-3 mt-lg-0">
-                    <?php if ($activeTab === 'ruang_lingkup'): ?>
+                    <?php if (
+                        $activeTab === 'ruang_lingkup'
+                        &&
+                        $canManageContext
+                    ): ?>
                         <button
                             class="btn btn-primary"
                             data-bs-toggle="offcanvas"
