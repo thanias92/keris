@@ -736,14 +736,11 @@ class KonteksController extends BaseContextController
 
         $usedKegiatan = [];
 
-        $usedKegiatan = $this->model
-            ->where('tahun', $tahun)
-            ->findColumn('id_kegiatan');
-
-        $usedKegiatan = array_filter(
-            $usedKegiatan,
-            fn($v) => !empty($v)
-        );
+        if ($tahun) {
+            $usedKegiatan = $this->model
+                ->where('tahun', $tahun)
+                ->findColumn('id_kegiatan');
+        }
 
         $builder = (new KegiatanModel())
             ->where('id_tim', $id);
@@ -756,12 +753,10 @@ class KonteksController extends BaseContextController
             ->orderBy('nama_kegiatan', 'ASC')
             ->findAll();
 
-        // DEBUG
         log_message('error', json_encode([
             'tahun' => $tahun,
-            'id_tim' => $id,
             'usedKegiatan' => $usedKegiatan,
-            'result' => $data,
+            'data' => $data
         ]));
 
         return $this->response->setJSON($data);
