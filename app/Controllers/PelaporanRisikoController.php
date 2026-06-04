@@ -549,25 +549,61 @@ class PelaporanRisikoController extends BaseController
 
         $builder = $this->db->table('rencana_penanganan_risiko rtp')
             ->select("
-            rtp.id_rtp,
-            rtp.uraian_rtp,
-            rtp.target_output,
-            rtp.target_waktu,
-            ir.pernyataan_risiko,
-            pm.realisasi_output,
-            pm.realisasi_waktu,
-            COALESCE(pm.status, 'Belum Dilaksanakan') as status,
-            sk.nama_tim,
-            kegiatan.id_kegiatan,
-            kegiatan.nama_kegiatan
-        ")
-            ->join('evaluasi_risiko er','er.id_evaluasi = rtp.id_penilaian_awal')
-            ->join('identifikasi_risiko ir','ir.id_identifikasi = er.id_identifikasi')
-            ->join('konteks_proses_bisnis kpb','kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('konteks k','k.id_konteks = kpb.id_konteks')
-            ->join('tim_kerja sk','sk.id_tim = k.id_tim','left')
-            ->join('kegiatan','kegiatan.id_kegiatan = k.id_kegiatan','left')
-            ->join('pemantauan_risiko pm','pm.id_rtp = rtp.id_rtp','left')
+        rtp.id_rtp,
+        rtp.uraian_rtp,
+        rtp.target_output,
+        rtp.target_waktu,
+
+        ir.id_identifikasi,
+        ir.pernyataan_risiko,
+        ir.penyebab_risiko,
+        ir.dampak_risiko,
+        ir.sumber_risiko,
+
+        er.opsi_tindakan,
+        er.prioritas,
+
+        pr.nilai_risiko,
+        pr.efektivitas,
+        pr.uraian_pengendalian,
+
+        kk.level AS kemungkinan,
+        kd.level AS dampak,
+
+        kr.nama_kategori,
+
+        pb.kode_proses,
+        pb.uraian_proses,
+
+        pm.realisasi_output,
+        pm.realisasi_waktu,
+        COALESCE(pm.status, 'Belum Dilaksanakan') as status,
+
+        sk.nama_tim,
+        kegiatan.id_kegiatan,
+        kegiatan.nama_kegiatan
+    ")
+            ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
+            ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
+            ->join('penilaian_risiko pr', 'pr.id_penilaian = er.id_penilaian')
+
+            ->join('kriteria_kemungkinan kk', 'kk.id_kriteria = pr.id_kemungkinan', 'left')
+            ->join('kriteria_dampak kd', 'kd.id_kriteria = pr.id_dampak', 'left')
+
+            ->join(
+                'kategori_risiko kr',
+                'kr.id_kategori_risiko = ir.id_kategori_risiko',
+                'left'
+            )
+
+            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
+            ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses', 'left')
+
+            ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
+            ->join('tim_kerja sk', 'sk.id_tim = k.id_tim', 'left')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = k.id_kegiatan', 'left')
+
+            ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left')
             ->where('pm.status_validasi', 'Disetujui');
 
         // FILTER TIM LOGIN

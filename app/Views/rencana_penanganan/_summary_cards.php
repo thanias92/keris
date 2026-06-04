@@ -1,4 +1,56 @@
 <div class="d-flex flex-wrap gap-2 mb-3 er-summary-row">
+    <!-- DISTRIBUSI LEVEL -->
+    <?php if (!empty($levelRisiko)): ?>
+
+        <?php
+        $order = ['Rendah', 'Sedang', 'Tinggi', 'Ekstrem'];
+
+        $colorMap = [
+            'Rendah'  => '#198754',
+            'Sedang'  => '#0dcaf0',
+            'Tinggi'  => '#ffc107',
+            'Ekstrem' => '#dc3545',
+        ];
+
+        $totalLevel = array_sum($levelRisiko);
+        ?>
+
+        <div class="er-stat-card er-stat-dist">
+
+            <div class="er-stat-label mb-2">
+                Distribusi Level
+            </div>
+
+            <?php foreach ($order as $lvl):
+
+                $jumlah = $levelRisiko[$lvl] ?? 0;
+                $warna  = $colorMap[$lvl];
+                $percent = $totalLevel > 0
+                    ? ($jumlah / $totalLevel) * 100
+                    : 0;
+            ?>
+
+                <div class="ar-dist-bar-row">
+                    <span class="ar-dist-label">
+                        <?= esc($lvl) ?>
+                    </span>
+
+                    <div class="ar-dist-bar">
+                        <div class="ar-dist-fill"
+                            style="width:<?= $percent ?>%;background:<?= $warna ?>">
+                        </div>
+                    </div>
+
+                    <span class="ar-dist-value">
+                        <?= $jumlah ?>
+                    </span>
+                </div>
+
+            <?php endforeach; ?>
+
+        </div>
+
+    <?php endif; ?>
 
     <!-- TOTAL RISIKO DITANGANI -->
     <div class="er-stat-card">
@@ -21,33 +73,4 @@
         <div class="er-stat-label">Belum Ada RTP</div>
         <div class="er-stat-value text-warning"><?= $totalBelum ?></div>
     </div>
-
-    <!-- DISTRIBUSI LEVEL -->
-    <?php if (!empty($levelRisiko)): ?>
-        <div class="er-stat-card er-stat-dist ms-auto">
-            <div class="er-stat-label mb-1">Distribusi Level</div>
-
-            <?php
-            $colorMap = [
-                'Rendah'  => ['bg' => '#198754', 'text' => '#fff'],
-                'Sedang'  => ['bg' => '#0dcaf0', 'text' => '#000'],
-                'Tinggi'  => ['bg' => '#ffc107', 'text' => '#000'],
-                'Ekstrem' => ['bg' => '#dc3545', 'text' => '#fff'],
-            ];
-
-            foreach ($levelRisiko as $level => $jumlah):
-                $c = $colorMap[$level] ?? ['bg' => '#6c757d', 'text' => '#fff'];
-            ?>
-                <div class="d-flex align-items-center justify-content-between gap-3 er-dist-row">
-                    <span class="er-dist-label"><?= esc($level) ?></span>
-                    <span class="er-dist-badge"
-                        style="background:<?= $c['bg'] ?>;color:<?= $c['text'] ?>">
-                        <?= $jumlah ?>
-                    </span>
-                </div>
-            <?php endforeach; ?>
-
-        </div>
-    <?php endif; ?>
-
 </div>

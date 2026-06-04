@@ -295,6 +295,7 @@ class RencanaPenangananController extends BaseController
         }
 
         $kriteria = $this->getKriteriaList();
+        $summary = $this->getSummary($idKonteks);
 
         return view('rencana_penanganan/index', [
             'grouped'       => $grouped,
@@ -310,6 +311,10 @@ class RencanaPenangananController extends BaseController
             ],
             'kriteriaKemungkinan' => $kriteria['kriteriaKemungkinan'],
             'kriteriaDampak'      => $kriteria['kriteriaDampak'],
+            'totalRisiko' => $summary['totalRisiko'],
+            'totalSudah'  => $summary['totalSudah'],
+            'totalBelum'  => $summary['totalBelum'],
+            'levelRisiko' => $summary['levelRisiko'],
         ]);
     }
 

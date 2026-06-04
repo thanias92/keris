@@ -84,19 +84,19 @@
                         </a>
                     </li>
 
-                    <li class="pc-item">
+                    <!-- <li class="pc-item">
                         <a href="<?= base_url('rbac/role') ?>" class="pc-link">
                             <span class="pc-micon"><i class="ti ti-shield"></i></span>
                             <span class="pc-mtext">Role</span>
                         </a>
-                    </li>
+                    </li> -->
 
-                    <li class="pc-item">
+                    <!-- <li class="pc-item">
                         <a href="<?= base_url('rbac/permission') ?>" class="pc-link">
                             <span class="pc-micon"><i class="ti ti-key"></i></span>
                             <span class="pc-mtext">Permission</span>
                         </a>
-                    </li>
+                    </li> -->
 
                     <li class="pc-item pc-hasmenu">
                         <a href="javascript:void(0)" class="pc-link pc-parent">
