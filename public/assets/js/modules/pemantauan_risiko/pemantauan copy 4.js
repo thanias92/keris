@@ -460,23 +460,9 @@ function prRenderStatusBadge(status) {
 
   let cls = "secondary";
 
-  switch (status) {
-    case "Selesai":
-      cls = "success";
-      break;
-
-    case "Dalam Proses":
-      cls = "primary";
-      break;
-
-    case "Terlambat":
-      cls = "danger";
-      break;
-
-    case "Belum Dilaksanakan":
-      cls = "secondary";
-      break;
-  }
+  if (status === "Selesai") cls = "success";
+  else if (status === "Dalam Proses") cls = "primary";
+  else if (status === "Terlambat") cls = "danger";
 
   el.className = `badge bg-${cls}-subtle text-${cls} border border-${cls}`;
   el.textContent = status || "-";
@@ -486,7 +472,7 @@ function prAutoSetStatus(data) {
   const statusEl = document.getElementById("prStatus");
   if (!statusEl) return;
 
-  statusEl.value = data.status || "Belum Dilaksanakan";
+  statusEl.value = data.status || "Terlambat";
 }
 
 function prCanEdit(data) {

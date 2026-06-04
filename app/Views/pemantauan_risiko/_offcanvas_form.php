@@ -95,15 +95,39 @@
 
                 <!-- ===== STATUS + CATATAN ===== -->
                 <div class="rtp-grid-2 mb-3">
+
                     <div>
-                        <div class="rtp-section-title"><i class="ti ti-flag me-1"></i>Status</div>
-                        <span id="prStatusBadge" class="badge bg-secondary-subtle text-secondary">-</span>
+                        <div class="rtp-section-title">
+                            <i class="ti ti-flag me-1"></i>Status
+                        </div>
+
+                        <span id="prStatusBadge"
+                            class="badge bg-secondary-subtle text-secondary">
+                            -
+                        </span>
+
+                        <div class="small text-muted mt-2">
+                            Status dihitung otomatis berdasarkan target dan realisasi.
+                        </div>
                     </div>
+
                     <div>
-                        <div class="rtp-section-title"><i class="ti ti-note me-1"></i>Catatan</div>
-                        <div id="prCatatanView" class="rtp-info-value small d-none">-</div>
-                        <textarea name="catatan" id="prCatatan" class="form-control" rows="2"></textarea>
+                        <div class="rtp-section-title">
+                            <i class="ti ti-note me-1"></i>Catatan
+                        </div>
+
+                        <div id="prCatatanView"
+                            class="rtp-info-value small d-none">
+                            -
+                        </div>
+
+                        <textarea
+                            name="catatan"
+                            id="prCatatan"
+                            class="form-control"
+                            rows="2"></textarea>
                     </div>
+
                 </div>
 
                 <!-- ===== BUKTI ===== -->

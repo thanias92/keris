@@ -182,7 +182,7 @@
 
                                     <!-- Target Output -->
                                     <td class="rtp-td rtp-td-output">
-                                        <div class="rtp-truncate small">
+                                        <div class="rtp-truncate small text-dark">
                                             <?= esc($rtp['target_output'] ?? '—') ?>
                                         </div>
                                     </td>
@@ -190,8 +190,13 @@
                                     <!-- Target Waktu -->
                                     <td class="rtp-td rtp-td-waktu text-center">
                                         <?php if ($bulan && $tahun): ?>
-                                            <div class="rtp-waktu-bulan"><?= $bulan ?></div>
-                                            <div class="rtp-waktu-tahun"><?= $tahun ?></div>
+                                            <div class="rtp-waktu-bulan text-dark">
+                                                <?= $bulan ?>
+                                            </div>
+
+                                            <div class="rtp-waktu-tahun text-dark">
+                                                <?= $tahun ?>
+                                            </div>
                                         <?php else: ?>
                                             <span class="text-muted">—</span>
                                         <?php endif; ?>

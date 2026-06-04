@@ -66,10 +66,11 @@
                                 $status = $rtp['status'] ?? 'Belum Dilaksanakan';
 
                                 $statusClass = match ($status) {
-                                    'Selesai' => 'success',
-                                    'Dalam Proses' => 'primary',
-                                    'Terlambat' => 'danger',
-                                    default => 'secondary'
+                                    'Selesai'            => 'success',
+                                    'Dalam Proses'       => 'primary',
+                                    'Terlambat'          => 'danger',
+                                    'Belum Dilaksanakan' => 'secondary',
+                                    default              => 'secondary'
                                 };
                                 ?>
 
@@ -113,12 +114,12 @@
                                     </td>
 
                                     <!-- REALISASI OUTPUT -->
-                                    <td class="<?= !empty($rtp['realisasi_output']) ? 'text-danger fw-semibold' : '' ?>">
+                                    <td class="<?= !empty($rtp['realisasi_output']) ? 'fw-semibold' : '' ?>">
                                         <?= esc($rtp['realisasi_output'] ?? '—') ?>
                                     </td>
 
                                     <!-- REALISASI WAKTU -->
-                                    <td class="text-center <?= !empty($rtp['realisasi_waktu']) ? 'text-danger fw-semibold' : '' ?>">
+                                    <td class="text-center <?= !empty($rtp['realisasi_waktu']) ? 'fw-semibold' : '' ?>">
                                         <?php if ($rBulan && $rTahun): ?>
                                             <div><?= $rBulan ?></div>
                                             <div class="small text-muted"><?= $rTahun ?></div>

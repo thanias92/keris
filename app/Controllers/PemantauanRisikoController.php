@@ -121,11 +121,22 @@ class PemantauanRisikoController extends BaseController
                 pm.realisasi_output,
                 pm.realisasi_waktu,
                 CASE
-                    WHEN pm.id_pemantauan IS NULL THEN 'Terlambat'
-                    WHEN bp.id_bukti IS NOT NULL THEN 'Selesai'
-                    WHEN pm.realisasi_output IS NOT NULL THEN 'Dalam Proses'
-                    ELSE 'Terlambat'
-                END as status,
+    WHEN pm.realisasi_output IS NULL
+         AND pm.realisasi_waktu IS NULL
+    THEN
+        CASE
+            WHEN DATE_TRUNC('month', rtp.target_waktu)
+                 >= DATE_TRUNC('month', CURRENT_DATE)
+            THEN 'Dalam Proses'
+            ELSE 'Belum Dilaksanakan'
+        END
+
+    WHEN DATE_TRUNC('month', pm.realisasi_waktu)
+         > DATE_TRUNC('month', rtp.target_waktu)
+    THEN 'Terlambat'
+
+    ELSE 'Selesai'
+END as status,
                 pm.catatan,
                 pm.updated_at as pemantauan_updated_at
             ")
@@ -318,11 +329,23 @@ class PemantauanRisikoController extends BaseController
             pm.id_pemantauan,
             pm.realisasi_output,
             pm.realisasi_waktu,
-            CASE
-                WHEN pm.id_pemantauan IS NULL THEN 'Terlambat'
-                WHEN pm.realisasi_output IS NOT NULL THEN 'Dalam Proses'
-                ELSE 'Terlambat'
-            END as status
+           CASE
+    WHEN pm.realisasi_output IS NULL
+         AND pm.realisasi_waktu IS NULL
+    THEN
+        CASE
+            WHEN DATE_TRUNC('month', rtp.target_waktu)
+                 >= DATE_TRUNC('month', CURRENT_DATE)
+            THEN 'Dalam Proses'
+            ELSE 'Belum Dilaksanakan'
+        END
+
+    WHEN DATE_TRUNC('month', pm.realisasi_waktu)
+         > DATE_TRUNC('month', rtp.target_waktu)
+    THEN 'Terlambat'
+
+    ELSE 'Selesai'
+END as status
         ")
             ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
