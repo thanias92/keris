@@ -570,6 +570,10 @@ class PelaporanRisikoController extends BaseController
         kk.level AS kemungkinan,
         kd.level AS dampak,
 
+        kk_residu.level AS kemungkinan_residu,
+        kd_residu.level AS dampak_residu,
+        mr_residu.nilai_risiko AS skor_residu,
+
         kr.nama_kategori,
 
         pb.kode_proses,
@@ -589,6 +593,22 @@ class PelaporanRisikoController extends BaseController
 
             ->join('kriteria_kemungkinan kk', 'kk.id_kriteria = pr.id_kemungkinan', 'left')
             ->join('kriteria_dampak kd', 'kd.id_kriteria = pr.id_dampak', 'left')
+            ->join(
+                'kriteria_kemungkinan kk_residu',
+                'kk_residu.id_kriteria = rtp.id_kemungkinan_residu',
+                'left'
+            )
+            ->join(
+                'kriteria_dampak kd_residu',
+                'kd_residu.id_kriteria = rtp.id_dampak_residu',
+                'left'
+            )
+            ->join(
+                'matriks_risiko mr_residu',
+                'mr_residu.level_kemungkinan = kk_residu.level AND mr_residu.level_dampak = kd_residu.level',
+                'left',
+                false
+            )
 
             ->join(
                 'kategori_risiko kr',
