@@ -17,7 +17,8 @@ class SasaranStrategisController extends BaseController
     public function index()
     {
         return view('master/sasaran_strategis/index', [
-            'title' => 'Sasaran Strategis'
+            'title' => 'Sasaran Strategis',
+            'hideGlobalContext' => true,
         ]);
     }
 

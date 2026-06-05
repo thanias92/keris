@@ -2,13 +2,13 @@
 <?= $this->section('content') ?>
 
 <script>
-    window.SK_CONFIG = {
+    window.TK_CONFIG = {
         url: {
-            table: '<?= site_url('master/satuan-kerja/table') ?>',
-            store: '<?= site_url('master/satuan-kerja/store') ?>',
-            update: (id) => `<?= site_url('master/satuan-kerja/update') ?>/${id}`,
-            delete: (id) => `<?= site_url('master/satuan-kerja/delete') ?>/${id}`,
-            detail: (id) => `<?= site_url('master/satuan-kerja/detail') ?>/${id}`
+            table: '<?= site_url('master/tim-kerja/table') ?>',
+            store: '<?= site_url('master/tim-kerja/store') ?>',
+            update: (id) => `<?= site_url('master/tim-kerja/update') ?>/${id}`,
+            delete: (id) => `<?= site_url('master/tim-kerja/delete') ?>/${id}`,
+            detail: (id) => `<?= site_url('master/tim-kerja/detail') ?>/${id}`
         }
     }
 </script>

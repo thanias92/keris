@@ -16,7 +16,7 @@ class BankRisikoController extends BaseController
 
     public function index()
     {
-        return view('master/bank_risiko/index', ['title' => 'Bank Risiko']);
+        return view('master/bank_risiko/index', ['title' => 'Bank Risiko', 'hideGlobalContext' => true,]);
     }
 
     public function table()

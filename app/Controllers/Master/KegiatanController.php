@@ -17,7 +17,8 @@ class KegiatanController extends BaseController
     public function index()
     {
         return view('master/kegiatan/index', [
-            'title' => 'Kegiatan'
+            'title' => 'Kegiatan',
+            'hideGlobalContext' => true,
         ]);
     }
 

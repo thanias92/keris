@@ -57,7 +57,7 @@ function renderTable() {
     html = '<tr><td colspan="3" class="text-center">Tidak ada data</td></tr>';
   } else {
     slice.forEach((row, i) => {
-      html += `<tr class="sk-row" data-id="${row.id}" data-nama="${row.nama_satuan_kerja}">
+      html += `<tr class="sk-row" data-id="${row.id}" data-nama="${row.nama_tim}">
 <td>${start + i + 1}</td>
 <td>${row.nama_satuan_kerja}</td>
 <td>${new Date().getFullYear()}</td>

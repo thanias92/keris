@@ -18,7 +18,8 @@ class TimKerjaController extends BaseController
     public function index()
     {
         return view('master/tim_kerja/index', [
-            'title' => 'Tim Kerja'
+            'title' => 'Tim Kerja',
+            'hideGlobalContext' => true,
         ]);
     }
 

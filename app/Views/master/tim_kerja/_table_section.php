@@ -7,7 +7,6 @@
                     <tr>
                         <th style="width:40px">#</th>
                         <th>Tim Kerja</th>
-                        <th style="width:120px">Tahun</th>
                     </tr>
                 </thead>
 

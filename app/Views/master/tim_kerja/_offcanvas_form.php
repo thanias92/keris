@@ -19,11 +19,6 @@
                 <input type="text" id="skNama" class="form-control">
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Tahun</label>
-                <input type="number" id="skTahun" class="form-control">
-            </div>
-
             <div class="d-flex align-items-center pt-3 border-top">
 
                 <div>

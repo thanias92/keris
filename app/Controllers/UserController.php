@@ -31,7 +31,8 @@ class UserController extends BaseController
         return view('user/index', [
             'users' => $users,
             'roles' => $roles,
-            'timKerja' => $timKerja
+            'timKerja' => $timKerja,
+            'hideGlobalContext' => true,
         ]);
     }
 
