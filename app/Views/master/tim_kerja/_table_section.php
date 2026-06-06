@@ -1,4 +1,4 @@
-<div class="card border-0 shadow-sm" id="skTableCard">
+<div class="card border-0 shadow-sm" id="tkTableCard">
     <div class="card-body">
 
         <div class="table-responsive">
@@ -10,7 +10,7 @@
                     </tr>
                 </thead>
 
-                <tbody id="skTableBody">
+                <tbody id="tkTableBody">
                     <tr>
                         <td colspan="3" class="text-center py-4 text-muted">Memuat...</td>
                     </tr>
@@ -24,18 +24,18 @@
     <div class="ar-table-bottom">
 
         <div class="ar-table-info">
-            <select id="skPerPage" class="ar-perpage">
+            <select id="tkPerPage" class="ar-perpage">
                 <option value="5">5</option>
                 <option value="10" selected>10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
             </select>
 
-            <div class="ar-info-text" id="skInfo">Menampilkan 0 data</div>
+            <div class="ar-info-text" id="tkInfo">Menampilkan 0 data</div>
         </div>
 
         <div class="ar-pagination">
-            <ul class="pagination mb-0" id="skPagination"></ul>
+            <ul class="pagination mb-0" id="tkPagination"></ul>
         </div>
 
     </div>
