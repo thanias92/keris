@@ -24,6 +24,7 @@
                 <option value="5">5</option>
                 <option value="10" selected>10</option>
                 <option value="25">25</option>
+                <option value="50">50</option>
             </select>
             <div class="ar-info-text" id="ssInfo">Menampilkan 0 data</div>
         </div>

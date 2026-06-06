@@ -24,7 +24,9 @@
                     <h2 class="page-title mb-0">Sasaran Strategis</h2>
                 </div>
                 <div class="col-12 col-lg-4 text-lg-end mt-2 mt-lg-0">
-                    <button class="btn btn-primary" id="btnTambah">Tambah</button>
+                    <button class="btn btn-primary" id="btnTambah">
+                        <i class="ti ti-plus"></i> Sasaran
+                    </button>
                 </div>
             </div>
         </div>

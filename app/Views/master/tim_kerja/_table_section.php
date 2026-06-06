@@ -1,5 +1,28 @@
 <div class="card border-0 shadow-sm" id="tkTableCard">
     <div class="card-body">
+        <div class="tk-toolbar">
+
+            <div class="tk-search">
+
+                <i class="ti ti-search"></i>
+
+                <input
+                    type="text"
+                    id="tkSearch"
+                    placeholder="Cari tim kerja atau kegiatan...">
+
+                <button
+                    type="button"
+                    id="tkSearchClear"
+                    class="d-none">
+
+                    <i class="ti ti-x"></i>
+
+                </button>
+
+            </div>
+
+        </div>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">

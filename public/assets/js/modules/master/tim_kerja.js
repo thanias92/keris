@@ -3,17 +3,54 @@ let tkModal = null;
 let currentPage = 1;
 let perPage = 10;
 let rawData = [];
+let filteredData = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   const el = document.getElementById("tkForm");
+
   if (el && typeof bootstrap !== "undefined") {
     tkModal = bootstrap.Offcanvas.getOrCreateInstance(el);
   }
+
   document.getElementById("tkPerPage").onchange = (e) => {
     perPage = parseInt(e.target.value);
     currentPage = 1;
     renderTable();
   };
+
+  // SEARCH REALTIME
+  document.getElementById("tkSearch").addEventListener("input", (e) => {
+    const keyword = e.target.value.toLowerCase().trim();
+
+    document
+      .getElementById("tkSearchClear")
+      .classList.toggle("d-none", !keyword);
+
+    currentPage = 1;
+
+    filteredData = rawData.filter((row) => {
+      return (
+        row.nama_tim?.toLowerCase().includes(keyword) ||
+        row.kegiatan?.toLowerCase().includes(keyword)
+      );
+    });
+
+    renderTable();
+  });
+
+  // CLEAR SEARCH
+  document.getElementById("tkSearchClear").addEventListener("click", () => {
+    document.getElementById("tkSearch").value = "";
+
+    filteredData = rawData;
+
+    document.getElementById("tkSearchClear").classList.add("d-none");
+
+    currentPage = 1;
+
+    renderTable();
+  });
+
   loadTable();
 });
 
@@ -92,6 +129,7 @@ function loadTable() {
     .then((r) => r.json())
     .then((data) => {
       rawData = data;
+      filteredData = data;
       renderTable();
     });
 }
@@ -99,7 +137,7 @@ function loadTable() {
 function renderTable() {
   const start = (currentPage - 1) * perPage;
   const end = start + perPage;
-  const slice = rawData.slice(start, end);
+  const slice = filteredData.slice(start, end);
   let html = "";
   if (!slice.length) {
     html = '<tr><td colspan="3" class="text-center">Tidak ada data</td></tr>';
@@ -168,7 +206,7 @@ function updateTitle(mode) {
 }
 
 function renderInfo() {
-  const total = rawData.length;
+  const total = filteredData.length;
   const from = (currentPage - 1) * perPage + 1;
   const to = Math.min(currentPage * perPage, total);
   document.getElementById("tkInfo").innerText =
@@ -176,7 +214,7 @@ function renderInfo() {
 }
 
 function renderPagination() {
-  const totalPage = Math.ceil(rawData.length / perPage);
+  const totalPage = Math.ceil(filteredData.length / perPage);
   let html = "";
   for (let i = 1; i <= totalPage; i++) {
     html += `<li class="page-item ${i === currentPage ? "active" : ""}">

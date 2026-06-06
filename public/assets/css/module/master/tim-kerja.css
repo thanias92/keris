@@ -270,3 +270,64 @@
     font-size:12px;
     font-weight:600;
 }
+
+/* ========================================
+   SEARCH
+======================================== */
+
+.tk-toolbar{
+    display:flex;
+    justify-content:flex-start; /* dari flex-end */
+    align-items:center;
+
+    padding-bottom:12px;
+    margin-bottom:12px;
+
+    border-bottom:1px solid #edf2f7;
+}
+
+.tk-search{
+    position:relative;
+    width:340px; /* dari 420px */
+}
+
+.tk-search input{
+    width:100%;
+    height:28px; /* dari 40px */
+
+    border:1px solid #dbe3ec;
+    border-radius:8px;
+
+    padding:0 38px 0 36px;
+
+    font-size:13px;
+
+    background:#fff;
+}
+
+.tk-search .ti-search{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#9ca3af;
+    font-size:14px;
+}
+
+#tkSearchClear{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+
+    border:none;
+    background:none;
+
+    color:#9ca3af;
+    padding:0;
+    line-height:1;
+}
+
+#tkTableCard .card-body{
+    padding:18px 22px;
+}
