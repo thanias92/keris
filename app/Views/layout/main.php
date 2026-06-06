@@ -50,6 +50,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/sasaran-strategis.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/penugasan-tim.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/plugins/bank-risiko.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/module/master/tim-kerja.css') ?>">
 
     <!-- SELECT2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />

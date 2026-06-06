@@ -25,18 +25,17 @@ class TimKerjaController extends BaseController
 
     public function table()
     {
-        $data = $this->db->query("
-            SELECT
-                tk.id_tim AS id,
-                tk.nama_tim,
-                COUNT(k.id_kegiatan) AS jumlah_kegiatan,
-                STRING_AGG(k.nama_kegiatan, '||') AS kegiatan
-            FROM tim_kerja tk
-            LEFT JOIN kegiatan k
-                ON k.id_tim = tk.id_tim
-            GROUP BY tk.id_tim, tk.nama_tim
-            ORDER BY tk.id_tim DESC
-        ")->getResultArray();
+        $data = $this->db->table('tim_kerja tk')
+            ->select("
+            tk.id_tim as id,
+            tk.nama_tim,
+            COUNT(k.id_kegiatan) as jumlah_kegiatan
+        ")
+            ->join('kegiatan k', 'k.id_tim = tk.id_tim', 'left')
+            ->groupBy('tk.id_tim, tk.nama_tim')
+            ->orderBy('tk.id_tim', 'DESC')
+            ->get()
+            ->getResultArray();
 
         return $this->response->setJSON($data);
     }

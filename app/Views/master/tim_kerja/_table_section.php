@@ -5,11 +5,11 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th style="width:40px">#</th>
-                        <th>Tim Kerja</th>
+                        <th class="tk-col-no">#</th>
+                        <th class="tk-col-tim">Tim Kerja</th>
+                        <th class="tk-col-kegiatan">Kegiatan</th>
                     </tr>
                 </thead>
-
                 <tbody id="tkTableBody">
                     <tr>
                         <td colspan="3" class="text-center py-4 text-muted">Memuat...</td>

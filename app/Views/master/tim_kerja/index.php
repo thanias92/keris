@@ -21,12 +21,14 @@
                 <div class="col-12 col-lg-8">
                     <ol class="breadcrumb mb-1">
                         <li class="breadcrumb-item">Administrasi</li>
-                        <li class="breadcrumb-item active">Tim Kerja</li>
+                        <li class="breadcrumb-item active">Tim Kerja & Kegiatan</li>
                     </ol>
-                    <h2 class="page-title mb-0">Tim Kerja</h2>
+                    <h2 class="page-title mb-0">Tim Kerja & Kegiatan</h2>
                 </div>
                 <div class="col-12 col-lg-4 text-lg-end mt-2 mt-lg-0">
-                    <button class="btn btn-primary" id="btnTambah">Tambah</button>
+                    <button class="btn btn-primary" id="btnTambah">
+                        <i class="ti ti-plus"></i> Tim
+                    </button>
                 </div>
             </div>
         </div>
@@ -36,6 +38,7 @@
     <?= view('master/tim_kerja/_offcanvas_form') ?>
 
 </div>
+<link rel="stylesheet" href="<?= base_url('assets/css/module/master/tim-kerja.css') ?>">
 
 <script src="<?= base_url('assets/js/modules/master/tim_kerja.js') ?>"></script>
 

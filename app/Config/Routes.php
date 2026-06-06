@@ -69,18 +69,22 @@ $routes->group('mr-instansi', ['filter' => ['auth']], function ($routes) {
 
 // Master Data
 $routes->group('master', ['filter' => ['auth']], function ($routes) {
+    // Tim Kerja
     $routes->get('tim-kerja', 'Master\TimKerjaController::index');
     $routes->get('tim-kerja/table', 'Master\TimKerjaController::table');
     $routes->post('tim-kerja/store', 'Master\TimKerjaController::store');
     $routes->post('tim-kerja/update/(:num)', 'Master\TimKerjaController::update/$1');
     $routes->post('tim-kerja/delete/(:num)', 'Master\TimKerjaController::delete/$1');
+    $routes->get('tim-kerja/detail/(:num)','Master\TimKerjaController::detail/$1');
 
+    // Kegiatan
     $routes->get('kegiatan', 'Master\KegiatanController::index');
     $routes->get('kegiatan/table', 'Master\KegiatanController::table');
     $routes->post('kegiatan/store', 'Master\KegiatanController::store');
     $routes->post('kegiatan/update/(:num)', 'Master\KegiatanController::update/$1');
     $routes->post('kegiatan/delete/(:num)', 'Master\KegiatanController::delete/$1');
 
+    // Sasaran Strategis
     $routes->get('sasaran-strategis', 'Master\SasaranStrategisController::index');
     $routes->get('sasaran-strategis/table', 'Master\SasaranStrategisController::table');
     $routes->post('sasaran-strategis/store', 'Master\SasaranStrategisController::store');
@@ -93,6 +97,7 @@ $routes->group('master', ['filter' => ['auth']], function ($routes) {
     $routes->post('penugasan-tim/store', 'Master\PenugasanTimController::store');
     $routes->post('penugasan-tim/delete/(:num)', 'Master\PenugasanTimController::delete/$1');
 
+    // Bank Risiko
     $routes->get('bank-risiko', 'Master\BankRisikoController::index');
     $routes->get('bank-risiko/table', 'Master\BankRisikoController::table');
     $routes->post('bank-risiko/store', 'Master\BankRisikoController::store');
