@@ -37,6 +37,7 @@
 
 </div>
 
+<link rel="stylesheet" href="<?= base_url('assets/css/module/master/sasaran-strategis.css') ?>">
 <script src="<?= base_url('assets/js/modules/master/sasaran_strategis.js') ?>"></script>
 
 <?= $this->endSection() ?>

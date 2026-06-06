@@ -1,5 +1,23 @@
 <div class="card border-0 shadow-sm">
     <div class="card-body">
+        <div class="ss-toolbar">
+
+            <div class="ss-search">
+                <i class="ti ti-search"></i>
+
+                <input type="text"
+                    id="ssSearch"
+                    placeholder="Cari kode atau uraian sasaran...">
+
+                <button type="button"
+                    id="ssSearchClear"
+                    class="d-none">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+
+        </div>
+        
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">

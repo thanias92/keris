@@ -3,7 +3,7 @@
 
         <div class="offcanvas-header border-bottom">
             <div>
-                <h5 class="offcanvas-title mb-0 fw-semibold">Tambah Sasaran</h5>
+                <h5 class="offcanvas-title mb-0 fw-semibold" id="ssOffcanvasTitle">Tambah Sasaran</h5>
                 <small>Sasaran Strategis</small>
             </div>
         </div>
