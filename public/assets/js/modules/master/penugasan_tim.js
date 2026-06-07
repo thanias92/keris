@@ -115,18 +115,18 @@ function updateTitle(mode) {
 }
 
 function loadDropdown() {
-  fetch("/master/tim-kerja/table")
+  fetch(PT_URL.timTable)
     .then((r) => r.json())
     .then((data) => {
       //console.log(data);
       let html = '<option value="">Pilih</option>';
       data.forEach((d) => {
-        html += `<option value="${d.id_tim}">${d.nama_tim}</option>`;
+        html += `<option value="${d.id}">${d.nama_tim}</option>`;
       });
       document.getElementById("ptTimKerja").innerHTML = html;
     });
 
-  fetch("/master/pengelola/table")
+  fetch(PT_URL.pengelolaTable)
     .then((r) => r.json())
     .then((data) => {
       let html = '<option value="">Pilih</option>';

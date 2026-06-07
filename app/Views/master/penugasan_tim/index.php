@@ -2,14 +2,19 @@
 <?= $this->section('content') ?>
 
 <script>
-    window.PT_CONFIG = {
-        url: {
-            table: '<?= site_url('master/penugasan-tim/table') ?>',
-            store: '<?= site_url('master/penugasan-tim/store') ?>',
-            update: (id) => `<?= site_url('master/penugasan-tim/update') ?>/${id}`,
-            delete: (id) => `<?= site_url('master/penugasan-tim/delete') ?>/${id}`
+    < script >
+        window.PT_CONFIG = {
+            url: {
+                table: '<?= site_url('master/penugasan-tim/table') ?>',
+                store: '<?= site_url('master/penugasan-tim/store') ?>',
+                update: (id) => `<?= site_url('master/penugasan-tim/update') ?>/${id}`,
+                delete: (id) => `<?= site_url('master/penugasan-tim/delete') ?>/${id}`,
+
+                timTable: '<?= site_url('master/tim-kerja/table') ?>',
+                pengelolaTable: '<?= site_url('master/pengelola/table') ?>'
+            }
         }
-    }
+</script>
 </script>
 
 <div class="pk-page">
