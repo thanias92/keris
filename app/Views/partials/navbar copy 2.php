@@ -79,6 +79,32 @@
         <!-- [Mobile Media Block end] -->
         <div class="ms-auto">
             <ul class="list-unstyled">
+                <li class="dropdown pc-h-item">
+                    <a
+                        class="pc-head-link dropdown-toggle arrow-none me-0"
+                        data-bs-toggle="dropdown"
+                        href="#"
+                        role="button"
+                        aria-haspopup="false"
+                        aria-expanded="false">
+                        <i class="ti ti-mail"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
+                        <div class="dropdown-header d-flex align-items-center justify-content-between">
+                            <h5 class="m-0">Message</h5>
+                            <a href="#!" class="pc-head-link bg-transparent"><i class="ti ti-x text-danger"></i></a>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-header px-0 text-wrap header-notification-scroll position-relative" style="max-height: calc(100vh - 215px)">
+                            <div class="list-group list-group-flush w-100">
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="text-center py-2">
+                            <a href="#!" class="link-primary">View all</a>
+                        </div>
+                    </div>
+                </li>
                 <li class="dropdown pc-h-item header-user-profile">
                     <a
                         class="pc-head-link dropdown-toggle arrow-none me-0"
@@ -95,44 +121,22 @@
                             <div class="d-flex mb-1">
                                 <div class="flex-grow-1 ms-3">
                                     <h6 class="mb-1"><?= esc(currentUserName()) ?></h6>
-                                    <span class="text-muted">
-                                        <?= ucfirst(session('user_role')) ?>
-                                    </span>
+                                    <span>UI/UX Designer</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="dropdown-divider"></div>
-
-                        <div class="px-3 py-2">
-
-                            <small class="d-block mb-1">
-                                <strong>NIP:</strong>
-                                <?= esc(session('nip') ?? '-') ?>
-                            </small>
-
-                            <small class="d-block mb-1">
-                                <strong>Jabatan:</strong>
-                                <?= esc(session('jabatan') ?? '-') ?>
-                            </small>
-
-                            <small class="d-block mb-1">
-                                <strong>Tim Kerja:</strong>
-                                <?= esc(session('nama_tim') ?? '-') ?>
-                            </small>
-
-                            <small class="d-block">
-                                <strong>Email:</strong>
-                                <?= esc(session('email') ?? '-') ?>
-                            </small>
-
+                        <div class="tab-content" id="mysrpTabContent">
+                            <div class="tab-pane fade show active" id="drp-tab-1" role="tabpanel" aria-labelledby="drp-t1" tabindex="0">
+                                <a href="#!" class="dropdown-item">
+                                    <i class="ti ti-user"></i>
+                                    <span>View Profile</span>
+                                </a>
+                                <a href="<?= base_url('logout') ?>" class="dropdown-item">
+                                    <i class="ti ti-power"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </div>
                         </div>
-
-                        <div class="dropdown-divider"></div>
-
-                        <a href="<?= base_url('logout') ?>" class="dropdown-item">
-                            <i class="ti ti-power"></i>
-                            <span>Logout</span>
-                        </a>
                     </div>
                 </li>
             </ul>

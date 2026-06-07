@@ -20,27 +20,7 @@ class AuthService
     */
     public function loginWithPassword(string $email, string $password): bool
     {
-        $user = $this->userModel
-            ->select('
-        users.*,
-        pengelola_risiko.nama as nama_pengelola,
-        pengelola_risiko.nip,
-        pengelola_risiko.jabatan,
-        tim_kerja.nama_tim
-    ')
-            ->join(
-                'pengelola_risiko',
-                'pengelola_risiko.id = users.pengelola_id',
-                'left'
-            )
-            ->join(
-                'tim_kerja',
-                'tim_kerja.id_tim = users.id_tim',
-                'left'
-            )
-            ->where('users.email', $email)
-            ->first();
-
+        $user = $this->userModel->where('email', $email)->first();
         if (!$user) {
             return false;
         }
@@ -114,14 +94,8 @@ class AuthService
             'user_id'      => $user['id'],
             'user_name'    => $user['name'],
             'user_role'    => $finalRole,
-
             'pengelola_id' => $user['pengelola_id'] ?? null,
             'id_tim'       => $user['id_tim'] ?? null,
-
-            'nip' => $user['nip'] ?? '-',
-            'jabatan' => $user['jabatan'] ?? '-',
-            'nama_tim' => $user['nama_tim'] ?? '-',
-            'email' => $user['email'] ?? '-',
             'isLoggedIn'   => true,
 
             'user' => [
