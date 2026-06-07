@@ -91,10 +91,12 @@ $routes->group('master', ['filter' => ['auth']], function ($routes) {
     $routes->post('sasaran-strategis/update/(:num)', 'Master\SasaranStrategisController::update/$1');
     $routes->post('sasaran-strategis/delete/(:num)', 'Master\SasaranStrategisController::delete/$1');
 
+    // Penugasan Tim
     $routes->get('penugasan-tim', 'Master\PenugasanTimController::index');
     $routes->get('penugasan-tim/table', 'Master\PenugasanTimController::table');
     $routes->get('pengelola/table', 'Master\PengelolaController::table');
     $routes->post('penugasan-tim/store', 'Master\PenugasanTimController::store');
+    $routes->post('penugasan-tim/update/(:num)','Master\PenugasanTimController::update/$1');
     $routes->post('penugasan-tim/delete/(:num)', 'Master\PenugasanTimController::delete/$1');
 
     // Bank Risiko

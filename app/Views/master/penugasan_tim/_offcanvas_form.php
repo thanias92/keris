@@ -3,7 +3,7 @@
 
         <div class="offcanvas-header border-bottom">
             <div>
-                <h5 class="offcanvas-title mb-0 fw-semibold">Tambah Penugasan</h5>
+                <h5 class="offcanvas-title mb-0 fw-semibold" id="ptOffcanvasTitle">Tambah Penugasan</h5>
                 <small>Penugasan Tim</small>
             </div>
         </div>
@@ -20,7 +20,7 @@
 
             <div class="mb-3">
                 <label class="form-label">Tim Kerja</label>
-                <select id="ptSatuanKerja" class="form-control"></select>
+                <select id="ptTimKerja" class="form-control"></select>
             </div>
 
             <div class="mb-3">
