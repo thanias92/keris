@@ -44,9 +44,24 @@ class PengelolaRisikoController extends BaseController
 
     public function store()
     {
+        $nip = trim($this->request->getPost('nip'));
+
+        $exists = $this->db->table('pengelola_risiko')
+            ->where('nip', $nip)
+            ->countAllResults();
+
+        if ($exists > 0) {
+            return $this->response
+                ->setStatusCode(400)
+                ->setJSON([
+                    'status' => false,
+                    'message' => 'NIP sudah terdaftar'
+                ]);
+        }
+
         $this->db->table('pengelola_risiko')->insert([
             'nama'        => $this->request->getPost('nama'),
-            'nip'         => $this->request->getPost('nip'),
+            'nip'         => $nip,
             'jabatan'     => $this->request->getPost('jabatan'),
             'wilayah_id'  => $this->request->getPost('wilayah_id'),
             'is_pemilik'  => $this->request->getPost('is_pemilik') ? true : false,
@@ -61,6 +76,22 @@ class PengelolaRisikoController extends BaseController
 
     public function update($id)
     {
+        $nip = trim($this->request->getPost('nip'));
+
+        $exists = $this->db->table('pengelola_risiko')
+            ->where('nip', $nip)
+            ->where('id !=', $id)
+            ->countAllResults();
+
+        if ($exists > 0) {
+            return $this->response
+                ->setStatusCode(400)
+                ->setJSON([
+                    'status' => false,
+                    'message' => 'NIP sudah terdaftar'
+                ]);
+        }
+        
         $this->db->table('pengelola_risiko')
             ->where('id', $id)
             ->update([

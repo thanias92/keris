@@ -275,7 +275,6 @@ function renderPagination() {
   container.innerHTML = html;
 }
 document.addEventListener("click", (e) => {
-  console.log("klik", e.target);
   if (e.target.closest("#btnTambah")) {
     document.getElementById("prId").value = "";
 
@@ -292,7 +291,31 @@ document.addEventListener("click", (e) => {
     prModal.show();
   }
 
-  if (e.target.closest("#prBtnSimpan")) {
+    if (e.target.closest("#prBtnSimpan")) {
+      const nama = document.getElementById("prNama").value.trim();
+      const nip = document.getElementById("prNip").value.trim();
+      const jabatan = document.getElementById("prJabatan").value.trim();
+      const wilayah = document.getElementById("prWilayah").value;
+
+      if (!nama) {
+        Swal.fire("Validasi", "Nama wajib diisi", "warning");
+        return;
+      }
+
+      if (!nip) {
+        Swal.fire("Validasi", "NIP wajib diisi", "warning");
+        return;
+      }
+
+      if (!jabatan) {
+        Swal.fire("Validasi", "Jabatan wajib diisi", "warning");
+        return;
+      }
+
+      if (!wilayah) {
+        Swal.fire("Validasi", "Wilayah wajib dipilih", "warning");
+        return;
+      }
     const id = document.getElementById("prId").value;
 
     const body = new URLSearchParams({
@@ -320,16 +343,25 @@ document.addEventListener("click", (e) => {
         method: "POST",
         body,
       })
-        .then((r) => r.json())
-        .then((result) => {
+        .then(async (response) => {
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result.message);
+          }
+
           Swal.fire("Berhasil", "Data berhasil disimpan", "success");
 
           prModal.hide();
 
           loadTable();
         })
-        .catch(() => {
-          Swal.fire("Error", "Gagal menyimpan data", "error");
+        .catch((err) => {
+          Swal.fire(
+            "Validasi",
+            err.message || "Gagal menyimpan data",
+            "warning",
+          );
         });
     });
     }
@@ -357,11 +389,11 @@ document.addEventListener("click", (e) => {
         row.dataset.aktif,
       );
         
+      setMode("view");
+
       if (!["1", "true", "t"].includes(row.dataset.aktif)) {
         document.getElementById("prBtnEdit").classList.add("d-none");
       }
-        
-      setMode("view");
 
       prModal.show();
     }
