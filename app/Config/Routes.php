@@ -91,6 +91,15 @@ $routes->group('master', ['filter' => ['auth']], function ($routes) {
     $routes->post('sasaran-strategis/update/(:num)', 'Master\SasaranStrategisController::update/$1');
     $routes->post('sasaran-strategis/delete/(:num)', 'Master\SasaranStrategisController::delete/$1');
 
+    // Pengelola Risiko
+    $routes->get('pengelola-risiko', 'Master\PengelolaRisikoController::index');
+    $routes->get('pengelola-risiko/table', 'Master\PengelolaRisikoController::table');
+    $routes->post('pengelola-risiko/store', 'Master\PengelolaRisikoController::store');
+    $routes->post('pengelola-risiko/update/(:num)', 'Master\PengelolaRisikoController::update/$1');
+    $routes->post('pengelola-risiko/delete/(:num)', 'Master\PengelolaRisikoController::delete/$1');
+    $routes->get('pengelola-risiko/wilayah', 'Master\PengelolaRisikoController::wilayah');
+    $routes->get('wilayah/table', 'Master\PengelolaRisikoController::wilayahTable');
+
     // Penugasan Tim
     $routes->get('penugasan-tim', 'Master\PenugasanTimController::index');
     $routes->get('penugasan-tim/table', 'Master\PenugasanTimController::table');

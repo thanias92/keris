@@ -50,6 +50,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/plugins/bank-risiko.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/module/master/tim-kerja.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/module/master/penugasan-tim.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/module/master/pengelola-risiko.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/sasaran-strategis.css') ?>">
 
     <!-- SELECT2 CSS -->
