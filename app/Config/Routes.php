@@ -99,6 +99,7 @@ $routes->group('master', ['filter' => ['auth']], function ($routes) {
     $routes->post('pengelola-risiko/delete/(:num)', 'Master\PengelolaRisikoController::delete/$1');
     $routes->get('pengelola-risiko/wilayah', 'Master\PengelolaRisikoController::wilayah');
     $routes->get('wilayah/table', 'Master\PengelolaRisikoController::wilayahTable');
+    $routes->get('pengelola-risiko/active-table','Master\PengelolaRisikoController::activeTable');
 
     // Penugasan Tim
     $routes->get('penugasan-tim', 'Master\PenugasanTimController::index');

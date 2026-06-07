@@ -10,7 +10,7 @@
             delete: (id) => `<?= site_url('master/penugasan-tim/delete') ?>/${id}`,
 
             timTable: '<?= site_url('master/tim-kerja/table') ?>',
-            pengelolaTable: '<?= site_url('master/pengelola/table') ?>'
+            pengelolaTable: '<?= site_url('master/pengelola-risiko/active-table') ?>',
         }
     };
 </script>

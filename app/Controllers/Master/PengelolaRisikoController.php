@@ -133,4 +133,16 @@ class PengelolaRisikoController extends BaseController
 
         return $this->response->setJSON($data);
     }
+
+    public function activeTable()
+    {
+        $data = $this->db->table('pengelola_risiko')
+            ->select('id, nama, jabatan')
+            ->where('aktif', true)
+            ->orderBy('nama', 'ASC')
+            ->get()
+            ->getResultArray();
+
+        return $this->response->setJSON($data);
+    }
 }

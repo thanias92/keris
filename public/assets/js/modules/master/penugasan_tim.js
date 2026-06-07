@@ -85,7 +85,8 @@ function setMode(mode) {
   document.getElementById("ptPengelola").disabled = isView;
   document.getElementById("ptTimKerja").disabled = isView;
   document.getElementById("ptTahun").disabled = isView;
-  document.getElementById("ptKetua").disabled = isView;
+  document.getElementById("ptRoleKetua").disabled = isView;
+  document.getElementById("ptRoleOperator").disabled = isView;
 
   document.getElementById("ptBtnEdit").classList.toggle("d-none", !isView);
 
@@ -267,9 +268,10 @@ document.addEventListener("click", (e) => {
     // });
     document.getElementById("ptTimKerja").value = r.dataset.tim;
     document.getElementById("ptTahun").value = r.dataset.t;
-    document.getElementById("ptKetua").checked = ["t", "true", "1"].includes(
-      r.dataset.k,
-    );
+    const isKetua = ["t", "true", "1"].includes(r.dataset.k);
+
+    document.getElementById("ptRoleKetua").checked = isKetua;
+    document.getElementById("ptRoleOperator").checked = !isKetua;
     setMode("view");
     ptModal.show();
   }
@@ -279,7 +281,7 @@ document.addEventListener("click", (e) => {
     document.getElementById("ptPengelola").value = "";
     document.getElementById("ptTimKerja").value = "";
     document.getElementById("ptTahun").value = new Date().getFullYear();
-    document.getElementById("ptKetua").checked = false;
+    document.getElementById("ptRoleOperator").checked = true;
     setMode("create");
     ptModal.show();
   }
@@ -290,7 +292,7 @@ document.addEventListener("click", (e) => {
       pengelola_id: document.getElementById("ptPengelola").value,
       tim_kerja_id: document.getElementById("ptTimKerja").value,
       tahun: document.getElementById("ptTahun").value,
-      is_ketua_tim: document.getElementById("ptKetua").checked ? 1 : 0,
+      is_ketua_tim: document.getElementById("ptRoleKetua").checked ? 1 : 0,
     });
 
     const url = id ? PT_URL.update(id) : PT_URL.store;

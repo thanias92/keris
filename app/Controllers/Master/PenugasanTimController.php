@@ -44,6 +44,20 @@ class PenugasanTimController extends BaseController
 
     public function store()
     {
+        $pengelola = $this->db->table('pengelola_risiko')
+            ->where('id', $this->request->getPost('pengelola_id'))
+            ->where('aktif', true)
+            ->get()
+            ->getRowArray();
+
+        if (!$pengelola) {
+            return $this->response
+                ->setStatusCode(400)
+                ->setJSON([
+                    'status' => false,
+                    'message' => 'Pengelola tidak aktif'
+                ]);
+        }
         $isKetua = $this->request->getPost('is_ketua_tim');
 
         if ($isKetua) {
@@ -81,6 +95,20 @@ class PenugasanTimController extends BaseController
 
     public function update($id)
     {
+        $pengelola = $this->db->table('pengelola_risiko')
+            ->where('id', $this->request->getPost('pengelola_id'))
+            ->where('aktif', true)
+            ->get()
+            ->getRowArray();
+
+        if (!$pengelola) {
+            return $this->response
+                ->setStatusCode(400)
+                ->setJSON([
+                    'status' => false,
+                    'message' => 'Pengelola tidak aktif'
+                ]);
+        }
         $isKetua = $this->request->getPost('is_ketua_tim');
 
         if ($isKetua) {

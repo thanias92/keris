@@ -391,10 +391,6 @@ document.addEventListener("click", (e) => {
         
       setMode("view");
 
-      if (!["1", "true", "t"].includes(row.dataset.aktif)) {
-        document.getElementById("prBtnEdit").classList.add("d-none");
-      }
-
       prModal.show();
     }
 

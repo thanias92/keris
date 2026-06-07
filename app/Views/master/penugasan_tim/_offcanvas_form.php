@@ -28,9 +28,33 @@
                 <input type="number" id="ptTahun" class="form-control">
             </div>
 
-            <div class="mb-3 form-check">
-                <input type="checkbox" id="ptKetua" class="form-check-input">
-                <label class="form-check-label">Ketua Tim</label>
+            <div class="mb-3">
+                <label class="form-label">Peran Tim</label>
+
+                <div class="form-check">
+                    <input class="form-check-input"
+                        type="radio"
+                        name="ptRole"
+                        id="ptRoleKetua"
+                        value="ketua">
+
+                    <label class="form-check-label" for="ptRoleKetua">
+                        Ketua Tim
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input"
+                        type="radio"
+                        name="ptRole"
+                        id="ptRoleOperator"
+                        value="operator"
+                        checked>
+
+                    <label class="form-check-label" for="ptRoleOperator">
+                        Operator
+                    </label>
+                </div>
             </div>
 
             <div class="d-flex align-items-center pt-3 border-top">
