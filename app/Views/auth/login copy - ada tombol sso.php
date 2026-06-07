@@ -145,7 +145,7 @@
 
                 <!-- Stat card -->
                 <div class="visual-stat-card">
-                    <div class="stat-label">Monitoring Risiko</div>
+                    <div class="stat-label">Total Risiko Terpantau</div>
                     <!-- Mini bar chart -->
                     <div class="mini-chart">
                         <div class="bar" style="height:50%"></div>
