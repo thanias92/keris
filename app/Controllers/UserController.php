@@ -39,8 +39,9 @@ class UserController extends BaseController
     {
         $data = $this->model
             ->select('users.*, roles.name role_name, tim_kerja.nama_tim')
-            ->join('roles', 'roles.id=users.role_id', 'left')
-            ->join('tim_kerja', 'tim_kerja.id_tim=users.id_tim', 'left')
+            ->join('roles', 'roles.id = users.role_id', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim = users.id_tim', 'left')
+            ->orderBy('users.name', 'ASC')
             ->findAll();
 
         return $this->response->setJSON($data);
