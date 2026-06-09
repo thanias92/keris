@@ -122,6 +122,7 @@ function erCanEdit(data) {
 
 /* POPULATE INFO */
 function erPopulateInfo(d) {
+  console.log(d);
   const set = (id, val) => {
     const el = document.getElementById(id);
     if (el) el.textContent = val || "-";
@@ -150,23 +151,28 @@ function erPopulateInfo(d) {
   set("erInfoEfektivitas", d.efektivitas);
 
   // Preview skor risiko
+  const warnaMap = {
+    biru: "#0d6efd",
+    hijau: "#198754",
+    kuning: "#ffc107",
+    oranye: "#fd7e14",
+    merah: "#dc3545",
+  };
+
   const nilaiEl = document.getElementById("erPreviewNilai");
   const badgeEl = document.getElementById("erPreviewBadge");
+
+  const warna = warnaMap[d.warna_selera] || "#6c757d";
+
   if (nilaiEl) {
     nilaiEl.textContent = d.nilai_risiko || "0";
-    nilaiEl.style.color = warnaMap[d.warna_selera] || "#6c757d";
+    nilaiEl.style.color = warna;
   }
-  if (badgeEl) {
-    badgeEl.textContent = d.nama_selera || "";
-    const warnaMap = {
-      biru: "#0d6efd",
-      hijau: "#198754",
-      kuning: "#ffc107",
-      oranye: "#fd7e14",
-      merah: "#dc3545",
-    };
 
-    badgeEl.style.backgroundColor = warnaMap[d.warna_selera] || "#6c757d";
+  if (badgeEl) {
+    badgeEl.textContent = d.nama_selera || "-";
+    badgeEl.style.backgroundColor = warna;
+    badgeEl.style.color = "#fff";
   }
 
   // === RBAC CONTROL ===

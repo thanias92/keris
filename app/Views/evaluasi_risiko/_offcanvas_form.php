@@ -145,7 +145,6 @@
 
             <hr class="ar-divider">
 
-
             <!-- ===== SECTION: PENGENDALIAN (READ ONLY) ===== -->
             <div class="mb-3">
 
@@ -192,7 +191,6 @@
                             <option value="Membagi">Membagi</option>
                             <option value="Mengurangi">Mengurangi</option>
                             <option value="Menerima">Menerima</option>
-                            <option value="Mengejar">Mengejar</option>
                         </select>
                     </div>
 

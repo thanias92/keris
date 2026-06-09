@@ -28,7 +28,7 @@ class EvaluasiRisikoModel extends Model
 
     protected $validationRules = [
         'id_identifikasi' => 'required|integer',
-        'opsi_tindakan'   => 'required|in_list[Menghindari,Membagi,Mengurangi,Menerima,Mengejar]',
+        'opsi_tindakan'   => 'required|in_list[Menghindari,Membagi,Mengurangi,Menerima]',
     ];
 
     protected $validationMessages = [
