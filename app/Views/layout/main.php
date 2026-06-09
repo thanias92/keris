@@ -47,6 +47,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/pelaporan-risiko.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/satuan-kerja.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/kegiatan.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/module/master/manajemen-user.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/module/master/tim-kerja.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/module/master/penugasan-tim.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/module/master/pengelola-risiko.css') ?>">

@@ -30,6 +30,10 @@ $routes->group('manajemen-user', ['filter' => ['auth', 'role:admin']], function 
     $routes->post('store', 'UserController::store');
     $routes->post('update/(:num)', 'UserController::update/$1');
     $routes->post('delete/(:num)', 'UserController::delete/$1');
+    $routes->get('table', 'UserController::table');
+    $routes->get('detail/(:num)', 'UserController::detail/$1');
+    $routes->get('roles', 'UserController::roles');
+    $routes->get('tim-kerja', 'UserController::timKerja');
 });
 
 // RBAC (Role & Permission)

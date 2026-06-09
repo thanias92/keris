@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
-use App\Models\TimKerjaModel;
 
 class UserController extends BaseController
 {
@@ -36,29 +35,75 @@ class UserController extends BaseController
         ]);
     }
 
+    public function table()
+    {
+        $data = $this->model
+            ->select('users.*, roles.name role_name, tim_kerja.nama_tim')
+            ->join('roles', 'roles.id=users.role_id', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim=users.id_tim', 'left')
+            ->findAll();
+
+        return $this->response->setJSON($data);
+    }
+
     public function store()
     {
-        $data = [
-            'name'     => $this->request->getPost('name'),
-            'email'    => $this->request->getPost('email'),
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
-            'role_id'  => $this->request->getPost('role_id'),
-            'id_tim'   => $this->request->getPost('id_tim'),
-        ];
+        $email = trim($this->request->getPost('email'));
 
-        if (!$this->model->insert($data)) {
-            return redirect()->back()->with('error', 'Gagal menambahkan user');
+        $exists = $this->model
+            ->where('email', $email)
+            ->first();
+
+        if ($exists) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Email sudah digunakan'
+            ]);
         }
 
-        return redirect()->back()->with('success', 'User berhasil ditambahkan');
+        $data = [
+            'name'     => $this->request->getPost('name'),
+            'email'    => $email,
+            'password' => password_hash(
+                $this->request->getPost('password'),
+                PASSWORD_DEFAULT
+            ),
+            'role_id'  => $this->request->getPost('role_id'),
+            'id_tim' => $this->request->getPost('id_tim') === ''
+                ? null
+                : $this->request->getPost('id_tim'),
+        ];
+
+        $this->model->insert($data);
+
+        return $this->response->setJSON([
+            'status' => true
+        ]);
     }
 
     public function update($id)
     {
+        $email = trim($this->request->getPost('email'));
+
+        $exists = $this->model
+            ->where('email', $email)
+            ->where('id !=', $id)
+            ->first();
+
+        if ($exists) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Email sudah digunakan'
+            ]);
+        }
+
+        $idTim = $this->request->getPost('id_tim');
+
         $data = [
-            'name'  => $this->request->getPost('name'),
-            'role_id'  => $this->request->getPost('role_id'),
-            'id_tim'   => $this->request->getPost('id_tim'),
+            'name'    => $this->request->getPost('name'),
+            'email'   => $email,
+            'role_id' => $this->request->getPost('role_id'),
+            'id_tim'  => $idTim === '' ? null : $idTim,
         ];
 
         if ($this->request->getPost('password')) {
@@ -70,17 +115,77 @@ class UserController extends BaseController
 
         $this->model->update($id, $data);
 
-        return redirect()->back()->with('success', 'User berhasil diperbarui');
+        return $this->response->setJSON([
+            'status' => true
+        ]);
+    }
+
+    public function detail($id)
+    {
+        $user = $this->model
+            ->select('
+            users.id,
+            users.name,
+            users.email,
+            users.role_id,
+            users.id_tim,
+            roles.name as role_name,
+            tim_kerja.nama_tim
+        ')
+            ->join('roles', 'roles.id = users.role_id', 'left')
+            ->join('tim_kerja', 'tim_kerja.id_tim = users.id_tim', 'left')
+            ->where('users.id', $id)
+            ->first();
+
+        if (!$user) {
+            return $this->response->setStatusCode(404)
+                ->setJSON([
+                    'status' => false,
+                    'message' => 'User tidak ditemukan'
+                ]);
+        }
+
+        return $this->response->setJSON([
+            'status' => true,
+            'data' => $user
+        ]);
     }
 
     public function delete($id)
     {
         if (session('user_id') == $id) {
-            return redirect()->back()->with('error', 'Tidak bisa menghapus akun sendiri');
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Tidak bisa menghapus akun sendiri'
+            ]);
         }
 
         $this->model->delete($id);
 
-        return redirect()->back()->with('success', 'User berhasil dihapus');
+        return $this->response->setJSON([
+            'status' => true
+        ]);
+    }
+
+    public function roles()
+    {
+        $data = db_connect()
+            ->table('roles')
+            ->get()
+            ->getResultArray();
+
+        return $this->response->setJSON($data);
+    }
+
+    public function timKerja()
+    {
+        $data = db_connect()
+            ->table('tim_kerja')
+            ->select('id_tim,nama_tim')
+            ->orderBy('nama_tim', 'ASC')
+            ->get()
+            ->getResultArray();
+
+        return $this->response->setJSON($data);
     }
 }
