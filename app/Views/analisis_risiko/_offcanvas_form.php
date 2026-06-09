@@ -31,6 +31,10 @@
                             <span class="ar-info-label">Tim Kerja</span>
                             <span class="ar-info-value" id="arInfoTimKerja">-</span>
                         </div>
+                        <div class="ar-info-row">
+                            <span class="ar-info-label">Kegiatan</span>
+                            <span class="ar-info-value" id="arInfoKegiatan">-</span>
+                        </div>
                     </div>
                     <div>
                         <div class="ar-info-row">

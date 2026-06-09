@@ -101,6 +101,7 @@ function arResetForm() {
   [
     "arInfoTahun",
     "arInfoTimKerja",
+    "arInfoKegiatan",
     "arInfoPengelola",
     "arInfoSasaran",
     "arInfoProses",
@@ -124,6 +125,7 @@ function arPopulateInfo(d) {
   };
   set("arInfoTahun", d.tahun);
   set("arInfoTimKerja", d.nama_tim);
+  set("arInfoKegiatan", d.nama_kegiatan);
   set("arInfoPengelola", d.nama_pengelola);
   set("arInfoSasaran", d.sasaran_strategis);
   set(
@@ -132,6 +134,35 @@ function arPopulateInfo(d) {
   );
   set("arInfoSasaranKinerja", d.sasaran_kinerja);
   set("arInfoPernyataan", d.pernyataan_risiko);
+
+  const warnaMap = {
+    biru: "#0d6efd",
+    hijau: "#198754",
+    kuning: "#ffc107",
+    oranye: "#fd7e14",
+    merah: "#dc3545",
+  };
+
+  const warna = warnaMap[d.warna_selera] || "#6c757d";
+
+  document.getElementById("arPreview").classList.remove("d-none");
+
+  const nilaiEl = document.getElementById("arPreviewNilai");
+  const badgeEl = document.getElementById("arPreviewBadge");
+
+  if (nilaiEl) {
+    nilaiEl.textContent = d.nilai_risiko || "0";
+    nilaiEl.style.color = warna;
+  }
+
+  if (badgeEl) {
+    badgeEl.textContent = d.nama_selera || "-";
+    badgeEl.style.backgroundColor = warna;
+    badgeEl.style.color = "#fff";
+  }
+
+  document.getElementById("arPreviewTindakan").textContent = d.tindakan || "";
+
   function formatNumberedText(text) {
     if (!text) return "-";
 

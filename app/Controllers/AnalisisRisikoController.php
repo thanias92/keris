@@ -432,17 +432,22 @@ class AnalisisRisikoController extends BaseController
                 sk_kinerja.uraian_sasaran as sasaran_kinerja,
                 k.tahun,
                 k.id_tim,
+                kegiatan.nama_kegiatan,
                 tim_kerja.nama_tim,
                 ss.uraian_sasaran as sasaran_strategis,
-                g.nama as nama_pengelola
+                g.nama as nama_pengelola,
+                sl.nama_level as nama_selera,
+                sl.warna as warna_selera
             ')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = pr.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = k.id_kegiatan', 'left')
             ->join('tim_kerja', 'tim_kerja.id_tim = k.id_tim', 'left')
             ->join('sasaran_strategis ss', 'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko g', 'g.id = k.pengelola_risiko_id', 'left')
+            ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
             ->join('sasaran_kinerja sk_kinerja', 'sk_kinerja.id_konteks_proses = ir.id_konteks_proses', 'left')
             ->where('pr.id_penilaian', $id)
             ->get()->getRowArray();
@@ -469,6 +474,7 @@ class AnalisisRisikoController extends BaseController
                 sk_kinerja.uraian_sasaran as sasaran_kinerja,
                 k.tahun,
                 k.id_tim,
+                kegiatan.nama_kegiatan,
                 tim_kerja.nama_tim,
                 ss.uraian_sasaran as sasaran_strategis,
                 g.nama as nama_pengelola
@@ -476,6 +482,7 @@ class AnalisisRisikoController extends BaseController
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = k.id_kegiatan', 'left')
             ->join('tim_kerja', 'tim_kerja.id_tim = k.id_tim', 'left')
             ->join('sasaran_strategis ss', 'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko g', 'g.id = k.pengelola_risiko_id', 'left')

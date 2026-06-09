@@ -121,9 +121,7 @@
                         <span class="ar-info-label">Dampak</span>
                         <span class="ar-info-value" id="erInfoImpact">-</span>
                     </div>
-
                 </div>
-
 
                 <!-- Skor Risiko -->
                 <div class="ar-preview-card">
@@ -137,11 +135,8 @@
                         <div id="erPreviewBadge" class="ar-preview-badge"></div>
                         <div id="erPreviewTindakan" class="ar-preview-tindakan"></div>
                     </div>
-
                 </div>
-
             </div>
-
 
             <hr class="ar-divider">
 
