@@ -631,3 +631,11 @@ font-size:10px;
 .rtp-input-zone .rtp-divider {
     border-top-color: #bfdbfe;
 }
+
+.rtp-preview-tindakan{
+    font-size:11px;
+    color:#6b7280;
+    max-width:240px;
+    text-align:right;
+    margin-top:4px;
+}

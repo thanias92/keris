@@ -172,8 +172,31 @@ function rtpPopulateInfo(d) {
   }
 
   if (badgeEl) {
+    const warnaMap = {
+      biru: "#0d6efd",
+      hijau: "#198754",
+      kuning: "#ffc107",
+      oranye: "#fd7e14",
+      merah: "#dc3545",
+    };
+
     badgeEl.textContent = d.nama_selera || "";
-    badgeEl.style.backgroundColor = d.warna_selera || "";
+
+    const warna =
+      warnaMap[(d.warna_selera || "").toLowerCase()] ||
+      d.warna_selera ||
+      "#6c757d";
+
+    badgeEl.style.backgroundColor = warna;
+    badgeEl.style.color = "#fff";
+
+    console.log("WARNA BADGE =", warna);
+  }
+
+  const tindakanEl = document.getElementById("rtpPreviewTindakan");
+
+  if (tindakanEl) {
+    tindakanEl.textContent = d.tindakan_selera || "";
   }
 
   RTP_CAN_EDIT = rtpCanEdit(d);
@@ -278,9 +301,29 @@ function rtpHitungResidu() {
       document.getElementById("rtpResiduNilai").style.color = res.warna;
 
       const badge = document.getElementById("rtpResiduBadge");
-      badge.textContent = res.nama_selera;
-      badge.style.backgroundColor = res.warna_selera;
+
+      const warnaMap = {
+        biru: "#0d6efd",
+        hijau: "#198754",
+        kuning: "#ffc107",
+        oranye: "#fd7e14",
+        merah: "#dc3545",
+      };
+
+      const warna =
+        warnaMap[(res.warna_selera || "").toLowerCase()] ||
+        res.warna_selera ||
+        "#6c757d";
+
+      badge.textContent = res.nama_selera || "";
+      badge.style.backgroundColor = warna;
       badge.style.color = "#fff";
+
+      const tindakan = document.getElementById("rtpResiduTindakan");
+
+      if (tindakan) {
+        tindakan.textContent = res.tindakan || "";
+      }
     });
 }
 

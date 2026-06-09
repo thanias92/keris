@@ -50,17 +50,17 @@ class RencanaPenangananController extends BaseController
 
         /* SUDAH ada RTP */
         $totalSudah = (int) $this->db->query("
-    SELECT COUNT(*) as total
-    FROM (
-        SELECT DISTINCT er.id_evaluasi
-        FROM evaluasi_risiko er
-        JOIN identifikasi_risiko ir        ON ir.id_identifikasi = er.id_identifikasi
-        JOIN konteks_proses_bisnis kpb     ON kpb.id_konteks_proses = ir.id_konteks_proses
-        JOIN rencana_penanganan_risiko rtp ON rtp.id_penilaian_awal = er.id_evaluasi
-        WHERE er.opsi_tindakan = 'Mengurangi'
-        " . ($idKonteks ? "AND kpb.id_konteks = $idKonteks" : "") . "
-    ) as sub
-")->getRowArray()['total'] ?? 0;
+            SELECT COUNT(*) as total
+            FROM (
+                SELECT DISTINCT er.id_evaluasi
+                FROM evaluasi_risiko er
+                JOIN identifikasi_risiko ir        ON ir.id_identifikasi = er.id_identifikasi
+                JOIN konteks_proses_bisnis kpb     ON kpb.id_konteks_proses = ir.id_konteks_proses
+                JOIN rencana_penanganan_risiko rtp ON rtp.id_penilaian_awal = er.id_evaluasi
+                WHERE er.opsi_tindakan = 'Mengurangi'
+                " . ($idKonteks ? "AND kpb.id_konteks = $idKonteks" : "") . "
+            ) as sub
+        ")->getRowArray()['total'] ?? 0;
         $totalBelum = $totalRisiko - $totalSudah;
 
         /* DISTRIBUSI LEVEL RISIKO */
@@ -87,14 +87,20 @@ class RencanaPenangananController extends BaseController
             ],
         ];
         $qDistribusi = $this->db->table('evaluasi_risiko er')
-            ->select('sl.nama_level, sl.warna, COUNT(*) as total')
-            ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
-            ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('penilaian_risiko pr', 'pr.id_penilaian = er.id_penilaian', 'left')
-            ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
+            ->select('sr_r.nama_level, sr_r.warna, COUNT(DISTINCT er.id_evaluasi) as total')
+            ->join('identifikasi_risiko ir','ir.id_identifikasi = er.id_identifikasi')
+            ->join('konteks_proses_bisnis kpb','kpb.id_konteks_proses = ir.id_konteks_proses')
+            ->join('rencana_penanganan_risiko rtp','rtp.id_penilaian_awal = er.id_evaluasi')
+            ->join('kriteria_kemungkinan km_r','km_r.id_kriteria = rtp.id_kemungkinan_residu','left')
+            ->join('kriteria_dampak kd_r','kd_r.id_kriteria = rtp.id_dampak_residu','left')
+            ->join('matriks_risiko mr_r','mr_r.level_kemungkinan = km_r.level AND mr_r.level_dampak = kd_r.level','left')
+            ->join('selera_risiko sr_r','mr_r.nilai_risiko BETWEEN sr_r.nilai_min AND sr_r.nilai_max','left')
             ->where('er.opsi_tindakan', 'Mengurangi')
-            ->groupBy('sl.nama_level, sl.warna');
+            ->where('rtp.id_rtp IS NOT NULL', null, false)
+            ->groupBy('sr_r.nama_level, sr_r.warna');
         if ($idKonteks) $qDistribusi->where('kpb.id_konteks', $idKonteks);
+
+        
 
         foreach ($qDistribusi->get()->getResultArray() as $row) {
             if (isset($levelRisiko[$row['nama_level']])) {
@@ -525,10 +531,11 @@ class RencanaPenangananController extends BaseController
             ss.uraian_sasaran as sasaran_strategis,
             pr.nilai_risiko,
             pr.warna_risiko,
-            sl.nama_level as nama_selera,
             km.level as level_kemungkinan,
             kd.level as level_dampak,
-            sl.warna as warna_selera
+            sl.nama_level as nama_selera,
+            sl.warna as warna_selera,
+            sl.tindakan as tindakan_selera
         ')
             ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
@@ -598,7 +605,8 @@ class RencanaPenangananController extends BaseController
                 kd.level      as level_dampak,
                 kd.nama_level as nama_dampak,
                 sl.nama_level as nama_selera,
-                sl.warna      as warna_selera
+                sl.warna as warna_selera,
+                sl.tindakan as tindakan_selera
             ')
             ->join('identifikasi_risiko ir',    'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')

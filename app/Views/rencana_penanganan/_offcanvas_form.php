@@ -106,6 +106,7 @@
                     </div>
                     <div class="text-end">
                         <div id="rtpPreviewBadge" class="rtp-preview-badge"></div>
+                        <div id="rtpPreviewTindakan" class="rtp-preview-tindakan"></div>
                     </div>
                 </div>
 
@@ -233,6 +234,7 @@
                         </div>
                         <div class="text-end">
                             <div id="rtpResiduBadge" class="rtp-residu-badge"></div>
+                            <div id="rtpResiduTindakan" class="rtp-preview-tindakan"></div>
                         </div>
                     </div>
 

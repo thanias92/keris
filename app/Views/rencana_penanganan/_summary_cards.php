@@ -28,6 +28,8 @@
                         <?= esc($level) ?>
                     </span>
 
+                    
+
                     <div class="er-dist-bar">
                         <div class="er-dist-fill"
                             style="width:<?= $percent ?>%; background:<?= $warna ?>">
