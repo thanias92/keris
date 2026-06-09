@@ -24,6 +24,7 @@ class BankRisikoController extends Controller
             'data'    => $data,
             'pager'   => $pager,
             'perPage' => $perPage,
+            'hideGlobalContext' => true,
         ]);
     }
 

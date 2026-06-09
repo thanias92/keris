@@ -3,7 +3,7 @@
 
         <div class="offcanvas-header border-bottom">
             <div>
-                <h5 class="offcanvas-title mb-0 fw-semibold">Bank Risiko</h5>
+                <h5 class="offcanvas-title mb-0 fw-semibold">Detail Bank Risiko</h5>
                 <small>Master Data</small>
             </div>
         </div>
@@ -19,7 +19,7 @@
             </div>
 
             <!-- APPROVAL SECTION -->
-            <div id="brApprovalBox" class="br-approval-box d-none">
+            <!-- <div id="brApprovalBox" class="br-approval-box d-none">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="fw-semibold text-muted">Approval</span>
                 </div>
@@ -33,7 +33,7 @@
                         <i class="ti ti-x me-1"></i>Reject
                     </button>
                 </div>
-            </div>
+            </div> -->
 
             <div class="d-flex align-items-center pt-3 border-top mt-3">
 

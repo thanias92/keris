@@ -1,5 +1,24 @@
 <div class="card border-0 shadow-sm" id="brTableCard">
     <div class="card-body">
+        <div class="br-toolbar">
+
+            <div class="br-search">
+                <i class="ti ti-search"></i>
+
+                <input
+                    type="text"
+                    id="brSearch"
+                    placeholder="Cari pernyataan risiko...">
+
+                <button
+                    type="button"
+                    id="brSearchClear"
+                    class="d-none">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+
+        </div>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -7,7 +26,7 @@
                     <tr>
                         <th style="width:40px">#</th>
                         <th>Pernyataan Risiko</th>
-                        <th>Status</th>
+                        <!-- <th>Status</th> -->
                     </tr>
                 </thead>
 

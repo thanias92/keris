@@ -3,36 +3,8 @@ let brModal = null;
 let currentPage = 1;
 let perPage = 10;
 let rawData = [];
-let filteredData = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("brSearch")?.addEventListener("keyup", (e) => {
-    const keyword = e.target.value.toLowerCase();
-
-    document
-      .getElementById("brSearchClear")
-      ?.classList.toggle("d-none", !keyword);
-
-    filteredData = rawData.filter((d) =>
-      (d.pernyataan_risiko || "").toLowerCase().includes(keyword),
-    );
-
-    currentPage = 1;
-    renderTable();
-  });
-
-  document.getElementById("brSearchClear")?.addEventListener("click", () => {
-    document.getElementById("brSearch").value = "";
-
-    filteredData = [...rawData];
-
-    currentPage = 1;
-
-    renderTable();
-
-    document.getElementById("brSearchClear").classList.add("d-none");
-  });
-
   const el = document.getElementById("brForm");
   if (el && typeof bootstrap !== "undefined") {
     brModal = bootstrap.Offcanvas.getOrCreateInstance(el);
@@ -59,28 +31,30 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function setMode(mode) {
-  updateTitle(mode);
-  const hasId = !!document.getElementById("brId").value;
-
   const isView = mode === "view";
   const isEdit = mode === "edit";
-  const isCreate = mode === "create";
 
   document.getElementById("brMode").value = mode;
-
   document.getElementById("brText").disabled = isView;
 
   document.getElementById("brBtnEdit").classList.toggle("d-none", !isView);
+  document.getElementById("brBtnBatal").classList.toggle("d-none", !isEdit);
+  document.getElementById("brBtnSimpan").classList.toggle("d-none", isView);
+  document
+    .getElementById("brApprovalBox")
+    .classList.toggle("d-none", !(isView && hasId));
+
+  const hasId = !!document.getElementById("brId").value;
 
   document
     .getElementById("brBtnDelete")
     .classList.toggle("d-none", !(isView && hasId));
-
-  document.getElementById("brBtnSimpan").classList.toggle("d-none", isView);
-
-  document.getElementById("brBtnBatal").classList.toggle("d-none", !isEdit);
-
-  document.getElementById("brBtnClose").classList.toggle("d-none", isEdit);
+  document
+    .getElementById("brBtnApprove")
+    .classList.toggle("d-none", !(isView && hasId));
+  document
+    .getElementById("brBtnReject")
+    .classList.toggle("d-none", !(isView && hasId));
 }
 
 function loadTable() {
@@ -88,7 +62,6 @@ function loadTable() {
     .then((r) => r.json())
     .then((data) => {
       rawData = data;
-      filteredData = [...data];
       renderTable();
     });
 }
@@ -96,7 +69,7 @@ function loadTable() {
 function renderTable() {
   const start = (currentPage - 1) * perPage;
   const end = start + perPage;
-  const slice = filteredData.slice(start, end);
+  const slice = rawData.slice(start, end);
   let html = "";
 
   if (!slice.length) {
@@ -117,7 +90,7 @@ data-status="${row.status}"
 data-notes="${escapeHtml(row.notes || "")}">
 <td>${start + i + 1}</td>
 <td>${row.pernyataan_risiko}</td>
-
+<td>${statusBadge}</td>
 </tr>`;
     });
   }
@@ -128,7 +101,7 @@ data-notes="${escapeHtml(row.notes || "")}">
 }
 
 function renderInfo() {
-  const total = filteredData.length;
+  const total = rawData.length;
   const from = total === 0 ? 0 : (currentPage - 1) * perPage + 1;
   const to = Math.min(currentPage * perPage, total);
   document.getElementById("brInfo").innerText =
@@ -136,7 +109,7 @@ function renderInfo() {
 }
 
 function renderPagination() {
-  const totalPage = Math.ceil(filteredData.length / perPage);
+  const totalPage = Math.ceil(rawData.length / perPage);
   let html = "";
 
   for (let i = 1; i <= totalPage; i++) {
@@ -162,18 +135,6 @@ function escapeHtml(text) {
     .replace(/"/g, "&quot;");
 }
 
-function updateTitle(mode) {
-  const title = document.getElementById("brTitle");
-
-  if (mode === "create") {
-    title.textContent = "Tambah Bank Risiko";
-  } else if (mode === "edit") {
-    title.textContent = "Edit Bank Risiko";
-  } else {
-    title.textContent = "Detail Bank Risiko";
-  }
-}
-
 document.addEventListener("click", (e) => {
   const row = e.target.closest(".br-row");
 
@@ -188,7 +149,7 @@ document.addEventListener("click", (e) => {
   if (e.target.id === "btnTambah") {
     document.getElementById("brId").value = "";
     document.getElementById("brText").value = "";
-    setMode("create");
+    setMode("edit");
     brModal.show();
   }
 
@@ -207,36 +168,22 @@ document.addEventListener("click", (e) => {
       return;
     }
 
-    Swal.fire({
-      title: "Simpan data?",
-      text: "Pastikan data yang dimasukkan sudah benar",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Ya, simpan",
-      cancelButtonText: "Batal",
-    }).then((result) => {
-      if (!result.isConfirmed) return;
+    const url = id ? BR_URL.update(id) : BR_URL.store;
 
-      const url = id ? BR_URL.update(id) : BR_URL.store;
-
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: `pernyataan=${encodeURIComponent(text)}`,
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `pernyataan=${encodeURIComponent(text)}`,
+    })
+      .then((res) => res.json())
+      .then(() => {
+        Swal.fire("Berhasil", "Data disimpan", "success");
+        brModal.hide();
+        loadTable();
       })
-        .then((res) => res.json())
-        .then(() => {
-          Swal.fire("Berhasil", "Data berhasil disimpan", "success");
-
-          brModal.hide();
-          loadTable();
-        })
-        .catch(() => {
-          Swal.fire("Error", "Gagal menyimpan data", "error");
-        });
-    });
+      .catch(() => {
+        Swal.fire("Error", "Gagal menyimpan data", "error");
+      });
   }
 
   if (e.target.id === "brBtnDelete") {
@@ -262,43 +209,43 @@ document.addEventListener("click", (e) => {
     });
   }
 
-  // if (e.target.id === "brBtnApprove") {
-  //   const id = document.getElementById("brId").value;
+  if (e.target.id === "brBtnApprove") {
+    const id = document.getElementById("brId").value;
 
-  //   fetch(BR_URL.approve(id), { method: "POST" })
-  //     .then(() => {
-  //       Swal.fire("Berhasil", "Disetujui", "success");
-  //       brModal.hide();
-  //       loadTable();
-  //     })
-  //     .catch(() => {
-  //       Swal.fire("Error", "Gagal approve", "error");
-  //     });
-  // }
+    fetch(BR_URL.approve(id), { method: "POST" })
+      .then(() => {
+        Swal.fire("Berhasil", "Disetujui", "success");
+        brModal.hide();
+        loadTable();
+      })
+      .catch(() => {
+        Swal.fire("Error", "Gagal approve", "error");
+      });
+  }
 
-//   if (e.target.id === "brBtnReject") {
-//     const id = document.getElementById("brId").value;
+  if (e.target.id === "brBtnReject") {
+    const id = document.getElementById("brId").value;
 
-//     Swal.fire({
-//       title: "Alasan Penolakan",
-//       input: "textarea",
-//       showCancelButton: true,
-//     }).then((result) => {
-//       if (!result.isConfirmed) return;
+    Swal.fire({
+      title: "Alasan Penolakan",
+      input: "textarea",
+      showCancelButton: true,
+    }).then((result) => {
+      if (!result.isConfirmed) return;
 
-//       fetch(BR_URL.reject(id), {
-//         method: "POST",
-//         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-//         body: `notes=${encodeURIComponent(result.value || "")}`,
-//       })
-//         .then(() => {
-//           Swal.fire("Berhasil", "Ditolak", "success");
-//           brModal.hide();
-//           loadTable();
-//         })
-//         .catch(() => {
-//           Swal.fire("Error", "Gagal reject", "error");
-//         });
-//     });
-//   }
+      fetch(BR_URL.reject(id), {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `notes=${encodeURIComponent(result.value || "")}`,
+      })
+        .then(() => {
+          Swal.fire("Berhasil", "Ditolak", "success");
+          brModal.hide();
+          loadTable();
+        })
+        .catch(() => {
+          Swal.fire("Error", "Gagal reject", "error");
+        });
+    });
+  }
 });
