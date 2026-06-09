@@ -1,5 +1,5 @@
 
-console.log("Rencana.js loaded 🚀");
+console.log("Rencana.js loaded");
 /* URL & CSRF */
 let RTP_CAN_EDIT = false;
 const USER = window.APP_USER || {};
@@ -88,7 +88,7 @@ function rtpSetMode(mode) {
       .forEach((el) => (el.disabled = false));
   }
 
-  // 🔥 pastikan hidden field tidak pernah disabled
+  // pastikan hidden field tidak pernah disabled
   document.getElementById("rtpIdEvaluasi").disabled = false;
 }
 
@@ -111,6 +111,7 @@ function rtpResetForm() {
   [
     "rtpInfoTahun",
     "rtpInfoTimKerja",
+    "rtpInfoKegiatan",
     "rtpInfoPengelola",
     "rtpInfoSasaran",
     "rtpInfoProses",
@@ -137,6 +138,7 @@ function rtpPopulateInfo(d) {
 
   set("rtpInfoTahun", d.tahun);
   set("rtpInfoTimKerja", d.nama_tim);
+  set("rtpInfoKegiatan", d.nama_kegiatan);
   set("rtpInfoPengelola", d.nama_pengelola);
   set("rtpInfoSasaran", d.sasaran_strategis);
 
@@ -171,7 +173,7 @@ function rtpPopulateInfo(d) {
 
   if (badgeEl) {
     badgeEl.textContent = d.nama_selera || "";
-    badgeEl.style.backgroundColor = d.warna_risiko || "";
+    badgeEl.style.backgroundColor = d.warna_selera || "";
   }
 
   RTP_CAN_EDIT = rtpCanEdit(d);
@@ -277,7 +279,7 @@ function rtpHitungResidu() {
 
       const badge = document.getElementById("rtpResiduBadge");
       badge.textContent = res.nama_selera;
-      badge.style.backgroundColor = res.warna;
+      badge.style.backgroundColor = res.warna_selera;
       badge.style.color = "#fff";
     });
 }
@@ -404,7 +406,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("rtpForm")?.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    console.log("SUBMIT KE-TRIGGER 🔥");
+    console.log("SUBMIT KE-TRIGGER");
 
     const mode = document.getElementById("rtpMode").value;
     const id = document.getElementById("rtpId").value;

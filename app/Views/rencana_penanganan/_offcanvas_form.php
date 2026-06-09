@@ -1,4 +1,3 @@
-<!-- ================= OFFCANVAS PENANGANAN RISIKO ================= -->
 <div class="offcanvas offcanvas-end shadow-lg" tabindex="-1" id="rtpOffcanvas">
     <div class="offcanvas-header border-bottom">
         <div>
@@ -29,6 +28,10 @@
                         <div class="rtp-info-row">
                             <span class="rtp-info-label">Tim Kerja</span>
                             <span class="rtp-info-value" id="rtpInfoTimKerja">-</span>
+                        </div>
+                        <div class="rtp-info-row">
+                            <span class="rtp-info-label">Kegiatan</span>
+                            <span class="rtp-info-value" id="rtpInfoKegiatan">-</span>
                         </div>
                     </div>
 

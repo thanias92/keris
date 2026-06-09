@@ -1,76 +1,71 @@
 <div class="d-flex flex-wrap gap-2 mb-3 er-summary-row">
     <!-- DISTRIBUSI LEVEL -->
     <?php if (!empty($levelRisiko)): ?>
-
-        <?php
-        $order = ['Rendah', 'Sedang', 'Tinggi', 'Ekstrem'];
-
-        $colorMap = [
-            'Rendah'  => '#198754',
-            'Sedang'  => '#0dcaf0',
-            'Tinggi'  => '#ffc107',
-            'Ekstrem' => '#dc3545',
-        ];
-
-        $totalLevel = array_sum($levelRisiko);
-        ?>
-
         <div class="er-stat-card er-stat-dist">
 
             <div class="er-stat-label mb-2">
                 Distribusi Level
             </div>
 
-            <?php foreach ($order as $lvl):
+            <?php
+            $totalLevel = array_sum(array_column($levelRisiko, 'jumlah'));
+            ?>
 
-                $jumlah = $levelRisiko[$lvl] ?? 0;
-                $warna  = $colorMap[$lvl];
+            <?php foreach ($levelRisiko as $level => $info): ?>
+
+                <?php
+                $jumlah = $info['jumlah'] ?? 0;
+                $warna  = hex_warna_selera_risiko($info['warna'] ?? null);
+
                 $percent = $totalLevel > 0
                     ? ($jumlah / $totalLevel) * 100
                     : 0;
-            ?>
+                ?>
 
-                <div class="ar-dist-bar-row">
-                    <span class="ar-dist-label">
-                        <?= esc($lvl) ?>
+                <div class="er-dist-bar-row">
+
+                    <span class="er-dist-label">
+                        <?= esc($level) ?>
                     </span>
 
-                    <div class="ar-dist-bar">
-                        <div class="ar-dist-fill"
-                            style="width:<?= $percent ?>%;background:<?= $warna ?>">
+                    <div class="er-dist-bar">
+                        <div class="er-dist-fill"
+                            style="width:<?= $percent ?>%; background:<?= $warna ?>">
                         </div>
                     </div>
 
-                    <span class="ar-dist-value">
+                    <span class="er-dist-value">
                         <?= $jumlah ?>
                     </span>
+
                 </div>
 
             <?php endforeach; ?>
 
         </div>
-
     <?php endif; ?>
 
-    <!-- TOTAL RISIKO DITANGANI -->
-    <div class="er-stat-card">
-        <div class="er-stat-label">Total Risiko Ditangani</div>
-        <div class="er-stat-value"><?= $totalRisiko ?></div>
-    </div>
+    <!-- TOTAL -->
+    <a href="<?= site_url('rencana-penanganan') ?>" class="er-stat-link">
+        <div class="er-stat-card <?= !$filter ? 'er-stat-active' : '' ?>">
+            <div class="er-stat-label">Total Risiko Ditangani</div>
+            <div class="er-stat-value"><?= $totalRisiko ?></div>
+        </div>
+    </a>
 
-    <!-- SUDAH ADA RTP -->
-    <div class="er-stat-card <?= $filter === 'sudah' ? 'er-stat-active-sudah' : '' ?>"
-        style="cursor:pointer"
-        onclick="window.location='<?= site_url('rencana-penanganan?filter=sudah') ?>'">
-        <div class="er-stat-label">Sudah Ada RTP</div>
-        <div class="er-stat-value text-success"><?= $totalSudah ?></div>
-    </div>
+    <!-- SUDAH -->
+    <a href="<?= site_url('rencana-penanganan?filter=sudah') ?>" class="er-stat-link">
+        <div class="er-stat-card <?= $filter === 'sudah' ? 'er-stat-active-sudah' : '' ?>">
+            <div class="er-stat-label">Sudah Ada RTP</div>
+            <div class="er-stat-value text-success"><?= $totalSudah ?></div>
+        </div>
+    </a>
 
-    <!-- BELUM ADA RTP -->
-    <div class="er-stat-card <?= $filter === 'belum' ? 'er-stat-active-belum' : '' ?>"
-        style="cursor:pointer"
-        onclick="window.location='<?= site_url('rencana-penanganan?filter=belum') ?>'">
-        <div class="er-stat-label">Belum Ada RTP</div>
-        <div class="er-stat-value text-warning"><?= $totalBelum ?></div>
-    </div>
+    <!-- BELUM -->
+    <a href="<?= site_url('rencana-penanganan?filter=belum') ?>" class="er-stat-link">
+        <div class="er-stat-card <?= $filter === 'belum' ? 'er-stat-active-belum' : '' ?>">
+            <div class="er-stat-label">Belum Ada RTP</div>
+            <div class="er-stat-value text-warning"><?= $totalBelum ?></div>
+        </div>
+    </a>
 </div>

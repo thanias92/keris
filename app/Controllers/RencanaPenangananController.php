@@ -64,20 +64,46 @@ class RencanaPenangananController extends BaseController
         $totalBelum = $totalRisiko - $totalSudah;
 
         /* DISTRIBUSI LEVEL RISIKO */
-        $levelRisiko       = ['Rendah' => 0, 'Sedang' => 0, 'Tinggi' => 0, 'Ekstrem' => 0];
+        $levelRisiko = [
+            'Sangat Rendah' => [
+                'jumlah' => 0,
+                'warna'  => 'biru'
+            ],
+            'Rendah' => [
+                'jumlah' => 0,
+                'warna'  => 'hijau'
+            ],
+            'Sedang' => [
+                'jumlah' => 0,
+                'warna'  => 'kuning'
+            ],
+            'Tinggi' => [
+                'jumlah' => 0,
+                'warna'  => 'oranye'
+            ],
+            'Sangat Tinggi' => [
+                'jumlah' => 0,
+                'warna'  => 'merah'
+            ],
+        ];
         $qDistribusi = $this->db->table('evaluasi_risiko er')
-            ->select('sl.nama_level, COUNT(*) as total')
-            ->join('identifikasi_risiko ir',    'ir.id_identifikasi = er.id_identifikasi')
+            ->select('sl.nama_level, sl.warna, COUNT(*) as total')
+            ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('penilaian_risiko pr',       'pr.id_penilaian = er.id_penilaian', 'left')
-            ->join('selera_risiko sl',          'sl.id_selera = pr.id_selera', 'left')
+            ->join('penilaian_risiko pr', 'pr.id_penilaian = er.id_penilaian', 'left')
+            ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
             ->where('er.opsi_tindakan', 'Mengurangi')
-            ->groupBy('sl.nama_level');
+            ->groupBy('sl.nama_level, sl.warna');
         if ($idKonteks) $qDistribusi->where('kpb.id_konteks', $idKonteks);
 
         foreach ($qDistribusi->get()->getResultArray() as $row) {
             if (isset($levelRisiko[$row['nama_level']])) {
-                $levelRisiko[$row['nama_level']] = (int) $row['total'];
+
+                $levelRisiko[$row['nama_level']]['jumlah']
+                    = (int)$row['total'];
+
+                $levelRisiko[$row['nama_level']]['warna']
+                    = $row['warna'];
             }
         }
 
@@ -353,7 +379,12 @@ class RencanaPenangananController extends BaseController
             rtp.id_rtp,
             rtp.uraian_rtp,
             rtp.target_output,
-            rtp.target_waktu
+            rtp.target_waktu,
+            km_r.level as level_kemungkinan_residu,
+            kd_r.level as level_dampak_residu,
+            mr_r.nilai_risiko as nilai_sr_residu,
+            sr_r.nama_level as nama_selera_residu,
+            sr_r.warna as warna_selera_residu
         ')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
@@ -361,7 +392,11 @@ class RencanaPenangananController extends BaseController
             ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->join('tim_kerja tk', 'tk.id_tim = k.id_tim', 'left')
             ->join('penilaian_risiko pr', 'pr.id_penilaian = er.id_penilaian', 'left')
+            ->join('kriteria_kemungkinan km_r','km_r.id_kriteria = rtp.id_kemungkinan_residu','left')
+            ->join('kriteria_dampak kd_r','kd_r.id_kriteria = rtp.id_dampak_residu','left')
+            ->join('matriks_risiko mr_r','mr_r.level_kemungkinan = km_r.level AND mr_r.level_dampak = kd_r.level','left')
             ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
+            ->join('selera_risiko sr_r','mr_r.nilai_risiko BETWEEN sr_r.nilai_min AND sr_r.nilai_max','left')
             ->join('rencana_penanganan_risiko rtp', 'rtp.id_penilaian_awal = er.id_evaluasi', 'left')
             ->where('er.opsi_tindakan', 'Mengurangi');
 
@@ -437,6 +472,11 @@ class RencanaPenangananController extends BaseController
                     'uraian_rtp'    => $row['uraian_rtp'],
                     'target_output' => $row['target_output'],
                     'target_waktu'  => $row['target_waktu'],
+                    'level_kemungkinan_residu' => $row['level_kemungkinan_residu'],
+                    'level_dampak_residu'      => $row['level_dampak_residu'],
+                    'nilai_sr_residu'          => $row['nilai_sr_residu'],
+                    'nama_selera_residu'       => $row['nama_selera_residu'],
+                    'warna_selera_residu'      => $row['warna_selera_residu'],
                 ];
             }
         }
@@ -472,33 +512,30 @@ class RencanaPenangananController extends BaseController
             rtp.target_output,
             rtp.target_waktu,
             k.id_tim,
-
             er.id_identifikasi,
-
             ir.pernyataan_risiko,
             ir.penyebab_risiko,
             ir.dampak_risiko,
-
             pb.kode_proses,
             pb.uraian_proses,
-
             k.tahun,
+            kegiatan.nama_kegiatan,
             tk.nama_tim,
             g.nama as nama_pengelola,
             ss.uraian_sasaran as sasaran_strategis,
-
             pr.nilai_risiko,
             pr.warna_risiko,
             sl.nama_level as nama_selera,
-
             km.level as level_kemungkinan,
-            kd.level as level_dampak
+            kd.level as level_dampak,
+            sl.warna as warna_selera
         ')
             ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = k.id_kegiatan', 'left')
             ->join('tim_kerja tk', 'tk.id_tim = k.id_tim', 'left')
             ->join('sasaran_strategis ss', 'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko g', 'g.id = k.pengelola_risiko_id', 'left')
@@ -550,6 +587,7 @@ class RencanaPenangananController extends BaseController
                 pb.uraian_proses,
                 k.tahun,
                 k.id_tim,
+                kegiatan.nama_kegiatan,
                 sk.nama_tim,
                 ss.uraian_sasaran as sasaran_strategis,
                 g.nama as nama_pengelola,
@@ -566,6 +604,7 @@ class RencanaPenangananController extends BaseController
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb',          'pb.id_proses = kpb.id_proses')
             ->join('konteks k',                 'k.id_konteks = kpb.id_konteks')
+            ->join('kegiatan', 'kegiatan.id_kegiatan = k.id_kegiatan', 'left')
             ->join('tim_kerja sk',           'sk.id_tim = k.id_tim', 'left')
             ->join('sasaran_strategis ss',      'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko g',        'g.id = k.pengelola_risiko_id', 'left')
@@ -791,6 +830,7 @@ class RencanaPenangananController extends BaseController
             'nilai_risiko' => $matriks['nilai_risiko'],
             'warna'        => $matriks['warna'],
             'nama_selera'  => $selera['nama_level'] ?? '-',
+            'warna_selera' => $selera['warna'] ?? '#6c757d',
             'tindakan'     => $selera['tindakan'] ?? '-',
         ]);
     }

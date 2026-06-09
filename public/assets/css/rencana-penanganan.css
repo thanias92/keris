@@ -486,6 +486,131 @@ background:#e5e7eb;
     cursor: pointer;
 }
 
+/* ================= SUMMARY STAT CARDS ================= */
+.er-summary-row {
+    align-items: stretch;
+}
+
+.er-stat-card {
+    border:1px solid #e9ecef;
+    border-radius:10px;
+    padding:10px 14px;
+    background:#fff;
+    min-width:120px;
+    transition:box-shadow .15s ease, transform .15s ease;
+}
+
+.er-stat-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.er-stat-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+.er-stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #111827;
+}
+
+.er-stat-active {
+    border-color: #0d6efd !important;
+    background: rgba(13, 110, 253, 0.04);
+}
+
+.er-stat-active-sudah {
+    border-color: #198754 !important;
+    background: rgba(25, 135, 84, 0.04);
+}
+
+.er-stat-active-belum {
+    border-color: #ffc107 !important;
+    background: rgba(255, 193, 7, 0.04);
+}
+
+.er-stat-dist {
+    min-width:190px;
+    max-width:210px;
+    padding:10px 12px;
+}
+
+.er-stat-dist:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.er-dist-row {
+    font-size: 12px;
+    padding: 2px 0;
+}
+
+.er-dist-label {
+    color: #374151;
+    font-weight: 400;
+}
+
+.er-dist-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    min-width: 24px;
+    text-align: center;
+}
+.er-stat-link{
+    display:block;
+    text-decoration:none;
+    color:inherit;
+}
+.er-stat-link:hover .er-stat-card{
+    box-shadow:0 4px 16px rgba(0,0,0,.08);
+    transform:translateY(-2px);
+}
+
+/* ================= DISTRIBUSI BAR ================= */
+.er-dist-bar-row{
+display:flex;
+align-items:center;
+gap:6px;
+margin:2px 0;
+font-size:11px;
+}
+
+.er-dist-label{
+width:80px;
+font-size:11px;
+color:#374151;
+}
+
+.er-dist-bar{
+flex:1;
+height:6px;
+background:#eef2f7;
+border-radius:4px;
+overflow:hidden;
+}
+
+.er-dist-fill{
+height:100%;
+border-radius:4px;
+transition:width .25s ease;
+}
+
+.er-dist-value{
+width:16px;
+text-align:right;
+font-weight:600;
+font-size:10px;
+}
+
 /* ================= INPUT ZONE (user-fill area) ================= */
 .rtp-input-zone {
     background: #eef4ff;
