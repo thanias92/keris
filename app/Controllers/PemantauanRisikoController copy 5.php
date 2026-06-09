@@ -96,31 +96,6 @@ class PemantauanRisikoController extends BaseController
         $offset  = ($page - 1) * $perPage;
         $filter  = $this->request->getGet('filter');
 
-        $statusCase = "
-        CASE
-            WHEN pm.realisasi_waktu IS NOT NULL
-                AND DATE_TRUNC('month', pm.realisasi_waktu)
-                    > DATE_TRUNC('month', rtp.target_waktu)
-            THEN 'Terlambat'
-
-            WHEN pm.realisasi_output IS NOT NULL
-                AND pm.realisasi_waktu IS NOT NULL
-                AND bp.id_bukti IS NOT NULL
-            THEN 'Selesai'
-
-            WHEN DATE_TRUNC('month', CURRENT_DATE)
-                > DATE_TRUNC('month', rtp.target_waktu)
-            THEN 'Terlambat'
-
-            WHEN pm.realisasi_output IS NULL
-                AND pm.realisasi_waktu IS NULL
-                AND bp.id_bukti IS NULL
-            THEN 'Belum Dilaksanakan'
-
-            ELSE 'Dalam Proses'
-        END
-        ";
-
         $builder = $this->db->table('rencana_penanganan_risiko rtp')
             ->select("
                 ir.id_identifikasi,
@@ -146,27 +121,22 @@ class PemantauanRisikoController extends BaseController
                 pm.realisasi_output,
                 pm.realisasi_waktu,
                 CASE
-                    WHEN pm.realisasi_waktu IS NOT NULL
-                        AND DATE_TRUNC('month', pm.realisasi_waktu)
-                            > DATE_TRUNC('month', rtp.target_waktu)
-                    THEN 'Terlambat'
+    WHEN pm.realisasi_output IS NULL
+         AND pm.realisasi_waktu IS NULL
+    THEN
+        CASE
+            WHEN DATE_TRUNC('month', rtp.target_waktu)
+                 >= DATE_TRUNC('month', CURRENT_DATE)
+            THEN 'Dalam Proses'
+            ELSE 'Belum Dilaksanakan'
+        END
 
-                    WHEN pm.realisasi_output IS NOT NULL
-                        AND pm.realisasi_waktu IS NOT NULL
-                        AND bp.id_bukti IS NOT NULL
-                    THEN 'Selesai'
+    WHEN DATE_TRUNC('month', pm.realisasi_waktu)
+         > DATE_TRUNC('month', rtp.target_waktu)
+    THEN 'Terlambat'
 
-                    WHEN DATE_TRUNC('month', CURRENT_DATE)
-                        > DATE_TRUNC('month', rtp.target_waktu)
-                    THEN 'Terlambat'
-
-                    WHEN pm.realisasi_output IS NULL
-                        AND pm.realisasi_waktu IS NULL
-                        AND bp.id_bukti IS NULL
-                    THEN 'Belum Dilaksanakan'
-
-                    ELSE 'Dalam Proses'
-                END as status,
+    ELSE 'Selesai'
+END as status,
                 pm.catatan,
                 pm.updated_at as pemantauan_updated_at
             ")
@@ -197,18 +167,15 @@ class PemantauanRisikoController extends BaseController
             $builder->where('k.id_kegiatan', $globalKegiatan);
         }
 
-        // if ($filter && $filter !== 'semua') {
-        //     if ($filter === 'Belum Dilaksanakan') {
-        //         $builder->groupStart()
-        //             ->where('pm.id_pemantauan IS NULL', null, false)
-        //             ->orWhere('pm.status', 'Belum Dilaksanakan')
-        //             ->groupEnd();
-        //     } else {
-        //         $builder->where('pm.status', $filter);
-        //     }
-        // }
         if ($filter && $filter !== 'semua') {
-            $builder->where("($statusCase) = '{$filter}'", null, false);
+            if ($filter === 'Belum Dilaksanakan') {
+                $builder->groupStart()
+                    ->where('pm.id_pemantauan IS NULL', null, false)
+                    ->orWhere('pm.status', 'Belum Dilaksanakan')
+                    ->groupEnd();
+            } else {
+                $builder->where('pm.status', $filter);
+            }
         }
 
         $qCount = $this->db->table('rencana_penanganan_risiko rtp')
@@ -231,16 +198,16 @@ class PemantauanRisikoController extends BaseController
             $qCount->where('k.id_kegiatan', $globalKegiatan);
         }
 
-        // if ($filter && $filter !== 'semua') {
-        //     if ($filter === 'Belum Dilaksanakan') {
-        //         $qCount->groupStart()
-        //             ->where('pm.id_pemantauan IS NULL', null, false)
-        //             ->orWhere('pm.status', 'Belum Dilaksanakan')
-        //             ->groupEnd();
-        //     } else {
-        //         $qCount->where('pm.status', $filter);
-        //     }
-        // }
+        if ($filter && $filter !== 'semua') {
+            if ($filter === 'Belum Dilaksanakan') {
+                $qCount->groupStart()
+                    ->where('pm.id_pemantauan IS NULL', null, false)
+                    ->orWhere('pm.status', 'Belum Dilaksanakan')
+                    ->groupEnd();
+            } else {
+                $qCount->where('pm.status', $filter);
+            }
+        }
 
         $total = (int) ($qCount->get()->getRowArray()['total'] ?? 0);
         $rows  = $builder->limit($perPage, $offset)->get()->getResultArray();
@@ -340,31 +307,6 @@ class PemantauanRisikoController extends BaseController
         ];
 
         $filter  = $this->request->getGet('filter');
-
-        $statusCase = "
-        CASE
-            WHEN pm.realisasi_waktu IS NOT NULL
-                AND DATE_TRUNC('month', pm.realisasi_waktu)
-                    > DATE_TRUNC('month', rtp.target_waktu)
-            THEN 'Terlambat'
-
-            WHEN pm.realisasi_output IS NOT NULL
-                AND pm.realisasi_waktu IS NOT NULL
-                AND bp.id_bukti IS NOT NULL
-            THEN 'Selesai'
-
-            WHEN DATE_TRUNC('month', CURRENT_DATE)
-                > DATE_TRUNC('month', rtp.target_waktu)
-            THEN 'Terlambat'
-
-            WHEN pm.realisasi_output IS NULL
-                AND pm.realisasi_waktu IS NULL
-                AND bp.id_bukti IS NULL
-            THEN 'Belum Dilaksanakan'
-
-            ELSE 'Dalam Proses'
-        END
-        ";
         $perPage = (int) ($this->request->getGet('perPage') ?? 10);
         $page    = (int) ($this->request->getGet('page') ?? 1);
         $offset  = ($page - 1) * $perPage;
@@ -372,44 +314,39 @@ class PemantauanRisikoController extends BaseController
         /* ================= QUERY ================= */
         $builder = $db->table('rencana_penanganan_risiko rtp')
             ->select("
-                ir.id_identifikasi,
-                rtp.id_rtp,
-                rtp.uraian_rtp,
-                rtp.target_output,
-                rtp.target_waktu,
-                k.id_tim,
-                pb.kode_proses,
-                pb.uraian_proses,
-                sk.nama_tim,
-                pr.nilai_risiko,
-                pr.warna_risiko,
-                sl.nama_level as nama_selera,
-                pm.id_pemantauan,
-                pm.realisasi_output,
-                pm.realisasi_waktu,
-                CASE
-                    WHEN pm.realisasi_waktu IS NOT NULL
-                        AND DATE_TRUNC('month', pm.realisasi_waktu)
-                            > DATE_TRUNC('month', rtp.target_waktu)
-                    THEN 'Terlambat'
+            ir.id_identifikasi,
+            rtp.id_rtp,
+            rtp.uraian_rtp,
+            rtp.target_output,
+            rtp.target_waktu,
+            k.id_tim,
+            pb.kode_proses,
+            pb.uraian_proses,
+            sk.nama_tim,
+            pr.nilai_risiko,
+            pr.warna_risiko,
+            sl.nama_level as nama_selera,
+            pm.id_pemantauan,
+            pm.realisasi_output,
+            pm.realisasi_waktu,
+           CASE
+    WHEN pm.realisasi_output IS NULL
+         AND pm.realisasi_waktu IS NULL
+    THEN
+        CASE
+            WHEN DATE_TRUNC('month', rtp.target_waktu)
+                 >= DATE_TRUNC('month', CURRENT_DATE)
+            THEN 'Dalam Proses'
+            ELSE 'Belum Dilaksanakan'
+        END
 
-                    WHEN pm.realisasi_output IS NOT NULL
-                        AND pm.realisasi_waktu IS NOT NULL
-                        AND bp.id_bukti IS NOT NULL
-                    THEN 'Selesai'
+    WHEN DATE_TRUNC('month', pm.realisasi_waktu)
+         > DATE_TRUNC('month', rtp.target_waktu)
+    THEN 'Terlambat'
 
-                    WHEN DATE_TRUNC('month', CURRENT_DATE)
-                        > DATE_TRUNC('month', rtp.target_waktu)
-                    THEN 'Terlambat'
-
-                    WHEN pm.realisasi_output IS NULL
-                        AND pm.realisasi_waktu IS NULL
-                        AND bp.id_bukti IS NULL
-                    THEN 'Belum Dilaksanakan'
-
-                    ELSE 'Dalam Proses'
-                END as status
-            ")
+    ELSE 'Selesai'
+END as status
+        ")
             ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
@@ -418,8 +355,7 @@ class PemantauanRisikoController extends BaseController
             ->join('tim_kerja sk', 'sk.id_tim = k.id_tim', 'left')
             ->join('penilaian_risiko pr', 'pr.id_penilaian = er.id_penilaian', 'left')
             ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
-            ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left')
-            ->join('bukti_pemantauan bp', 'bp.id_pemantauan = pm.id_pemantauan', 'left');
+            ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left');
 
         if ($globalTahun) {
             $builder->where('k.tahun', $globalTahun);
@@ -433,15 +369,12 @@ class PemantauanRisikoController extends BaseController
             $builder->where('k.id_kegiatan', $globalKegiatan);
         }
 
-        // if ($filter && $filter !== 'semua') {
-        //     if ($filter === 'Belum Dilaksanakan') {
-        //         $builder->where('pm.id_pemantauan IS NULL', null, false);
-        //     } else {
-        //         $builder->where('pm.status', $filter);
-        //     }
-        // }
         if ($filter && $filter !== 'semua') {
-            $builder->where("($statusCase) = '{$filter}'", null, false);
+            if ($filter === 'Belum Dilaksanakan') {
+                $builder->where('pm.id_pemantauan IS NULL', null, false);
+            } else {
+                $builder->where('pm.status', $filter);
+            }
         }
 
         /* ================= TOTAL ================= */
@@ -622,11 +555,22 @@ class PemantauanRisikoController extends BaseController
 
             $link = trim($this->request->getPost('bukti_link') ?? '');
 
+            $status = 'Terlambat';
+
+            if (!empty($realisasiOutput)) {
+                $status = 'Dalam Proses';
+            }
+
+            if (!empty($link)) {
+                $status = 'Selesai';
+            }
+
             $this->db->transStart();
 
             $idPemantauan = $this->pemantauanModel->upsertByRtp((int) $idRtp, [
                 'realisasi_output' => $realisasiOutput,
                 'realisasi_waktu'  => $realisasiWaktu,
+                'status'           => $status,
                 'catatan'          => $catatan,
             ]);
 

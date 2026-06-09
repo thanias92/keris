@@ -59,7 +59,7 @@ class PemantauanRisikoModel extends Model
     public function getByRtp(int $idRtp): ?array
     {
         return $this->db->table('pemantauan_risiko pm')
-            ->select("
+            ->select('
                 pm.*,
                 rtp.id_rtp,
                 k.id_tim,
@@ -75,38 +75,13 @@ class PemantauanRisikoModel extends Model
                 sk.nama_tim,
                 k.tahun,
                 ss.uraian_sasaran,
-                sk_kinerja.uraian_sasaran as uraian_sasaran_kinerja,
-                g.nama as nama_pengelola,
+                sk_kinerja.uraian_sasaran  as uraian_sasaran_kinerja,
+                g.nama                     as nama_pengelola,
                 pr.nilai_risiko,
                 pr.warna_risiko,
-                sl.nama_level as nama_selera,
-                sl.warna as warna_selera,
-                CASE
-                    WHEN pm.realisasi_waktu IS NOT NULL
-                        AND DATE_TRUNC('month', pm.realisasi_waktu)
-                            > DATE_TRUNC('month', rtp.target_waktu)
-                    THEN 'Terlambat'
-
-                    WHEN pm.realisasi_output IS NOT NULL
-                        AND pm.realisasi_waktu IS NOT NULL
-                        AND EXISTS (
-                            SELECT 1
-                            FROM bukti_pemantauan bp
-                            WHERE bp.id_pemantauan = pm.id_pemantauan
-                        )
-                    THEN 'Selesai'
-
-                    WHEN DATE_TRUNC('month', CURRENT_DATE)
-                        > DATE_TRUNC('month', rtp.target_waktu)
-                    THEN 'Terlambat'
-
-                    WHEN pm.realisasi_output IS NULL
-                        AND pm.realisasi_waktu IS NULL
-                    THEN 'Belum Dilaksanakan'
-
-                    ELSE 'Dalam Proses'
-                END as status
-            ")
+                sl.nama_level              as nama_selera,
+                sl.warna                   as warna_selera
+            ')
             ->join('rencana_penanganan_risiko rtp', 'rtp.id_rtp = pm.id_rtp')
             ->join('evaluasi_risiko er',             'er.id_evaluasi = rtp.id_penilaian_awal')
             ->join('identifikasi_risiko ir',         'ir.id_identifikasi = er.id_identifikasi')
@@ -175,67 +150,21 @@ class PemantauanRisikoModel extends Model
         return (int) $this->getInsertID();
     }
 
-    /* DISTRIBUSI STATUS*/
+    /* ======================================================
+       DISTRIBUSI STATUS
+    ====================================================== */
     public function getDistribusiStatus(?int $idKonteks = null): array
     {
         $statusList = ['Belum Dilaksanakan', 'Dalam Proses', 'Selesai', 'Terlambat'];
         $result     = array_fill_keys($statusList, 0);
 
         $builder = $this->db->table('rencana_penanganan_risiko rtp')
-            ->select("
-                CASE
-                    WHEN pm.realisasi_waktu IS NOT NULL
-                        AND DATE_TRUNC('month', pm.realisasi_waktu)
-                            > DATE_TRUNC('month', rtp.target_waktu)
-                    THEN 'Terlambat'
-
-                    WHEN pm.realisasi_output IS NOT NULL
-                        AND pm.realisasi_waktu IS NOT NULL
-                        AND bp.id_bukti IS NOT NULL
-                    THEN 'Selesai'
-
-                    WHEN DATE_TRUNC('month', CURRENT_DATE)
-                        > DATE_TRUNC('month', rtp.target_waktu)
-                    THEN 'Terlambat'
-
-                    WHEN pm.realisasi_output IS NULL
-                        AND pm.realisasi_waktu IS NULL
-                        AND bp.id_bukti IS NULL
-                    THEN 'Belum Dilaksanakan'
-
-                    ELSE 'Dalam Proses'
-                END as status,
-                COUNT(*) as total
-            ")
-            ->join('evaluasi_risiko er', 'er.id_evaluasi = rtp.id_penilaian_awal')
-            ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
+            ->select("COALESCE(pm.status, 'Belum Dilaksanakan') as status, COUNT(*) as total")
+            ->join('evaluasi_risiko er',        'er.id_evaluasi = rtp.id_penilaian_awal')
+            ->join('identifikasi_risiko ir',    'ir.id_identifikasi = er.id_identifikasi')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
-            ->join('pemantauan_risiko pm', 'pm.id_rtp = rtp.id_rtp', 'left')
-            ->join('bukti_pemantauan bp', 'bp.id_pemantauan = pm.id_pemantauan', 'left')
-            ->groupBy("
-                CASE
-                    WHEN pm.realisasi_waktu IS NOT NULL
-                        AND DATE_TRUNC('month', pm.realisasi_waktu)
-                            > DATE_TRUNC('month', rtp.target_waktu)
-                    THEN 'Terlambat'
-
-                    WHEN pm.realisasi_output IS NOT NULL
-                        AND pm.realisasi_waktu IS NOT NULL
-                        AND bp.id_bukti IS NOT NULL
-                    THEN 'Selesai'
-
-                    WHEN DATE_TRUNC('month', CURRENT_DATE)
-                        > DATE_TRUNC('month', rtp.target_waktu)
-                    THEN 'Terlambat'
-
-                    WHEN pm.realisasi_output IS NULL
-                        AND pm.realisasi_waktu IS NULL
-                        AND bp.id_bukti IS NULL
-                    THEN 'Belum Dilaksanakan'
-
-                    ELSE 'Dalam Proses'
-                END
-            ");
+            ->join('pemantauan_risiko pm',      'pm.id_rtp = rtp.id_rtp', 'left')
+            ->groupBy("COALESCE(pm.status, 'Belum Dilaksanakan')");
 
         if ($idKonteks) {
             $builder->where('kpb.id_konteks', $idKonteks);
