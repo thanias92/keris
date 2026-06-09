@@ -1,4 +1,3 @@
-<!-- ================= OFFCANVAS EVALUASI RISIKO ================= -->
 <div class="offcanvas offcanvas-end shadow-lg"
     tabindex="-1"
     id="erOffcanvas">
@@ -38,6 +37,11 @@
                         <div class="ar-info-row">
                             <span class="ar-info-label">Tim Kerja</span>
                             <span class="ar-info-value" id="erInfoTimKerja">-</span>
+                        </div>
+
+                        <div class="ar-info-row">
+                            <span class="ar-info-label">Kegiatan</span>
+                            <span class="ar-info-value" id="erInfoKegiatan">-</span>
                         </div>
                     </div>
 

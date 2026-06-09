@@ -190,35 +190,20 @@ class EvaluasiRisikoController extends BaseController
 
         /* DISTRIBUSI LEVEL */
         $levelRisiko = [
-            'Sangat Rendah' => [
-                'jumlah' => 0,
-                'warna'  => 'biru'
-            ],
-            'Rendah' => [
-                'jumlah' => 0,
-                'warna'  => 'hijau'
-            ],
-            'Sedang' => [
-                'jumlah' => 0,
-                'warna'  => 'kuning'
-            ],
-            'Tinggi' => [
-                'jumlah' => 0,
-                'warna'  => 'oranye'
-            ],
-            'Sangat Tinggi' => [
-                'jumlah' => 0,
-                'warna'  => 'merah'
-            ],
+            'Sangat Rendah' => ['jumlah' => 0],
+            'Rendah'        => ['jumlah' => 0],
+            'Sedang'        => ['jumlah' => 0],
+            'Tinggi'        => ['jumlah' => 0],
+            'Sangat Tinggi' => ['jumlah' => 0],
         ];
         $distribusiBuilder = $db->table('identifikasi_risiko ir')
-            ->select('sl.nama_level, sl.warna, COUNT(*) as total')
+            ->select('sl.nama_level, COUNT(*) as total')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
             ->join('penilaian_risiko pr', 'pr.id_identifikasi = ir.id_identifikasi', 'left')
             ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
             ->where('sl.nama_level IS NOT NULL', null, false)
-            ->groupBy('sl.nama_level, sl.warna');
+            ->groupBy('sl.nama_level');
 
         if ($idTim) $distribusiBuilder->where('k.id_tim', $idTim);
         if ($idPengelola) $distribusiBuilder->where('k.pengelola_risiko_id', $idPengelola);
@@ -227,12 +212,7 @@ class EvaluasiRisikoController extends BaseController
 
         foreach ($distribusiBuilder->get()->getResultArray() as $row) {
             if (isset($levelRisiko[$row['nama_level']])) {
-
-                $levelRisiko[$row['nama_level']]['jumlah'] =
-                    (int)$row['total'];
-
-                $levelRisiko[$row['nama_level']]['warna'] =
-                    $row['warna'];
+                $levelRisiko[$row['nama_level']]['jumlah'] = (int)$row['total'];
             }
         }
 
@@ -267,7 +247,6 @@ class EvaluasiRisikoController extends BaseController
                 sk_kinerja.uraian_sasaran as sasaran_kinerja,
                 k.tahun,
                 k.id_tim,
-                kegiatan.nama_kegiatan,
                 tim_kerja.nama_tim,
                 ss.uraian_sasaran as sasaran_strategis,
                 g.nama as nama_pengelola,
@@ -278,8 +257,7 @@ class EvaluasiRisikoController extends BaseController
                 pr.uraian_pengendalian,
                 km.level as level_kemungkinan,
                 kd.level as level_dampak,
-                sl.nama_level as nama_selera,
-                sl.warna as warna_selera
+                sl.nama_level as nama_selera
             ')
             ->join('identifikasi_risiko ir', 'ir.id_identifikasi = er.id_identifikasi')
             ->join('penilaian_risiko pr', 'pr.id_penilaian = er.id_penilaian', 'left')
@@ -289,7 +267,6 @@ class EvaluasiRisikoController extends BaseController
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->join('kegiatan', 'kegiatan.id_kegiatan = k.id_kegiatan', 'left')
             ->join('tim_kerja', 'tim_kerja.id_tim = k.id_tim', 'left')
             ->join('sasaran_strategis ss', 'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko g', 'g.id = k.pengelola_risiko_id', 'left')
@@ -318,7 +295,6 @@ class EvaluasiRisikoController extends BaseController
                 sk_kinerja.uraian_sasaran as sasaran_kinerja,
                 k.tahun,
                 k.id_tim,
-                kegiatan.nama_kegiatan,
                 tim_kerja.nama_tim,
                 ss.uraian_sasaran as sasaran_strategis,
                 g.nama as nama_pengelola,
@@ -338,7 +314,6 @@ class EvaluasiRisikoController extends BaseController
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('proses_bisnis pb', 'pb.id_proses = kpb.id_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
-            ->join('kegiatan', 'kegiatan.id_kegiatan = k.id_kegiatan', 'left')
             ->join('tim_kerja', 'tim_kerja.id_tim = k.id_tim', 'left')
             ->join('sasaran_strategis ss', 'ss.id_sasaran_strategis = k.id_sasaran_strategis', 'left')
             ->join('pengelola_risiko g', 'g.id = k.pengelola_risiko_id', 'left')
@@ -451,38 +426,25 @@ class EvaluasiRisikoController extends BaseController
 
         $totalBelum = $totalRisiko - $totalSudah;
 
-        /* DISTRIBUSI LEVEL (SAMA SEPERTI ANALISIS)*/
+        /* =======================
+       DISTRIBUSI LEVEL (SAMA SEPERTI ANALISIS)
+    ======================= */
         $levelRisiko = [
-            'Sangat Rendah' => [
-                'jumlah' => 0,
-                'warna'  => 'biru'
-            ],
-            'Rendah' => [
-                'jumlah' => 0,
-                'warna'  => 'hijau'
-            ],
-            'Sedang' => [
-                'jumlah' => 0,
-                'warna'  => 'kuning'
-            ],
-            'Tinggi' => [
-                'jumlah' => 0,
-                'warna'  => 'oranye'
-            ],
-            'Sangat Tinggi' => [
-                'jumlah' => 0,
-                'warna'  => 'merah'
-            ],
+            'Sangat Rendah' => ['jumlah' => 0],
+            'Rendah'        => ['jumlah' => 0],
+            'Sedang'        => ['jumlah' => 0],
+            'Tinggi'        => ['jumlah' => 0],
+            'Sangat Tinggi' => ['jumlah' => 0],
         ];
 
         $distribusiBuilder = $db->table('identifikasi_risiko ir')
-            ->select('sl.nama_level, sl.warna, COUNT(*) as total')
+            ->select('sl.nama_level, COUNT(*) as total')
             ->join('konteks_proses_bisnis kpb', 'kpb.id_konteks_proses = ir.id_konteks_proses')
             ->join('konteks k', 'k.id_konteks = kpb.id_konteks')
             ->join('penilaian_risiko pr', 'pr.id_identifikasi = ir.id_identifikasi', 'left')
             ->join('selera_risiko sl', 'sl.id_selera = pr.id_selera', 'left')
             ->where('sl.nama_level IS NOT NULL', null, false)
-            ->groupBy('sl.nama_level, sl.warna');
+            ->groupBy('sl.nama_level');
 
         if ($idTim) $distribusiBuilder->where('k.id_tim', $idTim);
         if ($idPengelola) $distribusiBuilder->where('k.pengelola_risiko_id', $idPengelola);
@@ -491,12 +453,7 @@ class EvaluasiRisikoController extends BaseController
 
         foreach ($distribusiBuilder->get()->getResultArray() as $row) {
             if (isset($levelRisiko[$row['nama_level']])) {
-
-                $levelRisiko[$row['nama_level']]['jumlah'] =
-                    (int)$row['total'];
-
-                $levelRisiko[$row['nama_level']]['warna'] =
-                    $row['warna'];
+                $levelRisiko[$row['nama_level']] = (int)$row['total'];
             }
         }
 

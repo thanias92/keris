@@ -154,19 +154,11 @@ function erPopulateInfo(d) {
   const badgeEl = document.getElementById("erPreviewBadge");
   if (nilaiEl) {
     nilaiEl.textContent = d.nilai_risiko || "0";
-    nilaiEl.style.color = warnaMap[d.warna_selera] || "#6c757d";
+    nilaiEl.style.color = d.warna_risiko || "";
   }
   if (badgeEl) {
     badgeEl.textContent = d.nama_selera || "";
-    const warnaMap = {
-      biru: "#0d6efd",
-      hijau: "#198754",
-      kuning: "#ffc107",
-      oranye: "#fd7e14",
-      merah: "#dc3545",
-    };
-
-    badgeEl.style.backgroundColor = warnaMap[d.warna_selera] || "#6c757d";
+    badgeEl.style.backgroundColor = d.warna_risiko || "";
   }
 
   // === RBAC CONTROL ===

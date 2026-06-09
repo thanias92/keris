@@ -238,6 +238,7 @@ $routes->group('evaluasi-risiko', ['namespace' => 'App\Controllers', 'filter' =>
         $routes->post('delete/(:num)', 'EvaluasiRisikoController::delete/$1');
     });
 });
+
 // Rencana Penanganan
 $routes->group('rencana-penanganan', ['namespace' => 'App\Controllers', 'filter' => ['auth']], function ($routes) {
 
