@@ -22,18 +22,10 @@ class DashboardController extends BaseController
             ->orderBy('nama_kategori')
             ->get()->getResultArray();
 
-        $matriks = $db->table('matriks_risiko')
-            ->orderBy('level_kemungkinan', 'DESC')
-            ->orderBy('level_dampak', 'ASC')
-            ->get()
-            ->getResultArray();
-
         return view('dashboard/index', [
             'tahunList'         => $tahunList,
             'timKerjaList'      => $timKerjaList,
             'kategoriList'      => $kategoriList,
-            'matriks' => $matriks,
-            'heatmap'=> [],
             'hideGlobalContext' => true,
         ]);
     }
@@ -116,6 +108,116 @@ class DashboardController extends BaseController
     {
         $db    = \Config\Database::connect();
 
+        return $this->response->setJSON([
+            'kpi' => [
+                'totalRisiko' => 127,
+                'totalRtp'    => 89,
+                'realisasi'   => 74,
+            ],
+
+            'heatmap' => [
+                1 => [
+                    1 => ['total' => 2, 'warna' => 'biru'],
+                    2 => ['total' => 3, 'warna' => 'hijau'],
+                    3 => ['total' => 1, 'warna' => 'kuning'],
+                    4 => ['total' => 0, 'warna' => 'oranye'],
+                    5 => ['total' => 0, 'warna' => 'merah'],
+                ],
+                2 => [
+                    1 => ['total' => 4, 'warna' => 'hijau'],
+                    2 => ['total' => 5, 'warna' => 'kuning'],
+                    3 => ['total' => 2, 'warna' => 'oranye'],
+                    4 => ['total' => 1, 'warna' => 'merah'],
+                    5 => ['total' => 1, 'warna' => 'merah'],
+                ],
+                3 => [
+                    1 => ['total' => 3, 'warna' => 'kuning'],
+                    2 => ['total' => 6, 'warna' => 'oranye'],
+                    3 => ['total' => 4, 'warna' => 'merah'],
+                    4 => ['total' => 2, 'warna' => 'merah'],
+                    5 => ['total' => 1, 'warna' => 'merah'],
+                ],
+                4 => [
+                    1 => ['total' => 2, 'warna' => 'oranye'],
+                    2 => ['total' => 4, 'warna' => 'merah'],
+                    3 => ['total' => 5, 'warna' => 'merah'],
+                    4 => ['total' => 3, 'warna' => 'merah'],
+                    5 => ['total' => 2, 'warna' => 'merah'],
+                ],
+                5 => [
+                    1 => ['total' => 1, 'warna' => 'merah'],
+                    2 => ['total' => 2, 'warna' => 'merah'],
+                    3 => ['total' => 3, 'warna' => 'merah'],
+                    4 => ['total' => 4, 'warna' => 'merah'],
+                    5 => ['total' => 5, 'warna' => 'merah'],
+                ],
+            ],
+
+            'pieLabels' => [
+                'Sangat Rendah',
+                'Rendah',
+                'Sedang',
+                'Tinggi',
+                'Sangat Tinggi'
+            ],
+
+            'pieValues' => [8, 15, 27, 18, 6],
+
+            'pieColors' => [
+                '#60a5fa',
+                '#22c55e',
+                '#fbbf24',
+                '#f97316',
+                '#ef4444'
+            ],
+
+            'kategoriLabels' => [
+                'Strategis',
+                'Operasional',
+                'Keuangan',
+                'Kepatuhan',
+                'Reputasi'
+            ],
+
+            'kategoriValues' => [
+                12,
+                25,
+                8,
+                15,
+                6
+            ],
+
+            'statusRtp' => [
+                'selesai'   => 35,
+                'proses'    => 18,
+                'belum'     => 24,
+                'terlambat' => 12,
+            ],
+
+            'progress' => [
+                [
+                    'nama_tim' => 'IPDS',
+                    'f1' => 12,
+                    'f2' => 10,
+                    'f3' => 8,
+                    'f4' => 6,
+                ],
+                [
+                    'nama_tim' => 'Neraca Wilayah',
+                    'f1' => 15,
+                    'f2' => 14,
+                    'f3' => 12,
+                    'f4' => 10,
+                ],
+                [
+                    'nama_tim' => 'Statistik Sosial',
+                    'f1' => 11,
+                    'f2' => 9,
+                    'f3' => 7,
+                    'f4' => 5,
+                ],
+            ]
+        ]);
         $tahun = $this->request->getGet('tahun');
         $timId = $this->request->getGet('tim');
         $katId = $this->request->getGet('kategori');
@@ -124,12 +226,12 @@ class DashboardController extends BaseController
             // ── Deteksi join path yang benar ─────────────────────────────────
             // Cek apakah id_konteks_proses di ir langsung cocok dengan id_konteks di konteks
             // atau butuh lewat konteks_proses_bisnis
-            // $testJoin = $db->query("
-            //     SELECT COUNT(*) AS c
-            //     FROM identifikasi_risiko ir
-            //     JOIN konteks k ON k.id_konteks = ir.id_konteks_proses
-            // ")->getRowArray();
-            // $directJoinWorks = ((int)$testJoin['c']) > 0;
+            $testJoin = $db->query("
+                SELECT COUNT(*) AS c
+                FROM identifikasi_risiko ir
+                JOIN konteks k ON k.id_konteks = ir.id_konteks_proses
+            ")->getRowArray();
+            $directJoinWorks = ((int)$testJoin['c']) > 0;
 
             // Cek apakah konteks punya kolom id_tim langsung
             $konteksColumns = array_column(
@@ -148,7 +250,7 @@ class DashboardController extends BaseController
                 $tahun,
                 $timId,
                 $katId,
-                
+                $directJoinWorks,
                 $konteksHasIdTim,
                 $konteksColumns
             ): array {
@@ -160,25 +262,33 @@ class DashboardController extends BaseController
                 $needKat     = (bool)$katId;
 
                 if ($needKonteks) {
+                    if ($directJoinWorks) {
+                        // ir.id_konteks_proses → konteks.id_konteks
+                        $join .= " LEFT JOIN konteks k ON k.id_konteks = {$irAlias}.id_konteks_proses";
+                    } else {
+                        // ir.id_konteks_proses → konteks_proses_bisnis → konteks
+                        $join .= " LEFT JOIN konteks_proses_bisnis kpb ON kpb.id_konteks_proses = {$irAlias}.id_konteks_proses"
+                            . " LEFT JOIN konteks k ON k.id_konteks = kpb.id_konteks";
+                    }
 
-    $join .= "
-        LEFT JOIN konteks_proses_bisnis kpb
-            ON kpb.id_konteks_proses = {$irAlias}.id_konteks_proses
+                    if ($tahun) {
+                        $where[]  = "k.tahun = ?";
+                        $params[] = $tahun;
+                    }
 
-        LEFT JOIN konteks k
-            ON k.id_konteks = kpb.id_konteks
-    ";
-
-    if ($tahun) {
-        $where[]  = "k.tahun = ?";
-        $params[] = $tahun;
-    }
-
-    if ($timId) {
-        $where[]  = "k.id_tim = ?";
-        $params[] = $timId;
-    }
-}
+                    if ($timId) {
+                        if ($konteksHasIdTim) {
+                            $where[]  = "k.id_tim = ?";
+                            $params[] = $timId;
+                        } else {
+                            // konteks → kegiatan → tim_kerja
+                            $join    .= " LEFT JOIN kegiatan kg ON kg.id_kegiatan = k.id_kegiatan"
+                                . " LEFT JOIN tim_kerja tk ON tk.id_tim = kg.id_tim";
+                            $where[]  = "tk.id_tim = ?";
+                            $params[] = $timId;
+                        }
+                    }
+                }
 
                 if ($needKat) {
                     $where[]  = "{$irAlias}.id_kategori_risiko = ?";
@@ -205,68 +315,41 @@ class DashboardController extends BaseController
 
             // ── KPI 2: Total RTP ─────────────────────────────────────────────
             if (empty($p)) {
-
-    $totalRtp = (int)$db->query("
-        SELECT COUNT(*) AS total
-        FROM rencana_penanganan_risiko
-    ")->getRowArray()['total'];
-
-} else {
-
-    [$j2, $w2, $p2] = $buildJoin('ir');
-
-    $totalRtp = (int)$db->query("
-        SELECT COUNT(DISTINCT rp.id_rtp) AS total
-
-        FROM rencana_penanganan_risiko rp
-
-        JOIN evaluasi_risiko er
-            ON er.id_evaluasi = rp.id_penilaian_awal
-
-        JOIN identifikasi_risiko ir
-            ON ir.id_identifikasi = er.id_identifikasi
-
-        $j2
-        $w2
-    ", $p2)->getRowArray()['total'];
-}
+                $totalRtp = (int)$db->query(
+                    "SELECT COUNT(*) AS total FROM rencana_penanganan_risiko"
+                )->getRowArray()['total'];
+            } else {
+                [$j2, $w2, $p2] = $buildJoin('ir');
+                $totalRtp = (int)$db->query(
+                    "SELECT COUNT(DISTINCT rp.id_rtp) AS total
+                     FROM rencana_penanganan_risiko rp
+                     JOIN penilaian_risiko pr    ON pr.id_penilaian = rp.id_penilaian_awal
+                     JOIN identifikasi_risiko ir ON ir.id_identifikasi = pr.id_identifikasi
+                     $j2 $w2",
+                    $p2
+                )->getRowArray()['total'];
+            }
 
             // ── KPI 3: Realisasi ─────────────────────────────────────────────
-
-            [$j3, $w3, $p3] = $buildJoin('ir');
-
-            $rtpSelesai = (int)$db->query("
-                SELECT COUNT(DISTINCT rp.id_rtp) AS total
-
-                FROM rencana_penanganan_risiko rp
-
-                LEFT JOIN pemantauan_risiko pm
-                    ON pm.id_rtp = rp.id_rtp
-
-                LEFT JOIN bukti_pemantauan bp
-                    ON bp.id_pemantauan = pm.id_pemantauan
-
-                JOIN evaluasi_risiko er
-                    ON er.id_evaluasi = rp.id_penilaian_awal
-
-                JOIN identifikasi_risiko ir
-                    ON ir.id_identifikasi = er.id_identifikasi
-
-                $j3
-
-                " . ($w3
-                        ? "$w3 AND pm.realisasi_output IS NOT NULL
-                    AND pm.realisasi_waktu IS NOT NULL
-                    AND bp.id_bukti IS NOT NULL"
-                        : "WHERE pm.realisasi_output IS NOT NULL
-                    AND pm.realisasi_waktu IS NOT NULL
-                    AND bp.id_bukti IS NOT NULL"),
+            if (empty($p)) {
+                $rtpSelesai = (int)$db->query(
+                    "SELECT COUNT(*) AS total FROM pemantauan_risiko WHERE status = 'selesai'"
+                )->getRowArray()['total'];
+            } else {
+                [$j3, $w3, $p3] = $buildJoin('ir');
+                // Tambah AND pm.status ke where
+                $w3 = $w3 ? "$w3 AND pm.status = 'selesai'" : "WHERE pm.status = 'selesai'";
+                $rtpSelesai = (int)$db->query(
+                    "SELECT COUNT(DISTINCT rp.id_rtp) AS total
+                     FROM pemantauan_risiko pm
+                     JOIN rencana_penanganan_risiko rp ON rp.id_rtp = pm.id_rtp
+                     JOIN penilaian_risiko pr          ON pr.id_penilaian = rp.id_penilaian_awal
+                     JOIN identifikasi_risiko ir       ON ir.id_identifikasi = pr.id_identifikasi
+                     $j3 $w3",
                     $p3
-            )->getRowArray()['total'];
-
-            $realisasi = $totalRtp > 0
-                ? round(($rtpSelesai / $totalRtp) * 100)
-                : 0;
+                )->getRowArray()['total'];
+            }
+            $realisasi = $totalRtp > 0 ? round(($rtpSelesai / $totalRtp) * 100) : 0;
 
             // ── HEATMAP ───────────────────────────────────────────────────────
             $matriksGrid = [];
@@ -282,11 +365,6 @@ class DashboardController extends BaseController
             }
 
             [$jh, $wh, $ph] = $buildJoin('ir');
-//             dd([
-//     'join'   => $jh,
-//     'where'  => $wh,
-//     'params' => $ph,
-// ]);
             $hmRows = $db->query("
                 SELECT mr.level_kemungkinan, mr.level_dampak, COUNT(*) AS total
                 FROM penilaian_risiko pr
@@ -325,13 +403,7 @@ class DashboardController extends BaseController
             ", $pp)->getResultArray();
 
             $warnaLabel = ['biru' => 'Sangat Rendah', 'hijau' => 'Rendah', 'kuning' => 'Sedang', 'oranye' => 'Tinggi', 'merah' => 'Sangat Tinggi'];
-            $warnaColor = [
-                'biru'   => '#bfdbfe',
-                'hijau'  => '#bbf7d0',
-                'kuning' => '#fde68a',
-                'oranye' => '#fed7aa',
-                'merah'  => '#fca5a5'
-            ];
+            $warnaColor = ['biru' => '#60a5fa', 'hijau' => '#22c55e', 'kuning' => '#fbbf24', 'oranye' => '#f97316', 'merah' => '#ef4444'];
             $warnaOrder = ['biru', 'hijau', 'kuning', 'oranye', 'merah'];
             usort($pieRows, fn($a, $b) => array_search($a['warna'], $warnaOrder) - array_search($b['warna'], $warnaOrder));
             $pieLabels = $pieValues = $pieColors = [];
@@ -357,72 +429,31 @@ class DashboardController extends BaseController
 
             // ── STATUS RTP ────────────────────────────────────────────────────
             [$js, $ws, $ps] = $buildJoin('ir');
-
-            $statusRows = $db->query("
+            $statusRow = $db->query("
                 SELECT
-                    CASE
-                        WHEN pm.realisasi_waktu IS NOT NULL
-                            AND DATE_TRUNC('month', pm.realisasi_waktu)
-                                > DATE_TRUNC('month', rp.target_waktu)
-                        THEN 'Terlambat'
-
-                        WHEN pm.realisasi_output IS NOT NULL
-                            AND pm.realisasi_waktu IS NOT NULL
-                            AND bp.id_bukti IS NOT NULL
-                        THEN 'Selesai'
-
-                        WHEN DATE_TRUNC('month', CURRENT_DATE)
-                            > DATE_TRUNC('month', rp.target_waktu)
-                        THEN 'Terlambat'
-
-                        WHEN pm.realisasi_output IS NULL
-                            AND pm.realisasi_waktu IS NULL
-                            AND bp.id_bukti IS NULL
-                        THEN 'Belum Dilaksanakan'
-
-                        ELSE 'Dalam Proses'
-                    END AS status
-
+                    SUM(CASE WHEN pm.status = 'selesai' THEN 1 ELSE 0 END) AS selesai,
+                    SUM(CASE WHEN pm.status = 'proses'
+                              AND (rp.target_waktu IS NULL OR rp.target_waktu >= CURDATE())
+                         THEN 1 ELSE 0 END) AS proses,
+                    SUM(CASE WHEN (pm.status IS NULL OR pm.status NOT IN ('selesai','proses'))
+                              AND (rp.target_waktu IS NULL OR rp.target_waktu >= CURDATE())
+                         THEN 1 ELSE 0 END) AS belum,
+                    SUM(CASE WHEN (pm.status IS NULL OR pm.status != 'selesai')
+                              AND rp.target_waktu IS NOT NULL
+                              AND rp.target_waktu < CURDATE()
+                         THEN 1 ELSE 0 END) AS terlambat
                 FROM rencana_penanganan_risiko rp
-                LEFT JOIN pemantauan_risiko pm
-                    ON pm.id_rtp = rp.id_rtp
-                LEFT JOIN bukti_pemantauan bp
-                    ON bp.id_pemantauan = pm.id_pemantauan
-
-                JOIN evaluasi_risiko er
-                    ON er.id_evaluasi = rp.id_penilaian_awal
-                JOIN identifikasi_risiko ir
-                    ON ir.id_identifikasi = er.id_identifikasi
-
+                LEFT JOIN pemantauan_risiko pm    ON pm.id_rtp = rp.id_rtp
+                JOIN penilaian_risiko pr          ON pr.id_penilaian = rp.id_penilaian_awal
+                JOIN identifikasi_risiko ir       ON ir.id_identifikasi = pr.id_identifikasi
                 $js $ws
-            ", $ps)->getResultArray();
-
+            ", $ps)->getRowArray();
             $statusRtp = [
-                'selesai'   => 0,
-                'proses'    => 0,
-                'belum'     => 0,
-                'terlambat' => 0,
+                'selesai'   => (int)($statusRow['selesai']   ?? 0),
+                'proses'    => (int)($statusRow['proses']    ?? 0),
+                'belum'     => (int)($statusRow['belum']     ?? 0),
+                'terlambat' => (int)($statusRow['terlambat'] ?? 0),
             ];
-
-            foreach ($statusRows as $row) {
-                switch ($row['status']) {
-                    case 'Selesai':
-                        $statusRtp['selesai']++;
-                        break;
-
-                    case 'Dalam Proses':
-                        $statusRtp['proses']++;
-                        break;
-
-                    case 'Belum Dilaksanakan':
-                        $statusRtp['belum']++;
-                        break;
-
-                    case 'Terlambat':
-                        $statusRtp['terlambat']++;
-                        break;
-                }
-            }
 
             // ── PROGRESS PER TIM KERJA ────────────────────────────────────────
             // Deteksi join path tim_kerja → konteks
@@ -438,10 +469,14 @@ class DashboardController extends BaseController
             }
 
             // konteks → identifikasi_risiko
-            $pgToIr = "
-                LEFT JOIN konteks_proses_bisnis kpb ON kpb.id_konteks = k.id_konteks
-                LEFT JOIN identifikasi_risiko ir ON ir.id_konteks_proses = kpb.id_konteks_proses
-            ";
+            $pgToIr = "";
+            if ($directJoinWorks) {
+                // konteks.id_konteks → identifikasi_risiko.id_konteks_proses
+                $pgToIr = "LEFT JOIN identifikasi_risiko ir ON ir.id_konteks_proses = k.id_konteks";
+            } else {
+                $pgToIr = "LEFT JOIN konteks_proses_bisnis kpb ON kpb.id_konteks = k.id_konteks"
+                    . " LEFT JOIN identifikasi_risiko ir  ON ir.id_konteks_proses = kpb.id_konteks_proses";
+            }
 
             $pgWhere  = "WHERE 1=1";
             $pgParams = [];
@@ -455,61 +490,33 @@ class DashboardController extends BaseController
             }
 
             $progressRows = $db->query("
-    SELECT
-        tk.id_tim,
-        tk.nama_tim,
+                SELECT
+                    tk.id_tim,
+                    tk.nama_tim,
+                    COUNT(DISTINCT k.id_konteks)  AS f1,
+                    COUNT(DISTINCT CASE WHEN ir.id_identifikasi IS NOT NULL THEN k.id_konteks END) AS f2,
+                    COUNT(DISTINCT CASE WHEN rp.id_rtp IS NOT NULL THEN k.id_konteks END) AS f3,
+                    COUNT(DISTINCT CASE WHEN pm.id_pemantauan IS NOT NULL THEN k.id_konteks END) AS f4
+                FROM tim_kerja tk
+                $pgFromTim
+                $pgToIr
+                LEFT JOIN penilaian_risiko pr          ON pr.id_identifikasi = ir.id_identifikasi
+                LEFT JOIN evaluasi_risiko ev           ON ev.id_penilaian = pr.id_penilaian
+                                                      AND ev.opsi_tindakan = 'mengurangi'
+                LEFT JOIN rencana_penanganan_risiko rp ON rp.id_penilaian_awal = pr.id_penilaian
+                LEFT JOIN pemantauan_risiko pm         ON pm.id_rtp = rp.id_rtp
+                $pgWhere
+                GROUP BY tk.id_tim, tk.nama_tim
+                ORDER BY tk.nama_tim
+            ", $pgParams)->getResultArray();
 
-        COUNT(DISTINCT k.id_konteks) AS f1,
-
-        COUNT(
-            DISTINCT CASE
-                WHEN ir.id_identifikasi IS NOT NULL
-                THEN k.id_konteks
-            END
-        ) AS f2,
-
-        COUNT(
-            DISTINCT CASE
-                WHEN rp.id_rtp IS NOT NULL
-                THEN k.id_konteks
-            END
-        ) AS f3,
-
-        COUNT(
-            DISTINCT CASE
-                WHEN pm.id_pemantauan IS NOT NULL
-                THEN k.id_konteks
-            END
-        ) AS f4
-
-    FROM tim_kerja tk
-
-    $pgFromTim
-
-    $pgToIr
-
-    LEFT JOIN evaluasi_risiko ev
-        ON ev.id_identifikasi = ir.id_identifikasi
-
-    LEFT JOIN rencana_penanganan_risiko rp
-        ON rp.id_penilaian_awal = ev.id_evaluasi
-
-    LEFT JOIN pemantauan_risiko pm
-        ON pm.id_rtp = rp.id_rtp
-
-    $pgWhere
-
-    GROUP BY tk.id_tim, tk.nama_tim
-    ORDER BY tk.nama_tim
-", $pgParams)->getResultArray();
-
-            // return $this->response->setJSON([
-            //     'debug_kategori' => $katRows
-            // ]);
+            return $this->response->setJSON([
+                'debug_kategori' => $katRows
+            ]);
 
             return $this->response->setJSON([
                 '_debug' => [
-                    //'directJoinWorks'  => $directJoinWorks,
+                    'directJoinWorks'  => $directJoinWorks,
                     'konteksHasIdTim'  => $konteksHasIdTim,
                     'totalRisiko'      => $totalRisiko,
                     'totalRtp'         => $totalRtp,

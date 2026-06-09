@@ -289,8 +289,7 @@ body:not(.sidebar-mini) .col-risiko {
 /* MATRlKS RISIKO - SUPER TIGHT VERSION */
 /* ===================================== */
 
-.pk-matriks-wrapper table.risk-matrix,
-.dashboard-risk-matrix table.risk-matrix {
+.pk-matriks-wrapper table.risk-matrix {
     width: 100%;
     border-collapse: collapse; /* penting */
     table-layout: fixed;
@@ -298,17 +297,14 @@ body:not(.sidebar-mini) .col-risiko {
 
 /* Reset */
 .pk-matriks-wrapper .risk-matrix th,
-.pk-matriks-wrapper .risk-matrix td,
-.dashboard-risk-matrix .risk-matrix th,
-.dashboard-risk-matrix .risk-matrix td {
+.pk-matriks-wrapper .risk-matrix td {
     padding: 0;
     border: none;
     background: transparent;
 }
 
 /* HEADER */
-.pk-matriks-wrapper .risk-matrix thead th,
-.dashboard-risk-matrix .risk-matrix thead th {
+.pk-matriks-wrapper .risk-matrix thead th {
     background: #ffffff;
     font-weight: 600;
     text-align: center;
@@ -317,14 +313,12 @@ body:not(.sidebar-mini) .col-risiko {
 }
 
 /* Paksa header jadi 2 baris */
-.pk-matriks-wrapper .risk-matrix thead th,
-.dashboard-risk-matrix .risk-matrix thead th {
+.pk-matriks-wrapper .risk-matrix thead th {
     line-height: 1.2;
 }
 
 /* Row kiri */
-.pk-matriks-wrapper .risk-matrix tbody th,
-.dashboard-risk-matrix .risk-matrix tbody th {
+.pk-matriks-wrapper .risk-matrix tbody th {
     background: #ffffff;
     text-align: left;
     padding: 10px 12px;
@@ -333,8 +327,7 @@ body:not(.sidebar-mini) .col-risiko {
 }
 
 /* Risk cell */
-.pk-matriks-wrapper .risk-cell,
-.dashboard-risk-matrix .risk-cell {
+.pk-matriks-wrapper .risk-cell {
     height: 70px; /* lebih pendek */
     margin: 2px;  /* jarak antar kotak */
     border-radius: 4px; /* lebih square */
@@ -349,8 +342,7 @@ body:not(.sidebar-mini) .col-risiko {
 }
 
 /* Hover */
-.pk-matriks-wrapper .risk-cell:hover,
-.dashboard-risk-matrix .risk-cell:hover {
+.pk-matriks-wrapper .risk-cell:hover {
     transform: translateY(-1px);
     box-shadow: 0 3px 8px rgba(0,0,0,0.1);
     cursor: pointer;
