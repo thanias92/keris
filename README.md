@@ -16,7 +16,7 @@
 |---|---|
 | **Organization** | BPS Provinsi Riau |
 | **Project Type** | Web-Based Risk Management Information System |
-| **Role** | Full Stack Developer (Solo Developer) |
+| **Role** | Full Stack Developer |
 | **Development Period** | December 2025 – June 2026 |
 | **Status** | Completed & Officially Handed Over |
 
