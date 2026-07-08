@@ -18,7 +18,7 @@
 | **Project Type** | Web-Based Risk Management Information System |
 | **Role** | Full Stack Developer |
 | **Development Period** | December 2025 – June 2026 |
-| **Status** | Completed & Officially Handed Over |
+| **Status** | Completed |
 
 ---
 
@@ -66,7 +66,7 @@ This project was developed during my internship, where I was responsible for the
 
 ## My Role
 
-As the **Solo Full Stack Developer**, I was responsible for the end-to-end development of the KERIS application, including:
+As the **Full Stack Developer**, I was responsible for the end-to-end development of the KERIS application, including:
 
 - Designing and implementing the PostgreSQL database.
 - Developing the backend using CodeIgniter 4.
