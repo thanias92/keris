@@ -1,60 +1,96 @@
-# CodeIgniter 4 Framework
+<p align="center">
+  <img src="public/assets/images/logo-keris-v2.png" alt="KERIS Logo" width="220">
+</p>
 
-## What is CodeIgniter?
+<h1 align="center">KERIS (Kelola Risiko)</h1>
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+<p align="center">
+  Risk Management Information System for BPS Provinsi Riau
+</p>
 
-This repository holds the distributable version of the framework.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+---
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## Project Information
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+| | |
+|---|---|
+| **Organization** | BPS Provinsi Riau |
+| **Project Type** | Web-Based Risk Management Information System |
+| **Role** | Full Stack Developer (Solo Developer) |
+| **Development Period** | December 2025 – June 2026 |
+| **Status** | Completed & Officially Handed Over |
 
-## Important Change with index.php
+---
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+## Overview
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+KERIS (Kelola Risiko) is a web-based Risk Management Information System developed for **BPS Provinsi Riau** to support organizational risk management activities.
 
-**Please** read the user guide for a better explanation of how CI4 works!
+The application enables users to establish risk contexts, identify and analyze risks, evaluate risk levels, define treatment plans, monitor mitigation progress, and generate reports through an integrated information system.
 
-## Repository Management
+This project was developed during my internship, where I was responsible for the complete development of the application as the sole Full Stack Developer.
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+---
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+## Features
 
-## Contributing
+- Dashboard
+- Context Management
+- Strategic Objectives Management
+- Business Process Management
+- Stakeholder Management
+- Risk Criteria Management
+- Risk Matrix Configuration
+- Risk Appetite Configuration
+- Risk Bank
+- Risk Identification
+- Risk Analysis
+- Risk Evaluation
+- Risk Treatment Plan (RTP)
+- Risk Monitoring
+- Reporting
 
-We welcome contributions from the community.
+---
 
-Please read the [*Contributing to CodeIgniter*](https://github.com/codeigniter4/CodeIgniter4/blob/develop/CONTRIBUTING.md) section in the development repository.
+## Tech Stack
 
-## Server Requirements
+| Category | Technology |
+|----------|------------|
+| **Backend** | PHP, CodeIgniter 4 |
+| **Frontend** | HTML, CSS, JavaScript, Bootstrap 5, jQuery |
+| **Database** | PostgreSQL |
+| **Libraries** | Select2 |
+| **Tools** | Git, DBeaver |
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+---
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+## My Role
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+As the **Solo Full Stack Developer**, I was responsible for the end-to-end development of the KERIS application, including:
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+- Designing and implementing the PostgreSQL database.
+- Developing the backend using CodeIgniter 4.
+- Developing the frontend using HTML, CSS, JavaScript, Bootstrap, and Select2.
+- Implementing all application modules.
+- Developing CRUD functionality across the system.
+- Creating database migrations and seeders.
+- Improving UI/UX and application usability.
+- Fixing bugs and optimizing application performance.
+- Conducting system testing prior to deployment.
+- Deploying the application and completing the official project handover.
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+---
+
+## Project Status
+
+**Completed** and officially handed over to **BPS Provinsi Riau**.
+
+---
+
+## Author
+
+**Bethania Simangunsong**
+
+Full Stack Developer
+
+GitHub: https://github.com/thanias92
